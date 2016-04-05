@@ -19,11 +19,13 @@ object Parser {
             //case e: Exception => println("General exception error")
         }
     }
-    def reflectMethod[T: ru.TypeTag](x: T, method: String) = {
-        try {
-          //currentMirror.reflectClass(T.asClass)
-        } catch {
+    def reflectMethod(x: Any, method: String, n: Int) = {
+        //try {
+          val m = ru.runtimeMirror(getClass.getClassLoader).reflect(x)
+          val f = m.symbol.typeSignature.member(ru.newTermName(method))
+          m.reflectMethod(f.asMethod)(n)
+        /*} catch {
           case e: Exception => println("General exception error")
-        }
+      }*/
     }
 }

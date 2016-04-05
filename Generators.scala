@@ -30,13 +30,24 @@ object Generators {
 def test() {
     val s = new Generators.Sampler("dicLocations.txt")
     val m = new Generators.Sampler("email.txt")
-    val i = Generators.GenPersons
+    val i = Generators.GenID
     val l : List[_] = List(s,m,i)
-    var namesv = l(1).run(10)
+    /*var namesv = l(1).run(10)
     var mails = l(2).run(10)
-    val ids = l(3).run(10)
-    var aa = ids.zip(namesv.map(x => List(x.split(" ")(1))))
-    var bb = ids.zip(mails.map(x => List(x)))
+    val ids = l(3).run(10)*/
+    var namesv = Parser.reflectMethod(l(0), "run", 10)
+    var mails = Parser.reflectMethod(l(1), "run", 10)
+    var ids = Parser.reflectMethod(l(2), "run", 10)
+
+
+    var Rids = ids.asInstanceOf[RDD[Int]]
+    var Rnamesv = namesv.asInstanceOf[RDD[String]]
+    var Rmails = mails.asInstanceOf[RDD[String]]
+    var aa = Rids.zip(Rnamesv.map(x => List(x.split(" ")(1))))
+    var bb = Rids.zip(Rmails.map(x => List(x)))
+    /*
+    aa = aa.asInstanceOf[RDD[(Int, List[String])]]
+    bb = bb.asInstanceOf[RDD[(Int, List[String])]]*/
     Generators.GenPersons.run(aa,bb).foreach(println)
     //var unit = aa.union(bb).reduceByKey((x,y) => x ++ y).foreach(println)
 }
