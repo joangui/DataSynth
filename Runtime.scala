@@ -1,6 +1,8 @@
 import scala.reflect.runtime.{universe => ru}
+import org.apache.spark._
+import org.apache.spark.rdd.RDD
 
-object Parser {
+object Runtime {
     def methodSignature[T: ru.TypeTag](x: T, method: String) = {
           try {
               val m = ru.typeOf[T].declaration(ru.newTermName(method)).asMethod
@@ -19,13 +21,18 @@ object Parser {
             //case e: Exception => println("General exception error")
         }
     }
-    def reflectMethod(x: Any, method: String, n: Int) = {
+    def reflectMethod(x: Any, method: String) = {
         //try {
           val m = ru.runtimeMirror(getClass.getClassLoader).reflect(x)
           val f = m.symbol.typeSignature.member(ru.newTermName(method))
-          m.reflectMethod(f.asMethod)(n)
+          //m.reflectMethod(f.asMethod)(n)
+          m.reflectMethod(f.asMethod)
         /*} catch {
           case e: Exception => println("General exception error")
       }*/
+    }
+    def cast[A](a: Any, tt: ru.TypeTag[A]): A = a.asInstanceOf[A]
+    def applyMap[A: ru.TypeTag, B: ru.TypeTag](d: RDD[_], x: Any, method: String): RDD[_] = {
+        d.map(x => reflectMethod(x,method)(x))
     }
 }
