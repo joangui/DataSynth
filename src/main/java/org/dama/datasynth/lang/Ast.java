@@ -93,6 +93,10 @@ public class Ast {
         public Generator getGenerator() {
             return generator;
         }
+
+        public DATATYPE getType() {
+            return type;
+        }
     }
 
     /**
@@ -193,9 +197,9 @@ public class Ast {
     /**
      * Performs a semantic analysis over the AST.
      * Checks for valid parameter names for generators
-     * @throws SemanticAnalysisException
+     * @throws SemanticException
      */
-    public void doSemanticAnalysis() throws SemanticAnalysisException {
+    public void doSemanticAnalysis() throws SemanticException {
         Map<String,Set<String>> attributes = new HashMap<String,Set<String>>();
         for(Entity entity : entities ) {
             String entityName = entity.getName();
@@ -204,6 +208,7 @@ public class Ast {
                 String attributeName = attribute.getName();
                 attributeNames.add(attributeName);
             }
+            if(attributes.containsKey(entityName)) throw new SemanticException("Two entities with the same name: "+entityName+". Entity names must be unique");
             attributes.put(entityName,attributeNames);
         }
 
@@ -213,7 +218,7 @@ public class Ast {
                 Generator generator = attribute.getGenerator();
                 for( String parameter : generator.getRunParameters()) {
                     if(!attributes.get(entityName).contains(parameter)) {
-                        throw new SemanticAnalysisException("Entity "+entityName+" does not contain an attribute named "+parameter);
+                        throw new SemanticException("Entity "+entityName+" does not contain an attribute named "+parameter);
                     }
                 }
             }

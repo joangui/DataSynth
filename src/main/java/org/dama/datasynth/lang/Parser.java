@@ -15,7 +15,7 @@ public class Parser {
      * @param str
      * @return
      */
-    public Ast parse( String str ) {
+    public Ast parse( String str ) throws SyntacticException {
         Ast ast = new Ast();
         try {
             JSONParser jsonParser = new JSONParser();
@@ -46,6 +46,9 @@ public class Parser {
                             Ast.DATATYPE.fromString((String)attribute.get("type")),
                             gen
                     );
+
+                    if(attr.getType() == null) throw new SyntacticException(((String) attribute.get("type")) + " is not a valid data type ");
+
                     ent.addAttribute(attr);
                 }
                 ast.addEntity(ent);

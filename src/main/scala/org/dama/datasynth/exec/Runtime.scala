@@ -1,12 +1,12 @@
 
 
-package org.dama.datasynth.runtime {
+package org.dama.datasynth.exec {
 
   import scala.reflect.runtime.{universe => ru}
   import org.apache.spark._
   import org.apache.spark.rdd.RDD
 
-  class Runtime {
+  object Runtime {
     def methodSignature[T: ru.TypeTag](x: T, method: String) = {
       try {
         val m = ru.typeOf[T].declaration(ru.newTermName(method)).asMethod

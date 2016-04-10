@@ -1,7 +1,7 @@
 
 package org.dama.datasynth {
 
-  import org.dama.datasynth.runtime._
+  import org.dama.datasynth.exec._
 
   object App {
     def main(args: Array[String]): Unit = {
