@@ -1,6 +1,6 @@
 
 
-package org.dama.datasynth.exec {
+package org.dama.datasynth.runtime {
 
   import scala.reflect.runtime.{universe => ru}
   import org.apache.spark._
