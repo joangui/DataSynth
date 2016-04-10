@@ -21,8 +21,12 @@ public class Task {
     private List<Task> dependees =  new ArrayList<Task>();
 
 
-    private Ast.Entity      entity = null;
-    private Ast.Attribute   attribute = null;
+    private String entity = null;
+    private String attribute = null;
+    private String generator = null;
+    private List<String> runParameters = new ArrayList<String>();
+    private List<String> initParameters = new ArrayList<String>();
+    private String output;
 
     /**
      * Class constructor
@@ -30,15 +34,24 @@ public class Task {
      * @param attribute The attribute this task is generating
      */
     public Task(Ast.Entity entity, Ast.Attribute attribute ) {
-        this.entity = entity;
-        this.attribute = attribute;
+        this.entity = entity.getName();
+        this.attribute = entity.getName();
+        this.output = Task.taskName(entity.getName(),attribute.getName());
+        this.generator = attribute.getGenerator().getName();
+        for( String param : attribute.getGenerator().getRunParameters()) {
+            this.runParameters.add(param);
+        }
+
+        for( String param : attribute.getGenerator().getInitParameters()) {
+            this.initParameters.add(param);
+        }
     }
 
     /**
      * Gets the entity this task is generating something for
      * @return The entity
      */
-    public Ast.Entity getEntity() {
+    public String getEntity() {
         return entity;
     }
 
@@ -46,7 +59,7 @@ public class Task {
      * Gets the attribute this task is generating something for
      * @return The attribute
      */
-    public Ast.Attribute getAttribute() {
+    public String getAttribute() {
         return attribute;
     }
 
@@ -79,11 +92,19 @@ public class Task {
     public void addDependee(Task task ) { dependees.add(task); }
 
     /**
-     * Gets the name of the task
-     * @return The name of the task
+     * Gets the output of the task
+     * @return The output of the task
      */
-    public String getTaskName() {
-        return taskName(entity.getName(),attribute.getName());
+    public String getOutput() {
+        return output;
+    }
+
+    /**
+     * Gets the parameters of the run method of the generator
+     * @return The run parameters of the generator
+     */
+    public List<String> getRunParameters() {
+        return runParameters;
     }
 
     public static String taskName(String entity, String attribute ) {
