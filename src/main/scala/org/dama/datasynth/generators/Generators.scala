@@ -1,3 +1,6 @@
+/*
+package org.dama.datasynth.Generators
+
 import org.apache.spark._
 import org.apache.spark.rdd.RDD
 
@@ -85,3 +88,4 @@ def test() {
     Generators.GenPersons.run(aa,bb).foreach(println)
     //var unit = aa.union(bb).reduceByKey((x,y) => x ++ y).foreach(println)
 }
+*/

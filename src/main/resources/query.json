@@ -1,0 +1,37 @@
+
+{
+  "entities" : [
+    {
+      "name" : "person",
+      "attributes" : [
+        {
+          "name" : "name",
+          "type" : "string",
+          "generator" : {
+            "name" : "NameGenerator",
+            "runParameters" : ["country"],
+            "initParameters" : ["countryNames.txt"]
+          }
+        },
+        {
+          "name" : "country",
+          "type" : "string",
+          "generator" : {
+            "name" : "CountryGenerator",
+            "runParameters" : [],
+            "initParameters" : ["countries.txt"]
+          }
+        },
+        {
+          "name" : "email",
+          "type" : "string",
+          "generator" : {
+            "name" : "EmailGenerator",
+            "runParameters" : ["country"],
+            "initParameters" : ["emails.txt"]
+          }
+        }
+      ]
+    }
+  ]
+}
