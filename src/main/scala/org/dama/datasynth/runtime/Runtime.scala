@@ -7,6 +7,7 @@ package org.dama.datasynth.runtime {
   import org.apache.spark.rdd.RDD
 
   object Runtime {
+    //def instanciateObject(classpath: String, )
     def methodSignature[T: ru.TypeTag](x: T, method: String) = {
       try {
         val m = ru.typeOf[T].declaration(ru.newTermName(method)).asMethod
@@ -39,7 +40,7 @@ package org.dama.datasynth.runtime {
 
     def cast[A](a: Any, tt: ru.TypeTag[A]): A = a.asInstanceOf[A]
 
-    def applyMap[A: ru.TypeTag, B: ru.TypeTag](d: RDD[_], x: Any, method: String): RDD[_] = {
+    def applyMap(d: RDD[_], x: Any, method: String): RDD[_] = {
       d.map(x => reflectMethod(x, method)(x))
     }
   }

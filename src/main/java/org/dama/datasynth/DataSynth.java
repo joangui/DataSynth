@@ -1,6 +1,6 @@
 package org.dama.datasynth;
 
-import static javafx.application.Platform.exit;
+//import static javafx.application.Platform.exit;
 
 import org.dama.datasynth.exec.BuildExecutionPlanException;
 import org.dama.datasynth.exec.ExecutionPlan;
@@ -8,6 +8,11 @@ import org.dama.datasynth.lang.Parser;
 import org.dama.datasynth.lang.Ast;
 import org.dama.datasynth.lang.SemanticException;
 import org.dama.datasynth.lang.SyntacticException;
+import org.dama.datasynth.runtime.Runtime;
+import org.dama.datasynth.generators.Sampler;
+import org.dama.datasynth.generators.TextFile;
+import org.apache.spark.api.java.*;
+import org.dama.datasynth.generators.GenID;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -19,10 +24,12 @@ import java.nio.file.Paths;
 public class DataSynth {
     public static void main( String [] args ) {
 
-        if(args.length != 1) {
+        if(args.length != 2) {
             System.err.println("Wrong arguments");
-            exit();
+            //exit();
+	    return;
         }
+        SparkEnv.initialize();
         Parser parser = new Parser();
         try {
             byte[] encoded = Files.readAllBytes(Paths.get(args[0]));
@@ -30,7 +37,15 @@ public class DataSynth {
             ast.doSemanticAnalysis();
             ExecutionPlan execPlan = new ExecutionPlan();
             execPlan.initialize(ast);
-
+            Sampler s = new Sampler(args[1]);
+            JavaRDD<Integer> rdd = new GenID().generateIds(10);
+            PairFunction<Integer, Integer, String> f =
+                                  new PairFunction<Integer, Integer, String>() {
+                                      public Tuple2<Integer, String> call(String x) {
+                                        return s.run(x);
+                                      }
+                                  };
+            rdd.mapToPair(f).savesAsTextFile("output.txt");
         } catch(IOException ioe) {
             System.out.println(ioe);
         } catch(SyntacticException se) {
