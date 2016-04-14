@@ -12,7 +12,7 @@ public class TextFile implements Serializable {
             Scanner inFile1 = new Scanner(new File(str));
             StringBuilder sb = new StringBuilder();
             while(inFile1.hasNext()) {
-                sb.append(inFile1.nextLine());
+                sb.append(inFile1.nextLine()+"\n");
             }
             array = sb.toString().split("\n");
         }catch (Exception e) {
