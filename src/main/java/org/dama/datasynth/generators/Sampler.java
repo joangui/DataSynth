@@ -3,9 +3,10 @@ package org.dama.datasynth.generators;
 import java.util.Random;
 import org.apache.spark.api.java.*;
 import scala.Tuple2;
-import org.apache.spark.api.java.function;
+import org.apache.spark.api.java.function.*;
+import java.io.Serializable;
 
-public class Sampler{
+public class Sampler implements Serializable{
     public TextFile tf;
     public Sampler(String file){
         tf = new TextFile(file);

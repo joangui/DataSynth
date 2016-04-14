@@ -3,8 +3,9 @@ package org.dama.datasynth.generators;
 import java.io.File;
 import java.util.Scanner;
 import java.lang.StringBuilder;
+import java.io.Serializable;
 
-public class TextFile {
+public class TextFile implements Serializable {
     public String[] array;
     TextFile(String str){
         try{

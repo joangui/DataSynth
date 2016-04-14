@@ -8,10 +8,11 @@ import org.dama.datasynth.lang.Parser;
 import org.dama.datasynth.lang.Ast;
 import org.dama.datasynth.lang.SemanticException;
 import org.dama.datasynth.lang.SyntacticException;
-import org.dama.datasynth.runtime.Runtime;
 import org.dama.datasynth.generators.Sampler;
 import org.dama.datasynth.generators.TextFile;
+import org.apache.spark.api.java.function.*;
 import org.apache.spark.api.java.*;
+import scala.Tuple2;
 import org.dama.datasynth.generators.GenID;
 
 import java.io.IOException;
@@ -41,11 +42,11 @@ public class DataSynth {
             JavaRDD<Integer> rdd = new GenID().generateIds(10);
             PairFunction<Integer, Integer, String> f =
                                   new PairFunction<Integer, Integer, String>() {
-                                      public Tuple2<Integer, String> call(String x) {
+                                      public Tuple2<Integer, String> call(Integer x) {
                                         return s.run(x);
                                       }
                                   };
-            rdd.mapToPair(f).savesAsTextFile("output.txt");
+            rdd.mapToPair(f).saveAsTextFile("output.txt");
         } catch(IOException ioe) {
             System.out.println(ioe);
         } catch(SyntacticException se) {
