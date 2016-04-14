@@ -14,6 +14,7 @@ import org.apache.spark.api.java.function.*;
 import org.apache.spark.api.java.*;
 import scala.Tuple2;
 import org.dama.datasynth.generators.GenID;
+import java.util.ArrayList;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -25,7 +26,7 @@ import java.nio.file.Paths;
 public class DataSynth {
     public static void main( String [] args ) {
 
-        if(args.length != 2) {
+        if(args.length != 3) {
             System.err.println("Wrong arguments");
             //exit();
 	    return;
@@ -38,15 +39,49 @@ public class DataSynth {
             ast.doSemanticAnalysis();
             ExecutionPlan execPlan = new ExecutionPlan();
             execPlan.initialize(ast);
-            Sampler s = new Sampler(args[1]);
             JavaRDD<Integer> rdd = new GenID().generateIds(10);
+
+            /*Class<?> clazz = Class.forName("org.dama.datasynth.generators.Sampler");
+            Constructor<?> constructor = clazz.getConstructor(String.class);
+
+            GTask s = constructor.newInstance(args[1]);*/
+
+            Sampler s = new Sampler(args[1]);
             PairFunction<Integer, Integer, String> f =
                                   new PairFunction<Integer, Integer, String>() {
                                       public Tuple2<Integer, String> call(Integer x) {
                                         return s.run(x);
                                       }
                                   };
-            rdd.mapToPair(f).saveAsTextFile("output.txt");
+            Sampler s2 = new Sampler(args[2]);
+            PairFunction<Integer, Integer, String> f2 =
+                                new PairFunction<Integer, Integer, String>() {
+                                    public Tuple2<Integer, String> call(Integer x) {
+                                      return s2.run(x);
+                                    }
+                                };
+            Function<String , ArrayList<String>> f3 =
+                                new Function<String , ArrayList<String>>() {
+                                    public ArrayList<String> call(String s) {
+                                        ArrayList<String> w = new ArrayList<String>();
+                                        w.add(s);
+                                        return w;
+                                    }
+                                };
+            Function2<ArrayList<String>, ArrayList<String>, ArrayList<String> > f4 =
+                                new Function2<ArrayList<String>, ArrayList<String>, ArrayList<String> >() {
+                                    public ArrayList<String> call(ArrayList<String> l1, ArrayList<String> l2) {
+                                      ArrayList<String> result = new ArrayList<String>();
+                                      result.addAll(l1);
+                                      result.addAll(l2);
+                                      return result;
+                                    }
+                                };
+            JavaPairRDD<Integer, String> rdd1 = rdd.mapToPair(f);
+            JavaPairRDD<Integer, String> rdd2 = rdd.mapToPair(f2);
+            JavaPairRDD<Integer, ArrayList<String> > result = rdd1.union(rdd2).mapValues(f3).reduceByKey(f4);
+            result.saveAsTextFile("output.txt");
+
         } catch(IOException ioe) {
             System.out.println(ioe);
         } catch(SyntacticException se) {
