@@ -3,11 +3,11 @@ package org.dama.datasynth.exec;
 import org.dama.datasynth.lang.Ast;
 
 import java.util.*;
-
+import java.io.Serializable;
 /**
  * Created by aprat on 10/04/16.
  */
-public class ExecutionPlan {
+public class ExecutionPlan implements Serializable{
 
     private  List<Task> entryPoints = new ArrayList<Task>();
 

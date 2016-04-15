@@ -4,11 +4,11 @@ import org.dama.datasynth.lang.Ast;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import java.io.Serializable;
 /**
  * Created by aprat on 10/04/16.
  */
-public class Task {
+public class Task implements Serializable{
 
     /**
      * The list of tasks this task depends on
