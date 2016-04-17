@@ -1,41 +1,12 @@
 package org.dama.datasynth.lang;
 
+import org.dama.datasynth.common.Types;
 import java.util.*;
 
 /**
  * Created by aprat on 10/04/16.
  */
 public class Ast {
-
-    public enum DATATYPE {
-        INTEGER("integer"),
-        LONG("long"),
-        STRING("string"),
-        FLOAT("float"),
-        DOUBLE("double"),
-        BOOLEAN("boolean");
-
-        private String text;
-
-        DATATYPE(String text) {
-            this.text = text;
-        }
-
-        public String getText() {
-            return this.text;
-        }
-
-        public static DATATYPE fromString(String text) {
-            if (text != null) {
-                for (DATATYPE b : DATATYPE.values()) {
-                    if (text.equalsIgnoreCase(b.text)) {
-                        return b;
-                    }
-                }
-            }
-            return null;
-        }
-    }
 
     /**
      * A node of the AST
@@ -72,7 +43,7 @@ public class Ast {
         /**
          * The data type of the attribute.
          */
-        private DATATYPE type;
+        private Types.DATATYPE type;
 
         /**
          * The generator to generate this attribute
@@ -84,7 +55,7 @@ public class Ast {
          * @param name The name of the attribute.
          * @param type The data type of the attribute.
          */
-        public Attribute(String name, DATATYPE type, Generator generator) {
+        public Attribute(String name, Types.DATATYPE type, Generator generator) {
             super(name);
             this.type = type;
             this.generator = generator;
@@ -94,7 +65,7 @@ public class Ast {
             return generator;
         }
 
-        public DATATYPE getType() {
+        public Types.DATATYPE getType() {
             return type;
         }
     }

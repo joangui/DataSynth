@@ -1,5 +1,6 @@
 package org.dama.datasynth.exec;
 
+import org.dama.datasynth.common.Types;
 import org.dama.datasynth.lang.Ast;
 
 import java.util.*;

@@ -1,5 +1,6 @@
 package org.dama.datasynth.lang;
 
+import org.dama.datasynth.common.Types;
 import java.io.StringReader;
 import java.io.IOException;
 
@@ -43,7 +44,7 @@ public class Parser {
 
                     Ast.Attribute attr = new Ast.Attribute(
                             (String)attribute.get("name"),
-                            Ast.DATATYPE.fromString((String)attribute.get("type")),
+                            Types.DATATYPE.fromString((String)attribute.get("type")),
                             gen
                     );
 

@@ -6,7 +6,7 @@
       "attributes" : [
         {
           "name" : "name",
-          "type" : "string",
+          "type" : "String",
           "generator" : {
             "name" : "NameGenerator",
             "runParameters" : ["country"],
@@ -15,7 +15,7 @@
         },
         {
           "name" : "country",
-          "type" : "string",
+          "type" : "String",
           "generator" : {
             "name" : "CountryGenerator",
             "runParameters" : [],
@@ -24,7 +24,7 @@
         },
         {
           "name" : "email",
-          "type" : "string",
+          "type" : "String",
           "generator" : {
             "name" : "EmailGenerator",
             "runParameters" : ["country"],

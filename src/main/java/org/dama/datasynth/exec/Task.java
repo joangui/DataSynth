@@ -1,5 +1,6 @@
 package org.dama.datasynth.exec;
 
+import org.dama.datasynth.common.Types;
 import org.dama.datasynth.lang.Ast;
 
 import java.util.ArrayList;
@@ -22,9 +23,20 @@ public class Task implements Serializable{
 
 
     private String entity = null;
-    private String attribute = null;
+    private String attributeName = null;
+    private Types.DATATYPE attributeType = null;
+
+    public String getGenerator() {
+        return generator;
+    }
+
     private String generator = null;
     private List<String> runParameters = new ArrayList<String>();
+
+    public List<String> getInitParameters() {
+        return initParameters;
+    }
+
     private List<String> initParameters = new ArrayList<String>();
     private String output;
 
@@ -35,7 +47,8 @@ public class Task implements Serializable{
      */
     public Task(Ast.Entity entity, Ast.Attribute attribute ) {
         this.entity = entity.getName();
-        this.attribute = entity.getName();
+        this.attributeName = attribute.getName();
+        this.attributeType = attribute.getType();
         this.output = Task.taskName(entity.getName(),attribute.getName());
         this.generator = attribute.getGenerator().getName();
         for( String param : attribute.getGenerator().getRunParameters()) {
@@ -56,11 +69,19 @@ public class Task implements Serializable{
     }
 
     /**
-     * Gets the attribute this task is generating something for
+     * Gets the name of the attribute this task is generating something for
      * @return The attribute
      */
-    public String getAttribute() {
-        return attribute;
+    public String getAttributeName() {
+        return attributeName;
+    }
+
+    /**
+     * Gets the type of the attribute this task is generating something for
+     * @return The attribute
+     */
+    public Types.DATATYPE getAttributeType() {
+        return attributeType;
     }
 
     /**
