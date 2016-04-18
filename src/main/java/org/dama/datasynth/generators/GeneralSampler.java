@@ -17,7 +17,7 @@ public class GeneralSampler {
         Double sum = 0.0;
         for(int i = 0; i < tf.array.length; ++i){
             sum += Double.parseDouble(tf.array[i][1]);
-            if(sum < u) return tf.array[i][0];
+            if(u <= sum) return tf.array[i][0];
         }
         return "NULL";
     }
