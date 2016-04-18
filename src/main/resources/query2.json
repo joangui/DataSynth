@@ -10,7 +10,7 @@
           "generator" : {
             "name" : "org.dama.datasynth.generators.Sampler",
             "runParameters" : [],
-            "initParameters" : ["/countries.txt"]
+            "initParameters" : ["/email.txt"]
           }
         },
         {
@@ -19,7 +19,7 @@
           "generator" : {
             "name" : "org.dama.datasynth.generators.Sampler",
             "runParameters" : [],
-            "initParameters" : ["/emails.txt"]
+            "initParameters" : ["/email.txt"]
           }
         }
       ]

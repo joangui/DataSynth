@@ -54,7 +54,7 @@ public class Types {
         return null;
     }
 
-    public static Method GetMethod(Generator generator, String methodName, List<DATATYPE> parameterTypes) {
+    public static Method GetMethod(Generator generator, String methodName, List<DATATYPE> parameterTypes) throws CommonException {
         Method[] methods = generator.getClass().getMethods();
         for(Method m : methods) {
             String mName = m.getName();
@@ -74,7 +74,10 @@ public class Types {
                 if(match) return m;
             }
         }
-        System.out.println("method "+methodName+" with "+parameterTypes.size()+" parameters not found");
-        return null;
+        String paramsString = new String();
+        for(DATATYPE param : parameterTypes) {
+            paramsString = paramsString+","+param.getText();
+        }
+        throw new CommonException("Method "+methodName+" with paramters "+parameterTypes.size()+" parameters <"+paramsString+"> not found");
     }
 }

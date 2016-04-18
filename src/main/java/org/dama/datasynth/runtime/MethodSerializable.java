@@ -1,5 +1,6 @@
 package org.dama.datasynth.runtime;
 
+import org.dama.datasynth.common.CommonException;
 import org.dama.datasynth.common.Types;
 
 import java.io.Serializable;
@@ -25,9 +26,11 @@ public class MethodSerializable implements Serializable {
         try {
             method = Types.GetMethod(g,functionName,parameters);
         } catch(NullPointerException nPE) {
-            System.out.println(nPE);
+            nPE.printStackTrace();
         } catch(SecurityException sE) {
-            System.out.println(sE);
+            sE.printStackTrace();
+        } catch(CommonException cE) {
+            cE.printStackTrace();
         }
     }
 
@@ -35,9 +38,9 @@ public class MethodSerializable implements Serializable {
         try {
             return method.invoke(g, params);
         } catch(InvocationTargetException iTE) {
-            System.out.println(iTE);
+            iTE.printStackTrace();
         } catch(IllegalAccessException iAE) {
-            System.out.println(iAE);
+            iAE.printStackTrace();
         }
     return null;
 
@@ -52,7 +55,6 @@ public class MethodSerializable implements Serializable {
                 out.writeUTF(dataType.getText());
             }
         } catch(java.io.IOException iOE) {
-            System.out.println(iOE);
             iOE.printStackTrace();
         }
     }
@@ -68,13 +70,15 @@ public class MethodSerializable implements Serializable {
             }
             method = Types.GetMethod(g,functionName,parameters);
         } catch(java.io.IOException iOE) {
-            System.out.println(iOE);
+            iOE.printStackTrace();
         } catch(ClassNotFoundException cNFE) {
-            System.out.println(cNFE);
-        }  catch(NullPointerException nPE) {
-            System.out.println(nPE);
+            cNFE.printStackTrace();
+        } catch(NullPointerException nPE) {
+            nPE.printStackTrace();
         } catch(SecurityException sE) {
-            System.out.println(sE);
+            sE.printStackTrace();
+        } catch(CommonException cE) {
+            cE.printStackTrace();
         }
     }
 }
