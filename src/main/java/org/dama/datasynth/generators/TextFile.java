@@ -9,7 +9,7 @@ public class TextFile implements Serializable {
     public String[] array;
     TextFile(String str){
         try{
-            Scanner inFile1 = new Scanner(new File(str));
+            Scanner inFile1 = new Scanner(new File(getClass().getResource(str).toURI()));
             StringBuilder sb = new StringBuilder();
             while(inFile1.hasNext()) {
                 sb.append(inFile1.nextLine()+"\n");

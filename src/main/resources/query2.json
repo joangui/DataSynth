@@ -1,0 +1,28 @@
+
+{
+  "entities" : [
+    {
+      "name" : "person",
+      "attributes" : [
+        {
+          "name" : "country",
+          "type" : "String",
+          "generator" : {
+            "name" : "org.dama.datasynth.generators.Sampler",
+            "runParameters" : [],
+            "initParameters" : ["/countries.txt"]
+          }
+        },
+        {
+          "name" : "email",
+          "type" : "String",
+          "generator" : {
+            "name" : "org.dama.datasynth.generators.Sampler",
+            "runParameters" : [],
+            "initParameters" : ["/emails.txt"]
+          }
+        }
+      ]
+    }
+  ]
+}

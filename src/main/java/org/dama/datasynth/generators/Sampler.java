@@ -5,14 +5,16 @@ import org.apache.spark.api.java.*;
 import scala.Tuple2;
 import org.apache.spark.api.java.function.*;
 import java.io.Serializable;
+import org.dama.datasynth.runtime.Generator;
 
-public class Sampler implements Serializable{
+public class Sampler extends Generator{
     public TextFile tf;
-    public Sampler(String file){
+    public Sampler(){}
+    public void initialize(String file){
         tf = new TextFile(file);
     }
-    public Tuple2<Integer, String> run(Integer x){
+    public String run(Integer x){
         Random g = new Random();
-        return new Tuple2<Integer, String>(x,tf.array[g.nextInt(tf.array.length)]);
+        return new String(tf.array[g.nextInt(tf.array.length)]);
     }
 }
