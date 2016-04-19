@@ -14,17 +14,19 @@ import java.util.List;
  */
 public class MethodSerializable implements Serializable {
 
-    private Generator g;
-    private String    functionName;
-    private List<Types.DATATYPE> parameters;
-    private Method method;
+    private Generator               g;
+    private String                  functionName;
+    private List<Types.DATATYPE>    parameters;
+    private Types.DATATYPE          returnType;
+    private Method                  method;
 
-    public MethodSerializable(Generator g, String functionName, List<Types.DATATYPE> parameters) {
+    public MethodSerializable(Generator g, String functionName, List<Types.DATATYPE> parameters, Types.DATATYPE returnType) {
         this.g              = g;
         this.functionName   = functionName;
         this.parameters     = parameters;
+        this.returnType     = returnType;
         try {
-            method = Types.GetMethod(g,functionName,parameters);
+            method = Types.GetMethod(g,functionName,parameters, returnType);
         } catch(NullPointerException nPE) {
             nPE.printStackTrace();
         } catch(SecurityException sE) {
@@ -54,6 +56,7 @@ public class MethodSerializable implements Serializable {
             for(Types.DATATYPE dataType : parameters) {
                 out.writeUTF(dataType.getText());
             }
+            out.writeUTF(returnType.getText());
         } catch(java.io.IOException iOE) {
             iOE.printStackTrace();
         }
@@ -68,7 +71,8 @@ public class MethodSerializable implements Serializable {
             for(int i = 0; i < numParameters; ++i) {
                 parameters.add(Types.DATATYPE.fromString(in.readUTF()));
             }
-            method = Types.GetMethod(g,functionName,parameters);
+            returnType = Types.DATATYPE.fromString(in.readUTF());
+            method = Types.GetMethod(g,functionName,parameters, returnType);
         } catch(java.io.IOException iOE) {
             iOE.printStackTrace();
         } catch(ClassNotFoundException cNFE) {

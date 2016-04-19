@@ -54,7 +54,7 @@ public class Types {
         return null;
     }
 
-    public static Method GetMethod(Generator generator, String methodName, List<DATATYPE> parameterTypes) throws CommonException {
+    public static Method GetMethod(Generator generator, String methodName, List<DATATYPE> parameterTypes, DATATYPE returnType) throws CommonException {
         Method[] methods = generator.getClass().getMethods();
         for(Method m : methods) {
             String mName = m.getName();
@@ -71,13 +71,16 @@ public class Types {
                     }
                     index++;
                 }
-                if(match) return m;
+                if(match) {
+                    if((returnType == null) || (returnType != null && m.getReturnType().getSimpleName().compareTo(returnType.getText()) == 0))
+                        return m;
+                }
             }
         }
         String paramsString = new String();
         for(DATATYPE param : parameterTypes) {
             paramsString = paramsString+","+param.getText();
         }
-        throw new CommonException("Method "+methodName+" with paramters "+parameterTypes.size()+" parameters <"+paramsString+"> not found");
+        throw new CommonException("Generator "+generator.getClass().getName()+" does not have a method with name "+methodName+" with paramters "+parameterTypes.size()+" parameters <"+paramsString+"> and return type "+(returnType != null ? returnType.getText() : "null"));
     }
 }

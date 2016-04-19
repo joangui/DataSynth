@@ -68,6 +68,7 @@ public class SparkExecutor {
         }
 
 
+        /** Calling Initialize Method of the Generator **/
         Object [] params = new Object[task.getInitParameters().size()];
         List<Types.DATATYPE> initParameters = new ArrayList<Types.DATATYPE>();
 
@@ -77,9 +78,10 @@ public class SparkExecutor {
             initParameters.add(Types.DATATYPE.STRING);
             index ++;
         }
-        MethodSerializable method = new MethodSerializable(generator,"initialize",initParameters);
+        MethodSerializable method = new MethodSerializable(generator,"initialize",initParameters,null);
         method.invoke(params);
 
+        /** Executing the Generator **/
         List<Types.DATATYPE> runParameterTypes = new ArrayList<Types.DATATYPE>();
         for(String param : task.getRunParameters()) {
             Types.DATATYPE dataType = attributeTypes.get(task.getEntity()+"."+param);
@@ -91,14 +93,14 @@ public class SparkExecutor {
         JavaRDD<Object> rdd;
         switch(runParameterTypes.size()){
             case 0: {
-                Function0Wrapper fw = new Function0Wrapper(generator, "run", runParameterTypes);
+                Function0Wrapper fw = new Function0Wrapper(generator, "run", runParameterTypes,task.getAttributeType());
                 rdd = entityRDD.map(fw);
             }
             break;
             case 1: {
                 JavaRDD<Object> attributeRDD = attributeRDDs.get(task.getEntity() + "." + task.getRunParameters().get(0));
                 JavaPairRDD<Long,Object> entityAttributeRDD = entityRDD.zip(attributeRDD);
-                FunctionWrapper fw = new FunctionWrapper(generator, "run", runParameterTypes);
+                FunctionWrapper fw = new FunctionWrapper(generator, "run", runParameterTypes,task.getAttributeType());
                 rdd = entityAttributeRDD.map(fw);
             }
             break;
@@ -110,9 +112,9 @@ public class SparkExecutor {
         attributeTypes.put(task.getOutput(),task.getAttributeType());
     }
 
-    public void DumpData() {
+    public void DumpData(String outputDir) {
         for( Map.Entry<String,JavaRDD<Object>> entry : attributeRDDs.entrySet() ) {
-           entry.getValue().coalesce(1).saveAsTextFile("./"+entry.getKey());
+           entry.getValue().coalesce(1).saveAsTextFile(outputDir+"/"+entry.getKey());
         }
     }
 }

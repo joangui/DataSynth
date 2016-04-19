@@ -14,8 +14,8 @@ import java.util.List;
 public class Function0Wrapper extends MethodSerializable implements Function<Long, Object> {
 
 
-    public Function0Wrapper( Generator g, String functionName, List<Types.DATATYPE> parameters ) {
-        super(g,functionName,parameters);
+    public Function0Wrapper(Generator g, String functionName, List<Types.DATATYPE> parameters, Types.DATATYPE returnType) {
+        super(g,functionName,parameters,returnType);
     }
 
     public Object call(Long l) {
