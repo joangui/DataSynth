@@ -11,6 +11,6 @@ public class Sampler extends Generator{
     }
     public String run(){
         Random g = new Random();
-        return new String(tf.array.get(g.nextInt(tf.array.size())));
+        return new String(tf.array[g.nextInt(tf.array.length)].toString());
     }
 }
