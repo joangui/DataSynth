@@ -24,6 +24,12 @@ public class SamplingSpace implements Serializable {
     }
     private void process(String str){
         String[] s = str.split(this.vdelimiter);
+        if(s.length > 0){
+            String[] aux = str.split(this.pdelimiter);
+            if(aux.length > 0) {
+                this.array = new String[s.length][aux.length];
+            }
+        }
         for(int i = 0; i < s.length; ++i) {
             String[] ss = str.split(this.pdelimiter);
             for(int j = 0; j < ss.length; ++j){

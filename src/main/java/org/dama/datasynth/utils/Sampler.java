@@ -1,8 +1,9 @@
 package org.dama.datasynth.utils;
 
+import java.io.Serializable;
 import java.util.Random;
 
-public class Sampler {
+public class Sampler implements Serializable{
     public SamplingSpace s;
     public Sampler(String str){
         this.initialize(str);
