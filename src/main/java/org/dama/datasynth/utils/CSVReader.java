@@ -8,22 +8,23 @@ import java.io.Serializable;
  */
 public class CSVReader implements Serializable{
     public String[] array;
-    private String pdel;
-    private String vdel;
-    public CSVReader(String str, String ppdel, String vvdel){
-        init(str, ppdel, vvdel);
+    private String pdel= " ";
+    private String vdel= ",";
+    private String sep;
+    public CSVReader(String str, String sep){
+        init(str, sep);
     }
     public CSVReader(String str){
-        init(str, ":", ",");
+        init(str, " ");
     }
-    private void init(String str, String ppdel, String vvdel) {
-        this.pdel = ppdel;
-        this.vdel = vvdel;
+    private void init(String str, String sep) {
         try{
             Scanner inFile1 = new Scanner(new File(getClass().getResource(str).toURI()));
             StringBuilder sb = new StringBuilder();
             while(inFile1.hasNext()) {
-                sb.append(inFile1.nextLine()+"\n");
+                String line = inFile1.nextLine();
+                line = line.replaceAll(sep," ");
+                sb.append(line + "\n");
             }
             this.array = sb.toString().split("\n");
         }catch (Exception e) {

@@ -13,7 +13,7 @@ public class Sampler implements Serializable{
     }
     public String takeSample(){
         Random g = new Random();
-        return s.array[g.nextInt(s.size())].toString();
+        return s.array[g.nextInt(s.size())][0].toString();
     }
 }
 

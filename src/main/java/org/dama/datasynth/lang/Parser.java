@@ -39,7 +39,7 @@ public class Parser {
 
                     JSONArray initParameters = (JSONArray)generator.get("initParameters");
                     for(Object initParameter: initParameters) {
-                        gen.addInitParameter((String)(initParameter));
+                        gen.addInitParameter(initParameter.toString());
                     }
 
                     Ast.Attribute attr = new Ast.Attribute(

@@ -5,12 +5,12 @@
       "name" : "person",
       "attributes" : [
         {
-          "name" : "creationDate",
+          "name" : "country",
           "type" : "String",
           "generator" : {
             "name" : "org.dama.datasynth.generators.GenFromFileCDF",
             "runParameters" : [],
-            "initParameters" : ["/dicLocations.txt"]
+            "initParameters" : ["/dicLocations.txt",1,5," "]
           }
         },
         {
@@ -19,7 +19,7 @@
           "generator" : {
             "name" : "org.dama.datasynth.generators.GenFromFileDF",
             "runParameters" : [],
-            "initParameters" : ["/email.txt"]
+            "initParameters" : ["/email.txt",0,1," "]
           }
         }
       ]
