@@ -6,7 +6,9 @@ import java.util.Random;
  * Created by quim on 4/19/16.
  */
 public class DFSampler extends Sampler{
-        public DFSampler(){}
+        public DFSampler(String str){
+            super(str);
+        }
         public String takeSample(){
             Random g = new Random();
             Double u = g.nextDouble();

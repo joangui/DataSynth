@@ -6,7 +6,9 @@ import java.util.Random;
  * Created by quim on 4/18/16.
  */
 public class CDFSampler extends Sampler{
-    public CDFSampler(){}
+    public CDFSampler(String str){
+        super(str);
+    }
     public String takeSample(){
         Random g = new Random();
         Double u = g.nextDouble();

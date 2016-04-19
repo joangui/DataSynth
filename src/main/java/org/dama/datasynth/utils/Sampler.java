@@ -1,11 +1,12 @@
 package org.dama.datasynth.utils;
 
 import java.util.Random;
-import org.dama.datasynth.runtime.Generator;
 
 public class Sampler {
     public SamplingSpace s;
-    public Sampler(){}
+    public Sampler(String str){
+        this.initialize(str);
+    }
     public void initialize(String str){
         s = new SamplingSpace(str);
     }

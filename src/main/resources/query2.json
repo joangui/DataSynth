@@ -8,16 +8,16 @@
           "name" : "country",
           "type" : "String",
           "generator" : {
-            "name" : "org.dama.datasynth.generators.Sampler",
+            "name" : "org.dama.datasynth.generators.GenFromFileCDF",
             "runParameters" : [],
-            "initParameters" : ["/email.txt"]
+            "initParameters" : ["/dicLocations.txt"]
           }
         },
         {
           "name" : "email",
           "type" : "String",
           "generator" : {
-            "name" : "org.dama.datasynth.generators.Sampler",
+            "name" : "org.dama.datasynth.generators.GenFromFileDF",
             "runParameters" : [],
             "initParameters" : ["/email.txt"]
           }
