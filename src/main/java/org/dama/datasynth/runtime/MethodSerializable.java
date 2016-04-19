@@ -1,5 +1,6 @@
 package org.dama.datasynth.runtime;
 
+import org.dama.datasynth.common.CommonException;
 import org.dama.datasynth.common.Types;
 
 import java.io.Serializable;
@@ -13,21 +14,25 @@ import java.util.List;
  */
 public class MethodSerializable implements Serializable {
 
-    private Generator g;
-    private String    functionName;
-    private List<Types.DATATYPE> parameters;
-    private Method method;
+    private Generator               g;
+    private String                  functionName;
+    private List<Types.DATATYPE>    parameters;
+    private Types.DATATYPE          returnType;
+    private Method                  method;
 
-    public MethodSerializable(Generator g, String functionName, List<Types.DATATYPE> parameters) {
+    public MethodSerializable(Generator g, String functionName, List<Types.DATATYPE> parameters, Types.DATATYPE returnType) {
         this.g              = g;
         this.functionName   = functionName;
         this.parameters     = parameters;
+        this.returnType     = returnType;
         try {
-            method = Types.GetMethod(g,functionName,parameters);
+            method = Types.GetMethod(g,functionName,parameters, returnType);
         } catch(NullPointerException nPE) {
-            System.out.println(nPE);
+            nPE.printStackTrace();
         } catch(SecurityException sE) {
-            System.out.println(sE);
+            sE.printStackTrace();
+        } catch(CommonException cE) {
+            cE.printStackTrace();
         }
     }
 
@@ -35,9 +40,9 @@ public class MethodSerializable implements Serializable {
         try {
             return method.invoke(g, params);
         } catch(InvocationTargetException iTE) {
-            System.out.println(iTE);
+            iTE.printStackTrace();
         } catch(IllegalAccessException iAE) {
-            System.out.println(iAE);
+            iAE.printStackTrace();
         }
     return null;
 
@@ -51,8 +56,8 @@ public class MethodSerializable implements Serializable {
             for(Types.DATATYPE dataType : parameters) {
                 out.writeUTF(dataType.getText());
             }
+            out.writeUTF(returnType.getText());
         } catch(java.io.IOException iOE) {
-            System.out.println(iOE);
             iOE.printStackTrace();
         }
     }
@@ -66,15 +71,18 @@ public class MethodSerializable implements Serializable {
             for(int i = 0; i < numParameters; ++i) {
                 parameters.add(Types.DATATYPE.fromString(in.readUTF()));
             }
-            method = Types.GetMethod(g,functionName,parameters);
+            returnType = Types.DATATYPE.fromString(in.readUTF());
+            method = Types.GetMethod(g,functionName,parameters, returnType);
         } catch(java.io.IOException iOE) {
-            System.out.println(iOE);
+            iOE.printStackTrace();
         } catch(ClassNotFoundException cNFE) {
-            System.out.println(cNFE);
-        }  catch(NullPointerException nPE) {
-            System.out.println(nPE);
+            cNFE.printStackTrace();
+        } catch(NullPointerException nPE) {
+            nPE.printStackTrace();
         } catch(SecurityException sE) {
-            System.out.println(sE);
+            sE.printStackTrace();
+        } catch(CommonException cE) {
+            cE.printStackTrace();
         }
     }
 }

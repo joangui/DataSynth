@@ -1,6 +1,10 @@
 package org.dama.datasynth.generators;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import java.lang.StringBuilder;
 import java.io.Serializable;
@@ -37,7 +41,7 @@ public class TextFile implements Serializable {
                 array[i][1] = m[y];
             }
         }catch (Exception e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
     }
 }
