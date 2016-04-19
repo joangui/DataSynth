@@ -5,21 +5,12 @@
       "name" : "person",
       "attributes" : [
         {
-          "name" : "country",
+          "name" : "creationDate",
           "type" : "String",
           "generator" : {
-            "name" : "org.dama.datasynth.generators.Sampler",
+            "name" : "org.dama.datasynth.generators.DateGenerator",
             "runParameters" : [],
-            "initParameters" : ["/email.txt"]
-          }
-        },
-        {
-          "name" : "email",
-          "type" : "String",
-          "generator" : {
-            "name" : "org.dama.datasynth.generators.Sampler",
-            "runParameters" : [],
-            "initParameters" : ["/email.txt"]
+            "initParameters" : ["dd-MM-yyyy", "01-01-1980", "31-12-1990"]
           }
         }
       ]
