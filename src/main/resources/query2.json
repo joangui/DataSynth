@@ -8,9 +8,18 @@
           "name" : "creationDate",
           "type" : "String",
           "generator" : {
-            "name" : "org.dama.datasynth.generators.DateGenerator",
+            "name" : "org.dama.datasynth.generators.GenFromFileCDF",
             "runParameters" : [],
-            "initParameters" : ["dd-MM-yyyy", "01-01-1980", "31-12-1990"]
+            "initParameters" : ["/dicLocations.txt"]
+          }
+        },
+        {
+          "name" : "email",
+          "type" : "String",
+          "generator" : {
+            "name" : "org.dama.datasynth.generators.GenFromFileDF",
+            "runParameters" : [],
+            "initParameters" : ["/email.txt"]
           }
         }
       ]
