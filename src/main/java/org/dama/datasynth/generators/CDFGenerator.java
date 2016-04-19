@@ -9,9 +9,9 @@ import org.dama.datasynth.utils.Sampler;
 /**
  * Created by quim on 4/19/16.
  */
-public class GenFromFileCDF extends Generator {
+public class CDFGenerator extends Generator {
         private Sampler s;
-        public GenFromFileCDF(){}
+        public CDFGenerator(){}
         public void initialize(String file, String x, String y, String sep ){
             CSVReader csv = new CSVReader(file, sep);
             this.s = new CDFSampler(csv.fetchSubMatrix(Integer.parseInt(x), Integer.parseInt(y)));

@@ -8,7 +8,7 @@
           "name" : "country",
           "type" : "String",
           "generator" : {
-            "name" : "org.dama.datasynth.generators.GenFromFileCDF",
+            "name" : "org.dama.datasynth.generators.CDFGenerator",
             "runParameters" : [],
             "initParameters" : ["/dicLocations.txt",1,5," "]
           }
@@ -17,9 +17,27 @@
           "name" : "email",
           "type" : "String",
           "generator" : {
-            "name" : "org.dama.datasynth.generators.GenFromFileDF",
+            "name" : "org.dama.datasynth.generators.DFGenerator",
             "runParameters" : [],
             "initParameters" : ["/email.txt",0,1," "]
+          }
+        },
+        {
+          "name" : "creationDate",
+          "type" : "String",
+          "generator" : {
+            "name" : "org.dama.datasynth.generators.DateGenerator",
+            "runParameters" : [],
+            "initParameters" : ["dd-MM-yy","01-01-1980","01-01-1990"]
+          }
+        },
+        {
+          "name" : "name",
+          "type" : "String",
+          "generator" : {
+            "name" : "org.dama.datasynth.generators.CorrellationGenerator",
+            "runParameters" : ["country"],
+            "initParameters" : ["/namesByCountry.txt"," "]
           }
         }
       ]
