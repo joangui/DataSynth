@@ -80,11 +80,25 @@ public class Ast {
          */
         protected List<Attribute>  attributes = new ArrayList<Attribute>();
 
+        /**
+         * The number of entities
+         */
+        protected Long           numEntities;
+
+        /**
+         * Gets the number of entities
+         * @return The number of entities
+         */
+        public Long getNumEntities() {
+            return numEntities;
+        }
+
         /** Class Constructor
          * @param name The name of the entity
          */
-        public Entity(String name) {
+        public Entity(String name, Long numEntities) {
             super(name);
+            this.numEntities = numEntities;
         }
 
         /**

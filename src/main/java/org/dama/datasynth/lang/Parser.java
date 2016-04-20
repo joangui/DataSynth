@@ -26,7 +26,8 @@ public class Parser {
             for( Object obj : entities ) {
                 JSONObject  entity= (JSONObject) obj;
                 String entityName = (String)entity.get("name");
-                Ast.Entity ent = new Ast.Entity(entityName);
+                Long numEntities = (Long)entity.get("number");
+                Ast.Entity ent = new Ast.Entity(entityName,numEntities);
                 JSONArray attributes = (JSONArray) entity.get("attributes");
                 for( Object objj : attributes ) {
                     JSONObject attribute = (JSONObject)objj;

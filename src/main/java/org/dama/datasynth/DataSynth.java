@@ -7,17 +7,17 @@ package org.dama.datasynth;
 import com.beust.jcommander.JCommander;
 import org.dama.datasynth.exec.BuildExecutionPlanException;
 import org.dama.datasynth.exec.ExecutionPlan;
+import org.dama.datasynth.runtime.ExecutionEngine;
 import org.dama.datasynth.runtime.ExecutionException;
 import org.dama.datasynth.lang.Parser;
 import org.dama.datasynth.lang.Ast;
 import org.dama.datasynth.lang.SemanticException;
 import org.dama.datasynth.lang.SyntacticException;
-import org.dama.datasynth.runtime.SparkExecutor;
+import org.dama.datasynth.runtime.SparkExecutionEngine;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Properties;
 
 
 /**
@@ -59,9 +59,9 @@ public class DataSynth {
 
             System.out.println("Executing query ...");
             start = System.currentTimeMillis();
-            SparkExecutor executor = new SparkExecutor();
-            executor.Execute(execPlan);
-            executor.DumpData(config.outputDir);
+            ExecutionEngine executor = new SparkExecutionEngine();
+            executor.execute(execPlan);
+            executor.dumpData(config.outputDir);
             end = System.currentTimeMillis();
             System.out.println("    Query executed in  "+(end-start) + " ms");
         } catch(IOException iOE) {
