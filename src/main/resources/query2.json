@@ -39,6 +39,15 @@
             "runParameters" : ["country"],
             "initParameters" : ["/namesByCountry.txt"," "]
           }
+        },
+        {
+          "name" : "fullMail",
+          "type" : "String",
+          "generator" : {
+            "name" : "org.dama.datasynth.generators.MailGenerator",
+            "runParameters" : ["name"],
+            "initParameters" : ["/email.txt"]
+          }
         }
       ]
     }
