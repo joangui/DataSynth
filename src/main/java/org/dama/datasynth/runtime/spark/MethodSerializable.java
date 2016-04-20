@@ -1,7 +1,8 @@
-package org.dama.datasynth.runtime;
+package org.dama.datasynth.runtime.spark;
 
 import org.dama.datasynth.common.CommonException;
 import org.dama.datasynth.common.Types;
+import org.dama.datasynth.runtime.Generator;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
@@ -14,7 +15,7 @@ import java.util.List;
  */
 public class MethodSerializable implements Serializable {
 
-    private Generator               g;
+    private Generator g;
     private String                  functionName;
     private List<Types.DATATYPE>    parameters;
     private Types.DATATYPE          returnType;

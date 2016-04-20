@@ -29,7 +29,7 @@
           "generator" : {
             "name" : "org.dama.datasynth.generators.DateGenerator",
             "runParameters" : [],
-            "initParameters" : ["dd-MM-yy","01-01-1980","01-01-1990"]
+            "initParameters" : ["dd-MM-yyyy","01-01-1980","01-01-1990"]
           }
         },
         {
@@ -39,6 +39,15 @@
             "name" : "org.dama.datasynth.generators.CorrellationGenerator",
             "runParameters" : ["country"],
             "initParameters" : ["/namesByCountry.txt"," "]
+          }
+        },
+        {
+          "name" : "id",
+          "type" : "Long",
+          "generator" : {
+            "name" : "org.dama.datasynth.generators.DateBasedIDGenerator",
+            "runParameters" : ["oid","creationDate"],
+            "initParameters" : ["dd-MM-yyyy"]
           }
         }
       ]
