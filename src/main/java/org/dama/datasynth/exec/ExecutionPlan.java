@@ -19,6 +19,10 @@ public class ExecutionPlan implements Serializable{
 
     }
 
+    /**
+     * Gets the entry points of the execution plan
+     * @return A list with the entry points of the execution plan
+     */
     public List<Task> getEntryPoints() {
         return entryPoints;
     }
@@ -29,40 +33,47 @@ public class ExecutionPlan implements Serializable{
      */
     public void initialize(Ast ast) throws BuildExecutionPlanException {
 
-        Set<Task> processed = new TreeSet<Task>((t1,t2) -> { return t1.getOutput().compareTo(t2.getOutput());});
-        Map<String,Task> tasks = new TreeMap<String,Task>();
+        Map<String,AttributeTask> tasks = new TreeMap<String,AttributeTask>();
         for(Ast.Entity entity : ast.getEntities()) {
+            Task entityTask = new EntityTask(entity.getName(),entity.getNumEntities());
+            entryPoints.add(entityTask);
             for(Ast.Attribute attribute : entity.getAttributes()) {
-                Task task = new Task(entity,attribute);
-                tasks.put(task.getOutput(),task);
+                AttributeTask task = new AttributeTask(entity,attribute);
+                tasks.put(task.getTaskName(),task);
             }
         }
 
-        for(Map.Entry<String,Task> task : tasks.entrySet() ) {
+        Set<AttributeTask> processed = new TreeSet<AttributeTask>((t1,t2) -> { return t1.getTaskName().compareTo(t2.getTaskName());});
+        for(Map.Entry<String,AttributeTask> task : tasks.entrySet() ) {
             if( !processed.contains(task.getValue())) {
-                List<Task> toProcess = new LinkedList<Task>();
+                List<AttributeTask> toProcess = new LinkedList<AttributeTask>();
                 toProcess.add(task.getValue());
                 while(!toProcess.isEmpty()) {
-                    Task currentTask = toProcess.get(0);
+                    AttributeTask currentTask = toProcess.get(0);
                     toProcess.remove(0);
                     processed.add(currentTask);
                     for (String param : currentTask.getRunParameters()) {
-                        Task otherTask = tasks.get(Task.taskName(currentTask.getEntity(), param));
+                        AttributeTask otherTask = tasks.get(currentTask.getEntity()+"."+param);
                         if (otherTask != null) {
                             if (!processed.contains(otherTask)) {
                                 toProcess.add(otherTask);
                             }
-                            task.getValue().addDependant(otherTask);
-                            otherTask.addDependee(task.getValue());
+                            task.getValue().addDependee(otherTask);
+                            otherTask.addDependant(task.getValue());
                         }
                     }
                 }
             }
         }
         if(processed.size() != tasks.size()) throw new BuildExecutionPlanException("Execution plan wrongly built. Missing tasks");
-        for(Map.Entry<String,Task> task : tasks.entrySet() ) {
-            if(task.getValue().getDependants().size() == 0) {
-                entryPoints.add(task.getValue());
+        for(Map.Entry<String,AttributeTask> task : tasks.entrySet() ) {
+            if(task.getValue().getDependees().size() == 0) {
+                for(Task entryPoint : entryPoints) {
+                    if(entryPoint.getTaskName().compareTo(task.getValue().getEntity()) == 0) {
+                        entryPoint.addDependant(task.getValue());
+                        task.getValue().addDependee(entryPoint);
+                    }
+                }
             }
         }
     }

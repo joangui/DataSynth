@@ -3,6 +3,7 @@
   "entities" : [
     {
       "name" : "person",
+      "number" : 500,
       "attributes" : [
         {
           "name" : "country",

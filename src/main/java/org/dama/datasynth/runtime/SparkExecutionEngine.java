@@ -4,6 +4,8 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.dama.datasynth.SparkEnv;
 import org.dama.datasynth.common.Types;
+import org.dama.datasynth.exec.AttributeTask;
+import org.dama.datasynth.exec.EntityTask;
 import org.dama.datasynth.exec.ExecutionPlan;
 import org.dama.datasynth.exec.Task;
 
@@ -15,45 +17,39 @@ import static org.apache.hadoop.yarn.webapp.hamlet.HamletSpec.LinkType.index;
 /**
  * Created by aprat on 17/04/16.
  */
-public class SparkExecutor {
+public class SparkExecutionEngine extends ExecutionEngine {
 
     private Map<String, JavaRDD<Long>> entityRDDs;
     private Map<String, JavaRDD<Object>> attributeRDDs;
     private Map<String, Types.DATATYPE>  attributeTypes;
 
 
-    public SparkExecutor() {
+    public SparkExecutionEngine() {
         entityRDDs = new HashMap<String,JavaRDD<Long>>();
         attributeRDDs = new HashMap<String,JavaRDD<Object>>();
         attributeTypes = new HashMap<String, Types.DATATYPE>();
     }
 
-    public void Execute(ExecutionPlan plan) throws ExecutionException {
-        List<Task> todo = new LinkedList<Task>();
-        todo.addAll(plan.getEntryPoints());
-        while(!todo.isEmpty()) {
-            Task task = todo.get(0);
-            todo.remove(0);
-            ExecuteTask(task);
-            for(Task next : task.getDependees()) {
-                todo.add(next);
-            }
+
+    @Override
+    public void dumpData(String outputDir) {
+        for( Map.Entry<String,JavaRDD<Object>> entry : attributeRDDs.entrySet() ) {
+            entry.getValue().coalesce(1).saveAsTextFile(outputDir+"/"+entry.getKey());
         }
     }
 
-    public void GenerateEntity(String entityName, int numEntities) {
+    @Override
+    public void execute(EntityTask task ) {
         List<Long> init = new ArrayList<Long>();
-        for(long i = 0; i < numEntities; ++i) {
+        for(long i = 0; i < task.getNumber(); ++i) {
             init.add(i);
         }
         JavaRDD<Long> ids = SparkEnv.sc.parallelize(init);
-        entityRDDs.put(entityName, ids);
+        entityRDDs.put(task.getEntity(), ids);
     }
 
-    public void ExecuteTask(Task task ) throws ExecutionException {
-        if(!entityRDDs.containsKey(task.getEntity())) {
-            GenerateEntity(task.getEntity(),100);
-        }
+    @Override
+    public void execute(AttributeTask task ) throws ExecutionException {
 
         String generatorName = task.getGenerator();
         Generator generator = null;
@@ -108,13 +104,8 @@ public class SparkExecutor {
                 throw new ExecutionException("Unsupported number of parameters");
 
         }
-        attributeRDDs.put(task.getOutput(),rdd);
-        attributeTypes.put(task.getOutput(),task.getAttributeType());
+        attributeRDDs.put(task.getTaskName(),rdd);
+        attributeTypes.put(task.getTaskName(),task.getAttributeType());
     }
 
-    public void DumpData(String outputDir) {
-        for( Map.Entry<String,JavaRDD<Object>> entry : attributeRDDs.entrySet() ) {
-           entry.getValue().coalesce(1).saveAsTextFile(outputDir+"/"+entry.getKey());
-        }
-    }
 }
