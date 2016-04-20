@@ -42,6 +42,15 @@
           }
         },
         {
+          "name" : "id",
+          "type" : "Long",
+          "generator" : {
+            "name" : "org.dama.datasynth.generators.DateBasedIDGenerator",
+            "runParameters" : ["oid","creationDate"],
+            "initParameters" : ["dd-MM-yyyy"]
+          }
+        },
+        {
           "name" : "fullMail",
           "type" : "String",
           "generator" : {

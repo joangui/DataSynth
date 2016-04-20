@@ -1,31 +1,27 @@
-package org.dama.datasynth.runtime;
+package org.dama.datasynth.runtime.spark;
 
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.rdd.RDD;
 import org.dama.datasynth.SparkEnv;
 import org.dama.datasynth.common.Types;
 import org.dama.datasynth.exec.AttributeTask;
 import org.dama.datasynth.exec.EntityTask;
-import org.dama.datasynth.exec.ExecutionPlan;
-import org.dama.datasynth.exec.Task;
+import org.dama.datasynth.runtime.*;
+import scala.Tuple2;
 
-import java.lang.reflect.Method;
 import java.util.*;
-
-import static org.apache.hadoop.yarn.webapp.hamlet.HamletSpec.LinkType.index;
 
 /**
  * Created by aprat on 17/04/16.
  */
 public class SparkExecutionEngine extends ExecutionEngine {
 
-    private Map<String, JavaRDD<Long>> entityRDDs;
     private Map<String, JavaRDD<Object>> attributeRDDs;
     private Map<String, Types.DATATYPE>  attributeTypes;
 
 
     public SparkExecutionEngine() {
-        entityRDDs = new HashMap<String,JavaRDD<Long>>();
         attributeRDDs = new HashMap<String,JavaRDD<Object>>();
         attributeTypes = new HashMap<String, Types.DATATYPE>();
     }
@@ -40,17 +36,19 @@ public class SparkExecutionEngine extends ExecutionEngine {
 
     @Override
     public void execute(EntityTask task ) {
-        List<Long> init = new ArrayList<Long>();
+        System.out.println("Preparing Task: "+task.getTaskName());
+        List<Object> init = new ArrayList<Object>();
         for(long i = 0; i < task.getNumber(); ++i) {
             init.add(i);
         }
-        JavaRDD<Long> ids = SparkEnv.sc.parallelize(init);
-        entityRDDs.put(task.getEntity(), ids);
+        JavaRDD<Object> ids = SparkEnv.sc.parallelize(init);
+        attributeRDDs.put(task.getEntity()+"."+"oid", ids);
+        attributeTypes.put(task.getEntity()+"."+"oid", Types.DATATYPE.LONG);
     }
 
     @Override
     public void execute(AttributeTask task ) throws ExecutionException {
-
+        System.out.println("Preparing Task: "+task.getTaskName());
         String generatorName = task.getGenerator();
         Generator generator = null;
         try {
@@ -85,7 +83,7 @@ public class SparkExecutionEngine extends ExecutionEngine {
             runParameterTypes.add(dataType);
         }
 
-        JavaRDD<Long> entityRDD = entityRDDs.get(task.getEntity());
+        JavaRDD<Object> entityRDD = attributeRDDs.get(task.getEntity()+".oid");
         JavaRDD<Object> rdd;
         switch(runParameterTypes.size()){
             case 0: {
@@ -95,9 +93,19 @@ public class SparkExecutionEngine extends ExecutionEngine {
             break;
             case 1: {
                 JavaRDD<Object> attributeRDD = attributeRDDs.get(task.getEntity() + "." + task.getRunParameters().get(0));
-                JavaPairRDD<Long,Object> entityAttributeRDD = entityRDD.zip(attributeRDD);
+                JavaPairRDD<Object,Object> entityAttributeRDD = entityRDD.zip(attributeRDD);
                 FunctionWrapper fw = new FunctionWrapper(generator, "run", runParameterTypes,task.getAttributeType());
                 rdd = entityAttributeRDD.map(fw);
+            }
+            break;
+            case 2: {
+                JavaRDD<Object> attributeRDD0 = attributeRDDs.get(task.getEntity() + "." + task.getRunParameters().get(0));
+                JavaRDD<Object> attributeRDD1 = attributeRDDs.get(task.getEntity() + "." + task.getRunParameters().get(1));
+                JavaPairRDD<Object,Object> entityAttributeRDD = entityRDD.zip(attributeRDD0);
+                JavaRDD<Tuple2<Object,Object>> a = JavaRDD.fromRDD(JavaPairRDD.toRDD(entityAttributeRDD), entityAttributeRDD.classTag());
+                JavaPairRDD<Tuple2<Object,Object>,Object> b = a.zip(attributeRDD1);
+                Function2Wrapper fw = new Function2Wrapper(generator, "run", runParameterTypes,task.getAttributeType());
+                rdd = b.map(fw);
             }
             break;
             default:

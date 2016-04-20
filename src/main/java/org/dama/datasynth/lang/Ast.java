@@ -191,6 +191,7 @@ public class Ast {
             Set<String> attributeNames = new TreeSet<String>();
             for( Attribute attribute : entity.getAttributes() ) {
                 String attributeName = attribute.getName();
+                if(attributeName.compareTo("oid") == 0) throw new SemanticException("Attribute name \"oid\" is reserved.");
                 attributeNames.add(attributeName);
             }
             if(attributes.containsKey(entityName)) throw new SemanticException("Two entities with the same name: "+entityName+". Entity names must be unique");
@@ -202,7 +203,7 @@ public class Ast {
             for( Attribute attribute : entity.getAttributes() ) {
                 Generator generator = attribute.getGenerator();
                 for( String parameter : generator.getRunParameters()) {
-                    if(!attributes.get(entityName).contains(parameter)) {
+                    if((parameter.compareTo("oid") != 0) && !attributes.get(entityName).contains(parameter)) {
                         throw new SemanticException("Entity "+entityName+" does not contain an attribute named "+parameter);
                     }
                 }

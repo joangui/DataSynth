@@ -13,7 +13,7 @@ import org.dama.datasynth.lang.Parser;
 import org.dama.datasynth.lang.Ast;
 import org.dama.datasynth.lang.SemanticException;
 import org.dama.datasynth.lang.SyntacticException;
-import org.dama.datasynth.runtime.SparkExecutionEngine;
+import org.dama.datasynth.runtime.spark.SparkExecutionEngine;
 
 import java.io.IOException;
 import java.nio.file.Files;
