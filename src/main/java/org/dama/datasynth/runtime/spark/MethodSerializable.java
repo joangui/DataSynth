@@ -46,7 +46,6 @@ public class MethodSerializable implements Serializable {
             iAE.printStackTrace();
         }
     return null;
-
     }
 
     private void writeObject(java.io.ObjectOutputStream out) {

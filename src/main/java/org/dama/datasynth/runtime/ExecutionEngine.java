@@ -1,9 +1,6 @@
 package org.dama.datasynth.runtime;
 
-import org.dama.datasynth.exec.AttributeTask;
-import org.dama.datasynth.exec.EntityTask;
-import org.dama.datasynth.exec.ExecutionPlan;
-import org.dama.datasynth.exec.Task;
+import org.dama.datasynth.exec.*;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -50,4 +47,11 @@ public abstract class ExecutionEngine {
      * @throws ExecutionException
      */
     public abstract void execute ( EntityTask task ) throws ExecutionException;
+
+    /**
+     * Executes an edge task
+     * @param task The task to execute
+     * @throws ExecutionException
+     */
+    public abstract void execute (EdgeTask task ) throws ExecutionException;
 }

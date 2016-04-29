@@ -29,7 +29,7 @@
           "generator" : {
             "name" : "org.dama.datasynth.generators.DateGenerator",
             "runParameters" : [],
-            "initParameters" : ["dd-MM-yy","01-01-1980","01-01-1990"]
+            "initParameters" : ["dd-MM-yyyy","01-01-1980","01-01-1990"]
           }
         },
         {

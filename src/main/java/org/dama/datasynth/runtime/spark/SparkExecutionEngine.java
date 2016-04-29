@@ -6,7 +6,9 @@ import org.apache.spark.rdd.RDD;
 import org.dama.datasynth.SparkEnv;
 import org.dama.datasynth.common.Types;
 import org.dama.datasynth.exec.AttributeTask;
+import org.dama.datasynth.exec.EdgeTask;
 import org.dama.datasynth.exec.EntityTask;
+import org.dama.datasynth.exec.ExecutionPlan;
 import org.dama.datasynth.runtime.*;
 import scala.Tuple2;
 
@@ -17,19 +19,19 @@ import java.util.*;
  */
 public class SparkExecutionEngine extends ExecutionEngine {
 
-    private Map<String, JavaRDD<Object>> attributeRDDs;
+    private Map<String, JavaPairRDD<Long, Object>> attributeRDDs;
     private Map<String, Types.DATATYPE>  attributeTypes;
 
 
     public SparkExecutionEngine() {
-        attributeRDDs = new HashMap<String,JavaRDD<Object>>();
+        attributeRDDs = new HashMap<String,JavaPairRDD<Long,Object>>();
         attributeTypes = new HashMap<String, Types.DATATYPE>();
     }
 
 
     @Override
     public void dumpData(String outputDir) {
-        for( Map.Entry<String,JavaRDD<Object>> entry : attributeRDDs.entrySet() ) {
+        for( Map.Entry<String,JavaPairRDD<Long,Object>> entry : attributeRDDs.entrySet() ) {
             entry.getValue().coalesce(1).saveAsTextFile(outputDir+"/"+entry.getKey());
         }
     }
@@ -61,7 +63,6 @@ public class SparkExecutionEngine extends ExecutionEngine {
             iAE.printStackTrace();
         }
 
-
         /** Calling Initialize Method of the Generator **/
         Object [] params = new Object[task.getInitParameters().size()];
         List<Types.DATATYPE> initParameters = new ArrayList<Types.DATATYPE>();
@@ -83,7 +84,7 @@ public class SparkExecutionEngine extends ExecutionEngine {
             runParameterTypes.add(dataType);
         }
 
-        JavaRDD<Object> entityRDD = attributeRDDs.get(task.getEntity()+".oid");
+        JavaPairRDD<Long, Object> entityRDD = attributeRDDs.get(task.getEntity()+".oid");
         JavaRDD<Object> rdd;
         switch(runParameterTypes.size()){
             case 0: {
@@ -92,15 +93,15 @@ public class SparkExecutionEngine extends ExecutionEngine {
             }
             break;
             case 1: {
-                JavaRDD<Object> attributeRDD = attributeRDDs.get(task.getEntity() + "." + task.getRunParameters().get(0));
+                JavaPairRDD<Long, Object> attributeRDD = attributeRDDs.get(task.getEntity() + "." + task.getRunParameters().get(0));
                 JavaPairRDD<Object,Object> entityAttributeRDD = entityRDD.zip(attributeRDD);
                 FunctionWrapper fw = new FunctionWrapper(generator, "run", runParameterTypes,task.getAttributeType());
                 rdd = entityAttributeRDD.map(fw);
             }
             break;
             case 2: {
-                JavaRDD<Object> attributeRDD0 = attributeRDDs.get(task.getEntity() + "." + task.getRunParameters().get(0));
-                JavaRDD<Object> attributeRDD1 = attributeRDDs.get(task.getEntity() + "." + task.getRunParameters().get(1));
+                JavaPairRDD<Long, Object> attributeRDD0 = attributeRDDs.get(task.getEntity() + "." + task.getRunParameters().get(0));
+                JavaPairRDD<Long, Object> attributeRDD1 = attributeRDDs.get(task.getEntity() + "." + task.getRunParameters().get(1));
                 JavaPairRDD<Object,Object> entityAttributeRDD = entityRDD.zip(attributeRDD0);
                 JavaRDD<Tuple2<Object,Object>> a = JavaRDD.fromRDD(JavaPairRDD.toRDD(entityAttributeRDD), entityAttributeRDD.classTag());
                 JavaPairRDD<Tuple2<Object,Object>,Object> b = a.zip(attributeRDD1);
@@ -116,4 +117,18 @@ public class SparkExecutionEngine extends ExecutionEngine {
         attributeTypes.put(task.getTaskName(),task.getAttributeType());
     }
 
+    @Override
+    public void execute(EdgeTask task) throws ExecutionException {
+    }
+
+    private JavaRDD<Object> buildAttributesRDD(EdgeTask task){
+        JavaRDD<Object> entity1Ids = this.attributeRDDs.get(task.entity1 + ".oid");
+        JavaRDD<Object> entity2Ids = this.attributeRDDs.get(task.entity2 + ".oid");
+
+        JavaPairRDD<long, Object> =
+
+        for(String str: attributes){
+
+        }
+    }
 }

@@ -164,6 +164,47 @@ public class Ast {
     }
 
     /**
+     * A generator in the AST
+     */
+    public static class Edge extends Node {
+        private Entity origin;
+        private Entity destination;
+        private int[] cardinality;
+        /**
+         * Class Constructor
+         * @param name The name of the generator
+         */
+        public Edge(String name) {
+            super(name);
+            this.cardinality = new int[2];
+        }
+
+        public Entity getOrigin() {
+            return origin;
+        }
+
+        public void setOrigin(Entity origin) {
+            this.origin = origin;
+        }
+
+        public Entity getDestination() {
+            return destination;
+        }
+
+        public void setDestination(Entity destination) {
+            this.destination = destination;
+        }
+
+        public int[] getCardinality() {
+            return cardinality;
+        }
+
+        public void setCardinality(int cardinality, int i) {
+            this.cardinality[i] = cardinality;
+        }
+    }
+
+    /**
      * The list of entities of the AST 
      */
     private List<Entity> entities = new ArrayList<Entity>();

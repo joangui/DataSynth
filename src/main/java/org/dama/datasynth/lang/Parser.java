@@ -3,11 +3,14 @@ package org.dama.datasynth.lang;
 import org.dama.datasynth.common.Types;
 import java.io.StringReader;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.mortbay.util.ajax.JSON;
 
 public class Parser {
 
@@ -18,16 +21,17 @@ public class Parser {
      */
     public Ast parse( String str ) throws SyntacticException {
         Ast ast = new Ast();
+        HashMap<String, Ast.Entity> hm = new HashMap<>();
         try {
             JSONParser jsonParser = new JSONParser();
             JSONObject jsonObject = (JSONObject) jsonParser.parse(new StringReader(str));
             JSONArray entities = (JSONArray)jsonObject.get("entities");
-
             for( Object obj : entities ) {
                 JSONObject  entity= (JSONObject) obj;
                 String entityName = (String)entity.get("name");
                 Long numEntities = (Long)entity.get("number");
                 Ast.Entity ent = new Ast.Entity(entityName,numEntities);
+                hm.put(entityName, ent);
                 JSONArray attributes = (JSONArray) entity.get("attributes");
                 for( Object objj : attributes ) {
                     JSONObject attribute = (JSONObject)objj;
@@ -54,6 +58,20 @@ public class Parser {
                     ent.addAttribute(attr);
                 }
                 ast.addEntity(ent);
+            }
+            JSONArray edges = (JSONArray)jsonObject.get("edges");
+            for(Object obj: edges){
+                JSONObject edge = (JSONObject) obj;
+                String edgeName = (String)edge.get("name");
+                Ast.Edge edg = new Ast.Edge(edgeName);
+                edg.setOrigin(hm.get((String)edge.get("origin")));
+                edg.setDestination(hm.get((String)edge.get("destination")));
+                JSONArray cardinality = (JSONArray)edge.get("cardinality");
+                int i = 0;
+                for(Object c: cardinality) {
+                    edg.setCardinality(Integer.parseInt(c.toString()),i);
+                    ++i;
+                }
             }
         } catch(ParseException pe) {
             System.out.println("position: " + pe.getPosition());
