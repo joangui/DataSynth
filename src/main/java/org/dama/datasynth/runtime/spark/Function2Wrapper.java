@@ -21,9 +21,4 @@ public class Function2Wrapper extends MethodSerializable implements Function<Tup
     public Object call(Tuple2<Tuple2<Object,Object>,Object> t) {
             return (Object) invoke(t._1()._2(),t._2());
     }
-
-    public Object call(Tuple2<Tuple2<Object,Object>,Object> t) {
-        return (Object) invoke(t._1()._2(),t._2());
-    }
-
 }

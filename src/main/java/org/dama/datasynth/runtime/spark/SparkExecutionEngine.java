@@ -2,6 +2,7 @@ package org.dama.datasynth.runtime.spark;
 
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.function.PairFunction;
 import org.apache.spark.rdd.RDD;
 import org.dama.datasynth.SparkEnv;
 import org.dama.datasynth.common.Types;
@@ -44,7 +45,14 @@ public class SparkExecutionEngine extends ExecutionEngine {
             init.add(i);
         }
         JavaRDD<Object> ids = SparkEnv.sc.parallelize(init);
-        attributeRDDs.put(task.getEntity()+"."+"oid", ids);
+        PairFunction<Long, Long, Object> f = new PairFunction<Long, Long, Object>() {
+            @Override
+            public Tuple2<Long, Object> call(Long id) {
+                return new Tuple2<Long, Object>(id, id);
+            }
+        };
+        JavaPairRDD<Long, Object> idss = ids.mapToPair(f);
+        attributeRDDs.put(task.getEntity()+"."+"oid", idss);
         attributeTypes.put(task.getEntity()+"."+"oid", Types.DATATYPE.LONG);
     }
 
@@ -85,11 +93,11 @@ public class SparkExecutionEngine extends ExecutionEngine {
         }
 
         JavaPairRDD<Long, Object> entityRDD = attributeRDDs.get(task.getEntity()+".oid");
-        JavaRDD<Object> rdd;
+        JavaPairRDD<Long, Object> rdd;
         switch(runParameterTypes.size()){
             case 0: {
                 Function0Wrapper fw = new Function0Wrapper(generator, "run", runParameterTypes,task.getAttributeType());
-                rdd = entityRDD.map(fw);
+                rdd = entityRDD.mapValues(fw);
             }
             break;
             case 1: {
@@ -122,13 +130,13 @@ public class SparkExecutionEngine extends ExecutionEngine {
     }
 
     private JavaRDD<Object> buildAttributesRDD(EdgeTask task){
-        JavaRDD<Object> entity1Ids = this.attributeRDDs.get(task.entity1 + ".oid");
+        /*JavaRDD<Object> entity1Ids = this.attributeRDDs.get(task.entity1 + ".oid");
         JavaRDD<Object> entity2Ids = this.attributeRDDs.get(task.entity2 + ".oid");
 
         JavaPairRDD<long, Object> =
 
         for(String str: attributes){
 
-        }
+        }*/
     }
 }
