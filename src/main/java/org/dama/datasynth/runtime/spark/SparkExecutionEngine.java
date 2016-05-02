@@ -103,6 +103,8 @@ public class SparkExecutionEngine extends ExecutionEngine {
             case 1: {
                 JavaPairRDD<Long, Object> attributeRDD = attributeRDDs.get(task.getEntity() + "." + task.getRunParameters().get(0));
                 JavaPairRDD<Object,Object> entityAttributeRDD = entityRDD.zip(attributeRDD);
+
+
                 FunctionWrapper fw = new FunctionWrapper(generator, "run", runParameterTypes,task.getAttributeType());
                 rdd = entityAttributeRDD.map(fw);
             }
@@ -130,13 +132,29 @@ public class SparkExecutionEngine extends ExecutionEngine {
     }
 
     private JavaRDD<Object> buildAttributesRDD(EdgeTask task){
-        /*JavaRDD<Object> entity1Ids = this.attributeRDDs.get(task.entity1 + ".oid");
-        JavaRDD<Object> entity2Ids = this.attributeRDDs.get(task.entity2 + ".oid");
+        JavaPairRDD<Long,Object> entity1Ids = this.attributeRDDs.get(task.entity1 + ".oid");
+        JavaPairRDD<Long,Object> entity2Ids = this.attributeRDDs.get(task.entity2 + ".oid");
 
-        JavaPairRDD<long, Object> =
+        JavaRDD<Tuple2<Long, Object>> aux = SparkEnv.sc.emptyRDD();
+        JavaPairRDD<Long, Object> ent1 = JavaPairRDD.fromJavaRDD(aux);
+        JavaPairRDD<Long, Object> ent2 = JavaPairRDD.fromJavaRDD(aux);
+        Function2<Tuple,Tuple,Tuple> join = new Function2<Tuple,Tuple,Tuple>(){
+            @Override
+            public Tuple call(Tuple t1, Tuple t2) {
+                return TupleUtils.concatenate(t1,t2);
+            }
+        };
+        for(String str: task.getAttributesEnt1()){
+            ent1.union(this.attributeRDDs.get(str));
+        }
+        ent1.reduceByKey(join);
 
-        for(String str: attributes){
+        for(String str: task.getAttributesEnt2()){
+            ent2.union(this.attributeRDDs.get(str));
+        }
+        ent2.reduceByKey(join);
 
-        }*/
+
+
     }
 }
