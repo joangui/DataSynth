@@ -106,8 +106,8 @@ public class SparkExecutionEngine extends ExecutionEngine {
             break;
             case 1: {
                 JavaPairRDD<Long, Tuple> attributeRDD = attributeRDDs.get(task.getEntity() + "." + task.getRunParameters().get(0));
-                JavaPairRDD<Long,Tuple> entityAttributeRDD = unionRDDs(entityRDD, attributeRDD);
-                //entityRDD.union(attributeRDD).reduceByKey(TupleUtils.join);
+                //JavaPairRDD<Long,Tuple> entityAttributeRDD = unionRDDs(entityRDD, attributeRDD);
+                JavaPairRDD<Long,Tuple> entityAttributeRDD = entityRDD.union(attributeRDD).reduceByKey(TupleUtils.join);
                 FunctionWrapper fw = new FunctionWrapper(generator, "run", runParameterTypes,task.getAttributeType());
                 rdd = entityAttributeRDD.mapValues(fw);
             }
@@ -115,8 +115,8 @@ public class SparkExecutionEngine extends ExecutionEngine {
             case 2: {
                 JavaPairRDD<Long, Tuple> attributeRDD0 = attributeRDDs.get(task.getEntity() + "." + task.getRunParameters().get(0));
                 JavaPairRDD<Long, Tuple> attributeRDD1 = attributeRDDs.get(task.getEntity() + "." + task.getRunParameters().get(1));
-                JavaPairRDD<Long,Tuple> entityAttributeRDD = unionRDDs(entityRDD, attributeRDD0, attributeRDD1);
-                        //entityRDD.union(attributeRDD0).union(attributeRDD1).reduceByKey(TupleUtils.join);
+                //JavaPairRDD<Long,Tuple> entityAttributeRDD = unionRDDs(entityRDD, attributeRDD0, attributeRDD1);
+                JavaPairRDD<Long,Tuple> entityAttributeRDD = entityRDD.union(attributeRDD0).union(attributeRDD1).reduceByKey(TupleUtils.join);
                 Function2Wrapper fw = new Function2Wrapper(generator, "run", runParameterTypes,task.getAttributeType());
                 rdd = entityAttributeRDD.mapValues(fw);
             }
@@ -133,7 +133,8 @@ public class SparkExecutionEngine extends ExecutionEngine {
     public void execute(EdgeTask task) throws ExecutionException {
     }
     private JavaPairRDD<Long, Tuple> unionRDDs(JavaPairRDD<Long,Tuple>... rdds){
-        JavaPairRDD<Long,Tuple> result = JavaPairRDD.fromRDD(SparkEnv.sc.emptyRDD());
+        JavaRDD<Tuple2<Long, Tuple>> aux = SparkEnv.sc.emptyRDD();
+        JavaPairRDD<Long,Tuple> result = JavaPairRDD.fromJavaRDD(aux);
         for(JavaPairRDD<Long,Tuple> rdd: rdds){
             result.union(rdd);
         }
