@@ -59,7 +59,8 @@ public class Parser {
                 }
                 ast.addEntity(ent);
             }
-            JSONArray edges = (JSONArray)jsonObject.get("edges");
+            //EDGE PROCESSING
+            /*JSONArray edges = (JSONArray)jsonObject.get("edges");
             for(Object obj: edges){
                 JSONObject edge = (JSONObject) obj;
                 String edgeName = (String)edge.get("name");
@@ -72,7 +73,7 @@ public class Parser {
                     edg.setCardinality(Integer.parseInt(c.toString()),i);
                     ++i;
                 }
-            }
+            }*/
         } catch(ParseException pe) {
             System.out.println("position: " + pe.getPosition());
             System.out.println(pe);
