@@ -6,7 +6,7 @@ package org.dama.datasynth;
 
 import com.beust.jcommander.JCommander;
 import org.dama.datasynth.exec.BuildExecutionPlanException;
-import org.dama.datasynth.exec.ExecutionPlan;
+import org.dama.datasynth.exec.ExecutionGraph;
 import org.dama.datasynth.runtime.ExecutionEngine;
 import org.dama.datasynth.runtime.ExecutionException;
 import org.dama.datasynth.lang.Parser;
@@ -52,7 +52,7 @@ public class DataSynth {
 
             System.out.println("Creating execution plan ...");
             start = System.currentTimeMillis();
-            ExecutionPlan execPlan = new ExecutionPlan();
+            ExecutionGraph execPlan = new ExecutionGraph();
             execPlan.initialize(ast);
             end = System.currentTimeMillis();
             System.out.println("    Execution plan created in  "+(end-start) + " ms");
@@ -74,6 +74,8 @@ public class DataSynth {
             bEPE.printStackTrace();
         } catch(ExecutionException eE) {
             eE.printStackTrace();
+        } finally {
+            //System.exit(1);
         }
     }
 }

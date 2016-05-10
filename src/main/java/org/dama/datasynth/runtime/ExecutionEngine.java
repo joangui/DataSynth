@@ -14,7 +14,7 @@ public abstract class ExecutionEngine {
      * @param plan The execution plan to execute
      * @throws ExecutionException
      */
-    public void execute(ExecutionPlan plan) throws ExecutionException {
+    public void execute(ExecutionGraph plan) throws ExecutionException {
         List<Task> todo = new LinkedList<Task>();
         todo.addAll(plan.getEntryPoints());
         while(!todo.isEmpty()) {
