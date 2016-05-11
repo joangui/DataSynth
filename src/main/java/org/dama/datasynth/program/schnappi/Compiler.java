@@ -24,9 +24,9 @@ public class Compiler {
 
         }
     }
-    private void solveEdge(Edge e){
+    /*private void solveEdge(Edge e){
         lookup db, possibly indexed by type of edge;
         result = solversDB.get(type of Edge)
-    }
+    }*/
 
 }

@@ -28,4 +28,9 @@ public class DEdge {
         this.target = v2;
     }
 
+    @Override
+    public String toString(){
+        return source.toString() + "->" + target.toString();
+    }
+
 }

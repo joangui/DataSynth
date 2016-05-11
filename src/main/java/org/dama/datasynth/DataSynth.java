@@ -6,7 +6,8 @@ package org.dama.datasynth;
 
 import com.beust.jcommander.JCommander;
 import org.dama.datasynth.exec.BuildExecutionPlanException;
-import org.dama.datasynth.exec.ExecutionGraph;
+import org.dama.datasynth.exec.ExecutionPlan;
+import org.dama.datasynth.exec.GraphBuilder;
 import org.dama.datasynth.runtime.ExecutionEngine;
 import org.dama.datasynth.runtime.ExecutionException;
 import org.dama.datasynth.lang.Parser;
@@ -52,15 +53,17 @@ public class DataSynth {
 
             System.out.println("Creating execution plan ...");
             start = System.currentTimeMillis();
-            ExecutionGraph execPlan = new ExecutionGraph();
+            ExecutionPlan execPlan = new ExecutionPlan();
             execPlan.initialize(ast);
+            GraphBuilder builder = new GraphBuilder(ast);
             end = System.currentTimeMillis();
             System.out.println("    Execution plan created in  "+(end-start) + " ms");
 
             System.out.println("Executing query ...");
             start = System.currentTimeMillis();
             ExecutionEngine executor = new SparkExecutionEngine();
-            executor.execute(execPlan);
+            //executor.execute(execPlan);
+            executor.dummyExecute();
             executor.dumpData(config.outputDir);
             end = System.currentTimeMillis();
             System.out.println("    Query executed in  "+(end-start) + " ms");
