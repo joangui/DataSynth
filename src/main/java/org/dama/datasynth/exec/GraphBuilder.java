@@ -12,6 +12,7 @@ import java.util.*;
 public class GraphBuilder {
     private DirectedGraph<Vertex, DEdge> g;
     private List<Task> entryPoints = new ArrayList<Task>();
+
     public GraphBuilder(Ast t){
         try {
             this.initialize(t);
@@ -76,5 +77,12 @@ public class GraphBuilder {
         for(DEdge e : g.edgeSet()){
             System.out.println(e);
         }
+    }
+    public DirectedGraph<Vertex, DEdge> getG() {
+        return g;
+    }
+
+    public void setG(DirectedGraph<Vertex, DEdge> g) {
+        this.g = g;
     }
 }
