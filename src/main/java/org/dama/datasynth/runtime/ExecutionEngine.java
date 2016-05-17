@@ -15,7 +15,7 @@ public abstract class ExecutionEngine {
      * @throws ExecutionException
      */
     public void execute(ExecutionPlan plan) throws ExecutionException {
-        List<Task> todo = new LinkedList<Task>();
+        /*List<Task> todo = new LinkedList<Task>();
         todo.addAll(plan.getEntryPoints());
         while(!todo.isEmpty()) {
             Task task = todo.get(0);
@@ -24,7 +24,7 @@ public abstract class ExecutionEngine {
             for(Task next : task.getDependants()) {
                 todo.add(next);
             }
-        }
+        }*/
     }
 
     public void dummyExecute() throws ExecutionException {

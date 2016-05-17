@@ -11,11 +11,10 @@ import java.util.List;
 /**
  * Created by aprat on 20/04/16.
  */
-public class AttributeTask extends Task  {
+public class AttributeTask extends Vertex  {
 
-    private String entity = null;
-    private String attributeName = null;
-    private Types.DATATYPE attributeType = null;
+    private Ast.Entity entity = null;
+    private Ast.Attribute attribute = null;
 
     public String getGenerator() {
         return generator;
@@ -36,9 +35,9 @@ public class AttributeTask extends Task  {
      * @param attribute The attribute this task is generating
      */
     public AttributeTask(Ast.Entity entity, Ast.Attribute attribute ) {
-        this.entity = entity.getName();
-        this.attributeName = attribute.getName();
-        this.attributeType = attribute.getType();
+        super(entity.getName()+"."+attribute.getName(),"attribute");
+        this.entity = entity;
+        this.attribute = attribute;
         this.generator = attribute.getGenerator().getName();
         for( String param : attribute.getGenerator().getRunParameters()) {
             this.runParameters.add(param);
@@ -54,7 +53,7 @@ public class AttributeTask extends Task  {
      * @return The entity
      */
     public String getEntity() {
-        return entity;
+        return entity.getName();
     }
 
     /**
@@ -62,7 +61,7 @@ public class AttributeTask extends Task  {
      * @return The attribute
      */
     public String getAttributeName() {
-        return attributeName;
+        return attribute.getName();
     }
 
     /**
@@ -70,15 +69,7 @@ public class AttributeTask extends Task  {
      * @return The attribute
      */
     public Types.DATATYPE getAttributeType() {
-        return attributeType;
-    }
-
-    /**
-     * Gets the output of the task
-     * @return The output of the task
-     */
-    public String getTaskName() {
-        return entity+"."+attributeName;
+        return attribute.getType();
     }
 
     /**
@@ -94,4 +85,9 @@ public class AttributeTask extends Task  {
         engine.execute(this);
     }
 
+
+    @Override
+    public void accept(DependencyGraphVisitor visitor) {
+        visitor.visit(this);
+    }
 }

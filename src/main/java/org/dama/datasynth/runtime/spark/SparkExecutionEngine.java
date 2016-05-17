@@ -46,9 +46,9 @@ public class SparkExecutionEngine extends ExecutionEngine {
 
     @Override
     public void execute(EntityTask task ) {
-        System.out.println("Preparing Task: "+task.getTaskName());
+        System.out.println("Preparing Task: "+task.toString());
         List<Long> init = new ArrayList<Long>();
-        for(long i = 0; i < task.getNumber(); ++i) {
+        for(long i = 0; i < 100; ++i) {
             init.add(i);
         }
         JavaRDD<Long> ids = SparkEnv.sc.parallelize(init);
@@ -60,7 +60,7 @@ public class SparkExecutionEngine extends ExecutionEngine {
 
     @Override
     public void execute(AttributeTask task ) throws ExecutionException {
-        System.out.println("Preparing Task: "+task.getTaskName());
+        System.out.println("Preparing Task: "+task.toString());
         String generatorName = task.getGenerator();
         Generator generator = null;
         try {
@@ -125,8 +125,8 @@ public class SparkExecutionEngine extends ExecutionEngine {
                 throw new ExecutionException("Unsupported number of parameters");
 
         }
-        attributeRDDs.put(task.getTaskName(),rdd);
-        attributeTypes.put(task.getTaskName(),task.getAttributeType());
+        attributeRDDs.put(task.toString(),rdd);
+        attributeTypes.put(task.toString(),task.getAttributeType());
     }
 
     @Override

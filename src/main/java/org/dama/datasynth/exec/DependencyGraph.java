@@ -8,9 +8,11 @@ import org.jgrapht.DirectedGraph;
  */
 public class DependencyGraph {
     private DirectedGraph<Vertex, DEdge> g;
-    public DependencyGraph(Ast t){
+    public DependencyGraph(Ast t) throws BuildDependencyGraphException {
         GraphBuilder gb = new GraphBuilder(t);
         this.g = gb.getG();
+        TextDependencyGraphPrinter printer = new TextDependencyGraphPrinter();
+        printer.visit(this);
     }
 
     public DirectedGraph<Vertex, DEdge> getG() {

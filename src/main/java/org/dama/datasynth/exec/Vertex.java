@@ -34,4 +34,6 @@ public abstract class Vertex {
     public String toString(){
         return "[" + this.getId() + ", " + this.getType() + "]";
     }
+
+    public abstract void accept(DependencyGraphVisitor visitor);
 }

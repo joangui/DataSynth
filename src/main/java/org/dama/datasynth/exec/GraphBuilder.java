@@ -1,52 +1,54 @@
 package org.dama.datasynth.exec;
 
+import org.dama.datasynth.DataSynth;
+import org.dama.datasynth.common.Types;
 import org.dama.datasynth.lang.Ast;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by quim on 5/10/16.
  */
 public class GraphBuilder {
+
+    private static final Logger logger= Logger.getLogger( DataSynth.class.getSimpleName() );
+
     private DirectedGraph<Vertex, DEdge> g;
-    private List<Task> entryPoints = new ArrayList<Task>();
+    private List<Vertex> entryPoints = new ArrayList<Vertex>();
 
     public GraphBuilder(Ast t){
         try {
             this.initialize(t);
-        } catch (BuildExecutionPlanException e) {
+        } catch (BuildDependencyGraphException e) {
             e.printStackTrace();
         }
     }
-    public void initialize(Ast ast) throws BuildExecutionPlanException {
-        this.g = new DefaultDirectedGraph<>((v1, v2) -> new DEdge(v1, v2));
 
-        for(Ast.Entity entity : ast.getEntities()) {
-            EntityVertex ev = new EntityVertex(entity.getName());
-            g.addVertex(ev);
-            for(Ast.Attribute attribute : entity.getAttributes()) {
-                AttributeVertex av = new AttributeVertex(entity.getName() + "." + attribute.getName());
-                g.addVertex(av);
-                g.addEdge(av, ev);
-            }
-        }
+    public void initialize(Ast ast) throws BuildDependencyGraphException {
+        this.g = new DefaultDirectedGraph<>((v1, v2) -> new DEdge(v1, v2));
 
         //############################################################################
         Map<String,AttributeTask> tasks = new TreeMap<String,AttributeTask>();
         for(Ast.Entity entity : ast.getEntities()) {
-            Task entityTask = new EntityTask(entity.getName(),entity.getNumEntities());
+            Vertex entityTask = new EntityTask(entity.getName());
             entryPoints.add(entityTask);
+            //g.addVertex(entityTask);
+            AttributeTask oid = new AttributeTask(entity,new Ast.Attribute("oid", Types.DATATYPE.INTEGER,new Ast.Generator("IdGenerator")));
+            g.addVertex(oid);
             for(Ast.Attribute attribute : entity.getAttributes()) {
                 AttributeTask task = new AttributeTask(entity,attribute);
-                tasks.put(task.getTaskName(),task);
+                tasks.put(task.getEntity()+"."+task.getAttributeName(),task);
+                g.addVertex(task);
+                g.addEdge(task,oid);
             }
         }
         //############################################################################
 
-
-        Set<AttributeTask> processed = new TreeSet<AttributeTask>((t1, t2) -> { return t1.getTaskName().compareTo(t2.getTaskName());});
+        Set<AttributeTask> processed = new TreeSet<AttributeTask>((t1, t2) -> { return t1.toString().compareTo(t2.toString());});
         for(Map.Entry<String,AttributeTask> task : tasks.entrySet() ) {
             if( !processed.contains(task.getValue())) {
                 List<AttributeTask> toProcess = new LinkedList<AttributeTask>();
@@ -55,28 +57,19 @@ public class GraphBuilder {
                     AttributeTask currentTask = toProcess.get(0);
                     toProcess.remove(0);
                     processed.add(currentTask);
-                    AttributeVertex v1 = new AttributeVertex(currentTask.getTaskName());
-                    g.addVertex(v1);
                     for (String param : currentTask.getRunParameters()) {
                         AttributeTask otherTask = tasks.get(currentTask.getEntity()+"."+param);
                         if (otherTask != null) {
                             if (!processed.contains(otherTask)) {
                                 toProcess.add(otherTask);
                             }
-                            AttributeVertex v2 = new AttributeVertex(otherTask.getTaskName());
-                            g.addVertex(v2);
-                            g.addEdge(v2,v1);
-                            task.getValue().addDependee(otherTask);
-                            otherTask.addDependant(task.getValue());
+                            g.addEdge(currentTask,otherTask);
                         }
                     }
                 }
             }
         }
-        if(processed.size() != tasks.size()) throw new BuildExecutionPlanException("Execution plan wrongly built. Missing tasks");
-        for(DEdge e : g.edgeSet()){
-            System.out.println(e);
-        }
+        if(processed.size() != tasks.size()) throw new BuildDependencyGraphException("Dependency plan wrongly built. Missing nodes");
     }
     public DirectedGraph<Vertex, DEdge> getG() {
         return g;

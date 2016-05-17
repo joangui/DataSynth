@@ -5,13 +5,14 @@ import java.util.ArrayList;
 /**
  * Created by quim on 4/27/16.
  */
-public class EdgeTask {
+public class EdgeTask extends Vertex {
     public String entity1;
     public String entity2;
     public ArrayList<String> attributesEnt1;
     public ArrayList<String> attributesEnt2;
 
     public EdgeTask(String ent1, String ent2, ArrayList<String> attr1, ArrayList<String> attr2) {
+        super(ent1+"."+ent2,"edge");
         this.entity1 = ent1;
         this.entity2 = ent2;
         this.attributesEnt1 = attr1;
@@ -48,5 +49,10 @@ public class EdgeTask {
 
     public void setAttributesEnt2(ArrayList<String> attributesEnt2) {
         this.attributesEnt2 = attributesEnt2;
+    }
+
+    @Override
+    public void accept(DependencyGraphVisitor visitor) {
+        visitor.visit(this);
     }
 }

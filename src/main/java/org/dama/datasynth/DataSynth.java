@@ -5,22 +5,22 @@ package org.dama.datasynth;
 //import static javafx.application.Platform.exit;
 
 import com.beust.jcommander.JCommander;
-import org.dama.datasynth.exec.BuildExecutionPlanException;
+import org.dama.datasynth.exec.BuildDependencyGraphException;
 import org.dama.datasynth.exec.DependencyGraph;
-import org.dama.datasynth.exec.ExecutionPlan;
-import org.dama.datasynth.exec.GraphBuilder;
-import org.dama.datasynth.runtime.ExecutionEngine;
-import org.dama.datasynth.runtime.ExecutionException;
-import org.dama.datasynth.lang.Parser;
 import org.dama.datasynth.lang.Ast;
+import org.dama.datasynth.lang.Parser;
 import org.dama.datasynth.lang.SemanticException;
 import org.dama.datasynth.lang.SyntacticException;
+import org.dama.datasynth.runtime.ExecutionEngine;
+import org.dama.datasynth.runtime.ExecutionException;
 import org.dama.datasynth.runtime.spark.SparkExecutionEngine;
+import org.dama.datasynth.utils.LogFormatter;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import java.util.logging.*;
 
 /**
  * Created by aprat on 10/04/16.
@@ -30,7 +30,23 @@ public class DataSynth {
 
     static private DataSynthConfig config;
 
+    private static final Logger logger= Logger.getLogger( DataSynth.class.getSimpleName() );
+
     public static void main( String [] args ) {
+
+        // Configure logger
+        Handler handler = null;
+        try {
+            handler = new FileHandler("DataSynth.log");
+            LogFormatter formatter = new LogFormatter();
+            handler.setFormatter(formatter);
+        } catch(IOException ioE) {
+            ioE.printStackTrace();
+            System.exit(1);
+        }
+        Logger.getLogger(DataSynth.class.getSimpleName()).addHandler(handler);
+        Logger.getLogger(DataSynth.class.getSimpleName()).setLevel(Level.FINE);
+        //
 
         config = new DataSynthConfig();
         JCommander jcommander = new JCommander(config,args);
@@ -45,41 +61,45 @@ public class DataSynth {
             byte[] encoded = Files.readAllBytes(Paths.get(config.queryFile));
 
             long start, end = 0;
-            System.out.println("Compiling query ...");
+            logger.info("Execution start ...");
             start = System.currentTimeMillis();
             Ast ast = parser.parse(new String(encoded, "UTF8"));
             ast.doSemanticAnalysis();
             end = System.currentTimeMillis();
-            System.out.println("    Query compiled in "+(end-start) + " ms");
+            logger.info(" Query compiled in "+(end-start) + " ms");
 
-            System.out.println("Creating execution plan ...");
             start = System.currentTimeMillis();
-            ExecutionPlan execPlan = new ExecutionPlan();
-            execPlan.initialize(ast);
+            /*ExecutionPlan execPlan = new ExecutionPlan();
+            execPlan.initialize(ast);*/
             DependencyGraph graph = new DependencyGraph(ast);
             end = System.currentTimeMillis();
-            System.out.println("    Execution plan created in  "+(end-start) + " ms");
+            logger.info(" Execution plan created in  "+(end-start) + " ms");
 
-            System.out.println("Executing query ...");
             start = System.currentTimeMillis();
             ExecutionEngine executor = new SparkExecutionEngine();
             //executor.execute(execPlan);
             executor.dummyExecute();
             executor.dumpData(config.outputDir);
             end = System.currentTimeMillis();
-            System.out.println("    Query executed in  "+(end-start) + " ms");
+            logger.info(" Query executed in  "+(end-start) + " ms");
+            logger.info("Execution finished");
+
+            return;
         } catch(IOException iOE) {
             iOE.printStackTrace();
+            System.exit(1);
         } catch(SyntacticException sE) {
             sE.printStackTrace();
+            System.exit(1);
         } catch(SemanticException sE) {
             sE.printStackTrace();
-        } catch(BuildExecutionPlanException bEPE) {
+            System.exit(1);
+        } catch(BuildDependencyGraphException bEPE) {
             bEPE.printStackTrace();
+            System.exit(1);
         } catch(ExecutionException eE) {
             eE.printStackTrace();
-        } finally {
-            //System.exit(1);
+            System.exit(1);
         }
     }
 }

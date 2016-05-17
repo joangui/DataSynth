@@ -6,7 +6,7 @@ import org.dama.datasynth.runtime.ExecutionException;
 /**
  * Created by aprat on 20/04/16.
  */
-public class EntityTask extends Task  {
+public class EntityTask extends Vertex  {
 
     /**
      * The entity name
@@ -14,13 +14,12 @@ public class EntityTask extends Task  {
     private String  entity;
 
     /**
-     * The number of entities
+     * The name of the entity
+     * @param entity
      */
-    private Long    number;
-
-    public EntityTask(String entity, Long number) {
+    public EntityTask(String entity) {
+        super(entity,"entity");
         this.entity = entity;
-        this.number = number;
     }
 
     /**
@@ -31,21 +30,8 @@ public class EntityTask extends Task  {
         return entity;
     }
 
-    /**
-     * Gets the number of entities
-     * @return The number of entities
-     */
-    public Long getNumber() {
-        return number;
-    }
-
     @Override
-    public String getTaskName() {
-        return entity;
-    }
-
-    @Override
-    public void accept(ExecutionEngine engine ) throws ExecutionException {
-        engine.execute(this);
+    public void accept(DependencyGraphVisitor visitor) {
+        visitor.visit(this);
     }
 }
