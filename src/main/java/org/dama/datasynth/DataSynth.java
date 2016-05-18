@@ -89,7 +89,9 @@ public class DataSynth {
             SchnappiParser.ProgramContext pctx = SchParser.program();
             SchnappiGeneratorVisitor visitor = new SchnappiGeneratorVisitor();
             Node n = visitor.visitProgram(pctx);
-            System.out.println("> " + n.toStringTabbed(""));
+            String printedAst = "\n > " + n.toStringTabbed("");
+            System.out.println(printedAst);
+            logger.log(Level.FINE, printedAst);
 
             start = System.currentTimeMillis();
             ExecutionEngine executor = new SparkExecutionEngine();
