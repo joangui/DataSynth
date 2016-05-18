@@ -16,5 +16,14 @@ public class FuncNode extends Node {
         super(id);
         this.ids = new ArrayList<>();
     }
+    @Override
+    public String toString(){
+        String str = "<" + this.id;
+        for(String s : ids){
+            str += "," + s;
+        }
+        str += ">";
+        return str;
+    }
 
 }

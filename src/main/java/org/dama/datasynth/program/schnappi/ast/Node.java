@@ -30,7 +30,10 @@ public class Node {
     public String toStringTabbed(String pad){
         String str = pad + this.toString();
         for(Node n : children){
-            str = "\n" + pad + "\t" + n.toStringTabbed(pad+"\t");
+            str = str + "\n" + ">" + pad + "\t";
+            String aux = "";
+            if(n != null) aux = n.toStringTabbed(pad+"\t");
+            str = str + aux;
         }
         return str;
     }

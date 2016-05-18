@@ -5,13 +5,20 @@ package org.dama.datasynth;
 //import static javafx.application.Platform.exit;
 
 import com.beust.jcommander.JCommander;
+import org.antlr.v4.runtime.ANTLRFileStream;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.dama.datasynth.exec.BuildDependencyGraphException;
 import org.dama.datasynth.exec.DependencyGraph;
 import org.dama.datasynth.lang.Ast;
 import org.dama.datasynth.lang.Parser;
 import org.dama.datasynth.lang.SemanticException;
 import org.dama.datasynth.lang.SyntacticException;
+import org.dama.datasynth.program.schnappi.SchnappiGeneratorVisitor;
 import org.dama.datasynth.program.schnappi.SchnappiLexer;
+import org.dama.datasynth.program.schnappi.SchnappiParser;
+import org.dama.datasynth.program.schnappi.ast.Node;
 import org.dama.datasynth.runtime.ExecutionEngine;
 import org.dama.datasynth.runtime.ExecutionException;
 import org.dama.datasynth.runtime.spark.SparkExecutionEngine;
@@ -75,6 +82,14 @@ public class DataSynth {
             DependencyGraph graph = new DependencyGraph(ast);
             end = System.currentTimeMillis();
             logger.info(" Execution plan created in  "+(end-start) + " ms");
+
+            SchnappiLexer SchLexer = new SchnappiLexer( new ANTLRFileStream("src/main/resources/test.spi"));
+            CommonTokenStream tokens = new CommonTokenStream( SchLexer );
+            SchnappiParser SchParser = new SchnappiParser( tokens );
+            SchnappiParser.ProgramContext pctx = SchParser.program();
+            SchnappiGeneratorVisitor visitor = new SchnappiGeneratorVisitor();
+            Node n = visitor.visitProgram(pctx);
+            System.out.println("> " + n.toStringTabbed(""));
 
             start = System.currentTimeMillis();
             ExecutionEngine executor = new SparkExecutionEngine();

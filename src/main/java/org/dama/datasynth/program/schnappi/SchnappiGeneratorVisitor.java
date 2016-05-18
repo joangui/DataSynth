@@ -12,7 +12,8 @@ import org.dama.datasynth.program.schnappi.ast.FuncNode;
 public class SchnappiGeneratorVisitor extends org.dama.datasynth.program.schnappi.SchnappiParserBaseVisitor<Node> {
     @Override
     public Node visitProgram(org.dama.datasynth.program.schnappi.SchnappiParser.ProgramContext ctx){
-        Node n = new Node(ctx.getText());
+        Node n = new Node("Program");
+        System.out.println(ctx.getText());
         for(org.dama.datasynth.program.schnappi.SchnappiParser.OpContext opc : ctx.op()) {
             n.addChild(visitOp(opc));
         }
@@ -20,26 +21,28 @@ public class SchnappiGeneratorVisitor extends org.dama.datasynth.program.schnapp
     }
     @Override
     public Node visitOp(org.dama.datasynth.program.schnappi.SchnappiParser.OpContext ctx){
-        Node n = new Node(ctx.getText());
+        Node n = new Node("OP");
         n.addChild(visitAssig(ctx.assig()));
         return n;
     }
     @Override
     public Node visitInit(org.dama.datasynth.program.schnappi.SchnappiParser.InitContext ctx){
-        Node n = new Node(ctx.getText());
+        Node n = new Node("INIT");
         n.addChild(new AtomNode(ctx.ID().getSymbol().getText(), "ID"));
         return n;
     }
     @Override
     public Node visitAssig(org.dama.datasynth.program.schnappi.SchnappiParser.AssigContext ctx) {
-        Node n = new Node(ctx.getText());
+        Node n = new Node("ASSIG");
         n.addChild(new AtomNode(ctx.ID().getSymbol().getText(), "ID"));
         n.addChild(visitExpr(ctx.expr()));
         return n;
     }
     @Override
-    public ExprNode visitExpr(org.dama.datasynth.program.schnappi.SchnappiParser.ExprContext ctx){
-        return null;
+    public Node visitExpr(org.dama.datasynth.program.schnappi.SchnappiParser.ExprContext ctx){
+        Node n = new Node("EXPR");
+        n.addChild(visitAtom(ctx.atom()));
+        return n;
     }
     @Override
     public Node visitAtom(org.dama.datasynth.program.schnappi.SchnappiParser.AtomContext ctx){
