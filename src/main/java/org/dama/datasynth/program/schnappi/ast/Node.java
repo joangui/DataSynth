@@ -7,6 +7,7 @@ import java.util.ArrayList;
  */
 public class Node {
     public String id;
+    public String type = "node";
     public ArrayList<Node> children;
     public Node(String opp, Node... args){
         this.id = opp;
@@ -22,5 +23,15 @@ public class Node {
     }
     public void addChild(Node n) {
         this.children.add(n);
+    }
+    public String toString(){
+        return "<" + id + "," + type + ">";
+    }
+    public String toStringTabbed(String pad){
+        String str = pad + this.toString();
+        for(Node n : children){
+            str = "\n" + pad + "\t" + n.toStringTabbed(pad+"\t");
+        }
+        return str;
     }
 }

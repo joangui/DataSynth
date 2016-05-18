@@ -11,6 +11,7 @@ import org.dama.datasynth.lang.Ast;
 import org.dama.datasynth.lang.Parser;
 import org.dama.datasynth.lang.SemanticException;
 import org.dama.datasynth.lang.SyntacticException;
+import org.dama.datasynth.program.schnappi.SchnappiLexer;
 import org.dama.datasynth.runtime.ExecutionEngine;
 import org.dama.datasynth.runtime.ExecutionException;
 import org.dama.datasynth.runtime.spark.SparkExecutionEngine;
