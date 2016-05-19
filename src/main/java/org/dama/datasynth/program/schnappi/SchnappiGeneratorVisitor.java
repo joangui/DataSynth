@@ -1,10 +1,7 @@
 package org.dama.datasynth.program.schnappi;
 
 import org.antlr.v4.runtime.tree.TerminalNode;
-import org.dama.datasynth.program.schnappi.ast.AtomNode;
-import org.dama.datasynth.program.schnappi.ast.ExprNode;
-import org.dama.datasynth.program.schnappi.ast.Node;
-import org.dama.datasynth.program.schnappi.ast.FuncNode;
+import org.dama.datasynth.program.schnappi.ast.*;
 
 /**
  * Created by quim on 5/17/16.
@@ -57,31 +54,49 @@ public class SchnappiGeneratorVisitor extends org.dama.datasynth.program.schnapp
     @Override
     public FuncNode visitMap(org.dama.datasynth.program.schnappi.SchnappiParser.MapContext ctx) {
         FuncNode n = new FuncNode("map");
+        ParamsNode pn = new ParamsNode("params");
         for(TerminalNode tn : ctx.ID()) {
-            n.ids.add(tn.getSymbol().getText());
+            pn.addParam(tn.getSymbol().getText());
         }
+        n.addParams(pn);
+        return n;
+    }
+    @Override
+    public FuncNode visitUnion(org.dama.datasynth.program.schnappi.SchnappiParser.UnionContext ctx){
+        FuncNode n = new FuncNode("union");
+        n.addParams(visitParams(ctx.params()));
         return n;
     }
     @Override
     public FuncNode visitReduce(org.dama.datasynth.program.schnappi.SchnappiParser.ReduceContext ctx) {
         FuncNode n = new FuncNode("reduce");
+        ParamsNode pn = new ParamsNode("params");
         for(TerminalNode tn : ctx.ID()) {
-            n.ids.add(tn.getSymbol().getText());
+            pn.addParam(tn.getSymbol().getText());
         }
+        n.addParams(pn);
         return n;
     }
     @Override
-    public FuncNode visitJoin(org.dama.datasynth.program.schnappi.SchnappiParser.JoinContext ctx){
-        FuncNode n = new FuncNode("join");
-        for(TerminalNode tn : ctx.ID()) {
-            n.ids.add(tn.getSymbol().getText());
+    public FuncNode visitEqjoin(org.dama.datasynth.program.schnappi.SchnappiParser.EqjoinContext ctx){
+        FuncNode n = new FuncNode("eqjoin");
+        n.addParams(visitParams(ctx.params()));
+        return n;
+    }
+    @Override
+    public ParamsNode visitParams(org.dama.datasynth.program.schnappi.SchnappiParser.ParamsContext ctx){
+        ParamsNode n = new ParamsNode("params");
+        for(TerminalNode tn : ctx.ID()){
+            n.addParam(tn.getSymbol().getText());
         }
         return n;
     }
     @Override
     public FuncNode visitGenids(org.dama.datasynth.program.schnappi.SchnappiParser.GenidsContext ctx){
         FuncNode n = new FuncNode("genids");
-        n.ids.add(ctx.NUM().getSymbol().getText());
+        ParamsNode pn = new ParamsNode("params");
+        pn.addParam(ctx.NUM().getSymbol().getText());
+        n.addParams(pn);
         return n;
     }
 }
