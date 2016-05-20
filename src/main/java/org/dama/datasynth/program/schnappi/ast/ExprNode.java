@@ -6,6 +6,7 @@ package org.dama.datasynth.program.schnappi.ast;
 public class ExprNode extends Node {
     public ExprNode(String id){
         super(id);
+        this.type = "EXPR";
     }
     public ExprNode(String id, Node n){
         this(id);

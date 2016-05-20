@@ -6,6 +6,7 @@ package org.dama.datasynth.program.schnappi.ast;
 public class AssigNode extends Node {
     public AssigNode(String id){
         super(id);
+        this.type = "ASSIG";
     }
     public AssigNode(String id, ExprNode n){
         this(id);

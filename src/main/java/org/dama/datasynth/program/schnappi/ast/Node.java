@@ -11,11 +11,17 @@ public class Node {
     public ArrayList<Node> children;
     public Node(String opp, Node... args){
         this.id = opp;
-        this.children = new ArrayList<Node>();
+        this.children = new ArrayList<>();
         for(Node arg : args) this.children.add(new Node(arg));
+    }
+    public Node(String iid, String ttype){
+        this.id = iid;
+        this.type = ttype;
+        this.children = new ArrayList<>();
     }
     public Node(Node n){
         this.id = n.id;
+        this.type = n.type;
         this.children = new ArrayList<Node>(n.children);
     }
     public Node getChild(int i){

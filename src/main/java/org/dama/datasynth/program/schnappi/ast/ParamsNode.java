@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class ParamsNode extends Node {
     public ArrayList<String> params;
     public ParamsNode(String id){
-        super(id);
+        super(id, "params");
         this.params = new ArrayList<>();
     }
     public ParamsNode(String param1, String param2){

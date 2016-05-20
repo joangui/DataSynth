@@ -18,27 +18,27 @@ public class SchnappiGeneratorVisitor extends org.dama.datasynth.program.schnapp
     }
     @Override
     public Node visitOp(org.dama.datasynth.program.schnappi.SchnappiParser.OpContext ctx){
-        Node n = new Node("OP");
+        Node n = new Node("OP", "op");
         if(ctx.assig() != null) n.addChild(visitAssig(ctx.assig()));
         else if(ctx.init() != null) n.addChild(visitInit(ctx.init()));
         return n;
     }
     @Override
     public Node visitInit(org.dama.datasynth.program.schnappi.SchnappiParser.InitContext ctx){
-        Node n = new Node("INIT");
+        Node n = new Node("INIT", "init");
         n.addChild(new AtomNode(ctx.ID().getSymbol().getText(), "ID"));
         return n;
     }
     @Override
     public Node visitAssig(org.dama.datasynth.program.schnappi.SchnappiParser.AssigContext ctx) {
-        Node n = new Node("ASSIG");
+        Node n = new Node("ASSIG", "assig");
         n.addChild(new AtomNode(ctx.ID().getSymbol().getText(), "ID"));
         n.addChild(visitExpr(ctx.expr()));
         return n;
     }
     @Override
     public Node visitExpr(org.dama.datasynth.program.schnappi.SchnappiParser.ExprContext ctx){
-        Node n = new Node("EXPR");
+        Node n = new Node("EXPR", "expr");
         n.addChild(visitAtom(ctx.atom()));
         return n;
     }
