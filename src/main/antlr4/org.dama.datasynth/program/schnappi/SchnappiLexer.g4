@@ -8,7 +8,7 @@ LBRA : '{';
 RBRA : '}';
 MAPKW : 'map';
 REDUCEKW : 'reduce';
-INIT : 'init';
+INIT : 'new';
 EQJOIN : 'eqjoin';
 UNION : 'union';
 GENID : 'gId';
