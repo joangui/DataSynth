@@ -3,7 +3,14 @@ options{
     language = Java;
     tokenVocab = SchnappiLexer;
 }
-program : op*;
+solver : signature bindings program;
+bindings : BINDINGS COLON LBRA bind* RBRA;
+bind : (bindhead EQ ID) | (ID EQ bindhead);
+bindhead : (SOURCE | TARGET) POINT ID;
+signature : SIGNATURE COLON LBRA source target RBRA;
+source : SOURCE EQ VTYPE;
+target : TARGET EQ VTYPE;
+program : PROGRAM COLON LBRA op* RBRA;
 op   : assig | init ;
 init : INIT LPAR ID RPAR;
 funcs : map | reduce | eqjoin | genids | union;

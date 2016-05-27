@@ -86,9 +86,9 @@ public class DataSynth {
             SchnappiLexer SchLexer = new SchnappiLexer( new ANTLRFileStream("src/main/resources/test.spi"));
             CommonTokenStream tokens = new CommonTokenStream( SchLexer );
             SchnappiParser SchParser = new SchnappiParser( tokens );
-            SchnappiParser.ProgramContext pctx = SchParser.program();
+            SchnappiParser.SolverContext sctx = SchParser.solver();
             SchnappiGeneratorVisitor visitor = new SchnappiGeneratorVisitor();
-            Node n = visitor.visitProgram(pctx);
+            Node n = visitor.visitSolver(sctx);
             String printedAst = "\n > " + n.toStringTabbed("");
             System.out.println(printedAst);
             logger.log(Level.FINE, printedAst);

@@ -10,24 +10,24 @@ import org.dama.datasynth.utils.Reader;
  */
 public abstract class Solver {
     private String rawRep;
-    private Ast astRep;
+    private Ast ast;
     private Signature signature;
     public Solver(String file) {
         this.rawRep = new Reader(file).text;
     }
     private void parse(String file){
-        this.astRep = new Parser(file).getAst();
+        //this.ast = new Parser(file).getAst();
     }
     public Signature getSignature(){
         return this.signature;
     }
 
-    public Ast getAstRep() {
-        return astRep;
+    public Ast getAst() {
+        return ast;
     }
 
-    public void setAstRep(Ast astRep) {
-        this.astRep = astRep;
+    public void setAst(Ast ast) {
+        this.ast = ast;
     }
     public abstract Ast instantiate(Vertex s, Vertex t);
 }

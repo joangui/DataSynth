@@ -2,11 +2,14 @@ package org.dama.datasynth.program.schnappi;
 
 import org.dama.datasynth.exec.*;
 import org.dama.datasynth.program.Ast;
+import org.dama.datasynth.program.schnappi.ast.Node;
+import org.dama.datasynth.program.solvers.Loader;
 import org.dama.datasynth.program.solvers.Signature;
 import org.dama.datasynth.program.solvers.Solver;
 import org.jgrapht.traverse.TopologicalOrderIterator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -16,11 +19,13 @@ import java.util.Set;
 public class Compiler {
     private Map<Signature, Solver> solversDB;
     private Ast program;
-    public Compiler(){
-        loadSolvers();
+    public Compiler(String dir){
+        loadSolvers(dir);
     }
-    private void loadSolvers(){
-        //
+    private void loadSolvers(String dir){
+        Loader.loadSolvers(dir);
+        this.solversDB = new HashMap<>();
+
     }
     private void synthesizeProgram(DependencyGraph g){
         TopologicalOrderIterator<Vertex, DEdge> it = new TopologicalOrderIterator<>(g.getG());
@@ -34,7 +39,7 @@ public class Compiler {
     }
     private void solveEdge(DEdge e){
         //cool stuff happening here
-        this.merge(solversDB.get(e.getSignature()).instantiate(e.getSource(), e.getTarget()));
+        //this.merge(solversDB.get(e.getSignature()).instantiate(e.getSource(), e.getTarget()));
         // this.program.appendSomeStuffSomePlace(
     }
 
@@ -45,7 +50,8 @@ public class Compiler {
     public void setProgram(Ast program) {
         this.program = program;
     }
-    private void merge(Ast ast){
-        //merge the new ast into this.program
+    private void merge(Solver solver){
+        Node r = this.program.getRoot();
+        r.addChild(solver.getAst().getRoot());
     }
 }

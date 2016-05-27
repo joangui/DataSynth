@@ -1,5 +1,6 @@
 package org.dama.datasynth.program.schnappi;
 
+
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.dama.datasynth.program.schnappi.ast.*;
 
@@ -8,9 +9,46 @@ import org.dama.datasynth.program.schnappi.ast.*;
  */
 public class SchnappiGeneratorVisitor extends org.dama.datasynth.program.schnappi.SchnappiParserBaseVisitor<Node> {
     @Override
+    public Node visitSolver(org.dama.datasynth.program.schnappi.SchnappiParser.SolverContext ctx){
+        Node n = new Node("Solver");
+        n.addChild(visitSignature(ctx.signature()));
+        n.addChild(visitBindings(ctx.bindings()));
+        n.addChild(visitProgram(ctx.program()));
+        return n;
+    }
+    @Override
+    public SignatureNode visitSignature(org.dama.datasynth.program.schnappi.SchnappiParser.SignatureContext ctx){
+        SignatureNode n = new SignatureNode("Signature", "signature");
+        n.addChild(visitSource(ctx.source()));
+        n.addChild(visitTarget(ctx.target()));
+        return n;
+    }
+    @Override
+    public SignatureNode visitSource(org.dama.datasynth.program.schnappi.SchnappiParser.SourceContext ctx){
+        return new SignatureNode(ctx.VTYPE().getSymbol().getText(), "source");
+    }
+    @Override
+    public SignatureNode visitTarget(org.dama.datasynth.program.schnappi.SchnappiParser.TargetContext ctx){
+        return new SignatureNode(ctx.VTYPE().getSymbol().getText(), "target");
+    }
+    @Override
+    public Node visitBindings(org.dama.datasynth.program.schnappi.SchnappiParser.BindingsContext ctx){
+        Node n = new Node("Bindings", "bindings");
+        for(org.dama.datasynth.program.schnappi.SchnappiParser.BindContext bctx : ctx.bind()){
+            n.addChild(visitBind(bctx));
+        }
+        return n;
+    }
+    @Override
+    public BindingNode visitBind(org.dama.datasynth.program.schnappi.SchnappiParser.BindContext ctx){
+        BindingNode n = new BindingNode("Binding", "binding");
+        n.rhs = ctx.bindhead().getText();
+        n.lhs = ctx.ID().getSymbol().getText();
+        return n;
+    }
+    @Override
     public Node visitProgram(org.dama.datasynth.program.schnappi.SchnappiParser.ProgramContext ctx){
         Node n = new Node("Program");
-        System.out.println(ctx.getText());
         for(org.dama.datasynth.program.schnappi.SchnappiParser.OpContext opc : ctx.op()) {
             n.addChild(visitOp(opc));
         }
