@@ -10,7 +10,18 @@ public class BindingNode extends Node{
         super(id);
         this.type = type;
     }
+    @Override
+    public Node copy(){
+        BindingNode bn = new BindingNode(this.id, this.type);
+        bn.lhs = this.lhs;
+        bn.rhs = this.rhs;
+        for(Node child : this.children){
+            bn.addChild(child.copy());
+        }
+        return bn;
+    }
     public String toString() {
         return "<" + lhs + " = " + rhs + "," + type + ">";
     }
+
 }

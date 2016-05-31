@@ -8,4 +8,11 @@ public class SignatureNode extends Node {
         super(id);
         this.type = type;
     }
+    public Node copy(){
+        SignatureNode sn = new SignatureNode(this.id, this.type);
+        for(Node child : this.children){
+            sn.addChild(child.copy());
+        }
+        return sn;
+    }
 }

@@ -8,4 +8,12 @@ public class AtomNode extends Node{
         super(id);
         this.type = type;
     }
+    @Override
+    public Node copy(){
+        AtomNode an = new AtomNode(this.id, this.type);
+        for(Node child : this.children){
+            an.addChild(child.copy());
+        }
+        return an;
+    }
 }

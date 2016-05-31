@@ -19,6 +19,8 @@ import org.dama.datasynth.program.schnappi.SchnappiGeneratorVisitor;
 import org.dama.datasynth.program.schnappi.SchnappiLexer;
 import org.dama.datasynth.program.schnappi.SchnappiParser;
 import org.dama.datasynth.program.schnappi.ast.Node;
+import org.dama.datasynth.program.solvers.Loader;
+import org.dama.datasynth.program.solvers.Solver;
 import org.dama.datasynth.runtime.ExecutionEngine;
 import org.dama.datasynth.runtime.ExecutionException;
 import org.dama.datasynth.runtime.spark.SparkExecutionEngine;
@@ -28,6 +30,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import java.util.ArrayList;
 import java.util.logging.*;
 
 /**
@@ -83,16 +86,19 @@ public class DataSynth {
             end = System.currentTimeMillis();
             logger.info(" Execution plan created in  "+(end-start) + " ms");
 
-            SchnappiLexer SchLexer = new SchnappiLexer( new ANTLRFileStream("src/main/resources/test.spi"));
+            SchnappiLexer SchLexer = new SchnappiLexer( new ANTLRFileStream("src/main/resources/solvers/test.spi"));
             CommonTokenStream tokens = new CommonTokenStream( SchLexer );
             SchnappiParser SchParser = new SchnappiParser( tokens );
             SchnappiParser.SolverContext sctx = SchParser.solver();
             SchnappiGeneratorVisitor visitor = new SchnappiGeneratorVisitor();
             Node n = visitor.visitSolver(sctx);
             String printedAst = "\n > " + n.toStringTabbed("");
-            System.out.println(printedAst);
+            //System.out.println(printedAst);
             logger.log(Level.FINE, printedAst);
-
+            ArrayList<Solver> solvers = Loader.loadSolvers("src/main/resources/solvers");
+            for(Solver s : solvers){
+                System.out.println("\n >" + s.instantiate().getRoot().toStringTabbed(""));
+            }
             start = System.currentTimeMillis();
             ExecutionEngine executor = new SparkExecutionEngine();
             //executor.execute(execPlan);

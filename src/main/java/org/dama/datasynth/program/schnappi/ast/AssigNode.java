@@ -12,4 +12,12 @@ public class AssigNode extends Node {
         this(id);
         this.addChild(n);
     }
+    @Override
+    public Node copy(){
+        AssigNode an = new AssigNode(this.id);
+        for(Node child : this.children){
+            an.addChild(child.copy());
+        }
+        return an;
+    }
 }

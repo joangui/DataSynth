@@ -25,5 +25,13 @@ public class FuncNode extends Node {
         str += ">";
         return str;
     }
-
+    @Override
+    public Node copy(){
+        FuncNode fn = new FuncNode(this.id);
+        fn.addParams(this.params);
+        for(Node child : this.children){
+            fn.addChild(child.copy());
+        }
+        return fn;
+    }
 }

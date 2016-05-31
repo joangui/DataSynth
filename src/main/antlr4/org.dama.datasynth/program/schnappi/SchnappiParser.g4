@@ -5,7 +5,7 @@ options{
 }
 solver : signature bindings program;
 bindings : BINDINGS COLON LBRA bind* RBRA;
-bind : (bindhead EQ ID) | (ID EQ bindhead);
+bind : (ID EQ bindhead);
 bindhead : (SOURCE | TARGET) POINT ID;
 signature : SIGNATURE COLON LBRA source target RBRA;
 source : SOURCE EQ VTYPE;

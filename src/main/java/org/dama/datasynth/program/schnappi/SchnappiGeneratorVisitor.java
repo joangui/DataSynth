@@ -66,6 +66,7 @@ public class SchnappiGeneratorVisitor extends org.dama.datasynth.program.schnapp
     public FuncNode visitInit(org.dama.datasynth.program.schnappi.SchnappiParser.InitContext ctx){
         FuncNode n = new FuncNode("init");
         n.addParams(visitParams(ctx.params()));
+        n.params.addParam(ctx.ID().getSymbol().getText());
         return n;
     }
     @Override

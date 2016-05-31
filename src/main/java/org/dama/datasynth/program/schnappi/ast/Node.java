@@ -24,6 +24,13 @@ public class Node {
         this.type = n.type;
         this.children = new ArrayList<Node>(n.children);
     }
+    public Node copy(){
+        Node nou = new Node(this.id, this.type);
+        for(Node child : this.children){
+            nou.addChild(child.copy());
+        }
+        return nou;
+    }
     public Node getChild(int i){
         return this.children.get(i);
     }
@@ -42,5 +49,8 @@ public class Node {
             str = str + aux;
         }
         return str;
+    }
+    public void accept(Visitor v){
+        v.visit(this);
     }
 }

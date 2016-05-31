@@ -37,4 +37,13 @@ public class ParamsNode extends Node {
         str += " >";
         return str;
     }
+    @Override
+    public Node copy(){
+        ParamsNode pn = new ParamsNode(this.id);
+        pn.params = this.params;
+        for(Node child : this.children){
+            pn.addChild(child.copy());
+        }
+        return pn;
+    }
 }

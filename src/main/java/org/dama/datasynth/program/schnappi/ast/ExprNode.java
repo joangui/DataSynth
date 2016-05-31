@@ -12,4 +12,12 @@ public class ExprNode extends Node {
         this(id);
         this.addChild(n);
     }
+    @Override
+    public Node copy(){
+        ExprNode en = new ExprNode(this.id);
+        for(Node child : this.children){
+            en.addChild(child.copy());
+        }
+        return en;
+    }
 }

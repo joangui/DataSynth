@@ -15,7 +15,8 @@ public final class Loader {
         ArrayList<Solver> solvers = new ArrayList<>();
         Iterator it = FileUtils.iterateFiles(new File(dir), null, false);
         while(it.hasNext()){
-            solvers.add(new DefaultSolver(((File)it.next()).getPath()));
+            Parser p = new Parser(((File)it.next()).getPath());
+            solvers.add(p.getSolver());
         }
         return solvers;
     }
