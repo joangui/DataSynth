@@ -7,28 +7,23 @@ import java.util.ArrayList;
  */
 public class FuncNode extends Node {
     //public ArrayList<String> ids;
-    public ParamsNode params;
     public FuncNode(String id, String id1, String id2){
         this(id);
-        params = new ParamsNode(id1, id2);
+        this.addChild(new ParamsNode(id1, id2));
     }
     public FuncNode(String id){
         super(id);
     }
-    public void addParams(ParamsNode pn){
-        this.params = pn;
-    }
-    @Override
+    /*@Override
     public String toString(){
         String str = "<" + this.id + " ";
         str = str + params;
         str += ">";
         return str;
-    }
+    }*/
     @Override
     public Node copy(){
         FuncNode fn = new FuncNode(this.id);
-        fn.addParams(this.params);
         for(Node child : this.children){
             fn.addChild(child.copy());
         }

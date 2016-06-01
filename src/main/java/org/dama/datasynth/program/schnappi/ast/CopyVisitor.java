@@ -6,7 +6,6 @@ package org.dama.datasynth.program.schnappi.ast;
 public class CopyVisitor extends Visitor{
     @Override
     public Node visit(AssigNode n) {
-        //AssigNode nn = new AssigNode(n);
         return null;
     }
 

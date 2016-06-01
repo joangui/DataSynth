@@ -13,4 +13,7 @@ public class Ast {
     public Node getRoot(){
         return root;
     }
+    public String print(){
+        return this.root.print();
+    }
 }

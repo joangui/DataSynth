@@ -27,7 +27,22 @@ public class Signature {
         this.target = target;
     }
 
-    public Boolean compareTo(Signature s){
+    public boolean compareTo(Signature s){
         return (this.source.compareTo(s.getSource()) == 0) && (this.target.compareTo(s.getTarget()) == 0);
+    }
+    @Override
+    public boolean equals(Object obj){
+        Signature s = (Signature) obj;
+        return this.compareTo(s);
+    }
+    @Override
+    public String toString(){
+        return source + " => " + target;
+    }
+    @Override
+    public int hashCode(){
+        int p = 19;
+        String str = source+target;
+        return p*(str.hashCode());
     }
 }

@@ -15,6 +15,7 @@ import org.dama.datasynth.lang.Ast;
 import org.dama.datasynth.lang.Parser;
 import org.dama.datasynth.lang.SemanticException;
 import org.dama.datasynth.lang.SyntacticException;
+import org.dama.datasynth.program.schnappi.Compiler;
 import org.dama.datasynth.program.schnappi.SchnappiGeneratorVisitor;
 import org.dama.datasynth.program.schnappi.SchnappiLexer;
 import org.dama.datasynth.program.schnappi.SchnappiParser;
@@ -95,10 +96,13 @@ public class DataSynth {
             String printedAst = "\n > " + n.toStringTabbed("");
             //System.out.println(printedAst);
             logger.log(Level.FINE, printedAst);
-            ArrayList<Solver> solvers = Loader.loadSolvers("src/main/resources/solvers");
+            /*ArrayList<Solver> solvers = Loader.loadSolvers("src/main/resources/solvers");
             for(Solver s : solvers){
                 System.out.println("\n >" + s.instantiate().getRoot().toStringTabbed(""));
-            }
+            }*/
+            Compiler c = new Compiler("src/main/resources/solvers");
+            c.synthesizeProgram(graph);
+            System.out.println(c.getProgram().print());
             start = System.currentTimeMillis();
             ExecutionEngine executor = new SparkExecutionEngine();
             //executor.execute(execPlan);

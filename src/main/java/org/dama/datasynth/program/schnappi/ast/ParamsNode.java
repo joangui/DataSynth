@@ -16,6 +16,9 @@ public class ParamsNode extends Node {
         this.addParam(param1);
         this.addParam(param2);
     }
+    public void mergeParams(ParamsNode n){
+        this.params.addAll(n.params);
+    }
     public void addParam(String id){
         this.params.add(id);
     }

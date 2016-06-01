@@ -50,6 +50,9 @@ public class Node {
         }
         return str;
     }
+    public String print(){
+        return this.toStringTabbed("");
+    }
     public void accept(Visitor v){
         v.visit(this);
     }

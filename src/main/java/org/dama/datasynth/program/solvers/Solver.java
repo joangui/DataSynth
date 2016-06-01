@@ -39,12 +39,12 @@ public class Solver {
             if(atom.type == "ID" && bindings.get(atom.id) != null){
                 atom.id = bindings.get(atom.id);
             }
-        }else if(root instanceof FuncNode){
-            ParamsNode params = ((FuncNode) root).params;
-            for(int i = 0; i<params.params.size(); ++i){
-                String str = bindings.get(params.params.get(i));
+        }else if(root instanceof ParamsNode){
+            ParamsNode pn = (ParamsNode) root;
+            for(int i = 0; i<pn.params.size(); ++i){
+                String str = bindings.get(pn.params.get(i));
                 if(str != null) {
-                    params.params.set(i,str);
+                    pn.params.set(i,str);
                 }
             }
         }

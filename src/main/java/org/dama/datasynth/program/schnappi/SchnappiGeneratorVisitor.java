@@ -65,8 +65,10 @@ public class SchnappiGeneratorVisitor extends org.dama.datasynth.program.schnapp
     @Override
     public FuncNode visitInit(org.dama.datasynth.program.schnappi.SchnappiParser.InitContext ctx){
         FuncNode n = new FuncNode("init");
-        n.addParams(visitParams(ctx.params()));
-        n.params.addParam(ctx.ID().getSymbol().getText());
+        ParamsNode pn = new ParamsNode("params");
+        pn.addParam(ctx.ID().getSymbol().getText());
+        pn.mergeParams(visitParams(ctx.params()));
+        n.addChild(pn);
         return n;
     }
     @Override
@@ -98,13 +100,13 @@ public class SchnappiGeneratorVisitor extends org.dama.datasynth.program.schnapp
         for(TerminalNode tn : ctx.ID()) {
             pn.addParam(tn.getSymbol().getText());
         }
-        n.addParams(pn);
+        n.addChild(pn);
         return n;
     }
     @Override
     public FuncNode visitUnion(org.dama.datasynth.program.schnappi.SchnappiParser.UnionContext ctx){
         FuncNode n = new FuncNode("union");
-        n.addParams(visitParams(ctx.params()));
+        n.addChild(visitParams(ctx.params()));
         return n;
     }
     @Override
@@ -114,13 +116,13 @@ public class SchnappiGeneratorVisitor extends org.dama.datasynth.program.schnapp
         for(TerminalNode tn : ctx.ID()) {
             pn.addParam(tn.getSymbol().getText());
         }
-        n.addParams(pn);
+        n.addChild(pn);
         return n;
     }
     @Override
     public FuncNode visitEqjoin(org.dama.datasynth.program.schnappi.SchnappiParser.EqjoinContext ctx){
         FuncNode n = new FuncNode("eqjoin");
-        n.addParams(visitParams(ctx.params()));
+        n.addChild(visitParams(ctx.params()));
         return n;
     }
     @Override
@@ -136,7 +138,7 @@ public class SchnappiGeneratorVisitor extends org.dama.datasynth.program.schnapp
         FuncNode n = new FuncNode("genids");
         ParamsNode pn = new ParamsNode("params");
         pn.addParam(ctx.NUM().getSymbol().getText());
-        n.addParams(pn);
+        n.addChild(pn);
         return n;
     }
 }
