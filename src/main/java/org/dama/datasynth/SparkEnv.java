@@ -7,7 +7,7 @@ public final class SparkEnv{
     public static SparkConf conf;
     public static JavaSparkContext sc;
     public static void initialize(){
-        conf = new SparkConf().setAppName("test_app").setMaster("local[4]");
+        conf = new SparkConf().setAppName("DataSynth").setMaster("local[4]");
         sc = new JavaSparkContext(conf);
     }
 }
