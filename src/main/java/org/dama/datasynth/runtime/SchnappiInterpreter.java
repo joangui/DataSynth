@@ -22,12 +22,13 @@ import java.util.Map;
  * Created by quim on 6/6/16.
  */
 public class SchnappiInterpreter {
-    private Map<String, JavaPairRDD<Long, Tuple>> attributeRDDs;
+    private Map<String, JavaPairRDD<Long, Tuple>> rdds;
+    private Map<String, Object> functions;
     private Map<String, Types.DATATYPE>  attributeTypes;
     private Map<String, Object> table;
 
     public SchnappiInterpreter() {
-        attributeRDDs = new HashMap<String,JavaPairRDD<Long,Tuple>>();
+        rdds = new HashMap<String,JavaPairRDD<Long,Tuple>>();
         attributeTypes = new HashMap<String, Types.DATATYPE>();
         table = new HashMap<String, Object>();
     }
@@ -35,7 +36,7 @@ public class SchnappiInterpreter {
 
     }
     public Object execAssig(AssigNode n) {
-        attributeRDDs.put(n.getChild(0).id, this.execExpr(n.getChild(1)));
+        rdds.put(n.getChild(0).id, this.execExpr(n.getChild(1)));
     }
     public Object execExpr(Node n){
         return execAtom(n);
@@ -45,7 +46,7 @@ public class SchnappiInterpreter {
     }
     public JavaPairRDD<Long, Tuple> execMap(FuncNode fn) {
         Object f = fetchFunction(fn.getChild(0));
-        Object rd = fetchRdd(fn.getChild(1));
+        Object rd = fetchRDD(fn.getChild(1));
         JavaPairRDD<Long, Tuple> rdd = (JavaPairRDD<Long, Tuple>) rd;
         return rdd.mapValues(f);
     }
@@ -86,9 +87,12 @@ public class SchnappiInterpreter {
         return idss;
     }
     private JavaPairRDD<Long, Tuple> fetchRDD(String str){
-        return this.attributeRDDs.get(str);
+        return this.rdds.get(str);
     }
     private Object fetchFunction(String generatorName, int numParams){
+        Object func = functions.get(generatorName);
+        if(func != null) return func;
+
         Generator generator = null;
         try {
             generator = (Generator)Class.forName(generatorName).newInstance();
@@ -108,7 +112,7 @@ public class SchnappiInterpreter {
             }
             break;
             case 1: {
-                JavaPairRDD<Long, Tuple> attributeRDD = attributeRDDs.get(task.getEntity() + "." + task.getRunParameters().get(0));
+                JavaPairRDD<Long, Tuple> attributeRDD = rdds.get(task.getEntity() + "." + task.getRunParameters().get(0));
                 //JavaPairRDD<Long,Tuple> entityAttributeRDD = unionRDDs(entityRDD, attributeRDD);
                 JavaPairRDD<Long,Tuple> entityAttributeRDD = entityRDD.union(attributeRDD).reduceByKey(TupleUtils.join);
                 FunctionWrapper fw = new FunctionWrapper(generator, "run", runParameterTypes,task.getAttributeType());
@@ -116,8 +120,8 @@ public class SchnappiInterpreter {
             }
             break;
             case 2: {
-                JavaPairRDD<Long, Tuple> attributeRDD0 = attributeRDDs.get(task.getEntity() + "." + task.getRunParameters().get(0));
-                JavaPairRDD<Long, Tuple> attributeRDD1 = attributeRDDs.get(task.getEntity() + "." + task.getRunParameters().get(1));
+                JavaPairRDD<Long, Tuple> attributeRDD0 = rdds.get(task.getEntity() + "." + task.getRunParameters().get(0));
+                JavaPairRDD<Long, Tuple> attributeRDD1 = rdds.get(task.getEntity() + "." + task.getRunParameters().get(1));
                 //JavaPairRDD<Long,Tuple> entityAttributeRDD = unionRDDs(entityRDD, attributeRDD0, attributeRDD1);
                 JavaPairRDD<Long,Tuple> entityAttributeRDD = entityRDD.union(attributeRDD0).union(attributeRDD1).reduceByKey(TupleUtils.join);
                 Function2Wrapper fw = new Function2Wrapper(generator, "run", runParameterTypes,task.getAttributeType());

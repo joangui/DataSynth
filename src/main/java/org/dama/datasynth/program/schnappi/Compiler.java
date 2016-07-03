@@ -51,7 +51,7 @@ public class Compiler {
     private void solveEdge(DEdge e) throws CompileException {
         Solver s = this.solversDB.get(e.getSignature());
         if(s == null) throw new CompileException("Unsolvable program");
-        this.concatenateProgram(s.instantiate());
+        this.concatenateProgram(s.instantiate(e));
         //cool stuff happening here
         //this.merge(solversDB.get(e.getSignature()).instantiate(e.getSource(), e.getTarget()));
         // this.program.appendSomeStuffSomePlace(

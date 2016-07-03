@@ -83,4 +83,15 @@ public class Types {
         }
         throw new CommonException("Generator "+generator.getClass().getName()+" does not have a method with name "+methodName+" with paramters "+parameterTypes.size()+" parameters <"+paramsString+"> and return type "+(returnType != null ? returnType.getText() : "null"));
     }
+
+    public static Method GetUntypedMethod(Generator generator, String methodName) throws CommonException {
+        Method[] methods = generator.getClass().getMethods();
+        for(Method m : methods) {
+            String mName = m.getName();
+            if(mName.compareTo(methodName)==0) {
+                return m;
+            }
+        }
+        throw new CommonException("Generator "+generator.getClass().getName()+" does not have a method with name "+methodName );
+    }
 }
