@@ -14,8 +14,8 @@ import java.util.List;
 public class Function0Wrapper extends UntypedMethod implements Function<Tuple, Tuple> {
 
 
-    public Function0Wrapper(Generator g, String functionName, List<Types.DATATYPE> parameters, Types.DATATYPE returnType) {
-        super(g,functionName,parameters,returnType);
+    public Function0Wrapper(Generator g, String functionName) {
+        super(g,functionName);
     }
 
     public Tuple call(Tuple l) {

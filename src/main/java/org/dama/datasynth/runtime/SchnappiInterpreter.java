@@ -2,13 +2,15 @@ package org.dama.datasynth.runtime;
 
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.function.Function;
+import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.api.java.function.PairFunction;
 import org.dama.datasynth.SparkEnv;
 import org.dama.datasynth.common.Types;
 import org.dama.datasynth.program.schnappi.ast.*;
-import org.dama.datasynth.runtime.spark.Function0Wrapper;
-import org.dama.datasynth.runtime.spark.Function2Wrapper;
-import org.dama.datasynth.runtime.spark.FunctionWrapper;
+import org.dama.datasynth.runtime.spark.untyped.Function0Wrapper;
+import org.dama.datasynth.runtime.spark.untyped.Function2Wrapper;
+import org.dama.datasynth.runtime.spark.untyped.FunctionWrapper;
 import org.dama.datasynth.utils.Tuple;
 import org.dama.datasynth.utils.TupleUtils;
 import scala.Tuple2;
@@ -23,7 +25,6 @@ import java.util.Map;
  */
 public class SchnappiInterpreter {
     private Map<String, JavaPairRDD<Long, Tuple>> rdds;
-    private Map<String, Object> functions;
     private Map<String, Types.DATATYPE>  attributeTypes;
     private Map<String, Object> table;
 
@@ -45,8 +46,8 @@ public class SchnappiInterpreter {
         //NUM | ID | funcs
     }
     public JavaPairRDD<Long, Tuple> execMap(FuncNode fn) {
-        Object f = fetchFunction(fn.getChild(0));
-        Object rd = fetchRDD(fn.getChild(1));
+        Function<Tuple,Tuple> f = fetchFunction(fn.getChild(0).id, Integer.parseInt(fn.getChild(1).id));
+        Object rd = fetchRDD(fn.getChild(1).id);
         JavaPairRDD<Long, Tuple> rdd = (JavaPairRDD<Long, Tuple>) rd;
         return rdd.mapValues(f);
     }
@@ -61,18 +62,25 @@ public class SchnappiInterpreter {
         return result;
     }
     public JavaPairRDD<Long, Tuple> execReduce(FuncNode fn) {
-        Object f = fetchFunction(fn.getChild(0));
+        Function<Tuple,Tuple> f = fetchFunction(fn.getChild(0).id, Integer.parseInt(fn.getChild(1).id));
         JavaRDD<Tuple2<Long, Tuple>> aux = SparkEnv.sc.emptyRDD();
         JavaPairRDD<Long,Tuple> result = JavaPairRDD.fromJavaRDD(aux);
         for(Node an : fn.children){
             Object rdd = execAtom(an);
             result.union((JavaPairRDD<Long,Tuple>)rdd);
         }
-        result.reduceByKey(f);
+        /*new Function2<Long, Tuple, Tuple>() {
+            @Override
+            public Long call(Tuple a, Tuple b) throws Exception {
+                Function2Wrapper<>
+                return f(a,b);
+            }
+        };*/
+        //result.reduceByKey(f);
         return result;
     }
-    public Object execEqjoin(FuncNode n){
-
+    public JavaPairRDD<Long, Tuple> execEqjoin(FuncNode n){
+        return null;
     }
     public JavaPairRDD<Long, Tuple> execGenids(FuncNode fn){
         ParamsNode pn = (ParamsNode) fn.getChild(0);
@@ -89,10 +97,7 @@ public class SchnappiInterpreter {
     private JavaPairRDD<Long, Tuple> fetchRDD(String str){
         return this.rdds.get(str);
     }
-    private Object fetchFunction(String generatorName, int numParams){
-        Object func = functions.get(generatorName);
-        if(func != null) return func;
-
+    private Function<Tuple, Tuple> fetchFunction(String generatorName, int numParams) {
         Generator generator = null;
         try {
             generator = (Generator)Class.forName(generatorName).newInstance();
@@ -105,32 +110,27 @@ public class SchnappiInterpreter {
         } finally {
             //System.exit(1);
         }
+        Function<Tuple, Tuple> fw = null;
         switch(numParams){
             case 0: {
-                Function0Wrapper fw = new Function0Wrapper(generator, "run", runParameterTypes,task.getAttributeType());
-                rdd = entityRDD.mapValues(fw);
+                fw = new Function0Wrapper(generator, "run");
             }
             break;
             case 1: {
-                JavaPairRDD<Long, Tuple> attributeRDD = rdds.get(task.getEntity() + "." + task.getRunParameters().get(0));
-                //JavaPairRDD<Long,Tuple> entityAttributeRDD = unionRDDs(entityRDD, attributeRDD);
-                JavaPairRDD<Long,Tuple> entityAttributeRDD = entityRDD.union(attributeRDD).reduceByKey(TupleUtils.join);
-                FunctionWrapper fw = new FunctionWrapper(generator, "run", runParameterTypes,task.getAttributeType());
-                rdd = entityAttributeRDD.mapValues(fw);
+                fw = new FunctionWrapper(generator, "run");
             }
             break;
             case 2: {
-                JavaPairRDD<Long, Tuple> attributeRDD0 = rdds.get(task.getEntity() + "." + task.getRunParameters().get(0));
-                JavaPairRDD<Long, Tuple> attributeRDD1 = rdds.get(task.getEntity() + "." + task.getRunParameters().get(1));
-                //JavaPairRDD<Long,Tuple> entityAttributeRDD = unionRDDs(entityRDD, attributeRDD0, attributeRDD1);
-                JavaPairRDD<Long,Tuple> entityAttributeRDD = entityRDD.union(attributeRDD0).union(attributeRDD1).reduceByKey(TupleUtils.join);
-                Function2Wrapper fw = new Function2Wrapper(generator, "run", runParameterTypes,task.getAttributeType());
-                rdd = entityAttributeRDD.mapValues(fw);
+                fw = new Function2Wrapper(generator, "run");
             }
             break;
             default:
-                throw new ExecutionException("Unsupported number of parameters");
-
+                try {
+                    throw new ExecutionException("Unsupported number of parameters");
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
         }
+        return fw;
     }
 }

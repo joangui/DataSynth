@@ -12,10 +12,10 @@ import java.util.List;
 /**
  * Created by aprat on 17/04/16.
  */
-public class Function2Wrapper extends MethodSerializable implements Function<Tuple, Tuple> {
+public class Function2Wrapper extends UntypedMethod implements Function<Tuple, Tuple> {
 
-    public Function2Wrapper(Generator g, String functionName, List<Types.DATATYPE> parameters, Types.DATATYPE returnType) {
-        super(g,functionName,parameters, returnType);
+    public Function2Wrapper(Generator g, String functionName) {
+        super(g,functionName);
     }
 
     public Tuple call(Tuple t) {
