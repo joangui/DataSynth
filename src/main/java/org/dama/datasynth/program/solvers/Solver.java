@@ -38,13 +38,13 @@ public class Solver {
     public void instantiate(Node root, DEdge e){
         if(root instanceof AtomNode){
             AtomNode atom = (AtomNode) root;
-            if(atom.type == "ID" && bindings.get(atom.id) != null){
-                atom.id = bindings.get(atom.id);
+            if(atom.type == "ID" && fetchValue(atom.id, e) != null){
+                atom.id = fetchValue(atom.id, e);
             }
         }else if(root instanceof ParamsNode){
             ParamsNode pn = (ParamsNode) root;
             for(int i = 0; i<pn.params.size(); ++i){
-                String str = bindings.get(pn.params.get(i));
+                String str = fetchValue(pn.params.get(i), e);
                 if(str != null) {
                     pn.params.set(i,str);
                 }
@@ -65,6 +65,20 @@ public class Solver {
         for(Node child : root.children){
             instantiate(child, e);
         }
+    }
+    private String fetchValue(String id, DEdge e){
+        String aux = bindings.get(id);
+        if(aux.substring(0,1).equalsIgnoreCase("@")){
+            switch(aux){
+                case "@source.generator" : {
+                    AttributeTask at = (AttributeTask) e.getSource();
+                    return at.getGenerator();
+                }
+                default : {
+                    return null;
+                }
+            }
+        }else return aux;
     }
     public Ast instantiate(DEdge e){
         //CopyVisitor cv = new CopyVisitor();

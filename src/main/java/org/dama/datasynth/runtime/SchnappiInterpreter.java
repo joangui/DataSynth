@@ -8,9 +8,11 @@ import org.apache.spark.api.java.function.PairFunction;
 import org.dama.datasynth.SparkEnv;
 import org.dama.datasynth.common.Types;
 import org.dama.datasynth.program.schnappi.ast.*;
+import org.dama.datasynth.runtime.spark.MethodRef;
 import org.dama.datasynth.runtime.spark.untyped.Function0Wrapper;
 import org.dama.datasynth.runtime.spark.untyped.Function2Wrapper;
 import org.dama.datasynth.runtime.spark.untyped.FunctionWrapper;
+import org.dama.datasynth.runtime.spark.untyped.UntypedMethod;
 import org.dama.datasynth.utils.Tuple;
 import org.dama.datasynth.utils.TupleUtils;
 import scala.Tuple2;
@@ -33,17 +35,58 @@ public class SchnappiInterpreter {
         attributeTypes = new HashMap<String, Types.DATATYPE>();
         table = new HashMap<String, Object>();
     }
-    public Object execInit(FuncNode fn){
-
+    public UntypedMethod execInit(FuncNode fn){
+        String generatorName = fn.getChild(0).id;
+        Generator generator = null;
+        try {
+            generator = (Generator)Class.forName(generatorName).newInstance();
+        } catch (ClassNotFoundException cNFE) {
+            cNFE.printStackTrace();
+        } catch (InstantiationException iE) {
+            iE.printStackTrace();
+        } catch (IllegalAccessException iAE) {
+            iAE.printStackTrace();
+        } finally {
+            //System.exit(1);
+        }
+        ArrayList<Object> params = new ArrayList<>();
+        for(int i = 1; i < fn.children.size(); ++i) params.add(fn.getChild(i));
+        UntypedMethod method = new UntypedMethod(generator,"initialize");
+        method.invoke(params);
+        return method;
+        //return new MethodRef(generatorName, method);
     }
     public Object execAssig(AssigNode n) {
-        rdds.put(n.getChild(0).id, this.execExpr(n.getChild(1)));
+        table.put(n.getChild(0).id, this.execExpr(n.getChild(1)));
     }
     public Object execExpr(Node n){
         return execAtom(n);
     }
     public Object execAtom(Node n){
-        //NUM | ID | funcs
+        if(n instanceof AtomNode){
+            return n.id;
+        }else{
+            return execFunc((FuncNode) n);
+        }
+    }
+    public Object execFunc(FuncNode n){
+        switch(n.type){
+            case "map" : {
+                return execMap(n);
+            }
+            case "union" : {
+                return execUnion(n);
+            }
+            case "reduce" : {
+                return execReduce(n);
+            }
+            case "genids" :{
+                return execGenids(n);
+            }
+            default: {
+                return null;
+            }
+        }
     }
     public JavaPairRDD<Long, Tuple> execMap(FuncNode fn) {
         Function<Tuple,Tuple> f = fetchFunction(fn.getChild(0).id, Integer.parseInt(fn.getChild(1).id));
@@ -132,5 +175,9 @@ public class SchnappiInterpreter {
                 }
         }
         return fw;
+    }
+    public Object fetchParameter(String param){
+        if(table.get(param) != null) return table.get(param);
+        else return param;
     }
 }

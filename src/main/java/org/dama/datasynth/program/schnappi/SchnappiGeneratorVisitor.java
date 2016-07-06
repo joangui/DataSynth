@@ -94,6 +94,16 @@ public class SchnappiGeneratorVisitor extends org.dama.datasynth.program.schnapp
         else return visitFuncs(functx);
     }
     @Override
+    public Node visitFuncs(org.dama.datasynth.program.schnappi.SchnappiParser.FuncsContext ctx){
+        if(ctx.init() != null) return visitInit(ctx.init());
+        else if(ctx.genids() != null) return visitGenids(ctx.genids());
+        else if(ctx.map() != null) return visitMap(ctx.map());
+        else if(ctx.reduce() != null) return visitReduce(ctx.reduce());
+        else if(ctx.union() != null) return visitUnion(ctx.union());
+        else if(ctx.eqjoin() != null) return visitEqjoin(ctx.eqjoin());
+        return null;
+    }
+    @Override
     public FuncNode visitMap(org.dama.datasynth.program.schnappi.SchnappiParser.MapContext ctx) {
         FuncNode n = new FuncNode("map");
         ParamsNode pn = new ParamsNode("params");
