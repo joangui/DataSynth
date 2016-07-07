@@ -22,4 +22,10 @@ public class DependencyGraph {
     public void setG(DirectedGraph<Vertex, DEdge> g) {
         this.g = g;
     }
+    public void print(){
+        for(DEdge e: g.edgeSet()){
+            System.out.println(e.getSource().getType() + " :: " + e.getTarget().getType());
+            System.out.println(e.getSource().getId() + " -> " + e.getTarget().getId());
+        }
+    }
 }

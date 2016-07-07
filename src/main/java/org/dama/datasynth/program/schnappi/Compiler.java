@@ -33,7 +33,9 @@ public class Compiler {
         TopologicalOrderIterator<Vertex, DEdge> it = new TopologicalOrderIterator<>(g.getG());
         while(it.hasNext()){
             Vertex v = it.next();
+            System.out.print(" >> " + v.getId() + " :: " + v.getType());
             Set<DEdge> edges = g.getG().outgoingEdgesOf(v);
+
             for(DEdge e : edges){
                 try {
                     solveEdge(e);
@@ -47,6 +49,7 @@ public class Compiler {
                 }
             }
         }
+        System.out.print("\n");
     }
     private void solveEdge(DEdge e) throws CompileException {
         Solver s = this.solversDB.get(e.getSignature());

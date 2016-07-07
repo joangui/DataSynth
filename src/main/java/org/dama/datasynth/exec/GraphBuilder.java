@@ -43,7 +43,8 @@ public class GraphBuilder {
                 AttributeTask task = new AttributeTask(entity,attribute);
                 tasks.put(task.getEntity()+"."+task.getAttributeName(),task);
                 g.addVertex(task);
-                g.addEdge(task,oid);
+                //g.addEdge(task,oid); Reversed due to topological sorting implementation
+                g.addEdge(oid,task);
             }
         }
         //############################################################################
@@ -63,7 +64,8 @@ public class GraphBuilder {
                             if (!processed.contains(otherTask)) {
                                 toProcess.add(otherTask);
                             }
-                            g.addEdge(currentTask,otherTask);
+                            //g.addEdge(currentTask,otherTask); Reversed due to topological sorting implementation
+                            g.addEdge(otherTask,currentTask);
                         }
                     }
                 }

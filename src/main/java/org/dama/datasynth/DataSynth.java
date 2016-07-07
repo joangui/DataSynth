@@ -85,6 +85,8 @@ public class DataSynth {
             execPlan.initialize(ast);*/
             DependencyGraph graph = new DependencyGraph(ast);
             end = System.currentTimeMillis();
+            System.out.println("Printing graph");
+            graph.print();
             logger.info(" Execution plan created in  "+(end-start) + " ms");
 
             SchnappiLexer SchLexer = new SchnappiLexer( new ANTLRFileStream("src/main/resources/solvers/test.spi"));
