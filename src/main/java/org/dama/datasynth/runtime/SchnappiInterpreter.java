@@ -57,7 +57,7 @@ public class SchnappiInterpreter {
         //return new MethodRef(generatorName, method);
     }
     public Object execAssig(AssigNode n) {
-        table.put(n.getChild(0).id, this.execExpr(n.getChild(1)));
+        return table.put(n.getChild(0).id, this.execExpr(n.getChild(1)));
     }
     public Object execExpr(Node n){
         return execAtom(n);

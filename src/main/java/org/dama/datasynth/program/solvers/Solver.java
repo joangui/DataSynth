@@ -68,6 +68,7 @@ public class Solver {
     }
     private String fetchValue(String id, DEdge e){
         String aux = bindings.get(id);
+        if(aux == null) return null;
         if(aux.substring(0,1).equalsIgnoreCase("@")){
             switch(aux){
                 case "@source.generator" : {
