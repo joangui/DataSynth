@@ -9,6 +9,7 @@ import org.dama.datasynth.program.schnappi.ast.BindingNode;
 import org.dama.datasynth.program.schnappi.ast.Node;
 import org.dama.datasynth.program.schnappi.ast.SignatureNode;
 import org.dama.datasynth.program.solvers.Signature;
+import org.dama.datasynth.program.solvers.SignatureVertex;
 import org.dama.datasynth.program.solvers.Solver;
 
 import java.io.IOException;
@@ -54,10 +55,15 @@ public class Parser {
         }
         return binds;
     }
-    public Signature getSignature(Node root){
+    /*public Signature getSignature(Node root){
         SignatureNode sn = (SignatureNode) root.getChild(0);
         String source = sn.getChild(0).id;
         String target = sn.getChild(1).id;
         return new Signature(source,target);
+    }*/
+    public SignatureVertex getSignature(Node root){
+        SignatureNode sn = (SignatureNode) root.getChild(0);
+        String type = sn.getChild(0).id;
+        return new SignatureVertex(type);
     }
 }

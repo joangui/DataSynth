@@ -24,6 +24,7 @@ import org.dama.datasynth.program.solvers.Loader;
 import org.dama.datasynth.program.solvers.Solver;
 import org.dama.datasynth.runtime.ExecutionEngine;
 import org.dama.datasynth.runtime.ExecutionException;
+import org.dama.datasynth.runtime.SchnappiInterpreter;
 import org.dama.datasynth.runtime.spark.SparkExecutionEngine;
 import org.dama.datasynth.utils.LogFormatter;
 
@@ -107,6 +108,9 @@ public class DataSynth {
             System.out.println(c.getProgram().print());
             start = System.currentTimeMillis();
             ExecutionEngine executor = new SparkExecutionEngine();
+            SchnappiInterpreter schInt = new SchnappiInterpreter();
+            schInt.execProgram(c.getProgram().getRoot());
+            schInt.check();
             //executor.execute(execPlan);
             executor.dummyExecute();
             executor.dumpData(config.outputDir);

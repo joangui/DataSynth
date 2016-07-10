@@ -1,10 +1,15 @@
 package org.dama.datasynth.program.schnappi;
 
+import org.antlr.v4.runtime.tree.TerminalNode;
 import org.dama.datasynth.exec.*;
 import org.dama.datasynth.program.Ast;
+import org.dama.datasynth.program.schnappi.ast.AtomNode;
+import org.dama.datasynth.program.schnappi.ast.FuncNode;
 import org.dama.datasynth.program.schnappi.ast.Node;
+import org.dama.datasynth.program.schnappi.ast.ParamsNode;
 import org.dama.datasynth.program.solvers.Loader;
 import org.dama.datasynth.program.solvers.Signature;
+import org.dama.datasynth.program.solvers.SignatureVertex;
 import org.dama.datasynth.program.solvers.Solver;
 import org.jgrapht.traverse.TopologicalOrderIterator;
 
@@ -17,7 +22,7 @@ import java.util.Set;
  * Created by quim on 5/5/16.
  */
 public class Compiler {
-    private Map<Signature, Solver> solversDB;
+    private Map<SignatureVertex, Solver> solversDB;
     private Ast program;
     public Compiler(String dir){
         loadSolvers(dir);
@@ -31,30 +36,61 @@ public class Compiler {
     }
     public void synthesizeProgram(DependencyGraph g){
         TopologicalOrderIterator<Vertex, DEdge> it = new TopologicalOrderIterator<>(g.getG());
-        while(it.hasNext()){
+        while(it.hasNext()) {
             Vertex v = it.next();
             System.out.print(" >> " + v.getId() + " :: " + v.getType());
-            Set<DEdge> edges = g.getG().outgoingEdgesOf(v);
-
-            for(DEdge e : edges){
-                try {
-                    solveEdge(e);
-                } catch (CompileException e1) {
-                    System.out.println();
-                    for(Solver s : solversDB.values()){
-                        Solver sp = this.solversDB.get(e.getSignature());
-                        System.out.println("Edge " + e.getSignature() + " | Solver "+s.getSignature() + " | equal? "+ e.getSignature().equals(s.getSignature()) + " null? " + (sp == null));
+            if (v.getType().equalsIgnoreCase("attribute")) {
+                if (!v.getId().equalsIgnoreCase("person.oid")) {
+                    if (g.getG().incomingEdgesOf(v).size() > 0) addIncomingUnion(v, g);
+                    try {
+                        solveVertex(v);
+                    } catch (CompileException e) {
+                        e.printStackTrace();
                     }
-                    //e1.printStackTrace();
+                } else {
+                    FuncNode n = new FuncNode("genids");
+                    ParamsNode pn = new ParamsNode("params");
+                    AttributeTask at = (AttributeTask) v;
+                    pn.addParam(String.valueOf(at.getNumEntities()));
+                    n.addChild(pn);
+                    Node np = new Node("OP", "op");
+                    Node na = new Node("ASSIG", "assig");
+                    Node ne = new Node("EXPR", "expr");
+                    ne.addChild(n);
+                    na.addChild(new AtomNode(v.getId(), "ID"));
+                    na.addChild(ne);
+                    np.addChild(na);
+                    this.program.getRoot().addChild(np);
                 }
+            }else if(v.getType().equalsIgnoreCase("entity")){
+                Set<DEdge> edges = g.getG().incomingEdgesOf(v);
+                Node np = new Node("OP", "op");
+                Node na = new Node("ASSIG", "assig");
+                Node ne = new Node("EXPR", "expr");
+                FuncNode n = new FuncNode("union");
+                ParamsNode pn = new ParamsNode("params");
+                for(DEdge e : edges){
+                    pn.addParam(e.getSource().getId() + ".result");
+                }
+                n.addChild(pn);
+                ne.addChild(n);
+                na.addChild(new AtomNode(v.getId() + ".final", "ID"));
+                na.addChild(ne);
+                np.addChild(na);
+                this.program.getRoot().addChild(np);
             }
         }
         System.out.print("\n");
     }
+    private void solveVertex(Vertex v) throws CompileException {
+        Solver s = this.solversDB.get(v.getSignature());
+        if(s == null) throw new CompileException("Unsolvable program");
+        this.concatenateProgram(s.instantiate(v));
+    }
     private void solveEdge(DEdge e) throws CompileException {
         Solver s = this.solversDB.get(e.getSignature());
         if(s == null) throw new CompileException("Unsolvable program");
-        this.concatenateProgram(s.instantiate(e));
+        //this.concatenateProgram(s.instantiate(e));
         //cool stuff happening here
         //this.merge(solversDB.get(e.getSignature()).instantiate(e.getSource(), e.getTarget()));
         // this.program.appendSomeStuffSomePlace(
@@ -64,6 +100,23 @@ public class Compiler {
         for(Node nn : np.children){
             this.program.getRoot().addChild(nn);
         }
+    }
+    private void addIncomingUnion(Vertex v, DependencyGraph g){
+        Set<DEdge> edges = g.getG().incomingEdgesOf(v);
+        Node np = new Node("OP", "op");
+        Node na = new Node("ASSIG", "assig");
+        Node ne = new Node("EXPR", "expr");
+        FuncNode n = new FuncNode("union");
+        ParamsNode pn = new ParamsNode("params");
+        for(DEdge e : edges){
+            pn.addParam(e.getSource().getId() + ".result");
+        }
+        n.addChild(pn);
+        ne.addChild(n);
+        na.addChild(new AtomNode(v.getId() + ".input", "ID"));
+        na.addChild(ne);
+        np.addChild(na);
+        this.program.getRoot().addChild(np);
     }
     public Ast getProgram() {
         return this.program;

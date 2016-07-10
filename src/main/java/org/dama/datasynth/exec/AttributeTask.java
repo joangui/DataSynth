@@ -85,6 +85,9 @@ public class AttributeTask extends Vertex  {
         engine.execute(this);
     }
 
+    public long getNumEntities(){
+        return this.entity.getNumEntities();
+    }
 
     @Override
     public void accept(DependencyGraphVisitor visitor) {

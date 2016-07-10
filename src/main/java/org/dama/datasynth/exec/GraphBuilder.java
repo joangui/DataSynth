@@ -39,12 +39,15 @@ public class GraphBuilder {
             //g.addVertex(entityTask);
             AttributeTask oid = new AttributeTask(entity,new Ast.Attribute("oid", Types.DATATYPE.INTEGER,new Ast.Generator("IdGenerator")));
             g.addVertex(oid);
+            g.addVertex(entityTask);
             for(Ast.Attribute attribute : entity.getAttributes()) {
                 AttributeTask task = new AttributeTask(entity,attribute);
                 tasks.put(task.getEntity()+"."+task.getAttributeName(),task);
                 g.addVertex(task);
                 //g.addEdge(task,oid); Reversed due to topological sorting implementation
                 g.addEdge(oid,task);
+                g.addEdge(task, entityTask);
+
             }
         }
         //############################################################################

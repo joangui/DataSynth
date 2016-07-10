@@ -1,21 +1,14 @@
 signature : {
-    @source = attribute
-    @target = entity
+    @source = entity
+    @target = attribute
 }
 
 bindings : {
     x = @source.id
     f = @target.func
-    x1 = @source.degree
-    x2 = @target.degree
-    x3 = @source.edge
-    x4 = @source.self
-    x5 = @target.self
 }
 
 program : {
     fp = new f(a)
-    x = map(x, fp)
-    y = union(x1,x2,x3,x4,x5)
-    yy = eqjoin(x1,x3,x5)
+    x = reduce(x, fp)
 }
