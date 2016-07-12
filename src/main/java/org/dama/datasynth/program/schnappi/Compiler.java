@@ -38,7 +38,7 @@ public class Compiler {
         TopologicalOrderIterator<Vertex, DEdge> it = new TopologicalOrderIterator<>(g.getG());
         while(it.hasNext()) {
             Vertex v = it.next();
-            System.out.print(" >> " + v.getId() + " :: " + v.getType());
+            //System.out.print(" >> " + v.getId() + " :: " + v.getType());
             if (v.getType().equalsIgnoreCase("attribute")) {
                 if (!v.getId().equalsIgnoreCase("person.oid")) {
                     if (g.getG().incomingEdgesOf(v).size() > 0) addIncomingUnion(v, g);
@@ -70,7 +70,7 @@ public class Compiler {
                 FuncNode n = new FuncNode("union");
                 ParamsNode pn = new ParamsNode("params");
                 for(DEdge e : edges){
-                    pn.addParam(e.getSource().getId() + ".result");
+                    pn.addParam(e.getSource().getId());
                 }
                 n.addChild(pn);
                 ne.addChild(n);
@@ -109,7 +109,7 @@ public class Compiler {
         FuncNode n = new FuncNode("union");
         ParamsNode pn = new ParamsNode("params");
         for(DEdge e : edges){
-            pn.addParam(e.getSource().getId() + ".result");
+            pn.addParam(e.getSource().getId());
         }
         n.addChild(pn);
         ne.addChild(n);

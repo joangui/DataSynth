@@ -43,7 +43,7 @@ public class ParamsNode extends Node {
     @Override
     public Node copy(){
         ParamsNode pn = new ParamsNode(this.id);
-        pn.params = this.params;
+        pn.params = new ArrayList<String>(this.params);
         for(Node child : this.children){
             pn.addChild(child.copy());
         }

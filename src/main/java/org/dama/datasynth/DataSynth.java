@@ -105,7 +105,7 @@ public class DataSynth {
             }*/
             Compiler c = new Compiler("src/main/resources/solvers");
             c.synthesizeProgram(graph);
-            System.out.println(c.getProgram().print());
+            logger.log(Level.FINE, c.getProgram().print());
             start = System.currentTimeMillis();
             ExecutionEngine executor = new SparkExecutionEngine();
             SchnappiInterpreter schInt = new SchnappiInterpreter();

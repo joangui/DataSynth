@@ -45,8 +45,9 @@ public class Solver {
             ParamsNode pn = (ParamsNode) root;
             for(int i = 0; i<pn.params.size(); ++i){
                 String str = fetchValue(pn.params.get(i), v);
+                //str = pn.params.get(i) + ":" + i + ":" + ((AttributeTask) v).getGenerator();
                 if(str != null) {
-                    pn.params.set(i,str);
+                    pn.params.set(i, str);
                 }
             }
         }else if(root instanceof FuncNode){
@@ -73,11 +74,16 @@ public class Solver {
             switch(aux){
                 case "@source.generator" : {
                     AttributeTask at = (AttributeTask) v;
+                    /*System.out.println(" ID " + id + " Generator " + at.getGenerator());*/
                     return at.getGenerator();
                 }
                 case "@source.input" : {
                     AttributeTask at = (AttributeTask) v;
                     return at.getId()+".input";
+                }
+                case "@source.id" : {
+                    AttributeTask at = (AttributeTask) v;
+                    return at.getId();
                 }
                 default : {
                     return null;

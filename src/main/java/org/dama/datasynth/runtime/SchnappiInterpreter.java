@@ -29,13 +29,13 @@ public class SchnappiInterpreter {
     private Map<String, JavaPairRDD<Long, Tuple>> rdds;
     private Map<String, Types.DATATYPE>  attributeTypes;
     private Map<String, Object> table;
-    private Map<String, UntypedMethod> methods;
+    private Map<String, Generator> generators;
 
     public SchnappiInterpreter() {
         rdds = new HashMap<String,JavaPairRDD<Long,Tuple>>();
         attributeTypes = new HashMap<String, Types.DATATYPE>();
         table = new HashMap<String, Object>();
-        methods = new HashMap<String, UntypedMethod>();
+        generators = new HashMap<String, Generator>();
     }
     public void execProgram(Node n){
         for(Node child : n.children) execOp(child);
@@ -58,14 +58,14 @@ public class SchnappiInterpreter {
         } finally {
             //System.exit(1);
         }
-        ArrayList<Object> params = new ArrayList<>();
         ParamsNode pnr = (ParamsNode) fn.getChild(1);
-        for(String str : pnr.params) {
-            params.add(str);
+        Object [] params = new Object[pnr.params.size()];
+        for(int index = 0; index < pnr.params.size(); ++index) {
+            params[index] = pnr.params.get(index);
         }
         UntypedMethod method = new UntypedMethod(generator,"initialize");
         method.invoke(params);
-        this.methods.put(generatorName, method);
+        this.generators.put(generatorName, generator);
         JavaRDD<Tuple2<Long, Tuple>> aux = SparkEnv.sc.emptyRDD();
         JavaPairRDD<Long,Tuple> result = JavaPairRDD.fromJavaRDD(aux);
         return result;
@@ -79,7 +79,6 @@ public class SchnappiInterpreter {
         return execAtom(n.getChild(0));
     }
     public Object execAtom(Node n){
-        System.out.println("Request of type " + n.getClass());
         if(n instanceof AtomNode){
             return table.get(n.id);
         }else{
@@ -87,7 +86,7 @@ public class SchnappiInterpreter {
         }
     }
     public JavaPairRDD<Long, Tuple> execFunc(FuncNode n){
-        switch(n.type){
+        switch(n.id){
             case "map" : {
                 return execMap(n);
             }
@@ -109,8 +108,12 @@ public class SchnappiInterpreter {
         }
     }
     public JavaPairRDD<Long, Tuple> execMap(FuncNode fn) {
-        Function<Tuple,Tuple> f = fetchFunction(fn.getChild(0).id, Integer.parseInt(fn.getChild(1).id));
-        Object rd = fetchRDD(fn.getChild(1).id);
+        ParamsNode pn0 = (ParamsNode) fn.getChild(0);
+        ParamsNode pn1 = (ParamsNode) fn.getChild(1);
+        System.out.println("format "+pn1.getParam(0));
+        Function<Tuple,Tuple> f = fetchFunction(pn0.getParam(0), Integer.parseInt(pn1.getParam(0)));
+        System.out.println(pn0.getParam(1));
+        Object rd = fetchRDD(pn0.getParam(1));
         JavaPairRDD<Long, Tuple> rdd = (JavaPairRDD<Long, Tuple>) rd;
         return rdd.mapValues(f);
     }
@@ -118,12 +121,21 @@ public class SchnappiInterpreter {
         JavaRDD<Tuple2<Long, Tuple>> aux = SparkEnv.sc.emptyRDD();
         JavaPairRDD<Long,Tuple> result = JavaPairRDD.fromJavaRDD(aux);
         ParamsNode pn = (ParamsNode) fn.getChild(0);
+        if(pn.params.size() == 0) return result;
+        boolean first = true;
         for(String p : pn.params){
             //JavaPairRDD<Long,Tuple> rdd = (JavaPairRDD<Long,Tuple>) execAtom(an);
             JavaPairRDD<Long,Tuple> rdd = (JavaPairRDD<Long,Tuple>) table.get(p);
-            result.union(rdd);
+            if(rdd == null) System.out.println("Null RDD "+p);
+            if(first) {
+                first = false;
+                result = rdd;
+            }
+            else {
+                result = result.union(rdd);
+            }
         }
-        result.reduceByKey(TupleUtils.join);
+        result = result.reduceByKey(TupleUtils.join);
         return result;
     }
     public JavaPairRDD<Long, Tuple> execReduce(FuncNode fn) {
@@ -159,8 +171,9 @@ public class SchnappiInterpreter {
         JavaPairRDD<Long, Tuple> idss = ids.mapToPair(f);
         return idss;
     }
-    private JavaPairRDD<Long, Tuple> fetchRDD(String str){
-        return this.rdds.get(str);
+    private Object fetchRDD(String str){
+        //return this.rdds.get(str);
+        return this.table.get(str);
     }
     private Function<Tuple, Tuple> fetchFunction(String generatorName, int numParams) {
         Generator generator = null;
@@ -175,7 +188,7 @@ public class SchnappiInterpreter {
         } finally {
             //System.exit(1);
         }*/
-        generator = this.methods.get(generatorName);
+        generator = this.generators.get(generatorName);
         Function<Tuple, Tuple> fw = null;
         switch(numParams){
             case 0: {
@@ -206,6 +219,9 @@ public class SchnappiInterpreter {
     public void check(){
         for(String str : this.table.keySet()){
             System.out.println(str);
+        }
+        for(Map.Entry<String, Object> e: this.table.entrySet()){
+            System.out.println(e.getKey() + " is empty? " + (e.getValue() == null));
         }
         JavaPairRDD<Long, Tuple> result = (JavaPairRDD<Long, Tuple>) this.table.get("person.final");
         if(result == null) System.out.println("WHY");

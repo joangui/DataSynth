@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class UntypedMethod implements Serializable {
 
-    private Generator g;
+    public Generator g;
     private String                  functionName;
     private Method                  method;
 
