@@ -110,7 +110,7 @@ public class DataSynth {
             ExecutionEngine executor = new SparkExecutionEngine();
             SchnappiInterpreter schInt = new SchnappiInterpreter();
             schInt.execProgram(c.getProgram().getRoot());
-            schInt.check();
+            schInt.dumpData();
             //executor.execute(execPlan);
             executor.dummyExecute();
             executor.dumpData(config.outputDir);

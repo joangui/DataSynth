@@ -1,5 +1,6 @@
 package org.dama.datasynth.runtime;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.function.Function;
@@ -17,6 +18,8 @@ import org.dama.datasynth.utils.Tuple;
 import org.dama.datasynth.utils.TupleUtils;
 import scala.Tuple2;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -225,6 +228,39 @@ public class SchnappiInterpreter {
         }
         JavaPairRDD<Long, Tuple> result = (JavaPairRDD<Long, Tuple>) this.table.get("person.final");
         if(result == null) System.out.println("WHY");
-        else result.coalesce(1).saveAsTextFile("/home/quim/DAMA/outputs");
+        else {
+            File f = new File("/home/quim/DAMA/outputs");
+            try {
+                FileUtils.cleanDirectory(f); //clean out directory (this is optional -- but good know)
+                FileUtils.forceDelete(f); //delete directory
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            result.coalesce(1).saveAsTextFile("/home/quim/DAMA/outputs");
+        }
+    }
+    public void dumpData(){
+        deleteDir("/home/quim/DAMA/outputs");
+        for( Map.Entry<String,Object> entry : table.entrySet() ) {
+            Object obj = entry.getValue();
+            if(obj instanceof JavaPairRDD) {
+                JavaPairRDD<String, Tuple> rdd = (JavaPairRDD<String, Tuple>) obj;
+                rdd.coalesce(1).saveAsTextFile("/home/quim/DAMA/outputs/" + entry.getKey());
+            }
+        }
+    }
+    private void deleteDir(String dir){
+        File file = new File(dir);
+        deleteDir(file);
+    }
+    private void deleteDir(File file) {
+        File[] contents = file.listFiles();
+        if (contents != null) {
+            for (File f : contents) {
+                deleteDir(f);
+            }
+        }
+        file.delete();
     }
 }

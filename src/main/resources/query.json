@@ -1,33 +1,35 @@
+
 {
   "entities" : [
     {
       "name" : "person",
+      "number" : 10,
       "attributes" : [
-        {
-          "name" : "name",
-          "type" : "String",
-          "generator" : {
-            "name" : "NameGenerator",
-            "runParameters" : ["country"],
-            "initParameters" : ["countryNames.txt"]
-          }
-        },
         {
           "name" : "country",
           "type" : "String",
           "generator" : {
-            "name" : "CountryGenerator",
+            "name" : "org.dama.datasynth.generators.CDFGenerator",
             "runParameters" : [],
-            "initParameters" : ["countries.txt"]
+            "initParameters" : ["/dicLocations.txt",1,5," "]
           }
         },
         {
           "name" : "email",
           "type" : "String",
           "generator" : {
-            "name" : "EmailGenerator",
+            "name" : "org.dama.datasynth.generators.DFGenerator",
+            "runParameters" : [],
+            "initParameters" : ["/email.txt",0,1," "]
+          }
+        },
+        {
+          "name" : "name",
+          "type" : "String",
+          "generator" : {
+            "name" : "org.dama.datasynth.generators.CorrellationGenerator",
             "runParameters" : ["country"],
-            "initParameters" : ["emails.txt"]
+            "initParameters" : ["/namesByCountry.txt"," "]
           }
         }
       ]

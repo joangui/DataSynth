@@ -46,8 +46,8 @@ public class Tuple implements Serializable {
         }else {
             String str = "(";
             str += this.get(0);
-            for (Object obj : this.elems) {
-                str += ", " + obj.toString();
+            for (int i = 1; i < this.size(); ++i) {
+                str += ", " + this.get(i).toString();
             }
             str += ")";
             return str;
