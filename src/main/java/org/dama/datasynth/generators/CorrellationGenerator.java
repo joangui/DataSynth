@@ -2,6 +2,7 @@ package org.dama.datasynth.generators;
 
 import org.dama.datasynth.runtime.Generator;
 import org.dama.datasynth.utils.CSVReader;
+import org.dama.datasynth.utils.MurmurHash;
 import org.dama.datasynth.utils.Sampler;
 
 import java.util.HashMap;
@@ -39,8 +40,8 @@ public class CorrellationGenerator extends Generator {
         }
     }
 
-    public String run( String country ) {
-        return samplers.get(country).takeSample();
+    public String run(Long id, String country) {
+        return samplers.get(country).takeSample(MurmurHash.hash64(id.toString()));
     }
 
 }

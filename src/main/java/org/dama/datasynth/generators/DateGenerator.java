@@ -2,6 +2,7 @@ package org.dama.datasynth.generators;
 
 import org.apache.avro.test.Simple;
 import org.dama.datasynth.runtime.Generator;
+import org.dama.datasynth.utils.MurmurHash;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -35,8 +36,9 @@ public class DateGenerator extends Generator {
     }
 
 
-    public String run() {
+    public String run(Long id) {
         Random rand = new Random();
+        rand.setSeed(MurmurHash.hash64(id.toString()));
         Calendar calendar = new GregorianCalendar();
         calendar.setTimeZone(TimeZone.getTimeZone(timeZone));
         SimpleDateFormat formatter = new SimpleDateFormat(format);

@@ -19,7 +19,6 @@ public class Function2Wrapper extends UntypedMethod implements Function<Tuple, T
     }
 
     public Tuple call(Tuple t) {
-            System.out.println("WOOT "+this.g.getClass().getName() + " size "+ t.size());
-            return new Tuple(invoke(t.get(1), t.get(2)));
+            return new Tuple(invoke(t.get(0), t.get(1), t.get(2)));
     }
 }

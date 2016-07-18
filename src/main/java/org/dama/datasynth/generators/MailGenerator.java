@@ -11,7 +11,7 @@ public class MailGenerator extends Generator {
             g = new DFGenerator();
             g.initialize(file, "0", "1", " ");
         }
-        public String run(String name) {
-            return name + "@" + g.run();
+        public String run(Long id, String name) {
+            return name + "@" + g.run(id);
         }
 }

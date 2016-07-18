@@ -18,7 +18,7 @@ public class Function0Wrapper extends UntypedMethod implements Function<Tuple, T
         super(g,functionName);
     }
 
-    public Tuple call(Tuple l) {
-            return new Tuple(invoke());
+    public Tuple call(Tuple t) {
+            return new Tuple(invoke(t.get(0)));
     }
 }

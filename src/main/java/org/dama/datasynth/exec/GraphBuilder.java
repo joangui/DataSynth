@@ -5,6 +5,7 @@ import org.dama.datasynth.common.Types;
 import org.dama.datasynth.lang.Ast;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultDirectedGraph;
+import org.jgrapht.graph.DirectedMultigraph;
 
 import java.util.*;
 import java.util.logging.Level;
@@ -29,7 +30,8 @@ public class GraphBuilder {
     }
 
     public void initialize(Ast ast) throws BuildDependencyGraphException {
-        this.g = new DefaultDirectedGraph<>((v1, v2) -> new DEdge(v1, v2));
+        //this.g = new DefaultDirectedGraph<>((v1, v2) -> new DEdge(v1, v2));
+        this.g = new DirectedMultigraph<>((v1, v2) -> new DEdge(v1, v2));
 
         //############################################################################
         Map<String,AttributeTask> tasks = new TreeMap<String,AttributeTask>();
@@ -38,6 +40,7 @@ public class GraphBuilder {
             entryPoints.add(entityTask);
             //g.addVertex(entityTask);
             AttributeTask oid = new AttributeTask(entity,new Ast.Attribute("oid", Types.DATATYPE.INTEGER,new Ast.Generator("IdGenerator")));
+            tasks.put(entity.getName()+".oid", oid);
             g.addVertex(oid);
             g.addVertex(entityTask);
             for(Ast.Attribute attribute : entity.getAttributes()) {
@@ -54,7 +57,9 @@ public class GraphBuilder {
 
         Set<AttributeTask> processed = new TreeSet<AttributeTask>((t1, t2) -> { return t1.toString().compareTo(t2.toString());});
         for(Map.Entry<String,AttributeTask> task : tasks.entrySet() ) {
-            if( !processed.contains(task.getValue())) {
+            if(task.getKey().substring(task.getKey().length()-3, task.getKey().length()).equalsIgnoreCase("oid")){
+                //
+            }else if( !processed.contains(task.getValue())) {
                 List<AttributeTask> toProcess = new LinkedList<AttributeTask>();
                 toProcess.add(task.getValue());
                 while(!toProcess.isEmpty()) {

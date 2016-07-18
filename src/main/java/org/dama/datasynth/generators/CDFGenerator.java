@@ -3,6 +3,7 @@ package org.dama.datasynth.generators;
 import org.dama.datasynth.runtime.Generator;
 import org.dama.datasynth.utils.CDFSampler;
 import org.dama.datasynth.utils.CSVReader;
+import org.dama.datasynth.utils.MurmurHash;
 import org.dama.datasynth.utils.Sampler;
 
 
@@ -16,7 +17,7 @@ public class CDFGenerator extends Generator {
             CSVReader csv = new CSVReader(file, sep);
             this.s = new CDFSampler(csv.fetchSubMatrix(Integer.parseInt(x), Integer.parseInt(y)));
         }
-        public String run(){
-            return s.takeSample();
+        public String run(Long id){
+            return s.takeSample(MurmurHash.hash64(id.toString()));
         }
 }

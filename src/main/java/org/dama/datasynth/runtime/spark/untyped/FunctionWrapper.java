@@ -19,7 +19,7 @@ public class FunctionWrapper extends UntypedMethod implements Function<Tuple,Tup
     }
 
     public Tuple call(Tuple t) {
-            return new Tuple(invoke(t.get(1)));
+            return new Tuple(invoke(t.get(0), t.get(1)));
     }
 
 
