@@ -108,7 +108,7 @@ public class DataSynth {
             logger.log(Level.FINE, c.getProgram().print());
             start = System.currentTimeMillis();
             ExecutionEngine executor = new SparkExecutionEngine();
-            SchnappiInterpreter schInt = new SchnappiInterpreter();
+            SchnappiInterpreter schInt = new SchnappiInterpreter(config);
             schInt.execProgram(c.getProgram().getRoot());
             schInt.dumpData();
             //executor.execute(execPlan);

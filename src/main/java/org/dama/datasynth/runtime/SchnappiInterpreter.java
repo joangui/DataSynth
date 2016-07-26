@@ -6,6 +6,8 @@ import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.api.java.function.PairFunction;
+import org.dama.datasynth.DataSynth;
+import org.dama.datasynth.DataSynthConfig;
 import org.dama.datasynth.SparkEnv;
 import org.dama.datasynth.common.Types;
 import org.dama.datasynth.program.schnappi.ast.*;
@@ -33,12 +35,17 @@ public class SchnappiInterpreter {
     private Map<String, Types.DATATYPE>  attributeTypes;
     private Map<String, Object> table;
     private Map<String, Generator> generators;
+    private DataSynthConfig config;
 
     public SchnappiInterpreter() {
         rdds = new HashMap<String,JavaPairRDD<Long,Tuple>>();
         attributeTypes = new HashMap<String, Types.DATATYPE>();
         table = new HashMap<String, Object>();
         generators = new HashMap<String, Generator>();
+    }
+    public SchnappiInterpreter(DataSynthConfig config){
+        this();
+        this.config = config;
     }
     public void execProgram(Node n){
         for(Node child : n.children) execOp(child);
@@ -229,7 +236,7 @@ public class SchnappiInterpreter {
         JavaPairRDD<Long, Tuple> result = (JavaPairRDD<Long, Tuple>) this.table.get("person.final");
         if(result == null) System.out.println("WHY");
         else {
-            File f = new File("/home/quim/DAMA/outputs");
+            File f = new File(this.config.outputDir);
             try {
                 FileUtils.cleanDirectory(f); //clean out directory (this is optional -- but good know)
                 FileUtils.forceDelete(f); //delete directory
@@ -237,16 +244,16 @@ public class SchnappiInterpreter {
                 e.printStackTrace();
             }
 
-            result.coalesce(1).saveAsTextFile("/home/quim/DAMA/outputs");
+            result.coalesce(1).saveAsTextFile(this.config.outputDir);
         }
     }
     public void dumpData(){
-        deleteDir("/home/quim/DAMA/outputs");
+        deleteDir(this.config.outputDir);
         for( Map.Entry<String,Object> entry : table.entrySet() ) {
             Object obj = entry.getValue();
             if(obj instanceof JavaPairRDD) {
                 JavaPairRDD<String, Tuple> rdd = (JavaPairRDD<String, Tuple>) obj;
-                rdd.coalesce(1).saveAsTextFile("/home/quim/DAMA/outputs/" + entry.getKey());
+                rdd.coalesce(1).saveAsTextFile(this.config.outputDir +"/" + entry.getKey());
             }
         }
     }
