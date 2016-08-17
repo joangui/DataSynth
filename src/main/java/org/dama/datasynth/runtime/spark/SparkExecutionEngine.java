@@ -155,14 +155,14 @@ public class SparkExecutionEngine extends ExecutionEngine {
         JavaRDD<Tuple2<Long, Tuple>> aux = SparkEnv.sc.emptyRDD();
         JavaPairRDD<Long, Tuple> ent1 = JavaPairRDD.fromJavaRDD(aux);
         JavaPairRDD<Long, Tuple> ent2 = JavaPairRDD.fromJavaRDD(aux);*/
-        for(String str: task.getAttributesEnt1()){
+        /*for(String str: task.getAttributesEnt1()){
             ent1.union(this.attributeRDDs.get(str));
         }
         ent1.reduceByKey(TupleUtils.join);
 
         for(String str: task.getAttributesEnt2()){
             ent2.union(this.attributeRDDs.get(str));
-        }
+        }*/
         ent2.reduceByKey(TupleUtils.join);
         return new Tuple2<>(ent1, ent2);
     }

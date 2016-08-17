@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Created by aprat on 20/04/16.
  */
-public class AttributeTask extends Vertex  {
+public class AttributeTask extends Vertex  implements ExecutableVertex{
 
     private Ast.Entity entity = null;
     private Ast.Attribute attribute = null;

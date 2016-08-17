@@ -1,0 +1,29 @@
+
+{
+  "entities" : [
+    {
+      "name" : "person",
+      "number" : 100,
+      "attributes" : [
+        {
+          "name" : "country",
+          "type" : "String",
+          "generator" : {
+            "name" : "org.dama.datasynth.generators.CDFGenerator",
+            "runParameters" : [],
+            "initParameters" : ["/dicLocations.txt",1,5," "]
+          }
+        },
+        {
+          "name" : "name",
+          "type" : "String",
+          "generator" : {
+            "name" : "org.dama.datasynth.generators.CorrellationGenerator",
+            "runParameters" : ["country"],
+            "initParameters" : ["/namesByCountry.txt"," "]
+          }
+        }
+      ]
+    }
+  ]
+}

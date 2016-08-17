@@ -35,7 +35,7 @@ public class ParamsNode extends Node {
             }
             str += aux.substring(1);
         }else {
-            str += "wtf " + this.id;
+            str += "";
         }
         str += " >";
         return str;

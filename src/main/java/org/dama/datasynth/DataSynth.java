@@ -105,12 +105,13 @@ public class DataSynth {
 
             start = System.currentTimeMillis();
             //ExecutionEngine executor = new SparkExecutionEngine();
+            /*SparkEnv.initialize();
             SchnappiInterpreter schInt = new SchnappiInterpreter(config);
             schInt.execProgram(c.getProgram().getRoot());
-            schInt.dumpData();
-            //executor.execute(execPlan);
-            //executor.dummyExecute();
-            //executor.dumpData(config.outputDir);
+            schInt.dumpData();*/
+            /*executor.execute(execPlan);
+            executor.dummyExecute();
+            executor.dumpData(config.outputDir);*/
             end = System.currentTimeMillis();
             logger.info(" Query executed in  "+(end-start) + " ms");
             logger.info("Execution finished");
