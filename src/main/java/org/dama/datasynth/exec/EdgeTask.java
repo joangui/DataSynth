@@ -1,54 +1,84 @@
 package org.dama.datasynth.exec;
 
+import org.dama.datasynth.lang.Ast;
+
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by quim on 4/27/16.
  */
-public class EdgeTask extends Vertex {
-    public String entity1;
-    public String entity2;
-    public ArrayList<String> attributesEnt1;
-    public ArrayList<String> attributesEnt2;
+public class EdgeTask extends Vertex implements ExecutableVertex{
+    public Ast.Edge edge;
+    public EntityTask entity1;
+    public EntityTask entity2;
+    public ArrayList<AttributeTask> attributesEnt1;
+    public ArrayList<AttributeTask> attributesEnt2;
 
-    public EdgeTask(String ent1, String ent2, ArrayList<String> attr1, ArrayList<String> attr2) {
-        super(ent1+"."+ent2,"edge");
+    public EdgeTask(Ast.Edge edge, EntityTask ent1, EntityTask ent2, ArrayList<AttributeTask> attr1, ArrayList<AttributeTask> attr2) {
+        super(ent1.getEntity()+"::"+ent2.getEntity(),"relation");
+        this.edge = edge;
         this.entity1 = ent1;
         this.entity2 = ent2;
         this.attributesEnt1 = attr1;
         this.attributesEnt2 = attr2;
     }
 
-    public String getEntity1() {
+    public EntityTask getEntity1() {
         return entity1;
     }
 
-    public void setEntity1(String entity1) {
+    public void setEntity1(EntityTask entity1) {
         this.entity1 = entity1;
     }
 
-    public String getEntity2() {
+    public EntityTask getEntity2() {
         return entity2;
     }
 
-    public void setEntity2(String entity2) {
+    public void setEntity2(EntityTask entity2) {
         this.entity2 = entity2;
     }
 
-    public ArrayList<String> getAttributesEnt1() {
+    public ArrayList<AttributeTask> getAttributesEnt1() {
         return attributesEnt1;
     }
 
-    public void setAttributesEnt1(ArrayList<String> attributesEnt1) {
+    public void setAttributesEnt1(ArrayList<AttributeTask> attributesEnt1) {
         this.attributesEnt1 = attributesEnt1;
     }
 
-    public ArrayList<String> getAttributesEnt2() {
+    public ArrayList<AttributeTask> getAttributesEnt2() {
         return attributesEnt2;
     }
 
-    public void setAttributesEnt2(ArrayList<String> attributesEnt2) {
+    public void setAttributesEnt2(ArrayList<AttributeTask> attributesEnt2) {
         this.attributesEnt2 = attributesEnt2;
+    }
+
+    public List<String> getInitParameters(){
+        return new ArrayList<String>();
+    }
+
+    public List<String> getRunParameters(){
+        return new ArrayList<String>();
+    }
+
+    public EntityTask getEntityByName(String name){
+        if(name.equalsIgnoreCase(entity1.getEntity())) return entity1;
+        else if(name.equalsIgnoreCase(entity2.getEntity())) return entity2;
+        else return null;
+    }
+
+    public List<AttributeTask> getAttributesByName(String name){
+        if(name.equalsIgnoreCase(entity1.getEntity())) return attributesEnt1;
+        else if(name.equalsIgnoreCase(entity2.getEntity())) return attributesEnt2;
+        else return null;
+    }
+
+    @Override
+    public String getGenerator() {
+        return edge.getGenerator();
     }
 
     @Override

@@ -13,10 +13,7 @@ import org.dama.datasynth.program.solvers.SignatureVertex;
 import org.dama.datasynth.program.solvers.Solver;
 import org.jgrapht.traverse.TopologicalOrderIterator;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by quim on 5/5/16.
@@ -41,7 +38,7 @@ public class Compiler {
             //System.out.print(" >> " + v.getId() + " :: " + v.getType());
             if (v.getType().equalsIgnoreCase("attribute")) {
                 if (!v.getId().equalsIgnoreCase("person.oid")) {
-                    if (g.getG().incomingEdgesOf(v).size() > 0) addIncomingUnion(v, g);
+                    if (g.getG().incomingEdgesOf(v).size() > 0) addIncomingUnion(v, g, ".input");
                     try {
                         solveVertex(v);
                     } catch (CompileException e) {
@@ -63,21 +60,15 @@ public class Compiler {
                     this.program.getRoot().addChild(np);
                 }
             }else if(v.getType().equalsIgnoreCase("entity")){
-                Set<DEdge> edges = g.getG().incomingEdgesOf(v);
-                Node np = new Node("OP", "op");
-                Node na = new Node("ASSIG", "assig");
-                Node ne = new Node("EXPR", "expr");
-                FuncNode n = new FuncNode("union");
-                ParamsNode pn = new ParamsNode("params");
-                for(DEdge e : edges){
-                    pn.addParam(e.getSource().getId());
+                addIncomingUnion(v, g, ".final");
+            }else if(v.getType().equalsIgnoreCase("relation")){
+                addFilters((EdgeTask) v,g);
+                addIncomingCartesianProduct(v,g,".input");
+                try {
+                    solveVertex(v);
+                } catch (CompileException e) {
+                    e.printStackTrace();
                 }
-                n.addChild(pn);
-                ne.addChild(n);
-                na.addChild(new AtomNode(v.getId() + ".final", "ID"));
-                na.addChild(ne);
-                np.addChild(na);
-                this.program.getRoot().addChild(np);
             }
         }
         System.out.print("\n");
@@ -101,7 +92,7 @@ public class Compiler {
             this.program.getRoot().addChild(nn);
         }
     }
-    private void addIncomingUnion(Vertex v, DependencyGraph g){
+    private void addIncomingUnion(Vertex v, DependencyGraph g, String suffix){
         Set<DEdge> edges = g.getG().incomingEdgesOf(v);
         Node np = new Node("OP", "op");
         Node na = new Node("ASSIG", "assig");
@@ -113,7 +104,50 @@ public class Compiler {
         }
         n.addChild(pn);
         ne.addChild(n);
-        na.addChild(new AtomNode(v.getId() + ".input", "ID"));
+        na.addChild(new AtomNode(v.getId() + suffix, "ID"));
+        na.addChild(ne);
+        np.addChild(na);
+        this.program.getRoot().addChild(np);
+    }
+    private void addIncomingCartesianProduct(Vertex v, DependencyGraph g, String suffix){
+        Set<DEdge> edges = g.getG().incomingEdgesOf(v);
+        Node np = new Node("OP", "op");
+        Node na = new Node("ASSIG", "assig");
+        Node ne = new Node("EXPR", "expr");
+        FuncNode n = new FuncNode("cartesian");
+        ParamsNode pn = new ParamsNode("params");
+        long index = 0;
+        for(DEdge e : edges){
+            pn.addParam(e.getSource().getId()+".filtered["+index+"]");
+            ++index;
+        }
+        n.addChild(pn);
+        ne.addChild(n);
+        na.addChild(new AtomNode(v.getId() + suffix, "ID"));
+        na.addChild(ne);
+        np.addChild(na);
+        this.program.getRoot().addChild(np);
+    }
+    private void addFilters(EdgeTask v, DependencyGraph g){
+        Set<DEdge> edges = g.getG().incomingEdgesOf(v);
+        long index = 0;
+        for(DEdge e : edges){
+            addFilter(v, v.getAttributesByName(e.getSource().getId()), e.getSource().getId(), index);
+            ++index;
+        }
+    }
+    private void addFilter(EdgeTask v, List<AttributeTask> attrs, String entityName, long ind){
+        Node np = new Node("OP", "op");
+        Node na = new Node("ASSIG", "assig");
+        Node ne = new Node("EXPR", "expr");
+        FuncNode n = new FuncNode("filter");
+        ParamsNode pn = new ParamsNode("params");
+        for(AttributeTask attr : attrs){
+            pn.addParam(attr.getId());
+        }
+        n.addChild(pn);
+        ne.addChild(n);
+        na.addChild(new AtomNode(entityName + ".filtered["+ind+"]", "ID"));
         na.addChild(ne);
         np.addChild(na);
         this.program.getRoot().addChild(np);

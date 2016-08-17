@@ -6,6 +6,7 @@ import org.dama.datasynth.lang.Ast;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DirectedMultigraph;
+import scala.tools.nsc.backend.icode.TypeKinds;
 
 import java.util.*;
 import java.util.logging.Level;
@@ -79,7 +80,27 @@ public class GraphBuilder {
                 }
             }
         }
-        if(processed.size() != tasks.size()) throw new BuildDependencyGraphException("Dependency plan wrongly built. Missing nodes");
+        System.out.println("Processed " + processed.size() + " Tasks " + tasks.size());
+        if(processed.size() != tasks.size()-1) throw new BuildDependencyGraphException("Dependency plan wrongly built. Missing nodes");
+        //Now process the edges which represent relationships between different entities
+        Map<String, EntityTask> entities = new HashMap<>();
+        for(Vertex vtx : entryPoints) {
+            entities.put(vtx.getId(), (EntityTask) vtx);
+        }
+        for(Ast.Edge edge : ast.getEdges()) {
+            EntityTask source = entities.get(edge.getOrigin().getName());
+            EntityTask target = entities.get(edge.getDestination().getName());
+            ArrayList<AttributeTask> sourceAttributes = new ArrayList<AttributeTask>();
+            ArrayList<AttributeTask> targetAttributes = new ArrayList<AttributeTask>();
+            String orig = edge.getOrigin().getName();
+            String dest = edge.getDestination().getName();
+            for(Ast.Attribute attr : edge.getOrigin().getAttributes()) sourceAttributes.add(tasks.get(orig+"."+attr.getName()));
+            for(Ast.Attribute attr : edge.getDestination().getAttributes()) targetAttributes.add(tasks.get(dest+"."+attr.getName()));
+            EdgeTask et = new EdgeTask(edge,source, target, sourceAttributes, targetAttributes);
+            g.addVertex(et);
+            g.addEdge(source,et);
+            g.addEdge(target,et);
+        }
     }
     public DirectedGraph<Vertex, DEdge> getG() {
         return g;

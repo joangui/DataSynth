@@ -1,0 +1,15 @@
+signature : {
+    @source = relation
+    @target = attribute
+}
+
+bindings : {
+    x = @source.id
+    f = @source.generator
+    z = @source.input
+}
+
+program : {
+    fp = new f(a)
+    x = map(f, z)
+}

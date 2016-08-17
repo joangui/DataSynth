@@ -2,12 +2,14 @@ package org.dama.datasynth.program.solvers;
 
 import org.dama.datasynth.exec.AttributeTask;
 import org.dama.datasynth.exec.DEdge;
+import org.dama.datasynth.exec.ExecutableVertex;
 import org.dama.datasynth.exec.Vertex;
 import org.dama.datasynth.program.Ast;
 import org.dama.datasynth.program.Parser;
 import org.dama.datasynth.program.schnappi.ast.*;
 import org.dama.datasynth.utils.Reader;
 
+import java.lang.reflect.Executable;
 import java.util.Map;
 
 /**
@@ -52,7 +54,7 @@ public class Solver {
             }
         }else if(root instanceof FuncNode){
             FuncNode fn = (FuncNode) root;
-            AttributeTask at = (AttributeTask) v;
+            ExecutableVertex at = (ExecutableVertex) v;
             if(fn.id.equalsIgnoreCase("init")){
                 ParamsNode pn = new ParamsNode("params");
                 for(String str : at.getInitParameters()) pn.addParam(str);
@@ -73,16 +75,16 @@ public class Solver {
         if(aux.substring(0,1).equalsIgnoreCase("@")){
             switch(aux){
                 case "@source.generator" : {
-                    AttributeTask at = (AttributeTask) v;
+                    ExecutableVertex at = (ExecutableVertex) v;
                     /*System.out.println(" ID " + id + " Generator " + at.getGenerator());*/
                     return at.getGenerator();
                 }
                 case "@source.input" : {
-                    AttributeTask at = (AttributeTask) v;
+                    ExecutableVertex at = (ExecutableVertex) v;
                     return at.getId()+".input";
                 }
                 case "@source.id" : {
-                    AttributeTask at = (AttributeTask) v;
+                    ExecutableVertex at = (ExecutableVertex) v;
                     return at.getId();
                 }
                 default : {

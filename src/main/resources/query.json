@@ -34,5 +34,24 @@
         }
       ]
     }
+  ],
+  "edges" : [
+    {
+      "name" : "friendship",
+      "number" : 5,
+      "source" : {
+        "entity" : "person",
+        "attributes" : ["name", "country"]
+      },
+      "target" : {
+        "entity" : "person",
+        "attributes" : ["name", "country"]
+      },
+      "generator" : {
+        "name" : "dummyGenerator",
+        "runParameters" : [],
+        "initParameters" : []
+      }
+    }
   ]
 }

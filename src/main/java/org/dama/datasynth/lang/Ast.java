@@ -170,6 +170,9 @@ public class Ast {
         private Entity origin;
         private Entity destination;
         private int[] cardinality;
+        private List<Attribute> attributesOrigin;
+        private List<Attribute> attributesTarget;
+        private Generator generator;
         /**
          * Class Constructor
          * @param name The name of the generator
@@ -177,6 +180,16 @@ public class Ast {
         public Edge(String name) {
             super(name);
             this.cardinality = new int[2];
+            this.attributesOrigin = new ArrayList<Attribute>();
+            this.attributesTarget = new ArrayList<Attribute>();
+        }
+
+        public Edge(String name, Generator gen) {
+            super(name);
+            this.cardinality = new int[2];
+            this.generator = gen;
+            this.attributesOrigin = new ArrayList<Attribute>();
+            this.attributesTarget = new ArrayList<Attribute>();
         }
 
         public Entity getOrigin() {
@@ -202,6 +215,29 @@ public class Ast {
         public void setCardinality(int cardinality, int i) {
             this.cardinality[i] = cardinality;
         }
+
+        public void addAttributeOrigin(Attribute atr){
+            this.attributesOrigin.add(atr);
+        }
+        public void addAttributeTarget(Attribute atr){
+            this.attributesTarget.add(atr);
+        }
+
+        public List<Attribute> getAttributesOrigin() {
+            return attributesOrigin;
+        }
+
+        public List<Attribute> getAttributesTarget() {
+            return attributesTarget;
+        }
+
+        public List<Attribute> getAllAttributes(){
+            ArrayList<Attribute> result = new ArrayList<>();
+            result.addAll(this.attributesOrigin);
+            result.addAll(this.attributesTarget);
+            return result;
+        }
+        public String getGenerator(){ return generator.getName();}
     }
 
     /**
@@ -218,6 +254,25 @@ public class Ast {
      * Adds a new entity into the AST
      */
     public void addEntity( Entity entity ) { entities.add(entity); }
+
+    /**
+     * The list of edges of the AST
+     */
+    private List<Edge> edges = new ArrayList<Edge>();
+
+    /**
+     * Adds a new edge into the AST
+     */
+    public void addEdge(Edge edg) { edges.add(edg); }
+    /**
+     * Gets the list of edges of the AST
+     */
+    public List<Edge> getEdges() { return edges; }
+
+    /**
+     * Adds a new edge into the AST
+     */
+    public void addEntity( Edge edg ) { edges.add(edg); }
 
 
     /**

@@ -68,7 +68,7 @@ public class DataSynth {
             return;
         }
 
-        SparkEnv.initialize();
+        //SparkEnv.initialize();
         Parser parser = new Parser();
         try {
             byte[] encoded = Files.readAllBytes(Paths.get(config.queryFile));
@@ -107,13 +107,14 @@ public class DataSynth {
             c.synthesizeProgram(graph);
             logger.log(Level.FINE, c.getProgram().print());
             start = System.currentTimeMillis();
-            ExecutionEngine executor = new SparkExecutionEngine();
+            //ExecutionEngine executor = new SparkExecutionEngine();
+            /*SparkEnv.initialize();
             SchnappiInterpreter schInt = new SchnappiInterpreter(config);
             schInt.execProgram(c.getProgram().getRoot());
-            schInt.dumpData();
-            //executor.execute(execPlan);
+            schInt.dumpData();*/
+            /*executor.execute(execPlan);
             executor.dummyExecute();
-            executor.dumpData(config.outputDir);
+            executor.dumpData(config.outputDir);*/
             end = System.currentTimeMillis();
             logger.info(" Query executed in  "+(end-start) + " ms");
             logger.info("Execution finished");
@@ -131,9 +132,9 @@ public class DataSynth {
         } catch(BuildDependencyGraphException bEPE) {
             bEPE.printStackTrace();
             System.exit(1);
-        } catch(ExecutionException eE) {
+        } /*catch(ExecutionException eE) {
             eE.printStackTrace();
             System.exit(1);
-        }
+        }*/
     }
 }
