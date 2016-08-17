@@ -21,11 +21,11 @@ public class GraphBuilder {
     private DirectedGraph<Vertex, DEdge> g;
     private List<Vertex> entryPoints = new ArrayList<Vertex>();
 
-    public GraphBuilder(Ast t){
+    public GraphBuilder(Ast t) throws BuildDependencyGraphException{
         try {
             this.initialize(t);
         } catch (BuildDependencyGraphException e) {
-            e.printStackTrace();
+            throw e;
         }
     }
 
@@ -47,10 +47,8 @@ public class GraphBuilder {
                 AttributeTask task = new AttributeTask(entity,attribute);
                 tasks.put(task.getEntity()+"."+task.getAttributeName(),task);
                 g.addVertex(task);
-                //g.addEdge(task,oid); Reversed due to topological sorting implementation
                 g.addEdge(oid,task);
                 g.addEdge(task, entityTask);
-
             }
         }
         //############################################################################
@@ -58,7 +56,7 @@ public class GraphBuilder {
         Set<AttributeTask> processed = new TreeSet<AttributeTask>((t1, t2) -> { return t1.toString().compareTo(t2.toString());});
         for(Map.Entry<String,AttributeTask> task : tasks.entrySet() ) {
             if(task.getKey().substring(task.getKey().length()-3, task.getKey().length()).equalsIgnoreCase("oid")){
-                //
+                processed.add(task.getValue());
             }else if( !processed.contains(task.getValue())) {
                 List<AttributeTask> toProcess = new LinkedList<AttributeTask>();
                 toProcess.add(task.getValue());
@@ -72,14 +70,13 @@ public class GraphBuilder {
                             if (!processed.contains(otherTask)) {
                                 toProcess.add(otherTask);
                             }
-                            //g.addEdge(currentTask,otherTask); Reversed due to topological sorting implementation
                             g.addEdge(otherTask,currentTask);
                         }
                     }
                 }
             }
         }
-        if(processed.size() != tasks.size()) throw new BuildDependencyGraphException("Dependency plan wrongly built. Missing nodes");
+        if(processed.size() != tasks.size()) throw new BuildDependencyGraphException("Critical internal Error. Dependency plan wrongly built. Some nodes might be missing");
     }
     public DirectedGraph<Vertex, DEdge> getG() {
         return g;

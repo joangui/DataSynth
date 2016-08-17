@@ -68,7 +68,6 @@ public class DataSynth {
             return;
         }
 
-        SparkEnv.initialize();
         Parser parser = new Parser();
         try {
             byte[] encoded = Files.readAllBytes(Paths.get(config.queryFile));
@@ -78,45 +77,44 @@ public class DataSynth {
             start = System.currentTimeMillis();
             Ast ast = parser.parse(new String(encoded, "UTF8"));
             ast.doSemanticAnalysis();
-            end = System.currentTimeMillis();
-            logger.info(" Query compiled in "+(end-start) + " ms");
-
-            start = System.currentTimeMillis();
-            /*ExecutionPlan execPlan = new ExecutionPlan();
-            execPlan.initialize(ast);*/
             DependencyGraph graph = new DependencyGraph(ast);
-            end = System.currentTimeMillis();
             System.out.println("Printing graph");
             graph.print();
-            logger.info(" Execution plan created in  "+(end-start) + " ms");
 
-            SchnappiLexer SchLexer = new SchnappiLexer( new ANTLRFileStream("src/main/resources/solvers/test.spi"));
+            /*SchnappiLexer SchLexer = new SchnappiLexer( new ANTLRFileStream("src/main/resources/solvers/test.spi"));
             CommonTokenStream tokens = new CommonTokenStream( SchLexer );
             SchnappiParser SchParser = new SchnappiParser( tokens );
             SchnappiParser.SolverContext sctx = SchParser.solver();
             SchnappiGeneratorVisitor visitor = new SchnappiGeneratorVisitor();
             Node n = visitor.visitSolver(sctx);
             String printedAst = "\n > " + n.toStringTabbed("");
-            //System.out.println(printedAst);
-            logger.log(Level.FINE, printedAst);
+            logger.log(Level.FINE, printedAst);*/
+
             /*ArrayList<Solver> solvers = Loader.loadSolvers("src/main/resources/solvers");
             for(Solver s : solvers){
                 System.out.println("\n >" + s.instantiate().getRoot().toStringTabbed(""));
             }*/
+
             Compiler c = new Compiler("src/main/resources/solvers");
-            c.synthesizeProgram(graph);
-            logger.log(Level.FINE, c.getProgram().print());
             start = System.currentTimeMillis();
-            ExecutionEngine executor = new SparkExecutionEngine();
+            c.synthesizeProgram(graph);
+            end = System.currentTimeMillis();
+            logger.info(" Query compiled in  "+(end-start) + " ms");
+            logger.log(Level.FINE, c.getProgram().print());
+
+
+            start = System.currentTimeMillis();
+            //ExecutionEngine executor = new SparkExecutionEngine();
             SchnappiInterpreter schInt = new SchnappiInterpreter(config);
             schInt.execProgram(c.getProgram().getRoot());
             schInt.dumpData();
             //executor.execute(execPlan);
-            executor.dummyExecute();
-            executor.dumpData(config.outputDir);
+            //executor.dummyExecute();
+            //executor.dumpData(config.outputDir);
             end = System.currentTimeMillis();
             logger.info(" Query executed in  "+(end-start) + " ms");
             logger.info("Execution finished");
+
 
             return;
         } catch(IOException iOE) {
@@ -131,9 +129,9 @@ public class DataSynth {
         } catch(BuildDependencyGraphException bEPE) {
             bEPE.printStackTrace();
             System.exit(1);
-        } catch(ExecutionException eE) {
+        } /*catch(ExecutionException eE) {
             eE.printStackTrace();
             System.exit(1);
-        }
+        }*/
     }
 }

@@ -18,7 +18,7 @@ public class CSVReader implements Serializable{
     }
     private void init(String str, String sep) {
         try{
-            Scanner inFile1 = new Scanner(new File(getClass().getResource(str).toURI()));
+            Scanner inFile1 = new Scanner(getClass().getResourceAsStream(str));
             StringBuilder sb = new StringBuilder();
             while(inFile1.hasNext()) {
                 String line = inFile1.nextLine();
@@ -26,6 +26,7 @@ public class CSVReader implements Serializable{
             }
             this.array = sb.toString().split("\n");
         }catch (Exception e) {
+            System.err.println("Exception when oppening file: "+str);
             e.printStackTrace();
         }
     }

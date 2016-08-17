@@ -1,6 +1,5 @@
 package org.dama.datasynth.program.schnappi;
 
-import org.antlr.v4.runtime.tree.TerminalNode;
 import org.dama.datasynth.exec.*;
 import org.dama.datasynth.program.Ast;
 import org.dama.datasynth.program.schnappi.ast.AtomNode;
@@ -8,12 +7,10 @@ import org.dama.datasynth.program.schnappi.ast.FuncNode;
 import org.dama.datasynth.program.schnappi.ast.Node;
 import org.dama.datasynth.program.schnappi.ast.ParamsNode;
 import org.dama.datasynth.program.solvers.Loader;
-import org.dama.datasynth.program.solvers.Signature;
 import org.dama.datasynth.program.solvers.SignatureVertex;
 import org.dama.datasynth.program.solvers.Solver;
 import org.jgrapht.traverse.TopologicalOrderIterator;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -22,23 +19,26 @@ import java.util.Set;
  * Created by quim on 5/5/16.
  */
 public class Compiler {
+
     private Map<SignatureVertex, Solver> solversDB;
     private Ast program;
+
     public Compiler(String dir){
         loadSolvers(dir);
         this.program = new Ast(new Node("main", "program"));
     }
+
     private void loadSolvers(String dir){
         this.solversDB = new HashMap<>();
         for(Solver s : Loader.loadSolvers(dir)) {
             this.solversDB.put(s.getSignature(),s);
         }
     }
+
     public void synthesizeProgram(DependencyGraph g){
         TopologicalOrderIterator<Vertex, DEdge> it = new TopologicalOrderIterator<>(g.getG());
         while(it.hasNext()) {
             Vertex v = it.next();
-            //System.out.print(" >> " + v.getId() + " :: " + v.getType());
             if (v.getType().equalsIgnoreCase("attribute")) {
                 if (!v.getId().equalsIgnoreCase("person.oid")) {
                     if (g.getG().incomingEdgesOf(v).size() > 0) addIncomingUnion(v, g);

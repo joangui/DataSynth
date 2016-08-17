@@ -38,6 +38,7 @@ public class SchnappiInterpreter {
     private DataSynthConfig config;
 
     public SchnappiInterpreter() {
+        SparkEnv.initialize();
         rdds = new HashMap<String,JavaPairRDD<Long,Tuple>>();
         attributeTypes = new HashMap<String, Types.DATATYPE>();
         table = new HashMap<String, Object>();
@@ -248,7 +249,7 @@ public class SchnappiInterpreter {
         }
     }
     public void dumpData(){
-        deleteDir(this.config.outputDir);
+        //deleteDir(this.config.outputDir);
         for( Map.Entry<String,Object> entry : table.entrySet() ) {
             Object obj = entry.getValue();
             if(obj instanceof JavaPairRDD) {
