@@ -10,10 +10,9 @@ import java.util.*;
 public abstract class DependencyGraphVisitor {
 
     public void visit(DependencyGraph dG) {
-        DirectedGraph<Vertex,DEdge> graph = dG.getG();
-        Set<Vertex> vertices = graph.vertexSet();
+        Set<Vertex> vertices = dG.vertexSet();
         for(Vertex v : vertices) {
-            if(graph.outDegreeOf(v) == 0) {
+            if(dG.outDegreeOf(v) == 0) {
                v.accept(this);
             }
         }

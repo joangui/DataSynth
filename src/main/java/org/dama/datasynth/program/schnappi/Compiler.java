@@ -34,12 +34,12 @@ public class Compiler {
     }
 
     public void synthesizeProgram(DependencyGraph g){
-        TopologicalOrderIterator<Vertex, DEdge> it = new TopologicalOrderIterator<>(g.getG());
+        TopologicalOrderIterator<Vertex, DEdge> it = new TopologicalOrderIterator<>(g);
         while(it.hasNext()) {
             Vertex v = it.next();
             if (v.getType().equalsIgnoreCase("attribute")) {
                 if (!v.getId().equalsIgnoreCase("person.oid")) {
-                    if (g.getG().incomingEdgesOf(v).size() > 0) addIncomingUnion(v, g, ".input");
+                    if (g.incomingEdgesOf(v).size() > 0) addIncomingUnion(v, g, ".input");
                     try {
                         solveVertex(v);
                     } catch (CompileException e) {
@@ -94,7 +94,7 @@ public class Compiler {
         }
     }
     private void addIncomingUnion(Vertex v, DependencyGraph g, String suffix){
-        Set<DEdge> edges = g.getG().incomingEdgesOf(v);
+        Set<DEdge> edges = g.incomingEdgesOf(v);
         Node np = new Node("OP", "op");
         Node na = new Node("ASSIG", "assig");
         Node ne = new Node("EXPR", "expr");
@@ -111,7 +111,7 @@ public class Compiler {
         this.program.getRoot().addChild(np);
     }
     private void addIncomingCartesianProduct(Vertex v, DependencyGraph g, String suffix){
-        Set<DEdge> edges = g.getG().incomingEdgesOf(v);
+        Set<DEdge> edges = g.incomingEdgesOf(v);
         Node np = new Node("OP", "op");
         Node na = new Node("ASSIG", "assig");
         Node ne = new Node("EXPR", "expr");
@@ -130,7 +130,7 @@ public class Compiler {
         this.program.getRoot().addChild(np);
     }
     private void addFilters(EdgeTask v, DependencyGraph g){
-        Set<DEdge> edges = g.getG().incomingEdgesOf(v);
+        Set<DEdge> edges = g.incomingEdgesOf(v);
         long index = 0;
         for(DEdge e : edges){
             addFilter(v, v.getAttributesByName(e.getSource().getId()), e.getSource().getId(), index);

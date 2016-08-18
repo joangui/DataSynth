@@ -42,7 +42,7 @@ public class TextDependencyGraphPrinter extends DependencyGraphVisitor {
 
     public void explode(Vertex vertex) {
         visited.add(vertex);
-        for(DEdge edge : graph.getG().incomingEdgesOf(vertex) ) {
+        for(DEdge edge : graph.incomingEdgesOf(vertex) ) {
             Vertex source = edge.getSource();
             source.accept(this);
         }
