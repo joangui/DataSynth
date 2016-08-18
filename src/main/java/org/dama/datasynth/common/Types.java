@@ -51,17 +51,8 @@ public class Types {
      * @param name The full packaged name of the generator to retrieve
      * @return An instance of the generator
      */
-    public static Generator getGenerator(String name) {
-        try {
+    public static Generator getGenerator(String name) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
             return (Generator) Class.forName(name).newInstance();
-        } catch(ClassNotFoundException cNFE) {
-            cNFE.printStackTrace();
-        } catch(InstantiationException iE) {
-            iE.printStackTrace();
-        } catch(IllegalAccessException iAE) {
-            iAE.printStackTrace();
-        }
-        return null;
     }
 
     /**
@@ -71,9 +62,9 @@ public class Types {
      * @param parameterTypes The list of parameter types
      * @param returnType The return type
      * @return The retrieved method.
-     * @throws CommonException if the method does not exist.
+     * @throws Exception if the method does not exist.
      */
-    public static Method getMethod(Generator generator, String methodName, List<DATATYPE> parameterTypes, DATATYPE returnType) throws CommonException {
+    public static Method getMethod(Generator generator, String methodName, List<DATATYPE> parameterTypes, DATATYPE returnType) throws Exception {
         Method[] methods = generator.getClass().getMethods();
         for(Method m : methods) {
             String mName = m.getName();
@@ -100,7 +91,7 @@ public class Types {
         for(DATATYPE param : parameterTypes) {
             paramsString = paramsString+","+param.getText();
         }
-        throw new CommonException("Generator "+generator.getClass().getName()+" does not have a method with name "+methodName+" with paramters "+parameterTypes.size()+" parameters <"+paramsString+"> and return type "+(returnType != null ? returnType.getText() : "null"));
+        throw new Exception("Generator "+generator.getClass().getName()+" does not have a method with name "+methodName+" with paramters "+parameterTypes.size()+" parameters <"+paramsString+"> and return type "+(returnType != null ? returnType.getText() : "null"));
     }
 
     /**
@@ -109,9 +100,9 @@ public class Types {
      * @param generator The generator to get the method from
      * @param methodName The name of the method to retrieve
      * @return The retrieved method
-     * @throws CommonException if the method does not exist.
+     * @throws Exception if the method does not exist.
      */
-    public static Method getUntypedMethod(Generator generator, String methodName) throws CommonException {
+    public static Method getUntypedMethod(Generator generator, String methodName) throws Exception {
         Method[] methods = generator.getClass().getMethods();
         for(Method m : methods) {
             String mName = m.getName();
@@ -119,6 +110,6 @@ public class Types {
                 return m;
             }
         }
-        throw new CommonException("Generator "+generator.getClass().getName()+" does not have a method with name "+methodName );
+        throw new Exception("Generator "+generator.getClass().getName()+" does not have a method with name "+methodName );
     }
 }

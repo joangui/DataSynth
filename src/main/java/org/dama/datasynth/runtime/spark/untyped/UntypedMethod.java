@@ -1,14 +1,11 @@
 package org.dama.datasynth.runtime.spark.untyped;
 
-import org.dama.datasynth.common.CommonException;
 import org.dama.datasynth.common.Types;
 import org.dama.datasynth.runtime.Generator;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by aprat on 17/04/16.
@@ -23,13 +20,13 @@ public class UntypedMethod implements Serializable {
         this.g              = g;
         this.functionName   = functionName;
         try {
-            method = Types.GetUntypedMethod(g,functionName);
+            method = Types.getUntypedMethod(g,functionName);
         } catch(NullPointerException nPE) {
             nPE.printStackTrace();
         } catch(SecurityException sE) {
             sE.printStackTrace();
-        } catch(CommonException cE) {
-            cE.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -57,7 +54,7 @@ public class UntypedMethod implements Serializable {
         try {
             g = (Generator)in.readObject();
             functionName = in.readUTF();
-            method = Types.GetUntypedMethod(g,functionName);
+            method = Types.getUntypedMethod(g,functionName);
         } catch(java.io.IOException iOE) {
             iOE.printStackTrace();
         } catch(ClassNotFoundException cNFE) {
@@ -66,8 +63,8 @@ public class UntypedMethod implements Serializable {
             nPE.printStackTrace();
         } catch(SecurityException sE) {
             sE.printStackTrace();
-        } catch(CommonException cE) {
-            cE.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

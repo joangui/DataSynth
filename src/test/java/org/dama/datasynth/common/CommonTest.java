@@ -1,6 +1,7 @@
 package org.dama.datasynth.common;
 
 import org.dama.datasynth.runtime.Generator;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -56,7 +57,22 @@ public class CommonTest {
 
     @Test
     public void GeneratorTest() {
-        Generator generator = Types.Generator("org.dama.datasynth.generators.CDFGenerator");
+        Generator generator = null;
+        try {
+            generator = Types.getGenerator("org.dama.datasynth.generators.CDFGenerator");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            Assert.fail("Test failed due to exception");
+            System.exit(1);
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+            Assert.fail("Test failed due to exception");
+            System.exit(1);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+            Assert.fail("Test failed due to exception");
+            System.exit(1);
+        }
         assertNotEquals("Generator org.dama.datasynth.generators.CDFGenerator should exist", generator, null);
         List<Types.DATATYPE> parameters = new ArrayList<Types.DATATYPE>();
         try {
@@ -64,12 +80,13 @@ public class CommonTest {
             parameters.add(Types.DATATYPE.STRING);
             parameters.add(Types.DATATYPE.STRING);
             parameters.add(Types.DATATYPE.STRING);
-            assertNotEquals("Function CDFGenerator.initialize with parameters String, String, String, String does not exist", Types.GetMethod(generator, "initialize", parameters, null), null);
-            assertNotEquals("Function CDFGenerator.initialize ", Types.GetUntypedMethod(generator, "initialize"), null);
+            assertNotEquals("Function CDFGenerator.initialize with parameters String, String, String, String does not exist", Types.getMethod(generator, "initialize", parameters, null), null);
+            assertNotEquals("Function CDFGenerator.initialize ", Types.getUntypedMethod(generator, "initialize"), null);
             parameters.clear();
             parameters.add(Types.DATATYPE.LONG);
-            assertNotEquals("Function CDFGenerator.run with Long and return type String does not exist", Types.GetMethod(generator, "run", parameters, Types.DATATYPE.STRING), null);
-        } catch(CommonException e) {
+            assertNotEquals("Function CDFGenerator.run with Long and return type String does not exist", Types.getMethod(generator, "run", parameters, Types.DATATYPE.STRING), null);
+        } catch (Exception e) {
+            Assert.fail("Test failed due to exception");
             e.printStackTrace();
             System.exit(1);
         }

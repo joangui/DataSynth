@@ -1,6 +1,5 @@
 package org.dama.datasynth.runtime.spark;
 
-import org.dama.datasynth.common.CommonException;
 import org.dama.datasynth.common.Types;
 import org.dama.datasynth.runtime.Generator;
 
@@ -27,13 +26,13 @@ public class MethodSerializable implements Serializable {
         this.parameters     = parameters;
         this.returnType     = returnType;
         try {
-            method = Types.GetMethod(g,functionName,parameters, returnType);
+            method = Types.getMethod(g,functionName,parameters, returnType);
         } catch(NullPointerException nPE) {
             nPE.printStackTrace();
         } catch(SecurityException sE) {
             sE.printStackTrace();
-        } catch(CommonException cE) {
-            cE.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -72,7 +71,7 @@ public class MethodSerializable implements Serializable {
                 parameters.add(Types.DATATYPE.fromString(in.readUTF()));
             }
             returnType = Types.DATATYPE.fromString(in.readUTF());
-            method = Types.GetMethod(g,functionName,parameters, returnType);
+            method = Types.getMethod(g,functionName,parameters, returnType);
         } catch(java.io.IOException iOE) {
             iOE.printStackTrace();
         } catch(ClassNotFoundException cNFE) {
@@ -81,8 +80,8 @@ public class MethodSerializable implements Serializable {
             nPE.printStackTrace();
         } catch(SecurityException sE) {
             sE.printStackTrace();
-        } catch(CommonException cE) {
-            cE.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
