@@ -62,48 +62,52 @@ public class Parser {
                 }
                 ast.addEntity(ent);
             }
+
             for(Map.Entry<String, Ast.Attribute> entry : hmAttr.entrySet()){
                 System.out.println("Key " + entry.getKey() + " IS NULL? "+ (entry.getValue() == null));
             }
+
             //EDGE PROCESSING
             JSONArray edges = (JSONArray)jsonObject.get("edges");
-            for(Object obj: edges){
-                JSONObject edge = (JSONObject) obj;
-                String edgeName = (String)edge.get("name");
-                JSONObject generator = (JSONObject)edge.get("generator");
-                Ast.Generator gen = new Ast.Generator((String)generator.get("name"));
-                JSONArray runParameters = (JSONArray)generator.get("runParameters");
-                for(Object runParameter: runParameters) {
-                    gen.addRunParameter((String)(runParameter));
-                }
+            if(edges != null) {
+                for (Object obj : edges) {
+                    JSONObject edge = (JSONObject) obj;
+                    String edgeName = (String) edge.get("name");
+                    JSONObject generator = (JSONObject) edge.get("generator");
+                    Ast.Generator gen = new Ast.Generator((String) generator.get("name"));
+                    JSONArray runParameters = (JSONArray) generator.get("runParameters");
+                    for (Object runParameter : runParameters) {
+                        gen.addRunParameter((String) (runParameter));
+                    }
 
-                JSONArray initParameters = (JSONArray)generator.get("initParameters");
-                for(Object initParameter: initParameters) {
-                    gen.addInitParameter(initParameter.toString());
-                }
-                Ast.Edge edg = new Ast.Edge(edgeName, gen);
-                JSONObject source = (JSONObject) edge.get("source");
-                JSONObject target = (JSONObject) edge.get("target");
-                Ast.Entity attrEnt = hm.get((String) source.get("entity"));
-                edg.setOrigin(attrEnt);
-                for(Object objattr : (JSONArray) source.get("attributes")) {
-                    String attr = (String) objattr;
-                    System.out.println("Fetching " + attrEnt.getName()+"."+attr);
-                    edg.addAttributeOrigin(hmAttr.get(attrEnt.getName()+"."+attr));
-                }
-                attrEnt = hm.get((String) target.get("entity"));
-                edg.setDestination(attrEnt);
-                for(Object objattr : (JSONArray) target.get("attributes")) {
-                    String attr = (String) objattr;
-                    edg.addAttributeTarget(hmAttr.get(attrEnt.getName()+"."+attr));
-                }
-                ast.addEdge(edg);
+                    JSONArray initParameters = (JSONArray) generator.get("initParameters");
+                    for (Object initParameter : initParameters) {
+                        gen.addInitParameter(initParameter.toString());
+                    }
+                    Ast.Edge edg = new Ast.Edge(edgeName, gen);
+                    JSONObject source = (JSONObject) edge.get("source");
+                    JSONObject target = (JSONObject) edge.get("target");
+                    Ast.Entity attrEnt = hm.get((String) source.get("entity"));
+                    edg.setOrigin(attrEnt);
+                    for (Object objattr : (JSONArray) source.get("attributes")) {
+                        String attr = (String) objattr;
+                        System.out.println("Fetching " + attrEnt.getName() + "." + attr);
+                        edg.addAttributeOrigin(hmAttr.get(attrEnt.getName() + "." + attr));
+                    }
+                    attrEnt = hm.get((String) target.get("entity"));
+                    edg.setDestination(attrEnt);
+                    for (Object objattr : (JSONArray) target.get("attributes")) {
+                        String attr = (String) objattr;
+                        edg.addAttributeTarget(hmAttr.get(attrEnt.getName() + "." + attr));
+                    }
+                    ast.addEdge(edg);
                 /*JSONArray cardinality = (JSONArray)edge.get("cardinality");
                 int i = 0;
                 for(Object c: cardinality) {
                     edg.setCardinality(Integer.parseInt(c.toString()),i);
                     ++i;
                 }*/
+                }
             }
         } catch(ParseException pe) {
             System.out.println("position: " + pe.getPosition());
