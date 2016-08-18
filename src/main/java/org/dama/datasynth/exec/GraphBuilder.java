@@ -22,15 +22,11 @@ public class GraphBuilder {
     private DirectedGraph<Vertex, DEdge> g;
     private List<Vertex> entryPoints = new ArrayList<Vertex>();
 
-    public GraphBuilder(Ast t) throws BuildDependencyGraphException{
-        try {
+    public GraphBuilder(Ast t) {
             this.initialize(t);
-        } catch (BuildDependencyGraphException e) {
-            throw e;
-        }
     }
 
-    public void initialize(Ast ast) throws BuildDependencyGraphException {
+    public void initialize(Ast ast) {
         //this.g = new DefaultDirectedGraph<>((v1, v2) -> new DEdge(v1, v2));
         this.g = new DirectedMultigraph<>((v1, v2) -> new DEdge(v1, v2));
 
@@ -78,7 +74,7 @@ public class GraphBuilder {
             }
         }
         System.out.println("Processed " + processed.size() + " Tasks " + tasks.size());
-        if(processed.size() != tasks.size()) throw new BuildDependencyGraphException("Critical internal Error. Dependency plan wrongly built. Some nodes might be missing");
+        if(processed.size() != tasks.size()) throw new RuntimeException("Critical internal Error. Dependency plan wrongly built. Some nodes might be missing");
         //Now process the edges which represent relationships between different entities
         Map<String, EntityTask> entities = new HashMap<>();
         for(Vertex vtx : entryPoints) {

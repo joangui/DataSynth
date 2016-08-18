@@ -13,9 +13,9 @@ public class DependencyGraph {
     /**
      * Constructor
      * @param ast The ast to build the dependency graph from
-     * @throws BuildDependencyGraphException
+     * @throws Exception
      */
-    public DependencyGraph(Ast ast) throws BuildDependencyGraphException {
+    public DependencyGraph(Ast ast) {
         GraphBuilder gb = new GraphBuilder(ast);
         this.g = gb.getG();
         TextDependencyGraphPrinter printer = new TextDependencyGraphPrinter();
