@@ -51,7 +51,7 @@ public class Types {
      * @param name The full packaged name of the generator to retrieve
      * @return An instance of the generator
      */
-    public static Generator Generator(String name) {
+    public static Generator getGenerator(String name) {
         try {
             return (Generator) Class.forName(name).newInstance();
         } catch(ClassNotFoundException cNFE) {
@@ -73,7 +73,7 @@ public class Types {
      * @return The retrieved method.
      * @throws CommonException if the method does not exist.
      */
-    public static Method GetMethod(Generator generator, String methodName, List<DATATYPE> parameterTypes, DATATYPE returnType) throws CommonException {
+    public static Method getMethod(Generator generator, String methodName, List<DATATYPE> parameterTypes, DATATYPE returnType) throws CommonException {
         Method[] methods = generator.getClass().getMethods();
         for(Method m : methods) {
             String mName = m.getName();
@@ -111,7 +111,7 @@ public class Types {
      * @return The retrieved method
      * @throws CommonException if the method does not exist.
      */
-    public static Method GetUntypedMethod(Generator generator, String methodName) throws CommonException {
+    public static Method getUntypedMethod(Generator generator, String methodName) throws CommonException {
         Method[] methods = generator.getClass().getMethods();
         for(Method m : methods) {
             String mName = m.getName();
