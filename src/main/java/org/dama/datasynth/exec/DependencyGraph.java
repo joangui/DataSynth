@@ -26,6 +26,10 @@ public class DependencyGraph  extends DirectedMultigraph<Vertex,DEdge> {
         printer.visit(this);
     }
 
+    /**
+     * Initializes the dependency graph given an Ast
+     * @param ast The Ast to initialize the dependency graph from
+     */
     private void initialize(Ast ast) {
         //############################################################################
         Map<String,AttributeTask> tasks = new TreeMap<String,AttributeTask>();
@@ -93,6 +97,9 @@ public class DependencyGraph  extends DirectedMultigraph<Vertex,DEdge> {
         }
     }
 
+    /**
+     * Prints the dependency graph
+     */
     public void print(){
         for(DEdge e: edgeSet()){
             System.out.println(e.getSource().getType() + " :: " + e.getTarget().getType());
