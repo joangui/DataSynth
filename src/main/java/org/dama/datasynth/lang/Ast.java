@@ -83,22 +83,22 @@ public class Ast {
         /**
          * The number of entities
          */
-        protected Long           numEntities;
+        protected Long numInstances;
 
         /**
          * Gets the number of entities
          * @return The number of entities
          */
-        public Long getNumEntities() {
-            return numEntities;
+        public Long getNumInstances() {
+            return numInstances;
         }
 
         /** Class Constructor
          * @param name The name of the entity
          */
-        public Entity(String name, Long numEntities) {
+        public Entity(String name, Long numInstances) {
             super(name);
-            this.numEntities = numEntities;
+            this.numInstances = numInstances;
         }
 
         /**

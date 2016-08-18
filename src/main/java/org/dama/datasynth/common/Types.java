@@ -29,6 +29,11 @@ public class Types {
             return typeData.getSimpleName();
         }
 
+        /**
+         * Returns the corresponding DATATYPE to the given string.
+         * @param text The string representing the datatype.
+         * @return The corresponding DATATYPE.
+         */
         public static DATATYPE fromString(String text) {
             if (text != null) {
                 for (DATATYPE b : DATATYPE.values()) {
@@ -54,6 +59,15 @@ public class Types {
         return null;
     }
 
+    /**
+     * Given a generator, gets the method with the given name, parameters and return type.
+     * @param generator The Generator to retrieve the method from
+     * @param methodName The Name of the method to retrieve
+     * @param parameterTypes The list of parameter types
+     * @param returnType The return type
+     * @return The retrieved method.
+     * @throws CommonException if the method does not exist.
+     */
     public static Method GetMethod(Generator generator, String methodName, List<DATATYPE> parameterTypes, DATATYPE returnType) throws CommonException {
         Method[] methods = generator.getClass().getMethods();
         for(Method m : methods) {
@@ -84,6 +98,14 @@ public class Types {
         throw new CommonException("Generator "+generator.getClass().getName()+" does not have a method with name "+methodName+" with paramters "+parameterTypes.size()+" parameters <"+paramsString+"> and return type "+(returnType != null ? returnType.getText() : "null"));
     }
 
+    /**
+     * Given a generator, gets the method with the given name, regardless of the parameters and return type.
+     * In case of multiple methods with the same name, returns the first it encounters.
+     * @param generator The generator to get the method from
+     * @param methodName The name of the method to retrieve
+     * @return The retrieved method
+     * @throws CommonException if the method does not exist.
+     */
     public static Method GetUntypedMethod(Generator generator, String methodName) throws CommonException {
         Method[] methods = generator.getClass().getMethods();
         for(Method m : methods) {

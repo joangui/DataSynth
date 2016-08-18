@@ -7,9 +7,16 @@ import org.jgrapht.DirectedGraph;
  * Created by quim on 5/12/16.
  */
 public class DependencyGraph {
+
     private DirectedGraph<Vertex, DEdge> g;
-    public DependencyGraph(Ast t) throws BuildDependencyGraphException {
-        GraphBuilder gb = new GraphBuilder(t);
+
+    /**
+     * Constructor
+     * @param ast The ast to build the dependency graph from
+     * @throws BuildDependencyGraphException
+     */
+    public DependencyGraph(Ast ast) throws BuildDependencyGraphException {
+        GraphBuilder gb = new GraphBuilder(ast);
         this.g = gb.getG();
         TextDependencyGraphPrinter printer = new TextDependencyGraphPrinter();
         printer.visit(this);
@@ -19,9 +26,6 @@ public class DependencyGraph {
         return g;
     }
 
-    public void setG(DirectedGraph<Vertex, DEdge> g) {
-        this.g = g;
-    }
     public void print(){
         for(DEdge e: g.edgeSet()){
             System.out.println(e.getSource().getType() + " :: " + e.getTarget().getType());

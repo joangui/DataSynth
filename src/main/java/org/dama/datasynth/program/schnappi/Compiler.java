@@ -49,7 +49,7 @@ public class Compiler {
                     FuncNode n = new FuncNode("genids");
                     ParamsNode pn = new ParamsNode("params");
                     AttributeTask at = (AttributeTask) v;
-                    pn.addParam(String.valueOf(at.getNumEntities()));
+                    pn.addParam(String.valueOf(at.getEntity().getNumInstances()));
                     n.addChild(pn);
                     Node np = new Node("OP", "op");
                     Node na = new Node("ASSIG", "assig");

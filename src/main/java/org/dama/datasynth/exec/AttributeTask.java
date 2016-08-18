@@ -2,8 +2,6 @@ package org.dama.datasynth.exec;
 
 import org.dama.datasynth.common.Types;
 import org.dama.datasynth.lang.Ast;
-import org.dama.datasynth.runtime.ExecutionEngine;
-import org.dama.datasynth.runtime.ExecutionException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,21 +11,11 @@ import java.util.List;
  */
 public class AttributeTask extends Vertex  implements ExecutableVertex{
 
-    private Ast.Entity entity = null;
-    private Ast.Attribute attribute = null;
-
-    public String getGenerator() {
-        return generator;
-    }
-
-    private String generator = null;
-    private List<String> runParameters = new ArrayList<String>();
-
-    public List<String> getInitParameters() {
-        return initParameters;
-    }
-
-    private List<String> initParameters = new ArrayList<String>();
+    private Ast.Entity      entity          = null;
+    private Ast.Attribute   attribute       = null;
+    private String          generator       = null;
+    private List<String>    runParameters   = new ArrayList<String>();
+    private List<String>    initParameters  = new ArrayList<String>();
 
     /**
      * Class constructor
@@ -49,11 +37,28 @@ public class AttributeTask extends Vertex  implements ExecutableVertex{
     }
 
     /**
+     * Gets the generator of this attribute task
+     * @return The name of the generator of this attribute task
+     */
+    public String getGenerator() {
+        return generator;
+    }
+
+
+    /**
+     * Gets the initialize method parameters
+     * @return The list of parameter types of the initialize method
+     */
+    public List<String> getInitParameters() {
+        return initParameters;
+    }
+
+    /**
      * Gets the entity this task is generating something for
      * @return The entity
      */
-    public String getEntity() {
-        return entity.getName();
+    public Ast.Entity getEntity() {
+        return entity;
     }
 
     /**
@@ -80,14 +85,6 @@ public class AttributeTask extends Vertex  implements ExecutableVertex{
         return runParameters;
     }
 
-
-    public void accept(ExecutionEngine engine) throws ExecutionException {
-        engine.execute(this);
-    }
-
-    public long getNumEntities(){
-        return this.entity.getNumEntities();
-    }
 
     @Override
     public void accept(DependencyGraphVisitor visitor) {

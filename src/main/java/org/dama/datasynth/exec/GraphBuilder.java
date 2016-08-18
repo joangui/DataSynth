@@ -46,7 +46,7 @@ public class GraphBuilder {
             g.addVertex(entityTask);
             for(Ast.Attribute attribute : entity.getAttributes()) {
                 AttributeTask task = new AttributeTask(entity,attribute);
-                tasks.put(task.getEntity()+"."+task.getAttributeName(),task);
+                tasks.put(task.getEntity().getName()+"."+task.getAttributeName(),task);
                 g.addVertex(task);
                 g.addEdge(oid,task);
                 g.addEdge(task, entityTask);
@@ -66,7 +66,7 @@ public class GraphBuilder {
                     toProcess.remove(0);
                     processed.add(currentTask);
                     for (String param : currentTask.getRunParameters()) {
-                        AttributeTask otherTask = tasks.get(currentTask.getEntity()+"."+param);
+                        AttributeTask otherTask = tasks.get(currentTask.getEntity().getName()+"."+param);
                         if (otherTask != null) {
                             if (!processed.contains(otherTask)) {
                                 toProcess.add(otherTask);

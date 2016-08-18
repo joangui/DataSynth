@@ -91,12 +91,12 @@ public class SparkExecutionEngine extends ExecutionEngine {
         /** Executing the Generator **/
         List<Types.DATATYPE> runParameterTypes = new ArrayList<Types.DATATYPE>();
         for(String param : task.getRunParameters()) {
-            Types.DATATYPE dataType = attributeTypes.get(task.getEntity()+"."+param);
+            Types.DATATYPE dataType = attributeTypes.get(task.getEntity().getName()+"."+param);
             if(dataType == null) throw new ExecutionException("DATATYPE cannot be null");
             runParameterTypes.add(dataType);
         }
 
-        JavaPairRDD<Long, Tuple> entityRDD = attributeRDDs.get(task.getEntity()+".oid");
+        JavaPairRDD<Long, Tuple> entityRDD = attributeRDDs.get(task.getEntity().getName()+".oid");
         JavaPairRDD<Long, Tuple> rdd;
         switch(runParameterTypes.size()){
             case 0: {
@@ -105,7 +105,7 @@ public class SparkExecutionEngine extends ExecutionEngine {
             }
             break;
             case 1: {
-                JavaPairRDD<Long, Tuple> attributeRDD = attributeRDDs.get(task.getEntity() + "." + task.getRunParameters().get(0));
+                JavaPairRDD<Long, Tuple> attributeRDD = attributeRDDs.get(task.getEntity().getName() + "." + task.getRunParameters().get(0));
                 //JavaPairRDD<Long,Tuple> entityAttributeRDD = unionRDDs(entityRDD, attributeRDD);
                 JavaPairRDD<Long,Tuple> entityAttributeRDD = entityRDD.union(attributeRDD).reduceByKey(TupleUtils.join);
                 FunctionWrapper fw = new FunctionWrapper(generator, "run", runParameterTypes,task.getAttributeType());
@@ -113,8 +113,8 @@ public class SparkExecutionEngine extends ExecutionEngine {
             }
             break;
             case 2: {
-                JavaPairRDD<Long, Tuple> attributeRDD0 = attributeRDDs.get(task.getEntity() + "." + task.getRunParameters().get(0));
-                JavaPairRDD<Long, Tuple> attributeRDD1 = attributeRDDs.get(task.getEntity() + "." + task.getRunParameters().get(1));
+                JavaPairRDD<Long, Tuple> attributeRDD0 = attributeRDDs.get(task.getEntity().getName() + "." + task.getRunParameters().get(0));
+                JavaPairRDD<Long, Tuple> attributeRDD1 = attributeRDDs.get(task.getEntity().getName() + "." + task.getRunParameters().get(1));
                 //JavaPairRDD<Long,Tuple> entityAttributeRDD = unionRDDs(entityRDD, attributeRDD0, attributeRDD1);
                 JavaPairRDD<Long,Tuple> entityAttributeRDD = entityRDD.union(attributeRDD0).union(attributeRDD1).reduceByKey(TupleUtils.join);
                 Function2Wrapper fw = new Function2Wrapper(generator, "run", runParameterTypes,task.getAttributeType());

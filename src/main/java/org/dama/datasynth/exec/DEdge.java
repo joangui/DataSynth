@@ -6,38 +6,46 @@ import org.dama.datasynth.program.solvers.Signature;
  * Created by quim on 5/10/16.
  */
 public class DEdge {
-    private Vertex source;
-    private Vertex target;
-    private Signature signature;
+
+    private Vertex      source;
+    private Vertex      target;
+    private Signature   signature;
+
+    /**
+     * Constructor
+     * @param source The source vertex of the edge
+     * @param target The target vertex of the edge
+     */
+    public DEdge(Vertex source, Vertex target){
+        this.source = source;
+        this.target = target;
+        this.signature = new Signature(source.getType(), target.getType());
+    }
+
+    /**
+     * Gets the source vertex of the edge
+     * @return The source of the edge
+     */
     public Vertex getSource() {
         return source;
     }
 
-    public void setSource(Vertex source) {
-        this.source = source;
-    }
-
+    /**
+     * Gets the target of the edge
+     * @return The target of the edge
+     */
     public Vertex getTarget() {
         return target;
     }
 
-    public void setTarget(Vertex target) {
-        this.target = target;
-    }
-
+    /**
+     * Gets the signature of the edge
+     * @return The signature of the edge
+     */
     public Signature getSignature() {
         return signature;
     }
 
-    public void setSignature(Signature signature) {
-        this.signature = signature;
-    }
-
-    public DEdge(Vertex v1, Vertex v2){
-        this.source = v1;
-        this.target = v2;
-        this.signature = new Signature(v1.getType(), v2.getType());
-    }
 
     @Override
     public String toString(){
