@@ -46,6 +46,11 @@ public class Types {
         }
     }
 
+    /**
+     * Returns an instance of the generator with the given name
+     * @param name The full packaged name of the generator to retrieve
+     * @return An instance of the generator
+     */
     public static Generator Generator(String name) {
         try {
             return (Generator) Class.forName(name).newInstance();
