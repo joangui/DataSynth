@@ -20,15 +20,19 @@ import java.util.HashMap;
  * Created by quim on 5/5/16.
  */
 public class Parser {
+
     private String file;
     private Solver solver;
+
     public Parser(String file){
         this.file = file;
         this.solver = this.parse();
     }
+
     public Solver getSolver() {
         return this.solver;
     }
+
     public Solver parse(){
         SchnappiLexer SchLexer = null;
         try {
@@ -46,6 +50,7 @@ public class Parser {
         s.signature = this.getSignature(n);
         return s;
     }
+
     public HashMap<String, String> getBindings(Node root){
         HashMap<String, String> binds = new HashMap<>();
         for(Node nn : root.getChild(1).children){
@@ -55,12 +60,14 @@ public class Parser {
         }
         return binds;
     }
+
     /*public Signature getSignature(Node root){
         SignatureNode sn = (SignatureNode) root.getChild(0);
         String source = sn.getChild(0).id;
         String target = sn.getChild(1).id;
         return new Signature(source,target);
     }*/
+
     public SignatureVertex getSignature(Node root){
         SignatureNode sn = (SignatureNode) root.getChild(0);
         String type = sn.getChild(0).id;

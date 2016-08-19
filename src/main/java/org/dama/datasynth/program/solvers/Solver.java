@@ -16,13 +16,16 @@ import java.util.Map;
  * Created by quim on 5/5/16.
  */
 public class Solver {
-    private String rawRep;
-    private Ast ast;
-    public Map<String,String> bindings;
-    public SignatureVertex signature;
+
+    private     String                  rawRep;
+    private     Ast                     ast;
+    public      Map<String,String>      bindings;
+    public      SignatureVertex         signature;
+
     public Solver(Ast astrep) {
         this.ast = astrep;
     }
+
     private void parse(String file){
         //this.ast = new Parser(file).getAst();
     }
@@ -95,8 +98,8 @@ public class Solver {
     }
     public Ast instantiate(Vertex v){
         //CopyVisitor cv = new CopyVisitor();
-        Ast binded = new Ast(ast.getRoot().copy());
-        this.instantiate(binded.getRoot(), v);
+        Ast binded = new Ast(ast.getRoots().get(0).copy());
+        this.instantiate(binded.getRoots().get(0), v);
         return binded;
     }
 }

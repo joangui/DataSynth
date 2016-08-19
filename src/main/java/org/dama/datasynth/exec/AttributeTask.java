@@ -2,6 +2,7 @@ package org.dama.datasynth.exec;
 
 import org.dama.datasynth.common.Types;
 import org.dama.datasynth.lang.Ast;
+import org.dama.datasynth.utils.traversals.Visitor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,11 +20,12 @@ public class AttributeTask extends Vertex  implements ExecutableVertex{
 
     /**
      * Class constructor
+     * @param graph The dependency graph this vertex belongs to
      * @param entity The entity this task is generating something for
      * @param attribute The attribute this task is generating
      */
-    public AttributeTask(Ast.Entity entity, Ast.Attribute attribute ) {
-        super(entity.getName()+"."+attribute.getName(),"attribute");
+    public AttributeTask(DependencyGraph graph, Ast.Entity entity, Ast.Attribute attribute ) {
+        super(graph, entity.getName()+"."+attribute.getName(),"attribute");
         this.entity = entity;
         this.attribute = attribute;
         this.generator = attribute.getGenerator().getName();
@@ -87,7 +89,8 @@ public class AttributeTask extends Vertex  implements ExecutableVertex{
 
 
     @Override
-    public void accept(DependencyGraphVisitor visitor) {
-        visitor.visit(this);
+    public void accept(Visitor visitor) {
+        DependencyGraphVisitor  dGraphVisitor = (DependencyGraphVisitor)(visitor);
+        dGraphVisitor.visit(this);
     }
 }

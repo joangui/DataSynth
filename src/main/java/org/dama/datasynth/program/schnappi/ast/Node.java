@@ -1,11 +1,14 @@
 package org.dama.datasynth.program.schnappi.ast;
 
+import org.dama.datasynth.utils.traversals.Acceptable;
+
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by quim on 5/17/16.
  */
-public class Node {
+public class Node implements Acceptable<Node> {
     public String id;
     public String type = "node";
     public ArrayList<Node> children;
@@ -53,7 +56,15 @@ public class Node {
     public String print(){
         return this.toStringTabbed("");
     }
-    public void accept(Visitor v){
+
+    @Override
+    public void accept(org.dama.datasynth.utils.traversals.Visitor visitor) {
+        Visitor v = (Visitor)visitor;
         v.visit(this);
+    }
+
+    @Override
+    public List<Node> neighbors() {
+        return children;
     }
 }

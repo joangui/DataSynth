@@ -14,7 +14,6 @@ public class TextDependencyGraphPrinter extends DependencyGraphVisitor {
 
     private static final Logger logger= Logger.getLogger( DataSynth.class.getSimpleName() );
 
-    private DependencyGraph     graph       = null;
     private int                 indents     = -1;
     private StringBuilder       strBuilder  = new StringBuilder();
 
@@ -37,14 +36,13 @@ public class TextDependencyGraphPrinter extends DependencyGraphVisitor {
         }
         return strBuilder.toString();
     }
+
     @Override
     public void visit(DependencyGraph graph) {
-        this.graph = graph;
         strBuilder.append("Printing Dependency Graph\n");
         super.visit(graph);
         logger.log(Level.FINE,"\n"+strBuilder.toString());
     }
-
 
     @Override
     public void visit(EntityTask entity) {

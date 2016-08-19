@@ -1,46 +1,60 @@
 package org.dama.datasynth.program.schnappi.ast;
 
+import org.dama.datasynth.program.Ast;
+
 /**
  * Created by quim on 5/30/16.
  */
 public class CopyVisitor extends Visitor{
     @Override
-    public Node visit(AssigNode n) {
-        return null;
+    public void visit(AssigNode n) {
     }
 
     @Override
-    public Node visit(AtomNode n) {
-        return null;
+    public void visit(AtomNode n) {
     }
 
     @Override
-    public Node visit(BindingNode n) {
-        return null;
+    public void visit(BindingNode n) {
     }
 
     @Override
-    public Node visit(ExprNode n) {
-        return null;
+    public void visit(ExprNode n) {
     }
 
     @Override
-    public Node visit(FuncNode n) {
-        return null;
+    public void visit(FuncNode n) {
     }
 
     @Override
-    public Node visit(Node n) {
-        return null;
+    public void visit(Node n) {
     }
 
     @Override
-    public Node visit(ParamsNode n) {
-        return null;
+    public void visit(ParamsNode n) {
     }
 
     @Override
-    public Node visit(SignatureNode n) {
-        return null;
+    public void visit(SignatureNode n) {
+    }
+
+    @Override
+    public boolean actBefore(Ast ast) {
+        return false;
+    }
+
+    @Override
+    public void actAfter(Ast ast) {
+
+    }
+
+    @Override
+    public boolean actBefore(Node node) {
+        return false;
+    }
+
+    @Override
+    public void actAfter(Node node) {
+
     }
 }

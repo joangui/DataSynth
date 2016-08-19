@@ -12,6 +12,7 @@ import org.dama.datasynth.lang.Parser;
 import org.dama.datasynth.lang.SemanticException;
 import org.dama.datasynth.lang.SyntacticException;
 import org.dama.datasynth.program.schnappi.Compiler;
+import org.dama.datasynth.program.schnappi.ast.AstTreePrinter;
 import org.dama.datasynth.utils.LogFormatter;
 
 import java.io.IOException;
@@ -86,7 +87,8 @@ public class DataSynth {
             c.synthesizeProgram(graph);
             end = System.currentTimeMillis();
             logger.info(" Query compiled in  "+(end-start) + " ms");
-            logger.log(Level.FINE, c.getProgram().print());
+            AstTreePrinter astTreePrinter = new AstTreePrinter();
+            astTreePrinter.visit(c.getProgram());
 
 
             start = System.currentTimeMillis();

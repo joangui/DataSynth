@@ -58,7 +58,7 @@ public class Compiler {
                     na.addChild(new AtomNode(v.getId(), "ID"));
                     na.addChild(ne);
                     np.addChild(na);
-                    this.program.getRoot().addChild(np);
+                    this.program.getRoots().get(0).addChild(np);
                 }
             }else if(v.getType().equalsIgnoreCase("entity")){
                 addIncomingUnion(v, g, ".final");
@@ -91,9 +91,9 @@ public class Compiler {
     }
 
     private void concatenateProgram(Ast p){
-        Node np = p.getRoot().getChild(2);
+        Node np = p.getRoots().get(0).getChild(2);
         for(Node nn : np.children){
-            this.program.getRoot().addChild(nn);
+            this.program.getRoots().get(0).addChild(nn);
         }
     }
 
@@ -112,7 +112,7 @@ public class Compiler {
         na.addChild(new AtomNode(v.getId() + suffix, "ID"));
         na.addChild(ne);
         np.addChild(na);
-        this.program.getRoot().addChild(np);
+        this.program.getRoots().get(0).addChild(np);
     }
 
     private void addIncomingCartesianProduct(Vertex v, DependencyGraph g, String suffix){
@@ -132,7 +132,7 @@ public class Compiler {
         na.addChild(new AtomNode(v.getId() + suffix, "ID"));
         na.addChild(ne);
         np.addChild(na);
-        this.program.getRoot().addChild(np);
+        this.program.getRoots().get(0).addChild(np);
     }
 
     private void addFilters(EdgeTask v, DependencyGraph g){
@@ -158,7 +158,7 @@ public class Compiler {
         na.addChild(new AtomNode(entityName + ".filtered["+ind+"]", "ID"));
         na.addChild(ne);
         np.addChild(na);
-        this.program.getRoot().addChild(np);
+        this.program.getRoots().get(0).addChild(np);
     }
 
     public Ast getProgram() {
@@ -169,7 +169,7 @@ public class Compiler {
         this.program = program;
     }
     private void merge(Solver solver){
-        Node r = this.program.getRoot();
-        r.addChild(solver.getAst().getRoot());
+        Node r = this.program.getRoots().get(0);
+        r.addChild(solver.getAst().getRoots().get(0));
     }
 }
