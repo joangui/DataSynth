@@ -39,6 +39,10 @@ public abstract class DependencyGraphVisitor {
                 recurse(dG, neighbor);
             }
             actAfter(v);
+        } else {
+            if (!actBefore(v)) return;
+            v.accept(this);
+            actAfter(v);
         }
     }
 

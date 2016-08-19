@@ -30,9 +30,9 @@ public class TextDependencyGraphPrinter extends DependencyGraphVisitor {
         }
         if(indents != 0 ) {
             if(direct) {
-                strBuilder.append("^--");
+                strBuilder.append("|__");
             } else {
-                strBuilder.append("^**");
+                strBuilder.append("|**");
             }
         }
         return strBuilder.toString();

@@ -48,6 +48,7 @@ public class DependencyGraph  extends DirectedMultigraph<Vertex,DEdge> {
             tasks.put(entity.getName()+".oid", oid);
             addVertex(oid);
             addVertex(entityTask);
+            addEdge(oid,entityTask);
             for(Ast.Attribute attribute : entity.getAttributes()) {
                 AttributeTask task = new AttributeTask(entity,attribute);
                 tasks.put(task.getEntity().getName()+"."+task.getAttributeName(),task);
