@@ -74,11 +74,13 @@ public class Compiler {
         }
         System.out.print("\n");
     }
+
     private void solveVertex(Vertex v) throws CompileException {
         Solver s = this.solversDB.get(v.getSignature());
         if(s == null) throw new CompileException("Unsolvable program");
         this.concatenateProgram(s.instantiate(v));
     }
+
     private void solveEdge(DEdge e) throws CompileException {
         Solver s = this.solversDB.get(e.getSignature());
         if(s == null) throw new CompileException("Unsolvable program");
@@ -87,12 +89,14 @@ public class Compiler {
         //this.merge(solversDB.get(e.getSignature()).instantiate(e.getSource(), e.getTarget()));
         // this.program.appendSomeStuffSomePlace(
     }
+
     private void concatenateProgram(Ast p){
         Node np = p.getRoot().getChild(2);
         for(Node nn : np.children){
             this.program.getRoot().addChild(nn);
         }
     }
+
     private void addIncomingUnion(Vertex v, DependencyGraph g, String suffix){
         Set<DEdge> edges = g.incomingEdgesOf(v);
         Node np = new Node("OP", "op");
@@ -110,6 +114,7 @@ public class Compiler {
         np.addChild(na);
         this.program.getRoot().addChild(np);
     }
+
     private void addIncomingCartesianProduct(Vertex v, DependencyGraph g, String suffix){
         Set<DEdge> edges = g.incomingEdgesOf(v);
         Node np = new Node("OP", "op");
@@ -129,6 +134,7 @@ public class Compiler {
         np.addChild(na);
         this.program.getRoot().addChild(np);
     }
+
     private void addFilters(EdgeTask v, DependencyGraph g){
         Set<DEdge> edges = g.incomingEdgesOf(v);
         long index = 0;
@@ -137,6 +143,7 @@ public class Compiler {
             ++index;
         }
     }
+
     private void addFilter(EdgeTask v, List<AttributeTask> attrs, String entityName, long ind){
         Node np = new Node("OP", "op");
         Node na = new Node("ASSIG", "assig");
@@ -153,6 +160,7 @@ public class Compiler {
         np.addChild(na);
         this.program.getRoot().addChild(np);
     }
+
     public Ast getProgram() {
         return this.program;
     }

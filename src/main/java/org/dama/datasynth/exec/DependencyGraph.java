@@ -22,9 +22,16 @@ public class DependencyGraph  extends DirectedMultigraph<Vertex,DEdge> {
     public DependencyGraph(Ast ast) {
         super((v1, v2) -> new DEdge(v1, v2));
         initialize(ast);
-        TextDependencyGraphPrinter printer = new TextDependencyGraphPrinter();
-        printer.visit(this);
     }
+
+    /**
+     * Gets the entry points (roots) of the dependency graph
+     * @return The list of entry points of the dependency graph
+     */
+    public List<Vertex> getEntryPoints() {
+        return entryPoints;
+    }
+
 
     /**
      * Initializes the dependency graph given an Ast
@@ -37,7 +44,7 @@ public class DependencyGraph  extends DirectedMultigraph<Vertex,DEdge> {
             Vertex entityTask = new EntityTask(entity.getName());
             entryPoints.add(entityTask);
             //g.addVertex(entityTask);
-            AttributeTask oid = new AttributeTask(entity,new Ast.Attribute("oid", Types.DATATYPE.INTEGER,new Ast.Generator("IdGenerator")));
+            AttributeTask oid = new AttributeTask(entity,new Ast.Attribute("oid", Types.DATATYPE.INTEGER, new Ast.Generator("IdGenerator")));
             tasks.put(entity.getName()+".oid", oid);
             addVertex(oid);
             addVertex(entityTask);
@@ -77,10 +84,12 @@ public class DependencyGraph  extends DirectedMultigraph<Vertex,DEdge> {
         System.out.println("Processed " + processed.size() + " Tasks " + tasks.size());
         if(processed.size() != tasks.size()) throw new RuntimeException("Critical internal Error. Dependency plan wrongly built. Some nodes might be missing");
         //Now process the edges which represent relationships between different entities
+
         Map<String, EntityTask> entities = new HashMap<>();
         for(Vertex vtx : entryPoints) {
             entities.put(vtx.getId(), (EntityTask) vtx);
         }
+
         for(Ast.Edge edge : ast.getEdges()) {
             EntityTask source = entities.get(edge.getOrigin().getName());
             EntityTask target = entities.get(edge.getDestination().getName());
@@ -100,10 +109,10 @@ public class DependencyGraph  extends DirectedMultigraph<Vertex,DEdge> {
     /**
      * Prints the dependency graph
      */
-    public void print(){
+    /*public void print(){
         for(DEdge e: edgeSet()){
             System.out.println(e.getSource().getType() + " :: " + e.getTarget().getType());
-            System.out.println(e.getSource().getId() + " -> " + e.getTarget().getId());
+            System.out.println(e.getSource().getId() + " <- " + e.getTarget().getId());
         }
-    }
+    }*/
 }

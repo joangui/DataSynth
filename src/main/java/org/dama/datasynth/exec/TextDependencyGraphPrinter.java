@@ -14,11 +14,15 @@ public class TextDependencyGraphPrinter extends DependencyGraphVisitor {
 
     private static final Logger logger= Logger.getLogger( DataSynth.class.getSimpleName() );
 
-    private DependencyGraph graph;
-    private Set<Vertex> visited = new HashSet<Vertex>();
-    private int indents = -1;
-    private StringBuilder strBuilder = new StringBuilder();
+    private DependencyGraph     graph       = null;
+    private int                 indents     = -1;
+    private StringBuilder       strBuilder  = new StringBuilder();
 
+    /**
+     * Retunrs an indented string with the number of current indents;
+     * @param direct The type of indent
+     * @return A string with the corresponding indent
+     */
     private String indents(Boolean direct) {
         StringBuilder strBuilder = new StringBuilder();
         for(int i = 0; i < indents;++i) {
@@ -36,39 +40,45 @@ public class TextDependencyGraphPrinter extends DependencyGraphVisitor {
     @Override
     public void visit(DependencyGraph graph) {
         this.graph = graph;
+        strBuilder.append("Printing Dependency Graph\n");
         super.visit(graph);
         logger.log(Level.FINE,"\n"+strBuilder.toString());
     }
 
-    public void explode(Vertex vertex) {
-        visited.add(vertex);
-        for(DEdge edge : graph.incomingEdgesOf(vertex) ) {
-            Vertex source = edge.getSource();
-            source.accept(this);
-        }
-    }
 
     @Override
     public void visit(EntityTask entity) {
-        indents++;
         strBuilder.append(indents(true)+entity.toString()+"\n");
-        explode(entity);
-        indents--;
     }
 
     @Override
     public void visit(AttributeTask attribute) {
-        indents++;
         strBuilder.append(indents(true)+attribute.toString()+"\n");
-        explode(attribute);
-        indents--;
     }
 
     @Override
     public void visit(EdgeTask relation) {
-        indents++;
         strBuilder.append(indents(true)+relation.toString()+"\n");
-        explode(relation);
+    }
+
+    @Override
+    public boolean actBefore(DependencyGraph dG) {
+        return true;
+    }
+
+    @Override
+    public void actAfter(DependencyGraph dG) {
+
+    }
+
+    @Override
+    public boolean actBefore(Vertex v) {
+        indents++;
+        return true;
+    }
+
+    @Override
+    public void actAfter(Vertex v) {
         indents--;
     }
 }

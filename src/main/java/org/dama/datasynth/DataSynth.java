@@ -6,6 +6,7 @@ package org.dama.datasynth;
 
 import com.beust.jcommander.JCommander;
 import org.dama.datasynth.exec.DependencyGraph;
+import org.dama.datasynth.exec.TextDependencyGraphPrinter;
 import org.dama.datasynth.lang.Ast;
 import org.dama.datasynth.lang.Parser;
 import org.dama.datasynth.lang.SemanticException;
@@ -62,8 +63,9 @@ public class DataSynth {
             Ast ast = parser.parse(new String(encoded, "UTF8"));
             ast.doSemanticAnalysis();
             DependencyGraph graph = new DependencyGraph(ast);
-            System.out.println("Printing graph");
-            graph.print();
+
+            TextDependencyGraphPrinter printer = new TextDependencyGraphPrinter();
+            printer.visit(graph);
 
             /*SchnappiLexer SchLexer = new SchnappiLexer( new ANTLRFileStream("src/main/resources/solvers/test.spi"));
             CommonTokenStream tokens = new CommonTokenStream( SchLexer );
