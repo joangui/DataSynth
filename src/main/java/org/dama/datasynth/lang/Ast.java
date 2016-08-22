@@ -20,7 +20,7 @@ public class Ast {
 
         /**
          * Class Constructor
-         * @param name The name of the AST Node
+         * @param name The name of the AST Statement
          */
         public Node(String name) {
             this.name = name;

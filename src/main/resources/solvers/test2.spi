@@ -4,7 +4,7 @@ signature : {
 }
 
 bindings : {
-    x = @source.id
+    x = @source.name
     f = @source.generator
     input = @source.input
 }

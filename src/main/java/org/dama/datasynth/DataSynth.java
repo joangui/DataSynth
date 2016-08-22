@@ -13,7 +13,8 @@ import org.dama.datasynth.lang.Parser;
 import org.dama.datasynth.lang.SemanticException;
 import org.dama.datasynth.lang.SyntacticException;
 import org.dama.datasynth.program.schnappi.Compiler;
-import org.dama.datasynth.program.schnappi.ast.AstTreePrinter;
+import org.dama.datasynth.program.schnappi.ast.visitor.AstTreePrinter;
+import org.dama.datasynth.program.schnappi.ast.Operation;
 import org.dama.datasynth.utils.LogFormatter;
 
 import java.io.IOException;
@@ -78,7 +79,7 @@ public class DataSynth {
             SchnappiParser SchParser = new SchnappiParser( tokens );
             SchnappiParser.SolverContext sctx = SchParser.solver();
             SchnappiGeneratorVisitor visitor = new SchnappiGeneratorVisitor();
-            Node n = visitor.visitSolver(sctx);
+            Statement n = visitor.visitSolver(sctx);
             String printedAst = "\n > " + n.toStringTabbed("");
             logger.log(Level.FINE, printedAst);*/
 
@@ -87,17 +88,17 @@ public class DataSynth {
                 System.out.println("\n >" + s.instantiate().getRoot().toStringTabbed(""));
             }*/
 
-            Compiler c = new Compiler("src/main/resources/solvers");
+            Compiler c = new Compiler(graph,"src/main/resources/solvers");
             start = System.currentTimeMillis();
-            c.synthesizeProgram(graph);
+            c.synthesizeProgram();
             end = System.currentTimeMillis();
             logger.info(" Query compiled in  "+(end-start) + " ms");
             AstTreePrinter astTreePrinter = new AstTreePrinter();
-            c.getProgram().getRoot().accept(astTreePrinter);
-
+            for(Operation operation : c.getProgram().getStatements()) {
+                operation.accept(astTreePrinter);
+            }
 
             start = System.currentTimeMillis();
-            //ExecutionEngine executor = new SparkExecutionEngine();
             /*SparkEnv.initialize();
             SchnappiInterpreter schInt = new SchnappiInterpreter(config);
             schInt.execProgram(c.getProgram().getRoot());

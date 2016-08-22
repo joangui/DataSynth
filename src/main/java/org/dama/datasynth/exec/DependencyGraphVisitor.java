@@ -5,7 +5,6 @@ package org.dama.datasynth.exec;
  */
 public abstract class DependencyGraphVisitor {
 
-
     protected DependencyGraph graph = null;
 
     public DependencyGraphVisitor( DependencyGraph graph) {
@@ -16,17 +15,17 @@ public abstract class DependencyGraphVisitor {
      * Performs the visit of a vertex of type Entity
      * @param entity The entity vertex to visit
      */
-    public abstract void visit(EntityTask entity);
+    public abstract void visit(Entity entity);
 
     /**
      * Performs the visit of a vertex of type Attribute
      * @param attribute The attribute vertex to visit
      */
-    public abstract void visit(AttributeTask attribute);
+    public abstract void visit(Attribute attribute);
 
     /**
      * Performs the visit of a vertex of type relation
      * @param relation The relation vertex to visit
      */
-    public abstract void visit(EdgeTask relation);
+    public abstract void visit(Edge relation);
 }

@@ -20,7 +20,7 @@ FSLASH : '/';
 VTYPE : ATTR | ENTITY | RELATION;
 ATTR : 'attribute';
 ENTITY : 'entity';
-RELATION : 'relation';
+RELATION : 'edge';
 SOURCE : '@source';
 TARGET : '@target';
 SIGNATURE : 'signature';

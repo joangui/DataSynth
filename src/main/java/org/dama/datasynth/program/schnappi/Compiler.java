@@ -2,12 +2,8 @@ package org.dama.datasynth.program.schnappi;
 
 import org.dama.datasynth.exec.*;
 import org.dama.datasynth.program.Ast;
-import org.dama.datasynth.program.schnappi.ast.AtomNode;
-import org.dama.datasynth.program.schnappi.ast.FuncNode;
-import org.dama.datasynth.program.schnappi.ast.Node;
-import org.dama.datasynth.program.schnappi.ast.ParamsNode;
+import org.dama.datasynth.program.schnappi.ast.*;
 import org.dama.datasynth.program.solvers.Loader;
-import org.dama.datasynth.program.solvers.SignatureVertex;
 import org.dama.datasynth.program.solvers.Solver;
 import org.jgrapht.traverse.TopologicalOrderIterator;
 
@@ -16,74 +12,47 @@ import java.util.*;
 /**
  * Created by quim on 5/5/16.
  */
-public class Compiler {
+public class Compiler extends DependencyGraphVisitor {
 
-    private Map<SignatureVertex, Solver> solversDB;
+    private Map<String, Solver> solversDB;
     private Ast program;
 
-    public Compiler(String dir){
+    public Compiler(DependencyGraph graph, String dir){
+        super(graph);
         loadSolvers(dir);
-        this.program = new Ast(new Node("main", "program"));
+        this.program = new Ast();
     }
 
     private void loadSolvers(String dir){
-        this.solversDB = new HashMap<>();
+        this.solversDB = new TreeMap<String,Solver>( new Comparator<String>() {
+            public int compare( String a, String b) {
+            return a.compareToIgnoreCase(b);
+        }
+        });
         for(Solver s : Loader.loadSolvers(dir)) {
-            this.solversDB.put(s.getSignature(),s);
+            this.solversDB.put(s.getSignature().getSource(),s);
         }
     }
 
-    public void synthesizeProgram(DependencyGraph g){
-        TopologicalOrderIterator<Vertex, DEdge> it = new TopologicalOrderIterator<>(g);
+    public void synthesizeProgram(){
+        TopologicalOrderIterator<Vertex, DEdge> it = new TopologicalOrderIterator<>(graph);
         while(it.hasNext()) {
             Vertex v = it.next();
-            if (v.getType().equalsIgnoreCase("attribute")) {
-                if (!v.getId().equalsIgnoreCase("person.oid")) {
-                    if (g.incomingEdgesOf(v).size() > 0) addIncomingUnion(v, g, ".input");
-                    try {
-                        solveVertex(v);
-                    } catch (CompileException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    FuncNode n = new FuncNode("genids");
-                    ParamsNode pn = new ParamsNode("params");
-                    AttributeTask at = (AttributeTask) v;
-                    pn.addParam(String.valueOf(at.getEntity().getNumInstances()));
-                    n.addChild(pn);
-                    Node np = new Node("OP", "op");
-                    Node na = new Node("ASSIG", "assig");
-                    Node ne = new Node("EXPR", "expr");
-                    ne.addChild(n);
-                    na.addChild(new AtomNode(v.getId(), "ID"));
-                    na.addChild(ne);
-                    np.addChild(na);
-                    this.program.getRoot().addChild(np);
-                }
-            }else if(v.getType().equalsIgnoreCase("entity")){
-                addIncomingUnion(v, g, ".final");
-            }else if(v.getType().equalsIgnoreCase("relation")){
-                addFilters((EdgeTask) v,g);
-                addIncomingCartesianProduct(v,g,".input");
-                try {
-                    solveVertex(v);
-                } catch (CompileException e) {
-                    e.printStackTrace();
-                }
-            }
+            v.accept(this);
         }
         System.out.print("\n");
     }
 
     private void solveVertex(Vertex v) throws CompileException {
-        Solver s = this.solversDB.get(v.getSignature());
-        if(s == null) throw new CompileException("Unsolvable program");
+        Solver s = this.solversDB.get(v.getType());
+        if(s == null) throw new CompileException("Unsolvable program. No solver for type "+v.getType());
         this.concatenateProgram(s.instantiate(v));
     }
 
     private void solveEdge(DEdge e) throws CompileException {
-        Solver s = this.solversDB.get(e.getSignature());
+        /*Solver s = this.solversDB.get(e.getSignature());
         if(s == null) throw new CompileException("Unsolvable program");
+        */
         //this.concatenateProgram(s.instantiate(e));
         //cool stuff happening here
         //this.merge(solversDB.get(e.getSignature()).instantiate(e.getSource(), e.getTarget()));
@@ -91,51 +60,38 @@ public class Compiler {
     }
 
     private void concatenateProgram(Ast p){
-        Node np = p.getRoot().getChild(2);
-        for(Node nn : np.children){
-            this.program.getRoot().addChild(nn);
+        List<Operation> statements = p.getStatements();
+        for(Operation statement : statements){
+            this.program.addStatement(statement);
         }
     }
 
     private void addIncomingUnion(Vertex v, DependencyGraph g, String suffix){
         Set<DEdge> edges = g.incomingEdgesOf(v);
-        Node np = new Node("OP", "op");
-        Node na = new Node("ASSIG", "assig");
-        Node ne = new Node("EXPR", "expr");
-        FuncNode n = new FuncNode("union");
-        ParamsNode pn = new ParamsNode("params");
+
+        Parameters parameters = new Parameters();
         for(DEdge e : edges){
-            pn.addParam(e.getSource().getId());
+            parameters.addParam(new Id(e.getSource().getId()));
         }
-        n.addChild(pn);
-        ne.addChild(n);
-        na.addChild(new AtomNode(v.getId() + suffix, "ID"));
-        na.addChild(ne);
-        np.addChild(na);
-        this.program.getRoot().addChild(np);
+        Function function = new Function("union",parameters);
+        Assign assign = new Assign(new Id(v.getId() + suffix),  function);
+        this.program.addStatement(assign);
     }
 
     private void addIncomingCartesianProduct(Vertex v, DependencyGraph g, String suffix){
         Set<DEdge> edges = g.incomingEdgesOf(v);
-        Node np = new Node("OP", "op");
-        Node na = new Node("ASSIG", "assig");
-        Node ne = new Node("EXPR", "expr");
-        FuncNode n = new FuncNode("cartesian");
-        ParamsNode pn = new ParamsNode("params");
+        Parameters parameters = new Parameters();
         long index = 0;
         for(DEdge e : edges){
-            pn.addParam(e.getSource().getId()+".filtered["+index+"]");
+            parameters.addParam( new Id(e.getSource().getId()+".filtered["+index+"]"));
             ++index;
         }
-        n.addChild(pn);
-        ne.addChild(n);
-        na.addChild(new AtomNode(v.getId() + suffix, "ID"));
-        na.addChild(ne);
-        np.addChild(na);
-        this.program.getRoot().addChild(np);
+        Function function = new Function("cartesian", parameters);
+        Assign assign = new Assign(new Id(v.getId() + suffix),function);
+        this.program.addStatement(assign);
     }
 
-    private void addFilters(EdgeTask v, DependencyGraph g){
+    private void addFilters(Edge v, DependencyGraph g){
         Set<DEdge> edges = g.incomingEdgesOf(v);
         long index = 0;
         for(DEdge e : edges){
@@ -144,21 +100,14 @@ public class Compiler {
         }
     }
 
-    private void addFilter(EdgeTask v, List<AttributeTask> attrs, String entityName, long ind){
-        Node np = new Node("OP", "op");
-        Node na = new Node("ASSIG", "assig");
-        Node ne = new Node("EXPR", "expr");
-        FuncNode n = new FuncNode("filter");
-        ParamsNode pn = new ParamsNode("params");
-        for(AttributeTask attr : attrs){
-            pn.addParam(attr.getId());
+    private void addFilter(Edge v, List<Attribute> attrs, String entityName, long ind){
+        Parameters parameters = new Parameters();
+        for(Attribute attr : attrs){
+            parameters.addParam(new Id(attr.getId()));
         }
-        n.addChild(pn);
-        ne.addChild(n);
-        na.addChild(new AtomNode(entityName + ".filtered["+ind+"]", "ID"));
-        na.addChild(ne);
-        np.addChild(na);
-        this.program.getRoot().addChild(np);
+        Function function = new Function("filter",parameters);
+        Assign assign = new Assign(new Id(entityName + ".filtered["+ind+"]"),function);
+        this.program.addStatement(assign);
     }
 
     public Ast getProgram() {
@@ -168,8 +117,43 @@ public class Compiler {
     public void setProgram(Ast program) {
         this.program = program;
     }
+
     private void merge(Solver solver){
-        Node r = this.program.getRoot();
-        r.addChild(solver.getAst().getRoot());
+        program.merge(solver.getOperations());
+    }
+
+    @Override
+    public void visit(Entity entity) {
+        addIncomingUnion(entity, graph, ".final");
+    }
+
+    @Override
+    public void visit(Attribute attribute) {
+        if (!attribute.getId().equalsIgnoreCase("person.oid")) {
+            if (graph.incomingEdgesOf(attribute).size() > 0) addIncomingUnion(attribute, graph, ".input");
+            try {
+                solveVertex(attribute);
+            } catch (CompileException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Parameters parameters = new Parameters( new Literal(String.valueOf(attribute.getEntity().getNumInstances())));
+            Function function = new Function("genids",parameters);
+            Assign assign = new Assign(new Id(attribute.getId()),function);
+            this.program.addStatement(assign);
+        }
+    }
+
+    @Override
+    public void visit(Edge edge) {
+
+        addFilters(edge, graph);
+        addIncomingCartesianProduct( edge, graph,".input");
+        try {
+            solveVertex(edge);
+        } catch (CompileException e) {
+            e.printStackTrace();
+        }
+
     }
 }

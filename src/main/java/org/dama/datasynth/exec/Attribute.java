@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by aprat on 20/04/16.
  */
-public class AttributeTask extends Vertex  implements ExecutableVertex{
+public class Attribute extends Vertex  implements ExecutableVertex{
 
     private Ast.Entity      entity          = null;
     private Ast.Attribute   attribute       = null;
@@ -22,8 +22,8 @@ public class AttributeTask extends Vertex  implements ExecutableVertex{
      * @param entity The entity this task is generating something for
      * @param attribute The attribute this task is generating
      */
-    public AttributeTask(Ast.Entity entity, Ast.Attribute attribute ) {
-        super(entity.getName()+"."+attribute.getName(),"attribute");
+    public Attribute(Ast.Entity entity, Ast.Attribute attribute ) {
+        super(entity.getName()+"."+attribute.getName());
         this.entity = entity;
         this.attribute = attribute;
         this.generator = attribute.getGenerator().getName();

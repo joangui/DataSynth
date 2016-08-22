@@ -3,15 +3,12 @@ package org.dama.datasynth.runtime;
 import org.apache.commons.io.FileUtils;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
-import org.apache.spark.api.java.function.Function;
-import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.api.java.function.PairFunction;
-import org.dama.datasynth.DataSynth;
 import org.dama.datasynth.DataSynthConfig;
 import org.dama.datasynth.SparkEnv;
 import org.dama.datasynth.common.Types;
+import org.dama.datasynth.program.Ast;
 import org.dama.datasynth.program.schnappi.ast.*;
-import org.dama.datasynth.runtime.spark.MethodRef;
 import org.dama.datasynth.runtime.spark.untyped.Function0Wrapper;
 import org.dama.datasynth.runtime.spark.untyped.Function2Wrapper;
 import org.dama.datasynth.runtime.spark.untyped.FunctionWrapper;
@@ -31,7 +28,7 @@ import java.util.Map;
  * Created by quim on 6/6/16.
  */
 public class SchnappiInterpreter {
-    private Map<String, JavaPairRDD<Long, Tuple>> rdds;
+/*    private Map<String, JavaPairRDD<Long, Tuple>> rdds;
     private Map<String, Types.DATATYPE>  attributeTypes;
     private Map<String, Object> table;
     private Map<String, Generator> generators;
@@ -48,15 +45,16 @@ public class SchnappiInterpreter {
         this();
         this.config = config;
     }
-    public void execProgram(Node n){
-        for(Node child : n.children) execOp(child);
+    public void execProgram(Ast ast){
+        for(Operation child : ast.getStatements()) execOp(child);
     }
-    public void execOp(Node n){
-        execAssig(n.getChild(0));
+    public void execOp(Operation n){
+        execAssig(n);
     }
-    public JavaPairRDD<Long,Tuple> execInit(FuncNode fn){
-        ParamsNode pn = (ParamsNode) fn.getChild(0);
-        String generatorName = pn.getParam(0);
+
+    public JavaPairRDD<Long,Tuple> execInit(Function fn){
+        Parameters pn = (Parameters) fn.getParameters();
+        String generatorName = ((Id)pn.getParam(0)).getName();
         Generator generator = null;
         try {
             generator = (Generator)Class.forName(generatorName).newInstance();
@@ -69,10 +67,11 @@ public class SchnappiInterpreter {
         } finally {
             //System.exit(1);
         }
-        ParamsNode pnr = (ParamsNode) fn.getChild(1);
-        Object [] params = new Object[pnr.params.size()];
-        for(int index = 0; index < pnr.params.size(); ++index) {
-            params[index] = pnr.params.get(index);
+        Parameters parameters = new Parameters(fn.getParameters());
+        parameters.getParams().remove(0);
+        Object [] params = new Object[parameters.params.size()];
+        for(int index = 0; index < parameters.params.size(); ++index) {
+            params[index] = parameters.params.get(index);
         }
         UntypedMethod method = new UntypedMethod(generator,"initialize");
         method.invoke(params);
@@ -80,24 +79,25 @@ public class SchnappiInterpreter {
         JavaRDD<Tuple2<Long, Tuple>> aux = SparkEnv.sc.emptyRDD();
         JavaPairRDD<Long,Tuple> result = JavaPairRDD.fromJavaRDD(aux);
         return result;
-        //return new MethodRef(generatorName, method);
     }
-    public Object execAssig(Node n) {
-        table.put(n.getChild(0).id, this.execExpr(n.getChild(1)));
+
+    public Object execAssig(Assign assign) {
+        table.put(assign.getId().getName(), this.execExpr(assign.getExpression()));
         return null;
     }
-    public Object execExpr(Node n){
-        return execAtom(n.getChild(0));
-    }
-    public Object execAtom(Node n){
-        if(n instanceof AtomNode){
-            return table.get(n.id);
+
+    public Object execExpr(Statement n){
+
+        if(n.getType().compareTo("Id") == 0 ){
+            return table.get(((Id)n).getName());
         }else{
-            return execFunc((FuncNode) n);
+            return execFunc((Function) n);
         }
     }
-    public JavaPairRDD<Long, Tuple> execFunc(FuncNode n){
-        switch(n.id){
+
+
+    public JavaPairRDD<Long, Tuple> execFunc(Function n){
+        switch(n.getName()){
             case "map" : {
                 return execMap(n);
             }
@@ -118,20 +118,18 @@ public class SchnappiInterpreter {
             }
         }
     }
-    public JavaPairRDD<Long, Tuple> execMap(FuncNode fn) {
-        ParamsNode pn0 = (ParamsNode) fn.getChild(0);
-        ParamsNode pn1 = (ParamsNode) fn.getChild(1);
-        System.out.println("format "+pn1.getParam(0));
-        Function<Tuple,Tuple> f = fetchFunction(pn0.getParam(0), Integer.parseInt(pn1.getParam(0)));
-        System.out.println(pn0.getParam(1));
+    public JavaPairRDD<Long, Tuple> execMap(Function fn) {
+        Id pn0 = (Id)fn.getParameters().getParam(0);
+        Id pn1 = (Id)fn.getParameters().getParam(1);
+        org.apache.spark.api.java.function.Function f = fetchFunction(pn0.getName(), Integer.parseInt(pn1.getName()));
         Object rd = fetchRDD(pn0.getParam(1));
         JavaPairRDD<Long, Tuple> rdd = (JavaPairRDD<Long, Tuple>) rd;
         return rdd.mapValues(f);
     }
-    public JavaPairRDD<Long, Tuple> execUnion(FuncNode fn){
+    public JavaPairRDD<Long, Tuple> execUnion(Function fn){
         JavaRDD<Tuple2<Long, Tuple>> aux = SparkEnv.sc.emptyRDD();
         JavaPairRDD<Long,Tuple> result = JavaPairRDD.fromJavaRDD(aux);
-        ParamsNode pn = (ParamsNode) fn.getChild(0);
+        Parameters pn = (Parameters) fn.getChild(0);
         if(pn.params.size() == 0) return result;
         boolean first = true;
         for(String p : pn.params){
@@ -149,29 +147,21 @@ public class SchnappiInterpreter {
         result = result.reduceByKey(TupleUtils.join);
         return result;
     }
-    public JavaPairRDD<Long, Tuple> execReduce(FuncNode fn) {
-        Function<Tuple,Tuple> f = fetchFunction(fn.getChild(0).id, Integer.parseInt(fn.getChild(1).id));
+    public JavaPairRDD<Long, Tuple> execReduce(Function fn) {
+        org.apache.spark.api.java.function.Function f = fetchFunction(fn.getChild(0).id, Integer.parseInt(fn.getChild(1).id));
         JavaRDD<Tuple2<Long, Tuple>> aux = SparkEnv.sc.emptyRDD();
         JavaPairRDD<Long,Tuple> result = JavaPairRDD.fromJavaRDD(aux);
-        for(Node an : fn.children){
+        for(Statement an : fn.children){
             Object rdd = execAtom(an);
             result.union((JavaPairRDD<Long,Tuple>)rdd);
         }
-        /*new Function2<Long, Tuple, Tuple>() {
-            @Override
-            public Long call(Tuple a, Tuple b) throws Exception {
-                Function2Wrapper<>
-                return f(a,b);
-            }
-        };*/
-        //result.reduceByKey(f);
         return result;
     }
-    public JavaPairRDD<Long, Tuple> execEqjoin(FuncNode n){
+    public JavaPairRDD<Long, Tuple> execEqjoin(Function n){
         return null;
     }
-    public JavaPairRDD<Long, Tuple> execGenids(FuncNode fn){
-        ParamsNode pn = (ParamsNode) fn.getChild(0);
+    public JavaPairRDD<Long, Tuple> execGenids(Function fn){
+        Parameters pn = (Parameters) fn.getChild(0);
         int n = Integer.parseInt(pn.params.get(0));
         List<Long> init = new ArrayList<Long>();
         for(long i = 0; i < n; ++i) {
@@ -186,21 +176,10 @@ public class SchnappiInterpreter {
         //return this.rdds.get(str);
         return this.table.get(str);
     }
-    private Function<Tuple, Tuple> fetchFunction(String generatorName, int numParams) {
+    private org.apache.spark.api.java.function.Function fetchFunction(String generatorName, int numParams) {
         Generator generator = null;
-        /*try {
-            generator = (Generator)Class.forName(generatorName).newInstance();
-        } catch (ClassNotFoundException cNFE) {
-            cNFE.printStackTrace();
-        } catch (InstantiationException iE) {
-            iE.printStackTrace();
-        } catch (IllegalAccessException iAE) {
-            iAE.printStackTrace();
-        } finally {
-            //System.exit(1);
-        }*/
         generator = this.generators.get(generatorName);
-        Function<Tuple, Tuple> fw = null;
+        org.apache.spark.api.java.function.Function fw = null;
         switch(numParams){
             case 0: {
                 fw = new Function0Wrapper(generator, "run");
@@ -249,7 +228,6 @@ public class SchnappiInterpreter {
         }
     }
     public void dumpData(){
-        //deleteDir(this.config.outputDir);
         for( Map.Entry<String,Object> entry : table.entrySet() ) {
             Object obj = entry.getValue();
             if(obj instanceof JavaPairRDD) {
@@ -271,4 +249,5 @@ public class SchnappiInterpreter {
         }
         file.delete();
     }
+    */
 }

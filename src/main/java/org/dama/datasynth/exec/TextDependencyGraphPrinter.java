@@ -2,10 +2,8 @@ package org.dama.datasynth.exec;
 
 import org.dama.datasynth.DataSynth;
 
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -53,7 +51,7 @@ public class TextDependencyGraphPrinter extends DependencyGraphVisitor {
 
 
     @Override
-    public void visit(EntityTask entity) {
+    public void visit(Entity entity) {
         indents++;
         logger.log(Level.FINE,new String(indents(true)+entity.toString()));
         explode(entity);
@@ -61,7 +59,7 @@ public class TextDependencyGraphPrinter extends DependencyGraphVisitor {
     }
 
     @Override
-    public void visit(AttributeTask attribute) {
+    public void visit(Attribute attribute) {
         indents++;
         logger.log(Level.FINE,new String(indents(true)+attribute.toString()));
         explode(attribute);
@@ -69,7 +67,7 @@ public class TextDependencyGraphPrinter extends DependencyGraphVisitor {
     }
 
     @Override
-    public void visit(EdgeTask relation) {
+    public void visit(Edge relation) {
         indents++;
         logger.log(Level.FINE,new String(indents(true)+relation.toString()));
         explode(relation);

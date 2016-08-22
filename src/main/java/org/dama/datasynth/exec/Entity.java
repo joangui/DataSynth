@@ -1,12 +1,9 @@
 package org.dama.datasynth.exec;
 
-import org.dama.datasynth.runtime.ExecutionEngine;
-import org.dama.datasynth.runtime.ExecutionException;
-
 /**
  * Created by aprat on 20/04/16.
  */
-public class EntityTask extends Vertex  {
+public class Entity extends Vertex  {
 
     /**
      * The entity name
@@ -17,8 +14,8 @@ public class EntityTask extends Vertex  {
      * The name of the entity
      * @param entity
      */
-    public EntityTask(String entity) {
-        super(entity,"entity");
+    public Entity(String entity) {
+        super(entity);
         this.entity = entity;
     }
 
@@ -33,6 +30,5 @@ public class EntityTask extends Vertex  {
     @Override
     public void accept(DependencyGraphVisitor visitor) {
         visitor.visit(this);
-
     }
 }

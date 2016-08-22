@@ -1,7 +1,5 @@
 package org.dama.datasynth.exec;
 
-import org.dama.datasynth.program.solvers.Signature;
-
 /**
  * Created by quim on 5/10/16.
  */
@@ -9,7 +7,6 @@ public class DEdge {
 
     private Vertex      source;
     private Vertex      target;
-    private Signature   signature;
 
     /**
      * Constructor
@@ -19,7 +16,6 @@ public class DEdge {
     public DEdge(Vertex source, Vertex target){
         this.source = source;
         this.target = target;
-        this.signature = new Signature(source.getType(), target.getType());
     }
 
     /**
@@ -36,14 +32,6 @@ public class DEdge {
      */
     public Vertex getTarget() {
         return target;
-    }
-
-    /**
-     * Gets the signature of the edge
-     * @return The signature of the edge
-     */
-    public Signature getSignature() {
-        return signature;
     }
 
 

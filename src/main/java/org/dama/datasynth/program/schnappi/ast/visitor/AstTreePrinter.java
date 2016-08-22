@@ -1,7 +1,8 @@
-package org.dama.datasynth.program.schnappi.ast;
+package org.dama.datasynth.program.schnappi.ast.visitor;
 
 import org.dama.datasynth.DataSynth;
-import org.dama.datasynth.program.Ast;
+import org.dama.datasynth.program.schnappi.ast.*;
+import org.dama.datasynth.program.solvers.Solver;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -38,73 +39,65 @@ public class AstTreePrinter implements Visitor {
         return strBuilder.toString();
     }
 
-    private void explode(Node node) {
-        for(Node neighbor : node.neighbors()) {
-            neighbor.accept(this);
+    @Override
+    public void visit(Assign n) {
+        indents++;
+        logger.log(Level.FINE,(indents(true)+n.toString()));
+        n.getId().accept(this);
+        n.getExpression().accept(this);
+        indents--;
+    }
+
+    @Override
+    public void visit(Id n) {
+        indents++;
+        logger.log(Level.FINE,(indents(true)+n.toString()));
+        indents--;
+    }
+
+    @Override
+    public void visit(Binding n) {
+        indents++;
+        logger.log(Level.FINE,(indents(true)+n.toString()));
+        indents--;
+    }
+
+    @Override
+    public void visit(Expression n) {
+    }
+
+    @Override
+    public void visit(Function n) {
+        indents++;
+        logger.log(Level.FINE,(indents(true)+n.toString()));
+        n.getParameters().accept(this);
+        indents--;
+    }
+
+    @Override
+    public void visit(Parameters n) {
+        indents++;
+        logger.log(Level.FINE,(indents(true)+n.toString()));
+        for(Expression param : n.getParams()) {
+            param.accept(this);
         }
-    }
-
-    @Override
-    public void visit(AssigNode n) {
-        indents++;
-        logger.log(Level.FINE,(indents(true)+n.toString()));
-        explode(n);
         indents--;
     }
 
     @Override
-    public void visit(AtomNode n) {
+    public void visit(Signature n) {
         indents++;
         logger.log(Level.FINE,(indents(true)+n.toString()));
-        explode(n);
         indents--;
     }
 
     @Override
-    public void visit(BindingNode n) {
-        indents++;
-        logger.log(Level.FINE,(indents(true)+n.toString()));
-        explode(n);
-        indents--;
+    public void visit(Solver n) {
+
     }
 
     @Override
-    public void visit(ExprNode n) {
-        indents++;
-        logger.log(Level.FINE,(indents(true)+n.toString()));
-        explode(n);
-        indents--;
-    }
+    public void visit(Operation n) {
 
-    @Override
-    public void visit(FuncNode n) {
-        indents++;
-        logger.log(Level.FINE,(indents(true)+n.toString()));
-        explode(n);
-        indents--;
-    }
-
-    @Override
-    public void visit(ParamsNode n) {
-        indents++;
-        logger.log(Level.FINE,(indents(true)+n.toString()));
-        explode(n);
-        indents--;
-    }
-
-    @Override
-    public void visit(SignatureNode n) {
-        indents++;
-        logger.log(Level.FINE,(indents(true)+n.toString()));
-        explode(n);
-        indents--;
-    }
-
-    @Override
-    public void visit(Node n) {
-        indents++;
-        logger.log(Level.FINE,(indents(true)+n.toString()));
-        explode(n);
-        indents--;
     }
 }

@@ -1,10 +1,10 @@
 signature : {
-    @source = relation
+    @source = edge
     @target = attribute
 }
 
 bindings : {
-    x = @source.id
+    x = @source.name
     f = @source.generator
     z = @source.input
 }

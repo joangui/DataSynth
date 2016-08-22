@@ -8,15 +8,16 @@ import java.util.List;
 /**
  * Created by quim on 4/27/16.
  */
-public class EdgeTask extends Vertex {
-    public Ast.Edge edge;
-    public EntityTask entity1;
-    public EntityTask entity2;
-    public ArrayList<AttributeTask> attributesEnt1;
-    public ArrayList<AttributeTask> attributesEnt2;
+public class Edge extends Vertex {
 
-    public EdgeTask(Ast.Edge edge, EntityTask ent1, EntityTask ent2, ArrayList<AttributeTask> attr1, ArrayList<AttributeTask> attr2) {
-        super(ent1.getEntity()+"::"+ent2.getEntity(),"relation");
+    public Ast.Edge edge;
+    public Entity entity1;
+    public Entity entity2;
+    public ArrayList<Attribute> attributesEnt1;
+    public ArrayList<Attribute> attributesEnt2;
+
+    public Edge(Ast.Edge edge, Entity ent1, Entity ent2, ArrayList<Attribute> attr1, ArrayList<Attribute> attr2) {
+        super(ent1.getEntity()+"::"+ent2.getEntity());
         this.edge = edge;
         this.entity1 = ent1;
         this.entity2 = ent2;
@@ -24,35 +25,35 @@ public class EdgeTask extends Vertex {
         this.attributesEnt2 = attr2;
     }
 
-    public EntityTask getEntity1() {
+    public Entity getEntity1() {
         return entity1;
     }
 
-    public void setEntity1(EntityTask entity1) {
+    public void setEntity1(Entity entity1) {
         this.entity1 = entity1;
     }
 
-    public EntityTask getEntity2() {
+    public Entity getEntity2() {
         return entity2;
     }
 
-    public void setEntity2(EntityTask entity2) {
+    public void setEntity2(Entity entity2) {
         this.entity2 = entity2;
     }
 
-    public ArrayList<AttributeTask> getAttributesEnt1() {
+    public ArrayList<Attribute> getAttributesEnt1() {
         return attributesEnt1;
     }
 
-    public void setAttributesEnt1(ArrayList<AttributeTask> attributesEnt1) {
+    public void setAttributesEnt1(ArrayList<Attribute> attributesEnt1) {
         this.attributesEnt1 = attributesEnt1;
     }
 
-    public ArrayList<AttributeTask> getAttributesEnt2() {
+    public ArrayList<Attribute> getAttributesEnt2() {
         return attributesEnt2;
     }
 
-    public void setAttributesEnt2(ArrayList<AttributeTask> attributesEnt2) {
+    public void setAttributesEnt2(ArrayList<Attribute> attributesEnt2) {
         this.attributesEnt2 = attributesEnt2;
     }
 
@@ -64,13 +65,13 @@ public class EdgeTask extends Vertex {
         return new ArrayList<String>();
     }
 
-    public EntityTask getEntityByName(String name){
+    public Entity getEntityByName(String name){
         if(name.equalsIgnoreCase(entity1.getEntity())) return entity1;
         else if(name.equalsIgnoreCase(entity2.getEntity())) return entity2;
         else return null;
     }
 
-    public List<AttributeTask> getAttributesByName(String name){
+    public List<Attribute> getAttributesByName(String name){
         if(name.equalsIgnoreCase(entity1.getEntity())) return attributesEnt1;
         else if(name.equalsIgnoreCase(entity2.getEntity())) return attributesEnt2;
         else return null;
