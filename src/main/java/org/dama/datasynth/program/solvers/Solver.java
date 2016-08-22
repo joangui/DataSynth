@@ -98,8 +98,8 @@ public class Solver {
     }
     public Ast instantiate(Vertex v){
         //CopyVisitor cv = new CopyVisitor();
-        Ast binded = new Ast(ast.getRoots().get(0).copy());
-        this.instantiate(binded.getRoots().get(0), v);
+        Ast binded = new Ast(ast.getRoot().copy());
+        this.instantiate(binded.getRoot(), v);
         return binded;
     }
 }

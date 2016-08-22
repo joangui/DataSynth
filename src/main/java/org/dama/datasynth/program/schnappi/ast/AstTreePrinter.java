@@ -9,13 +9,14 @@ import java.util.logging.Logger;
 /**
  * Created by aprat on 19/08/16.
  */
-public class AstTreePrinter extends Visitor {
+public class AstTreePrinter implements Visitor {
 
     private static final Logger logger= Logger.getLogger( DataSynth.class.getSimpleName() );
 
     private int                 indents     = -1;
 
     private StringBuilder       strBuilder  = new StringBuilder();
+
 
     /**
      * Retunrs an indented string with the number of current indents;
@@ -37,63 +38,73 @@ public class AstTreePrinter extends Visitor {
         return strBuilder.toString();
     }
 
-    @Override
-    public void visit(Ast ast) {
-        strBuilder.append("Printing Dependency Graph\n");
-        super.visit(ast);
-        logger.log(Level.FINE,"\n"+strBuilder.toString());
+    private void explode(Node node) {
+        for(Node neighbor : node.neighbors()) {
+            neighbor.accept(this);
+        }
     }
 
     @Override
-    public boolean actBefore(Ast ast) {
-        return true;
-    }
-
-    @Override
-    public void actAfter(Ast ast) {
-
-    }
-
-    @Override
-    public boolean actBefore(Node node) {
+    public void visit(AssigNode n) {
         indents++;
-        return true;
-    }
-
-    @Override
-    public void actAfter(Node node) {
+        logger.log(Level.FINE,(indents(true)+n.toString()));
+        explode(n);
         indents--;
     }
 
-    public void visit(AssigNode n) {
-        strBuilder.append(indents(true)+n.toString()+"\n");
-    }
-
+    @Override
     public void visit(AtomNode n) {
-        strBuilder.append(indents(true)+n.toString()+"\n");
+        indents++;
+        logger.log(Level.FINE,(indents(true)+n.toString()));
+        explode(n);
+        indents--;
     }
 
+    @Override
     public void visit(BindingNode n) {
-        strBuilder.append(indents(true)+n.toString()+"\n");
+        indents++;
+        logger.log(Level.FINE,(indents(true)+n.toString()));
+        explode(n);
+        indents--;
     }
 
+    @Override
     public void visit(ExprNode n) {
-        strBuilder.append(indents(true)+n.toString()+"\n");
+        indents++;
+        logger.log(Level.FINE,(indents(true)+n.toString()));
+        explode(n);
+        indents--;
     }
 
+    @Override
     public void visit(FuncNode n) {
-        strBuilder.append(indents(true)+n.toString()+"\n");
+        indents++;
+        logger.log(Level.FINE,(indents(true)+n.toString()));
+        explode(n);
+        indents--;
     }
 
-    public void visit(Node n) {
-        strBuilder.append(indents(true)+n.toString()+"\n");
-    }
-
+    @Override
     public void visit(ParamsNode n) {
-        strBuilder.append(indents(true)+n.toString()+"\n");
+        indents++;
+        logger.log(Level.FINE,(indents(true)+n.toString()));
+        explode(n);
+        indents--;
     }
 
+    @Override
     public void visit(SignatureNode n) {
-        strBuilder.append(indents(true)+n.toString()+"\n");
+        indents++;
+        logger.log(Level.FINE,(indents(true)+n.toString()));
+        explode(n);
+        indents--;
+    }
+
+    @Override
+    public void visit(Node n) {
+        indents++;
+        logger.log(Level.FINE,(indents(true)+n.toString()));
+        explode(n);
+        indents--;
     }
 }

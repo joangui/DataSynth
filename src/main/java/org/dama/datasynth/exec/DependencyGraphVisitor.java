@@ -1,15 +1,16 @@
 package org.dama.datasynth.exec;
 
-import org.dama.datasynth.utils.traversals.Visitor;
-import org.jgrapht.DirectedGraph;
-
-import java.util.*;
-
 /**
  * Created by aprat on 17/05/16.
  */
-public abstract class DependencyGraphVisitor extends Visitor<DependencyGraph, Vertex> {
+public abstract class DependencyGraphVisitor {
 
+
+    protected DependencyGraph graph = null;
+
+    public DependencyGraphVisitor( DependencyGraph graph) {
+        this.graph = graph;
+    }
 
     /**
      * Performs the visit of a vertex of type Entity

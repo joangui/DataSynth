@@ -1,8 +1,6 @@
 package org.dama.datasynth.exec;
 
 import org.dama.datasynth.program.solvers.SignatureVertex;
-import org.dama.datasynth.utils.traversals.Acceptable;
-import org.dama.datasynth.utils.traversals.Visitor;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -10,14 +8,12 @@ import java.util.List;
 /**
  * Created by quim on 5/10/16.
  */
-public abstract class Vertex implements Acceptable<Vertex> {
+public abstract class Vertex {
     private String id;
     private String type;
     private SignatureVertex signature;
-    DependencyGraph graph = null;
 
-    public Vertex(DependencyGraph graph, String str, String tpe){
-        this.graph=graph;
+    public Vertex(String str, String tpe){
         this.id = str;
         this.type = tpe;
         this.signature = new SignatureVertex(type);
@@ -52,13 +48,14 @@ public abstract class Vertex implements Acceptable<Vertex> {
         return "[" + this.getId() + ", " + this.getType() + "]";
     }
 
-    @Override
-    public List<Vertex> neighbors() {
+    /*public List<Vertex> neighbors() {
         List<Vertex> neighbors = new LinkedList<Vertex>();
         for(DEdge edge : graph.incomingEdgesOf(this)) {
             Vertex source = edge.getSource();
             neighbors.add(source);
         }
         return neighbors;
-    }
+    }*/
+
+    public abstract void accept(DependencyGraphVisitor visitor);
 }

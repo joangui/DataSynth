@@ -1,7 +1,6 @@
 package org.dama.datasynth.exec;
 
 import org.dama.datasynth.lang.Ast;
-import org.dama.datasynth.utils.traversals.Visitor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,15 +8,15 @@ import java.util.List;
 /**
  * Created by quim on 4/27/16.
  */
-public class EdgeTask extends Vertex implements ExecutableVertex{
+public class EdgeTask extends Vertex {
     public Ast.Edge edge;
     public EntityTask entity1;
     public EntityTask entity2;
     public ArrayList<AttributeTask> attributesEnt1;
     public ArrayList<AttributeTask> attributesEnt2;
 
-    public EdgeTask(DependencyGraph graph, Ast.Edge edge, EntityTask ent1, EntityTask ent2, ArrayList<AttributeTask> attr1, ArrayList<AttributeTask> attr2) {
-        super(graph, ent1.getEntity()+"::"+ent2.getEntity(),"relation");
+    public EdgeTask(Ast.Edge edge, EntityTask ent1, EntityTask ent2, ArrayList<AttributeTask> attr1, ArrayList<AttributeTask> attr2) {
+        super(ent1.getEntity()+"::"+ent2.getEntity(),"relation");
         this.edge = edge;
         this.entity1 = ent1;
         this.entity2 = ent2;
@@ -77,14 +76,12 @@ public class EdgeTask extends Vertex implements ExecutableVertex{
         else return null;
     }
 
-    @Override
     public String getGenerator() {
         return edge.getGenerator();
     }
 
     @Override
-    public void accept(Visitor visitor) {
-        DependencyGraphVisitor dGraphVisitor = (DependencyGraphVisitor)(visitor);
-        dGraphVisitor.visit(this);
+    public void accept(DependencyGraphVisitor visitor) {
+        visitor.visit(this);
     }
 }

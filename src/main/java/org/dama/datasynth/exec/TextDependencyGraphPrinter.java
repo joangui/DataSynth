@@ -3,6 +3,8 @@ package org.dama.datasynth.exec;
 import org.dama.datasynth.DataSynth;
 
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -15,7 +17,11 @@ public class TextDependencyGraphPrinter extends DependencyGraphVisitor {
     private static final Logger logger= Logger.getLogger( DataSynth.class.getSimpleName() );
 
     private int                 indents     = -1;
-    private StringBuilder       strBuilder  = new StringBuilder();
+
+
+    public TextDependencyGraphPrinter(DependencyGraph graph) {
+        super(graph);
+    }
 
     /**
      * Retunrs an indented string with the number of current indents;
@@ -37,46 +43,36 @@ public class TextDependencyGraphPrinter extends DependencyGraphVisitor {
         return strBuilder.toString();
     }
 
-    @Override
-    public void visit(DependencyGraph graph) {
-        strBuilder.append("Printing Dependency Graph\n");
-        super.visit(graph);
-        logger.log(Level.FINE,"\n"+strBuilder.toString());
+    private void explode(Vertex vertex) {
+        List<Vertex> neighbors = new LinkedList<Vertex>();
+        for(DEdge edge : graph.incomingEdgesOf(vertex)) {
+            Vertex source = edge.getSource();
+            source.accept(this);
+        }
     }
+
 
     @Override
     public void visit(EntityTask entity) {
-        strBuilder.append(indents(true)+entity.toString()+"\n");
+        indents++;
+        logger.log(Level.FINE,new String(indents(true)+entity.toString()));
+        explode(entity);
+        indents--;
     }
 
     @Override
     public void visit(AttributeTask attribute) {
-        strBuilder.append(indents(true)+attribute.toString()+"\n");
+        indents++;
+        logger.log(Level.FINE,new String(indents(true)+attribute.toString()));
+        explode(attribute);
+        indents--;
     }
 
     @Override
     public void visit(EdgeTask relation) {
-        strBuilder.append(indents(true)+relation.toString()+"\n");
-    }
-
-    @Override
-    public boolean actBefore(DependencyGraph dG) {
-        return true;
-    }
-
-    @Override
-    public void actAfter(DependencyGraph dG) {
-
-    }
-
-    @Override
-    public boolean actBefore(Vertex v) {
         indents++;
-        return true;
-    }
-
-    @Override
-    public void actAfter(Vertex v) {
+        logger.log(Level.FINE,new String(indents(true)+relation.toString()));
+        explode(relation);
         indents--;
     }
 }

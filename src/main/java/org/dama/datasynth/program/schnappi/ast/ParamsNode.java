@@ -7,10 +7,12 @@ import java.util.ArrayList;
  */
 public class ParamsNode extends Node {
     public ArrayList<String> params;
+
     public ParamsNode(String id){
         super(id, "params");
         this.params = new ArrayList<>();
     }
+
     public ParamsNode(String param1, String param2){
         this("params");
         this.addParam(param1);
@@ -19,12 +21,15 @@ public class ParamsNode extends Node {
     public void mergeParams(ParamsNode n){
         this.params.addAll(n.params);
     }
+
     public void addParam(String id){
         this.params.add(id);
     }
+
     public String getParam(int i){
         return this.params.get(i);
     }
+
     @Override
     public String toString(){
         String str = "P<";

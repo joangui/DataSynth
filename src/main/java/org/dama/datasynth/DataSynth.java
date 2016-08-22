@@ -7,6 +7,7 @@ package org.dama.datasynth;
 import com.beust.jcommander.JCommander;
 import org.dama.datasynth.exec.DependencyGraph;
 import org.dama.datasynth.exec.TextDependencyGraphPrinter;
+import org.dama.datasynth.exec.Vertex;
 import org.dama.datasynth.lang.Ast;
 import org.dama.datasynth.lang.Parser;
 import org.dama.datasynth.lang.SemanticException;
@@ -19,6 +20,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import java.util.List;
 import java.util.logging.*;
 
 /**
@@ -65,8 +67,11 @@ public class DataSynth {
             ast.doSemanticAnalysis();
             DependencyGraph graph = new DependencyGraph(ast);
 
-            TextDependencyGraphPrinter printer = new TextDependencyGraphPrinter();
-            printer.visit(graph);
+            TextDependencyGraphPrinter printer = new TextDependencyGraphPrinter(graph);
+            List<Vertex> roots = graph.getEntryPoints();
+            for(Vertex vertex : roots) {
+                vertex.accept(printer);
+            }
 
             /*SchnappiLexer SchLexer = new SchnappiLexer( new ANTLRFileStream("src/main/resources/solvers/test.spi"));
             CommonTokenStream tokens = new CommonTokenStream( SchLexer );
@@ -88,7 +93,7 @@ public class DataSynth {
             end = System.currentTimeMillis();
             logger.info(" Query compiled in  "+(end-start) + " ms");
             AstTreePrinter astTreePrinter = new AstTreePrinter();
-            astTreePrinter.visit(c.getProgram());
+            c.getProgram().getRoot().accept(astTreePrinter);
 
 
             start = System.currentTimeMillis();

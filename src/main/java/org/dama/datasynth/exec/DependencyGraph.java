@@ -2,7 +2,6 @@ package org.dama.datasynth.exec;
 
 import org.dama.datasynth.common.Types;
 import org.dama.datasynth.lang.Ast;
-import org.dama.datasynth.utils.traversals.Tree;
 import org.jgrapht.graph.DirectedMultigraph;
 
 import java.util.*;
@@ -10,7 +9,7 @@ import java.util.*;
 /**
  * Created by quim on 5/12/16.
  */
-public class DependencyGraph  extends DirectedMultigraph<Vertex,DEdge> implements Tree<Vertex> {
+public class DependencyGraph  extends DirectedMultigraph<Vertex,DEdge> {
 
     private List<Vertex> entryPoints = new ArrayList<Vertex>();
 
@@ -33,16 +32,16 @@ public class DependencyGraph  extends DirectedMultigraph<Vertex,DEdge> implement
         //############################################################################
         Map<String,AttributeTask> tasks = new TreeMap<String,AttributeTask>();
         for(Ast.Entity entity : ast.getEntities()) {
-            Vertex entityTask = new EntityTask(this,entity.getName());
+            Vertex entityTask = new EntityTask(entity.getName());
             entryPoints.add(entityTask);
             //g.addVertex(entityTask);
-            AttributeTask oid = new AttributeTask(this,entity,new Ast.Attribute("oid", Types.DATATYPE.INTEGER, new Ast.Generator("IdGenerator")));
+            AttributeTask oid = new AttributeTask(entity,new Ast.Attribute("oid", Types.DATATYPE.INTEGER, new Ast.Generator("IdGenerator")));
             tasks.put(entity.getName()+".oid", oid);
             addVertex(oid);
             addVertex(entityTask);
             addEdge(oid,entityTask);
             for(Ast.Attribute attribute : entity.getAttributes()) {
-                AttributeTask task = new AttributeTask(this,entity,attribute);
+                AttributeTask task = new AttributeTask(entity,attribute);
                 tasks.put(task.getEntity().getName()+"."+task.getAttributeName(),task);
                 addVertex(task);
                 addEdge(oid,task);
@@ -92,19 +91,18 @@ public class DependencyGraph  extends DirectedMultigraph<Vertex,DEdge> implement
             String dest = edge.getDestination().getName();
             for(Ast.Attribute attr : edge.getOrigin().getAttributes()) sourceAttributes.add(tasks.get(orig+"."+attr.getName()));
             for(Ast.Attribute attr : edge.getDestination().getAttributes()) targetAttributes.add(tasks.get(dest+"."+attr.getName()));
-            EdgeTask et = new EdgeTask(this,edge,source, target, sourceAttributes, targetAttributes);
+            EdgeTask et = new EdgeTask(edge,source, target, sourceAttributes, targetAttributes);
             addVertex(et);
             addEdge(source,et);
             addEdge(target,et);
         }
     }
 
-    @Override
-    public List<Vertex> getRoots() {
+    public List<Vertex> getEntryPoints() {
         return entryPoints;
     }
 
-    /**
+/**
      * Prints the dependency graph
      */
     /*public void print(){
