@@ -1,4 +1,4 @@
-package org.dama.datasynth.exec;
+package org.dama.datasynth.lang.dependencygraph;
 
 import org.dama.datasynth.lang.Ast;
 
@@ -16,8 +16,8 @@ public class Edge extends Vertex {
     public ArrayList<Attribute> attributesEnt1;
     public ArrayList<Attribute> attributesEnt2;
 
-    public Edge(Ast.Edge edge, Entity ent1, Entity ent2, ArrayList<Attribute> attr1, ArrayList<Attribute> attr2) {
-        super(ent1.getEntity()+"::"+ent2.getEntity());
+    public Edge(DependencyGraph graph, Ast.Edge edge, Entity ent1, Entity ent2, ArrayList<Attribute> attr1, ArrayList<Attribute> attr2) {
+        super(graph, ent1.getEntity()+"::"+ent2.getEntity());
         this.edge = edge;
         this.entity1 = ent1;
         this.entity2 = ent2;

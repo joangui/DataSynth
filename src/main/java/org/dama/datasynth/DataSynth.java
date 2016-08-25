@@ -5,9 +5,9 @@ package org.dama.datasynth;
 //import static javafx.application.Platform.exit;
 
 import com.beust.jcommander.JCommander;
-import org.dama.datasynth.exec.DependencyGraph;
-import org.dama.datasynth.exec.TextDependencyGraphPrinter;
-import org.dama.datasynth.exec.Vertex;
+import org.dama.datasynth.lang.dependencygraph.DependencyGraph;
+import org.dama.datasynth.lang.dependencygraph.TextDependencyGraphPrinter;
+import org.dama.datasynth.lang.dependencygraph.Vertex;
 import org.dama.datasynth.lang.Ast;
 import org.dama.datasynth.lang.Parser;
 import org.dama.datasynth.lang.SemanticException;
@@ -69,17 +69,17 @@ public class DataSynth {
             DependencyGraph graph = new DependencyGraph(ast);
 
             TextDependencyGraphPrinter printer = new TextDependencyGraphPrinter(graph);
-            List<Vertex> roots = graph.getEntryPoints();
+            List<Vertex> roots = graph.getEntities();
             for(Vertex vertex : roots) {
                 vertex.accept(printer);
             }
 
-            /*SchnappiLexer SchLexer = new SchnappiLexer( new ANTLRFileStream("src/main/resources/solvers/test.spi"));
+            /*SchnappiLexer SchLexer = new SchnappiLexer( new ANTLRFileStream("src/main/resources/solvers/entitySolver.spi"));
             CommonTokenStream tokens = new CommonTokenStream( SchLexer );
             SchnappiParser SchParser = new SchnappiParser( tokens );
             SchnappiParser.SolverContext sctx = SchParser.solver();
             SchnappiGeneratorVisitor visitor = new SchnappiGeneratorVisitor();
-            Statement n = visitor.visitSolver(sctx);
+            Node n = visitor.visitSolver(sctx);
             String printedAst = "\n > " + n.toStringTabbed("");
             logger.log(Level.FINE, printedAst);*/
 
@@ -93,6 +93,8 @@ public class DataSynth {
             c.synthesizeProgram();
             end = System.currentTimeMillis();
             logger.info(" Query compiled in  "+(end-start) + " ms");
+
+            logger.log(Level.FINE,"\nPrinting Schnappi Ast\n");
             AstTreePrinter astTreePrinter = new AstTreePrinter();
             for(Operation operation : c.getProgram().getStatements()) {
                 operation.accept(astTreePrinter);

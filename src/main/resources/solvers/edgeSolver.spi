@@ -1,15 +1,7 @@
 signature : {
-    @source = edge
-    @target = attribute
+    @source = Edge
+    @target = Attribute
 }
 
-bindings : {
-    x = @source.name
-    f = @source.generator
-    z = @source.input
-}
-
-program : {
-    fp = new f(a)
-    x = map(f, z)
-}
+fp = new @source.generator(@source.initParameters);
+@edge.id = map(f, @source.dependencies);

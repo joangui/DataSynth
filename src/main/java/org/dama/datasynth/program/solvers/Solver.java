@@ -1,6 +1,6 @@
 package org.dama.datasynth.program.solvers;
 
-import org.dama.datasynth.exec.Vertex;
+import org.dama.datasynth.lang.dependencygraph.Vertex;
 import org.dama.datasynth.program.Ast;
 import org.dama.datasynth.program.schnappi.ast.*;
 import org.dama.datasynth.program.schnappi.ast.Operation;
@@ -12,20 +12,14 @@ import java.util.List;
 /**
  * Created by quim on 5/5/16.
  */
-public class Solver extends Statement {
+public class Solver extends Node {
 
     public      Signature               signature;
-    public      List<Binding>           bindings;
     public      Ast                     ast;
 
-    public Solver(Signature signature, List<Binding> bindings, Ast ast) {
+    public Solver(Signature signature, Ast ast) {
         this.signature = signature;
-        this.bindings = bindings;
         this.ast = ast;
-    }
-
-    public List<Binding> getBindings() {
-        return bindings;
     }
 
     public Signature getSignature() {
@@ -51,7 +45,7 @@ public class Solver extends Statement {
     }
 
     @Override
-    public Statement copy() {
+    public Node copy() {
         return null;
     }
 }

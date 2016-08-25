@@ -1,4 +1,4 @@
-package org.dama.datasynth.exec;
+package org.dama.datasynth.lang.dependencygraph;
 
 import java.util.List;
 

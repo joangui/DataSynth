@@ -1,4 +1,4 @@
-package org.dama.datasynth.exec;
+package org.dama.datasynth.lang.dependencygraph;
 
 import org.dama.datasynth.common.Types;
 import org.dama.datasynth.lang.Ast;
@@ -11,7 +11,7 @@ import java.util.*;
  */
 public class DependencyGraph  extends DirectedMultigraph<Vertex,DEdge> {
 
-    private List<Vertex> entryPoints = new ArrayList<Vertex>();
+    private List<Vertex> entities = new ArrayList<Vertex>();
 
     /**
      * Constructor
@@ -32,20 +32,20 @@ public class DependencyGraph  extends DirectedMultigraph<Vertex,DEdge> {
         //############################################################################
         Map<String,Attribute> tasks = new TreeMap<String,Attribute>();
         for(Ast.Entity entity : ast.getEntities()) {
-            Vertex entityTask = new Entity(entity.getName());
-            entryPoints.add(entityTask);
+            Vertex entityTask = new Entity(this,entity.getName());
+            entities.add(entityTask);
             //g.addVertex(entityTask);
-            Attribute oid = new Attribute(entity,new Ast.Attribute("oid", Types.DATATYPE.INTEGER, new Ast.Generator("IdGenerator")));
+            Attribute oid = new Attribute(this,entity,new Ast.Attribute("oid", Types.DATATYPE.INTEGER, new Ast.Generator("IdGenerator")));
             tasks.put(entity.getName()+".oid", oid);
             addVertex(oid);
             addVertex(entityTask);
-            addEdge(oid,entityTask);
+            addEdge(entityTask,oid);
             for(Ast.Attribute attribute : entity.getAttributes()) {
-                Attribute task = new Attribute(entity,attribute);
+                Attribute task = new Attribute(this,entity,attribute);
                 tasks.put(task.getEntity().getName()+"."+task.getAttributeName(),task);
                 addVertex(task);
-                addEdge(oid,task);
-                addEdge(task, entityTask);
+                addEdge(task,oid);
+                addEdge(entityTask,task);
             }
         }
         //############################################################################
@@ -67,7 +67,7 @@ public class DependencyGraph  extends DirectedMultigraph<Vertex,DEdge> {
                             if (!processed.contains(otherTask)) {
                                 toProcess.add(otherTask);
                             }
-                            addEdge(otherTask,currentTask);
+                            addEdge(currentTask,otherTask);
                         }
                     }
                 }
@@ -78,7 +78,7 @@ public class DependencyGraph  extends DirectedMultigraph<Vertex,DEdge> {
         //Now process the edges which represent relationships between different entities
 
         Map<String, Entity> entities = new HashMap<>();
-        for(Vertex vtx : entryPoints) {
+        for(Vertex vtx : this.entities) {
             entities.put(vtx.getId(), (Entity) vtx);
         }
 
@@ -91,15 +91,15 @@ public class DependencyGraph  extends DirectedMultigraph<Vertex,DEdge> {
             String dest = edge.getDestination().getName();
             for(Ast.Attribute attr : edge.getOrigin().getAttributes()) sourceAttributes.add(tasks.get(orig+"."+attr.getName()));
             for(Ast.Attribute attr : edge.getDestination().getAttributes()) targetAttributes.add(tasks.get(dest+"."+attr.getName()));
-            Edge et = new Edge(edge,source, target, sourceAttributes, targetAttributes);
+            Edge et = new Edge(this, edge,source, target, sourceAttributes, targetAttributes);
             addVertex(et);
-            addEdge(source,et);
-            addEdge(target,et);
+            addEdge(et,source);
+            addEdge(et,target);
         }
     }
 
-    public List<Vertex> getEntryPoints() {
-        return entryPoints;
+    public List<Vertex> getEntities() {
+        return entities;
     }
 
 /**

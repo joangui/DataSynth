@@ -54,7 +54,7 @@ public class SchnappiInterpreter {
 
     public JavaPairRDD<Long,Tuple> execInit(Function fn){
         Parameters pn = (Parameters) fn.getParameters();
-        String generatorName = ((Id)pn.getParam(0)).getName();
+        String generatorName = ((Binding)pn.getParam(0)).getName();
         Generator generator = null;
         try {
             generator = (Generator)Class.forName(generatorName).newInstance();
@@ -86,10 +86,10 @@ public class SchnappiInterpreter {
         return null;
     }
 
-    public Object execExpr(Statement n){
+    public Object execExpr(Node n){
 
-        if(n.getType().compareTo("Id") == 0 ){
-            return table.get(((Id)n).getName());
+        if(n.getType().compareTo("Binding") == 0 ){
+            return table.get(((Binding)n).getName());
         }else{
             return execFunc((Function) n);
         }
@@ -119,8 +119,8 @@ public class SchnappiInterpreter {
         }
     }
     public JavaPairRDD<Long, Tuple> execMap(Function fn) {
-        Id pn0 = (Id)fn.getParameters().getParam(0);
-        Id pn1 = (Id)fn.getParameters().getParam(1);
+        Binding pn0 = (Binding)fn.getParameters().getParam(0);
+        Binding pn1 = (Binding)fn.getParameters().getParam(1);
         org.apache.spark.api.java.function.Function f = fetchFunction(pn0.getName(), Integer.parseInt(pn1.getName()));
         Object rd = fetchRDD(pn0.getParam(1));
         JavaPairRDD<Long, Tuple> rdd = (JavaPairRDD<Long, Tuple>) rd;
@@ -151,7 +151,7 @@ public class SchnappiInterpreter {
         org.apache.spark.api.java.function.Function f = fetchFunction(fn.getChild(0).id, Integer.parseInt(fn.getChild(1).id));
         JavaRDD<Tuple2<Long, Tuple>> aux = SparkEnv.sc.emptyRDD();
         JavaPairRDD<Long,Tuple> result = JavaPairRDD.fromJavaRDD(aux);
-        for(Statement an : fn.children){
+        for(Node an : fn.children){
             Object rdd = execAtom(an);
             result.union((JavaPairRDD<Long,Tuple>)rdd);
         }

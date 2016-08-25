@@ -1,4 +1,4 @@
-package org.dama.datasynth.exec;
+package org.dama.datasynth.lang.dependencygraph;
 
 import org.dama.datasynth.common.Types;
 import org.dama.datasynth.lang.Ast;
@@ -22,8 +22,8 @@ public class Attribute extends Vertex  implements ExecutableVertex{
      * @param entity The entity this task is generating something for
      * @param attribute The attribute this task is generating
      */
-    public Attribute(Ast.Entity entity, Ast.Attribute attribute ) {
-        super(entity.getName()+"."+attribute.getName());
+    public Attribute(DependencyGraph graph, Ast.Entity entity, Ast.Attribute attribute ) {
+        super(graph, entity.getName()+"."+attribute.getName());
         this.entity = entity;
         this.attribute = attribute;
         this.generator = attribute.getGenerator().getName();
@@ -40,6 +40,7 @@ public class Attribute extends Vertex  implements ExecutableVertex{
      * Gets the generator of this attribute task
      * @return The name of the generator of this attribute task
      */
+    @Schnappi(name="generator")
     public String getGenerator() {
         return generator;
     }
@@ -49,6 +50,7 @@ public class Attribute extends Vertex  implements ExecutableVertex{
      * Gets the initialize method parameters
      * @return The list of parameter types of the initialize method
      */
+    @Schnappi(name="initParameters")
     public List<String> getInitParameters() {
         return initParameters;
     }
@@ -81,6 +83,7 @@ public class Attribute extends Vertex  implements ExecutableVertex{
      * Gets the parameters of the run method of the generator
      * @return The run parameters of the generator
      */
+    @Schnappi(name="runParameters")
     public List<String> getRunParameters() {
         return runParameters;
     }

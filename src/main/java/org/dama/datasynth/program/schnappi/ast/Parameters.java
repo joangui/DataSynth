@@ -2,14 +2,13 @@ package org.dama.datasynth.program.schnappi.ast;
 
 import org.dama.datasynth.program.schnappi.ast.visitor.Visitor;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 /**
  * Created by quim on 5/19/16.
  */
-public class Parameters extends Statement {
+public class Parameters extends Node {
 
     public List<Expression> params = new LinkedList<Expression>();
 
@@ -38,22 +37,6 @@ public class Parameters extends Statement {
     }
 
     @Override
-    public String toString(){
-        String str = "P<";
-        if(params.size() > 0){
-            String aux = "";
-            for(Expression s : params){
-                aux += ", " + s.toString();
-            }
-            str += aux.substring(1);
-        }else {
-            str += "";
-        }
-        str += " >";
-        return str;
-    }
-
-    @Override
     public void accept(Visitor visitor) {
         visitor.visit(this);
     }
@@ -63,7 +46,12 @@ public class Parameters extends Statement {
     }
 
     @Override
-    public Statement copy() {
+    public Node copy() {
         return new Parameters(this);
+    }
+
+    @Override
+    public String toString() {
+        return "<Parameters>";
     }
 }

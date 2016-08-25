@@ -2,6 +2,7 @@ package org.dama.datasynth.program.schnappi.ast.visitor;
 
 import org.dama.datasynth.DataSynth;
 import org.dama.datasynth.program.schnappi.ast.*;
+import org.dama.datasynth.program.schnappi.ast.Number;
 import org.dama.datasynth.program.solvers.Solver;
 
 import java.util.logging.Level;
@@ -49,13 +50,6 @@ public class AstTreePrinter implements Visitor {
     }
 
     @Override
-    public void visit(Id n) {
-        indents++;
-        logger.log(Level.FINE,(indents(true)+n.toString()));
-        indents--;
-    }
-
-    @Override
     public void visit(Binding n) {
         indents++;
         logger.log(Level.FINE,(indents(true)+n.toString()));
@@ -93,11 +87,37 @@ public class AstTreePrinter implements Visitor {
 
     @Override
     public void visit(Solver n) {
-
+        indents++;
+        logger.log(Level.FINE,(indents(true)+n.toString()));
+        indents--;
     }
 
     @Override
     public void visit(Operation n) {
+        indents++;
+        logger.log(Level.FINE,(indents(true)+n.toString()));
+        indents--;
+    }
+
+    @Override
+    public void visit(Any n) {
+        indents++;
+        logger.log(Level.FINE,(indents(true)+n.toString()));
+        indents--;
+    }
+
+    @Override
+    public void visit(Id n) {
+
+    }
+
+    @Override
+    public void visit(StringLiteral n) {
+
+    }
+
+    @Override
+    public void visit(Number n) {
 
     }
 }

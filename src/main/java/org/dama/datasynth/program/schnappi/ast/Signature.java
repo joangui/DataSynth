@@ -5,7 +5,7 @@ import org.dama.datasynth.program.schnappi.ast.visitor.Visitor;
 /**
  * Created by quim on 5/25/16.
  */
-public class Signature extends Statement implements Comparable<Signature> {
+public class Signature extends Node implements Comparable<Signature> {
 
     private String source = null;
     private String target = null;
@@ -26,7 +26,7 @@ public class Signature extends Statement implements Comparable<Signature> {
     }
 
     @Override
-    public Statement copy() {
+    public Node copy() {
         return new Signature(this);
     }
 

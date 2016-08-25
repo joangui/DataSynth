@@ -3,8 +3,8 @@ package org.dama.datasynth.program.schnappi;
 /**
  * Created by quim on 6/1/16.
  */
-public class CompileException extends Exception {
-    public CompileException(String message){
+public class CompilerException extends RuntimeException {
+    public CompilerException(String message){
         super(message);
     }
 }

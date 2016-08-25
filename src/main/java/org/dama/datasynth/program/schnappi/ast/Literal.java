@@ -5,25 +5,23 @@ import org.dama.datasynth.program.schnappi.ast.visitor.Visitor;
 /**
  * Created by aprat on 22/08/16.
  */
-public class Literal extends Expression {
-
-    private String value;
+public class Literal extends Any {
 
     public Literal(String value) {
-        this.value = value;
+        super(value);
     }
 
-    public String getValue() {
-        return value;
-    }
-
-    @Override
-    public void accept(Visitor visitor) {
-        visitor.visit(this);
+    public Literal(Literal literal) {
+        super(literal.getValue());
     }
 
     @Override
-    public Expression copy() {
-        return null;
+    public Literal copy() {
+        return new Literal(this);
+    }
+
+    @Override
+    public java.lang.String toString() {
+        return "<literal,"+value+">";
     }
 }

@@ -7,16 +7,16 @@ import org.dama.datasynth.program.schnappi.ast.visitor.Visitor;
  */
 public class Assign extends Operation {
 
-    private Id          id          = null;
+    private Any id          = null;
     private Expression  expression  = null;
 
-    public Assign(Id id, Expression expression){
+    public Assign(Any id, Expression expression){
         this.id = id;
         this.expression = expression;
     }
 
     public Assign(Assign assign) {
-        this.id = new Id(assign.id);
+        this.id = assign.id.copy();
         this.expression = assign.expression.copy();
     }
 
@@ -30,11 +30,25 @@ public class Assign extends Operation {
         return new Assign(this);
     }
 
-    public Id getId() {
+    public Any getId() {
         return id;
+    }
+
+    public void setId(Any id) {
+        this.id = id;
     }
 
     public Expression getExpression() {
         return expression;
+    }
+
+    public void setExpression(Expression expression) {
+        this.expression = expression;
+    }
+
+
+    @Override
+    public java.lang.String toString() {
+        return "<assign>";
     }
 }

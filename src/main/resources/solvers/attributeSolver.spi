@@ -1,0 +1,7 @@
+signature : {
+    @source = Attribute
+    @target = Attribute
+}
+
+f = new @source.generator(@source.initParameters);
+@source.id = map(f, @source.dependencies);

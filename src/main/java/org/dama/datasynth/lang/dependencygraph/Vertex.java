@@ -1,20 +1,32 @@
-package org.dama.datasynth.exec;
+package org.dama.datasynth.lang.dependencygraph;
+
+import java.lang.annotation.Inherited;
 
 /**
  * Created by quim on 5/10/16.
  */
 public abstract class Vertex {
 
-    private String id;
+    @Inherited
+    public @interface Schnappi {
+       String name();
+    }
 
-    public Vertex(String str){
+    private String id;
+    protected DependencyGraph graph = null;
+
+    public Vertex(DependencyGraph graph, String str){
+        this.graph = graph;
         this.id = str;
     }
+
     public Boolean compareTo(Vertex v){
         if(!(this.getClass() == v.getClass())) return false;
         return this.id.equalsIgnoreCase(v.getId());
     }
 
+
+    @Schnappi(name = "id")
     public String getId() {
         return id;
     }

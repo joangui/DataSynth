@@ -45,4 +45,11 @@ public class Function extends Expression {
     public String getName() {
         return name;
     }
+
+    @Override
+    public String toString() {
+        return "<function,"+name+">";
+    }
+
+
 }

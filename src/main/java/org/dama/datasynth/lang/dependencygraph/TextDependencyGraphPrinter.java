@@ -1,4 +1,4 @@
-package org.dama.datasynth.exec;
+package org.dama.datasynth.lang.dependencygraph;
 
 import org.dama.datasynth.DataSynth;
 
@@ -43,8 +43,8 @@ public class TextDependencyGraphPrinter extends DependencyGraphVisitor {
 
     private void explode(Vertex vertex) {
         List<Vertex> neighbors = new LinkedList<Vertex>();
-        for(DEdge edge : graph.incomingEdgesOf(vertex)) {
-            Vertex source = edge.getSource();
+        for(DEdge edge : graph.outgoingEdgesOf(vertex)) {
+            Vertex source = edge.getTarget();
             source.accept(this);
         }
     }
