@@ -1,12 +1,15 @@
 package org.dama.datasynth.lang.dependencygraph;
 
 import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 /**
  * Created by quim on 5/10/16.
  */
 public abstract class Vertex {
 
+    @Retention(RetentionPolicy.RUNTIME)
     @Inherited
     public @interface Schnappi {
        String name();

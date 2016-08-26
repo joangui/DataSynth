@@ -1,18 +1,16 @@
-package org.dama.datasynth.program.schnappi.ast.visitor;
+package org.dama.datasynth.program.schnappi.compilerpass;
 
 import org.dama.datasynth.lang.dependencygraph.ExecutableVertex;
 import org.dama.datasynth.lang.dependencygraph.Vertex;
 import org.dama.datasynth.program.schnappi.CompilerException;
 import org.dama.datasynth.program.schnappi.ast.*;
 import org.dama.datasynth.program.schnappi.ast.Number;
+import org.dama.datasynth.program.schnappi.ast.visitor.Visitor;
 import org.dama.datasynth.program.solvers.Solver;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by aprat on 22/08/16.
@@ -27,29 +25,16 @@ public class SolverInstantiator implements Visitor {
         this.vertex = vertex;
     }
 
-    private String fetchValue(Binding id, Vertex v){
-        String aux = "";
-        switch(aux){
-            case "@source.generator" : {
-                ExecutableVertex at = (ExecutableVertex) v;
-                return at.getGenerator();
-            }
-            case "@source.input" : {
-                ExecutableVertex at = (ExecutableVertex) v;
-                return at.getId()+".input";
-            }
-            case "@source.id" : {
-                ExecutableVertex at = (ExecutableVertex) v;
-                return at.getId();
-            }
-            default : {
-                return aux;
-            }
-        }
-    }
 
     private Method findMethod(Vertex vertex, String methodName) {
-        Method [] methods = vertex.getClass().getMethods();
+        Method [] methods =  null;
+        String className = "org.dama.datasynth.lang.dependencygraph."+vertex.getType();
+        try {
+            methods = vertex.getClass().asSubclass(Class.forName(className)).getMethods();
+        } catch(ClassNotFoundException e) {
+            throw new CompilerException("Error when processing binding. Unable to gind Class of type "+className+". Class not found.");
+        }
+
         for(Method m : methods) {
             if(m.getParameterCount() == 0) {
                 if (m.isAnnotationPresent(Vertex.Schnappi.class)) {
@@ -58,18 +43,18 @@ public class SolverInstantiator implements Visitor {
                 }
             }
         }
-        return null;
+        throw new CompilerException("Error when processing binding. Unable to find a method with name \""+methodName+"\" in vertex of type "+vertex.getType());
     }
 
     private List<Expression> processBinding(Binding binding) {
         List<Expression> retList = new LinkedList<Expression>();
         String value = binding.getValue();
         int pointIndex = value.indexOf('.');
-        String methodName = value.substring(pointIndex,value.length());
+        String methodName = value.substring(pointIndex+1,value.length());
         Method method = findMethod(vertex,methodName);
         try {
-            Class returnType = method.getReturnType().getClass();
-            if(returnType.getSimpleName().compareTo("String") == 0) {
+            Class returnType = method.getReturnType();
+            if(String.class.isAssignableFrom(returnType)) {
                 retList.add(new Any((String)method.invoke(vertex)));
             } else {
                 if(Collection.class.isAssignableFrom(returnType)) {
@@ -77,6 +62,8 @@ public class SolverInstantiator implements Visitor {
                     for(String str : strs) {
                         retList.add(new Any(str));
                     }
+                } else {
+                    throw new CompilerException("Method " + method.getName() + " in type " + vertex.getType() + " has an invalid return type "+returnType.getName());
                 }
             }
         } catch (IllegalAccessException e) {
@@ -92,10 +79,11 @@ public class SolverInstantiator implements Visitor {
         if(n.getId().getType().compareTo("Binding") != 0) {
             n.getId().accept(this);
         } else {
-            List<Expression> exprs = processBinding((Binding)n.getExpression());
+            List<Expression> exprs = processBinding((Binding)n.getId());
             if(exprs.size() > 1) throw new CompilerException("Invalid binding replacement in assign operation. Cannot assign more than one expression.");
-            if(exprs.get(0).getType().compareTo("Id") != 0) throw new CompilerException("Invalid binding replacement in assign operation. Cannot assign an expression to something different than an Id.");
-            n.setId((Id)exprs.get(0));
+            if(exprs.size() == 0) throw new CompilerException("Invalid binding replacement in assign operation. Binding in assign operation must return one corresponding binging");
+        //    if(exprs.get(0).getType().compareTo("Id") != 0) throw new CompilerException("Invalid binding replacement in assign operation. Cannot assign an expression to something different than an Id.");
+            n.setId(new Id(((Any)exprs.get(0)).getValue()));
         }
 
         if(n.getExpression().getType().compareTo("Binding") != 0) {
@@ -109,7 +97,6 @@ public class SolverInstantiator implements Visitor {
 
     @Override
     public void visit(Binding n) {
-        n.setValue(fetchValue(n,vertex));
     }
 
 
@@ -120,29 +107,21 @@ public class SolverInstantiator implements Visitor {
 
     @Override
     public void visit(Function n) {
-        /*ExecutableVertex at = (ExecutableVertex) vertex;
-        if(n.getName().compareTo("init") == 0) {
-            Parameters parameters = new Parameters();
-            for(String str : at.getInitParameters()) {
-                parameters.addParam(new Literal(str));
-            }
-            n.addParameters(parameters);
-        } else {
-            Parameters parameters = new Parameters();
-            parameters.addParam(new Literal(String.valueOf(at.getRunParameters().size())));
-            n.addParameters(parameters);
-        }*/
         n.getParameters().accept(this);
     }
 
     @Override
     public void visit(Parameters n) {
         try {
-            for (Expression param : n.getParams()) {
-                if(param.getType().compareTo("Binding") != 0) {
-                    param.accept(this);
-                } else {
-                    Binding binding = (Binding) param;
+            ListIterator<Expression> iterator = n.getParams().listIterator();
+            while(iterator.hasNext()) {
+                Expression currentExpr = iterator.next();
+                if(currentExpr.getType().compareTo("Binding") == 0) {
+                    List<Expression> bindings = processBinding((Binding)currentExpr);
+                    iterator.remove();
+                    for(Expression binding : bindings) {
+                        iterator.add(binding);
+                    }
                 }
             }
         } catch (NullPointerException npe) {

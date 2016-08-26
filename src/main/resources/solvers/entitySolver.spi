@@ -3,4 +3,4 @@ signature : {
     @target = Attribute
 }
 
-@source.id = union(@source.dependencies);
+@source.id = union(@source.attributes);

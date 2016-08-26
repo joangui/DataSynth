@@ -1,8 +1,9 @@
-package org.dama.datasynth.program.schnappi.ast.visitor;
+package org.dama.datasynth.program.schnappi.printer;
 
 import org.dama.datasynth.DataSynth;
 import org.dama.datasynth.program.schnappi.ast.*;
 import org.dama.datasynth.program.schnappi.ast.Number;
+import org.dama.datasynth.program.schnappi.ast.visitor.Visitor;
 import org.dama.datasynth.program.solvers.Solver;
 
 import java.util.logging.Level;

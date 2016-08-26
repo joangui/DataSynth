@@ -4,4 +4,4 @@ signature : {
 }
 
 f = new @source.generator(@source.initParameters);
-@source.id = map(f, @source.dependencies);
+@source.id = map(f, @source.runParameters);

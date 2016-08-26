@@ -4,10 +4,8 @@ import org.dama.datasynth.lang.dependencygraph.Vertex;
 import org.dama.datasynth.program.Ast;
 import org.dama.datasynth.program.schnappi.ast.*;
 import org.dama.datasynth.program.schnappi.ast.Operation;
-import org.dama.datasynth.program.schnappi.ast.visitor.SolverInstantiator;
+import org.dama.datasynth.program.schnappi.compilerpass.SolverInstantiator;
 import org.dama.datasynth.program.schnappi.ast.visitor.Visitor;
-
-import java.util.List;
 
 /**
  * Created by quim on 5/5/16.

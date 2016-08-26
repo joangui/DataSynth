@@ -22,7 +22,7 @@ public class Entity extends Vertex  {
         this.entity = entity;
     }
 
-    @Schnappi(name="dependencies")
+    @Schnappi(name="attributes")
     public List<String> dependencyNames(){
         List<String> ret = new LinkedList<String>();
         for(DEdge edge : graph.outgoingEdgesOf(this)) {

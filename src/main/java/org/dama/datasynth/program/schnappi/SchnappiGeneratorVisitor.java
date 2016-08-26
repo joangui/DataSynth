@@ -52,10 +52,10 @@ public class SchnappiGeneratorVisitor extends org.dama.datasynth.program.schnapp
     @Override
     public Assign visitAssig(org.dama.datasynth.program.schnappi.SchnappiParser.AssigContext ctx) {
 
-        StringLiteral literal = null;
-        if(ctx.BINDING() != null) literal = new StringLiteral(ctx.BINDING().getText());
-        if(ctx.ID() != null) literal = new StringLiteral(ctx.ID().getText());
-        return new Assign(literal, visitExpr(ctx.expr()));
+        Any any = null;
+        if(ctx.BINDING() != null) any = new Binding(ctx.BINDING().getText());
+        if(ctx.ID() != null) any = new Id(ctx.ID().getText());
+        return new Assign(any, visitExpr(ctx.expr()));
     }
 
     @Override

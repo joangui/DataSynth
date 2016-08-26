@@ -3,6 +3,7 @@ package org.dama.datasynth.program.schnappi;
 import org.dama.datasynth.lang.dependencygraph.*;
 import org.dama.datasynth.program.Ast;
 import org.dama.datasynth.program.schnappi.ast.*;
+import org.dama.datasynth.program.schnappi.ast.Number;
 import org.dama.datasynth.program.solvers.Loader;
 import org.dama.datasynth.program.solvers.Solver;
 
@@ -66,10 +67,10 @@ public class Compiler extends DependencyGraphVisitor {
 
         Parameters parameters = new Parameters();
         for(DEdge e : edges){
-            parameters.addParam(new Binding(e.getTarget().getId()));
+            parameters.addParam(new Id(e.getTarget().getId()));
         }
         Function function = new Function("union",parameters);
-        Assign assign = new Assign(new Any(v.getId() + suffix),  function);
+        Assign assign = new Assign(new Id(v.getId() + suffix),  function);
         this.program.addStatement(assign);
     }
 
@@ -78,11 +79,11 @@ public class Compiler extends DependencyGraphVisitor {
         Parameters parameters = new Parameters();
         long index = 0;
         for(DEdge e : edges){
-            parameters.addParam( new Binding(e.getTarget().getId()+".filtered["+index+"]"));
+            parameters.addParam( new Id(e.getTarget().getId()+".filtered["+index+"]"));
             ++index;
         }
         Function function = new Function("cartesian", parameters);
-        Assign assign = new Assign(new Any(v.getId() + suffix),function);
+        Assign assign = new Assign(new Id(v.getId() + suffix),function);
         this.program.addStatement(assign);
     }
 
@@ -98,10 +99,10 @@ public class Compiler extends DependencyGraphVisitor {
     private void addFilter(Edge v, List<Attribute> attrs, String entityName, long ind){
         Parameters parameters = new Parameters();
         for(Attribute attr : attrs){
-            parameters.addParam(new Binding(attr.getId()));
+            parameters.addParam(new Id(attr.getId()));
         }
         Function function = new Function("filter",parameters);
-        Assign assign = new Assign(new Binding(entityName + ".filtered["+ind+"]"),function);
+        Assign assign = new Assign(new Id(entityName + ".filtered["+ind+"]"),function);
         this.program.addStatement(assign);
     }
 
@@ -144,9 +145,9 @@ public class Compiler extends DependencyGraphVisitor {
                     e.printStackTrace();
                 }
             } else {
-                Parameters parameters = new Parameters(new Literal(String.valueOf(attribute.getEntity().getNumInstances())));
+                Parameters parameters = new Parameters(new Number(String.valueOf(attribute.getEntity().getNumInstances())));
                 Function function = new Function("genids", parameters);
-                Assign assign = new Assign(new Any(attribute.getId()), function);
+                Assign assign = new Assign(new Id(attribute.getId()), function);
                 this.program.addStatement(assign);
             }
             generatedVertices.add(attribute.getId());
