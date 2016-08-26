@@ -15,6 +15,7 @@ import org.dama.datasynth.lang.SyntacticException;
 import org.dama.datasynth.program.schnappi.Compiler;
 import org.dama.datasynth.program.schnappi.printer.AstTreePrinter;
 import org.dama.datasynth.program.schnappi.ast.Operation;
+import org.dama.datasynth.runtime.SchnappiInterpreter;
 import org.dama.datasynth.utils.LogFormatter;
 
 import java.io.IOException;
@@ -101,10 +102,10 @@ public class DataSynth {
             }
 
             start = System.currentTimeMillis();
-            /*SparkEnv.initialize();
             SchnappiInterpreter schInt = new SchnappiInterpreter(config);
-            schInt.execProgram(c.getProgram().getRoot());
-            schInt.dumpData();*/
+            schInt.execProgram(c.getProgram());
+            schInt.dumpData();
+
             /*executor.execute(execPlan);
             executor.dummyExecute();
             executor.dumpData(config.outputDir);*/

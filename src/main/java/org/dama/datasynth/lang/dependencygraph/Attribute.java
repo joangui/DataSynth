@@ -4,6 +4,7 @@ import org.dama.datasynth.common.Types;
 import org.dama.datasynth.lang.Ast;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -86,9 +87,15 @@ public class Attribute extends Vertex  implements ExecutableVertex{
      * @return The run parameters of the generator
      */
 
-    @Schnappi(name="runParameters")
     public List<String> getRunParameters() {
         return runParameters;
+    }
+
+    @Schnappi(name="runParameters")
+    public List<String> dependencyNames(){
+        List<String> ret = new LinkedList<String>();
+        ret.add(new String(entity.getName()+"."+getAttributeName()+"."+"input"));
+        return ret;
     }
 
     public void accept(DependencyGraphVisitor visitor) {

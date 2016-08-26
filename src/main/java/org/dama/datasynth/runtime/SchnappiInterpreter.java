@@ -28,7 +28,7 @@ import java.util.Map;
  * Created by quim on 6/6/16.
  */
 public class SchnappiInterpreter {
-/*    private Map<String, JavaPairRDD<Long, Tuple>> rdds;
+    private Map<String, JavaPairRDD<Long, Tuple>> rdds;
     private Map<String, Types.DATATYPE>  attributeTypes;
     private Map<String, Object> table;
     private Map<String, Generator> generators;
@@ -49,12 +49,12 @@ public class SchnappiInterpreter {
         for(Operation child : ast.getStatements()) execOp(child);
     }
     public void execOp(Operation n){
-        execAssig(n);
+        execAssig((Assign)n);
     }
 
     public JavaPairRDD<Long,Tuple> execInit(Function fn){
         Parameters pn = (Parameters) fn.getParameters();
-        String generatorName = ((Binding)pn.getParam(0)).getName();
+        String generatorName = ((Any)pn.getParam(0)).getValue();
         Generator generator = null;
         try {
             generator = (Generator)Class.forName(generatorName).newInstance();
@@ -82,14 +82,14 @@ public class SchnappiInterpreter {
     }
 
     public Object execAssig(Assign assign) {
-        table.put(assign.getId().getName(), this.execExpr(assign.getExpression()));
+        table.put(assign.getId().getValue(), this.execExpr(assign.getExpression()));
         return null;
     }
 
     public Object execExpr(Node n){
 
         if(n.getType().compareTo("Binding") == 0 ){
-            return table.get(((Binding)n).getName());
+            return table.get(((Binding)n).getValue());
         }else{
             return execFunc((Function) n);
         }
@@ -119,20 +119,20 @@ public class SchnappiInterpreter {
         }
     }
     public JavaPairRDD<Long, Tuple> execMap(Function fn) {
-        Binding pn0 = (Binding)fn.getParameters().getParam(0);
-        Binding pn1 = (Binding)fn.getParameters().getParam(1);
-        org.apache.spark.api.java.function.Function f = fetchFunction(pn0.getName(), Integer.parseInt(pn1.getName()));
-        Object rd = fetchRDD(pn0.getParam(1));
+        Any pn0 = (Any)fn.getParameters().getParam(0);
+        Any pn1 = (Any)fn.getParameters().getParam(1);
+        org.apache.spark.api.java.function.Function f = fetchFunction(pn0.getValue(), 1);
+        Object rd = fetchRDD(pn1.getValue());
         JavaPairRDD<Long, Tuple> rdd = (JavaPairRDD<Long, Tuple>) rd;
         return rdd.mapValues(f);
     }
     public JavaPairRDD<Long, Tuple> execUnion(Function fn){
         JavaRDD<Tuple2<Long, Tuple>> aux = SparkEnv.sc.emptyRDD();
         JavaPairRDD<Long,Tuple> result = JavaPairRDD.fromJavaRDD(aux);
-        Parameters pn = (Parameters) fn.getChild(0);
+        Parameters pn = fn.getParameters();
         if(pn.params.size() == 0) return result;
         boolean first = true;
-        for(String p : pn.params){
+        for(Expression p : pn.params){
             //JavaPairRDD<Long,Tuple> rdd = (JavaPairRDD<Long,Tuple>) execAtom(an);
             JavaPairRDD<Long,Tuple> rdd = (JavaPairRDD<Long,Tuple>) table.get(p);
             if(rdd == null) System.out.println("Null RDD "+p);
@@ -147,8 +147,9 @@ public class SchnappiInterpreter {
         result = result.reduceByKey(TupleUtils.join);
         return result;
     }
+
     public JavaPairRDD<Long, Tuple> execReduce(Function fn) {
-        org.apache.spark.api.java.function.Function f = fetchFunction(fn.getChild(0).id, Integer.parseInt(fn.getChild(1).id));
+   /*     org.apache.spark.api.java.function.Function f = fetchFunction(fn.getChild(0).id, Integer.parseInt(fn.getChild(1).id));
         JavaRDD<Tuple2<Long, Tuple>> aux = SparkEnv.sc.emptyRDD();
         JavaPairRDD<Long,Tuple> result = JavaPairRDD.fromJavaRDD(aux);
         for(Node an : fn.children){
@@ -156,13 +157,17 @@ public class SchnappiInterpreter {
             result.union((JavaPairRDD<Long,Tuple>)rdd);
         }
         return result;
+        */
+        throw new ExecutionException(("Operation REDUCE not implemented"));
     }
+
     public JavaPairRDD<Long, Tuple> execEqjoin(Function n){
         return null;
     }
+
     public JavaPairRDD<Long, Tuple> execGenids(Function fn){
-        Parameters pn = (Parameters) fn.getChild(0);
-        int n = Integer.parseInt(pn.params.get(0));
+        Parameters pn = fn.getParameters();
+        int n = Integer.parseInt(((Any)pn.getParam(0)).getValue());
         List<Long> init = new ArrayList<Long>();
         for(long i = 0; i < n; ++i) {
             init.add(i);
@@ -249,5 +254,4 @@ public class SchnappiInterpreter {
         }
         file.delete();
     }
-    */
 }
