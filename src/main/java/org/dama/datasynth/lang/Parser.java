@@ -35,30 +35,33 @@ public class Parser {
                 Ast.Entity ent = new Ast.Entity(entityName,numInstances);
                 hm.put(entityName, ent);
                 JSONArray attributes = (JSONArray) entity.get("attributes");
-                for( Object objj : attributes ) {
-                    JSONObject attribute = (JSONObject)objj;
-                    JSONObject generator = (JSONObject)attribute.get("generator");
-                    Ast.Generator gen = new Ast.Generator((String)generator.get("name"));
-                    JSONArray runParameters = (JSONArray)generator.get("runParameters");
-                    for(Object runParameter: runParameters) {
-                        gen.addRunParameter((String)(runParameter));
+                if(attributes != null) {
+                    for (Object objj : attributes) {
+                        JSONObject attribute = (JSONObject) objj;
+                        JSONObject generator = (JSONObject) attribute.get("generator");
+                        Ast.Generator gen = new Ast.Generator((String) generator.get("name"));
+                        JSONArray runParameters = (JSONArray) generator.get("runParameters");
+                        for (Object runParameter : runParameters) {
+                            gen.addRunParameter((String) (runParameter));
+                        }
+
+                        JSONArray initParameters = (JSONArray) generator.get("initParameters");
+                        for (Object initParameter : initParameters) {
+                            gen.addInitParameter(initParameter.toString());
+                        }
+
+                        Ast.Attribute attr = new Ast.Attribute(
+                                (String) attribute.get("name"),
+                                Types.DATATYPE.fromString((String) attribute.get("type")),
+                                gen
+                        );
+                        System.out.println("Inserting " + ent.getName() + "." + attr.getName());
+                        hmAttr.put(ent.getName() + "." + attr.getName(), attr);
+                        if (attr.getType() == null)
+                            throw new SyntacticException(((String) attribute.get("type")) + " is not a valid data type ");
+
+                        ent.addAttribute(attr);
                     }
-
-                    JSONArray initParameters = (JSONArray)generator.get("initParameters");
-                    for(Object initParameter: initParameters) {
-                        gen.addInitParameter(initParameter.toString());
-                    }
-
-                    Ast.Attribute attr = new Ast.Attribute(
-                            (String)attribute.get("name"),
-                            Types.DATATYPE.fromString((String)attribute.get("type")),
-                            gen
-                    );
-                    System.out.println("Inserting " + ent.getName()+ "." + attr.getName());
-                    hmAttr.put(ent.getName()+ "." + attr.getName(), attr);
-                    if(attr.getType() == null) throw new SyntacticException(((String) attribute.get("type")) + " is not a valid data type ");
-
-                    ent.addAttribute(attr);
                 }
                 ast.addEntity(ent);
             }
