@@ -94,7 +94,13 @@ public class Attribute extends Vertex  implements ExecutableVertex{
     @Schnappi(name="runParameters")
     public List<String> dependencyNames(){
         List<String> ret = new LinkedList<String>();
-        ret.add(new String(entity.getName()+"."+getAttributeName()+"."+"input"));
+        for(DEdge edge : graph.outgoingEdgesOf(this)) {
+            Vertex neighbor = edge.getTarget();
+            if(neighbor.getType().compareTo("Attribute") == 0) {
+                Attribute attribute = (Attribute)neighbor;
+                ret.add(attribute.getEntity().getName()+"."+attribute.getAttributeName());
+            }
+        }
         return ret;
     }
 

@@ -89,8 +89,8 @@ public class SchnappiInterpreter {
             case "Id":
                 return table.get(((Id) n).getValue());
             case "Any":
-                Object aux = table.get(((Any) n).getValue());
-                if(aux != null) return new Tuple(aux,1);
+                Tuple aux = table.get(((Any) n).getValue());
+                if(aux != null) return aux;
                 return new Tuple(((Any)n).getValue(),1);
             case "Function":
                 return execFunc((Function)n);

@@ -143,7 +143,7 @@ public class Compiler extends DependencyGraphVisitor {
                 vertex.accept(this);
             }
             if (!attribute.getId().contains(".oid")) {
-                if (graph.outgoingEdgesOf(attribute).size() > 0) addUnionOfDependencies(attribute, graph, ".input");
+                //if (graph.outgoingEdgesOf(attribute).size() > 0) addUnionOfDependencies(attribute, graph, ".input");
                 try {
                     solveVertex(attribute);
                 } catch (CompilerException e) {
