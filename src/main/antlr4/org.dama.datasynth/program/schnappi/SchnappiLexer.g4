@@ -55,7 +55,9 @@ UNION
 GENID
     : 'gId'
     ;
-
+SORT
+    : 'sort'
+    ;
 EQ
     : '='
     ;
@@ -94,7 +96,12 @@ RELATION
 SIGNATURE
     : 'signature'
     ;
-
+PART
+    : 'partition'
+    ;
+MAPPART
+    : 'mapPartition'
+    ;
 ID
 : (ALPHA)+
 ;
