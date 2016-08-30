@@ -125,8 +125,13 @@ public class Compiler extends DependencyGraphVisitor {
                 Vertex vertex = edge.getTarget();
                 vertex.accept(this);
             }
-            addUnionOfDependencies(entity, graph, ".final");
+            //addUnionOfDependencies(entity, graph, ".final");
             generatedVertices.add(entity.getId());
+            try {
+                solveVertex(entity);
+            } catch (CompilerException e) {
+                e.printStackTrace();
+            }
         }
     }
 
