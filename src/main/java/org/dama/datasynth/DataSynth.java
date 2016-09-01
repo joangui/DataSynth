@@ -106,13 +106,13 @@ public class DataSynth {
             schInt.execProgram(c.getProgram());
             schInt.dumpData();
 
-            /*executor.execute(execPlan);
-            executor.dummyExecute();
-            executor.dumpData(config.outputDir);*/
             end = System.currentTimeMillis();
             logger.info(" Query executed in  "+(end-start) + " ms");
             logger.info("Execution finished");
 
+            /*executor.execute(execPlan);
+            executor.dummyExecute();
+            executor.dumpData(config.outputDir);*/
 
             return;
         } catch(IOException iOE) {

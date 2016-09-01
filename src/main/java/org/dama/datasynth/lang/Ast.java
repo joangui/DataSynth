@@ -167,11 +167,9 @@ public class Ast {
      * A generator in the AST
      */
     public static class Edge extends Node {
-        private Entity origin;
-        private Entity destination;
+        private Entity entity;
         private int[] cardinality;
-        private List<Attribute> attributesOrigin;
-        private List<Attribute> attributesTarget;
+        private List<Attribute> attributes;
         private Generator generator;
         /**
          * Class Constructor
@@ -180,32 +178,22 @@ public class Ast {
         public Edge(String name) {
             super(name);
             this.cardinality = new int[2];
-            this.attributesOrigin = new ArrayList<Attribute>();
-            this.attributesTarget = new ArrayList<Attribute>();
+            this.attributes = new ArrayList<Attribute>();
         }
 
         public Edge(String name, Generator gen) {
             super(name);
             this.cardinality = new int[2];
             this.generator = gen;
-            this.attributesOrigin = new ArrayList<Attribute>();
-            this.attributesTarget = new ArrayList<Attribute>();
+            this.attributes = new ArrayList<Attribute>();
         }
 
-        public Entity getOrigin() {
-            return origin;
+        public Entity getEntity() {
+            return entity;
         }
 
-        public void setOrigin(Entity origin) {
-            this.origin = origin;
-        }
-
-        public Entity getDestination() {
-            return destination;
-        }
-
-        public void setDestination(Entity destination) {
-            this.destination = destination;
+        public void setOrigin(Entity entity) {
+            this.entity = entity;
         }
 
         public int[] getCardinality() {
@@ -216,25 +204,18 @@ public class Ast {
             this.cardinality[i] = cardinality;
         }
 
-        public void addAttributeOrigin(Attribute atr){
-            this.attributesOrigin.add(atr);
-        }
-        public void addAttributeTarget(Attribute atr){
-            this.attributesTarget.add(atr);
+        public void addAttribute(Attribute atr){
+            this.attributes.add(atr);
         }
 
-        public List<Attribute> getAttributesOrigin() {
-            return attributesOrigin;
+        public List<Attribute> getAttributes() {
+            return attributes;
         }
 
-        public List<Attribute> getAttributesTarget() {
-            return attributesTarget;
-        }
 
         public List<Attribute> getAllAttributes(){
             ArrayList<Attribute> result = new ArrayList<>();
-            result.addAll(this.attributesOrigin);
-            result.addAll(this.attributesTarget);
+            result.addAll(this.attributes);
             return result;
         }
         public String getGenerator(){ return generator.getName();}
