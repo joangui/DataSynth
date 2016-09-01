@@ -83,18 +83,13 @@ public class DependencyGraph  extends DirectedMultigraph<Vertex,DEdge> {
         }
 
         for(Ast.Edge edge : ast.getEdges()) {
-            Entity source = entities.get(edge.getOrigin().getName());
-            Entity target = entities.get(edge.getDestination().getName());
-            ArrayList<Attribute> sourceAttributes = new ArrayList<Attribute>();
-            ArrayList<Attribute> targetAttributes = new ArrayList<Attribute>();
-            String orig = edge.getOrigin().getName();
-            String dest = edge.getDestination().getName();
-            for(Ast.Attribute attr : edge.getOrigin().getAttributes()) sourceAttributes.add(tasks.get(orig+"."+attr.getName()));
-            for(Ast.Attribute attr : edge.getDestination().getAttributes()) targetAttributes.add(tasks.get(dest+"."+attr.getName()));
-            Edge et = new Edge(this, edge,source, target, sourceAttributes, targetAttributes);
+            Entity entity = entities.get(edge.getEntity().getName());
+            ArrayList<Attribute> attributes = new ArrayList<Attribute>();
+            String orig = edge.getEntity().getName();
+            for(Ast.Attribute attr : edge.getEntity().getAttributes()) attributes.add(tasks.get(orig+"."+attr.getName()));
+            Edge et = new Edge(this, edge, entity, attributes);
             addVertex(et);
-            addEdge(et,source);
-            addEdge(et,target);
+            addEdge(et,entity);
         }
     }
 
@@ -108,7 +103,7 @@ public class DependencyGraph  extends DirectedMultigraph<Vertex,DEdge> {
     /*public void print(){
         for(DEdge e: edgeSet()){
             System.out.println(e.getSource().getType() + " :: " + e.getTarget().getType());
-            System.out.println(e.getSource().getName() + " <- " + e.getTarget().getName());
+            System.out.println(e.getSource().getId() + " <- " + e.getTarget().getId());
         }
     }*/
 }

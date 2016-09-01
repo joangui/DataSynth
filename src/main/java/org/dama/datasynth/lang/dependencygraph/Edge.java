@@ -11,26 +11,26 @@ import java.util.List;
 public class Edge extends Vertex {
 
     public Ast.Edge edge;
-    public Entity entity1;
+    public Entity entity;
     public Entity entity2;
-    public ArrayList<Attribute> attributesEnt1;
+    public ArrayList<Attribute> attributes;
     public ArrayList<Attribute> attributesEnt2;
 
-    public Edge(DependencyGraph graph, Ast.Edge edge, Entity ent1, Entity ent2, ArrayList<Attribute> attr1, ArrayList<Attribute> attr2) {
-        super(graph, ent1.getEntity()+"::"+ent2.getEntity());
+    public Edge(DependencyGraph graph, Ast.Edge edge, Entity ent1, ArrayList<Attribute> attr1 ) {
+        super(graph, ":"+ent1.getEntity()+":");
         this.edge = edge;
-        this.entity1 = ent1;
-        this.entity2 = ent2;
-        this.attributesEnt1 = attr1;
-        this.attributesEnt2 = attr2;
+        this.entity = ent1;
+        this.entity2 = null;
+        this.attributes = attr1;
+        this.attributesEnt2 = null;
     }
 
-    public Entity getEntity1() {
-        return entity1;
+    public Entity getEntity() {
+        return entity;
     }
 
-    public void setEntity1(Entity entity1) {
-        this.entity1 = entity1;
+    public void setEntity(Entity entity1) {
+        this.entity = entity1;
     }
 
     public Entity getEntity2() {
@@ -41,12 +41,12 @@ public class Edge extends Vertex {
         this.entity2 = entity2;
     }
 
-    public ArrayList<Attribute> getAttributesEnt1() {
-        return attributesEnt1;
+    public ArrayList<Attribute> getAttributes() {
+        return attributes;
     }
 
-    public void setAttributesEnt1(ArrayList<Attribute> attributesEnt1) {
-        this.attributesEnt1 = attributesEnt1;
+    public void setAttributes(ArrayList<Attribute> attributesEnt1) {
+        this.attributes = attributesEnt1;
     }
 
     public ArrayList<Attribute> getAttributesEnt2() {
@@ -66,13 +66,13 @@ public class Edge extends Vertex {
     }
 
     public Entity getEntityByName(String name){
-        if(name.equalsIgnoreCase(entity1.getEntity())) return entity1;
+        if(name.equalsIgnoreCase(entity.getEntity())) return entity;
         else if(name.equalsIgnoreCase(entity2.getEntity())) return entity2;
         else return null;
     }
 
     public List<Attribute> getAttributesByName(String name){
-        if(name.equalsIgnoreCase(entity1.getEntity())) return attributesEnt1;
+        if(name.equalsIgnoreCase(entity.getEntity())) return attributes;
         else if(name.equalsIgnoreCase(entity2.getEntity())) return attributesEnt2;
         else return null;
     }

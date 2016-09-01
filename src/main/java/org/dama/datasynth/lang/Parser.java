@@ -88,20 +88,13 @@ public class Parser {
                         gen.addInitParameter(initParameter.toString());
                     }
                     Ast.Edge edg = new Ast.Edge(edgeName, gen);
-                    JSONObject source = (JSONObject) edge.get("source");
-                    JSONObject target = (JSONObject) edge.get("target");
-                    Ast.Entity attrEnt = hm.get((String) source.get("entity"));
+                    String entity = (String) edge.get("entity");
+                    Ast.Entity attrEnt = hm.get(entity);
                     edg.setOrigin(attrEnt);
-                    for (Object objattr : (JSONArray) source.get("attributes")) {
+                    for (Object objattr : (JSONArray) edge.get("attributes")) {
                         String attr = (String) objattr;
                         System.out.println("Fetching " + attrEnt.getName() + "." + attr);
-                        edg.addAttributeOrigin(hmAttr.get(attrEnt.getName() + "." + attr));
-                    }
-                    attrEnt = hm.get((String) target.get("entity"));
-                    edg.setDestination(attrEnt);
-                    for (Object objattr : (JSONArray) target.get("attributes")) {
-                        String attr = (String) objattr;
-                        edg.addAttributeTarget(hmAttr.get(attrEnt.getName() + "." + attr));
+                        edg.addAttribute(hmAttr.get(attrEnt.getName() + "." + attr));
                     }
                     ast.addEdge(edg);
                 /*JSONArray cardinality = (JSONArray)edge.get("cardinality");
