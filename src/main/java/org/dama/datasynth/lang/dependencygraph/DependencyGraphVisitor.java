@@ -28,4 +28,16 @@ public abstract class DependencyGraphVisitor {
      * @param relation The relation vertex to visit
      */
     public abstract void visit(Edge relation);
+
+    /*
+     * Performs the visit of a vertex of type generator
+     * @param generator The generator vertex to visit
+     */
+    public abstract void visit(Generator generator);
+
+    /*
+     * Performs the visit of a vertex of type literal
+     * @param generator The literal vertex to visit
+     */
+    public abstract void visit(Literal literal);
 }

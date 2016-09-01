@@ -1,6 +1,7 @@
 package org.dama.datasynth.program.schnappi;
 
 import org.dama.datasynth.lang.dependencygraph.*;
+import org.dama.datasynth.lang.dependencygraph.Literal;
 import org.dama.datasynth.program.Ast;
 import org.dama.datasynth.program.schnappi.ast.*;
 import org.dama.datasynth.program.schnappi.ast.Number;
@@ -125,7 +126,6 @@ public class Compiler extends DependencyGraphVisitor {
                 Vertex vertex = edge.getTarget();
                 vertex.accept(this);
             }
-            //addUnionOfDependencies(entity, graph, ".final");
             generatedVertices.add(entity.getId());
             try {
                 solveVertex(entity);
@@ -175,5 +175,15 @@ public class Compiler extends DependencyGraphVisitor {
             }
             generatedVertices.add(edge.getId());
         }
+    }
+
+    @Override
+    public void visit(Generator generator) {
+        throw new CompilerException("Method visit Generator in compiler not implemented.");
+    }
+
+    @Override
+    public void visit(Literal literal) {
+        throw new CompilerException("Method visit Literal in compiler not implemented.");
     }
 }

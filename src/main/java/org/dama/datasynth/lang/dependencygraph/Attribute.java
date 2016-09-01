@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Created by aprat on 20/04/16.
  */
-public class Attribute extends Vertex  implements ExecutableVertex{
+public class Attribute extends Vertex {
 
     private Ast.Entity      entity          = null;
     private Ast.Attribute   attribute       = null;

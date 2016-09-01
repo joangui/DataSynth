@@ -73,4 +73,20 @@ public class TextDependencyGraphPrinter extends DependencyGraphVisitor {
         explode(relation);
         indents--;
     }
+
+    @Override
+    public void visit(Generator generator) {
+        indents++;
+        logger.log(Level.FINE,new String(indents(true)+generator.toString()));
+        explode(generator);
+        indents--;
+    }
+
+    @Override
+    public void visit(Literal literal) {
+        indents++;
+        logger.log(Level.FINE,new String(indents(true)+literal.toString()));
+        explode(literal);
+        indents--;
+    }
 }

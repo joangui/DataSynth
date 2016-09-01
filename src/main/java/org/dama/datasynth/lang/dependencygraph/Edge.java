@@ -10,11 +10,29 @@ import java.util.List;
  */
 public class Edge extends Vertex {
 
-    public Ast.Edge edge;
-    public Entity entity1;
-    public Entity entity2;
-    public ArrayList<Attribute> attributesEnt1;
-    public ArrayList<Attribute> attributesEnt2;
+    private enum Direction {
+        UNDIRECTED ("undirected"),
+        DIRECTED ("directed");
+
+        private String text = null;
+
+        Direction(String text) {
+            this.text = text;
+        }
+
+
+        @Override
+        public String toString() {
+            return this.text;
+        }
+    }
+
+    private Ast.Edge edge;
+    private Entity entity1;
+    private Entity entity2;
+    private ArrayList<Attribute> attributesEnt1;
+    private ArrayList<Attribute> attributesEnt2;
+    private Direction direction;
 
     public Edge(DependencyGraph graph, Ast.Edge edge, Entity ent1, Entity ent2, ArrayList<Attribute> attr1, ArrayList<Attribute> attr2) {
         super(graph, ent1.getEntity()+"::"+ent2.getEntity());
@@ -23,6 +41,7 @@ public class Edge extends Vertex {
         this.entity2 = ent2;
         this.attributesEnt1 = attr1;
         this.attributesEnt2 = attr2;
+        this.direction = Direction.UNDIRECTED;
     }
 
     public Entity getEntity1() {
@@ -84,5 +103,10 @@ public class Edge extends Vertex {
     @Override
     public void accept(DependencyGraphVisitor visitor) {
         visitor.visit(this);
+    }
+
+    @Override
+    public String toString(){
+        return "[" + this.getId() + ","+direction.toString()+","+getClass().getSimpleName()+"]";
     }
 }
