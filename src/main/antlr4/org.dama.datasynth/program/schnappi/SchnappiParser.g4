@@ -3,7 +3,7 @@ options{
     language = Java;
     tokenVocab = SchnappiLexer;
 }
-solver : signature program;
+solver : signature? program;
 signature : SIGNATURE COLON LBRA source target RBRA;
 source : SOURCE EQ VTYPE;
 target : TARGET EQ VTYPE;
