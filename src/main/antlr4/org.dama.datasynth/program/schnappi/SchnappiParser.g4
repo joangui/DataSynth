@@ -20,6 +20,8 @@ union : UNION LPAR (params)? RPAR;
 genids : GENID LPAR NUM RPAR;
 sort : SORT LPAR params RPAR;
 partition : PART LPAR params RPAR;
+filter : FILTER LPAR any COMA set RPAR;
 expr : any | funcs;
 params : (any (COMA any)*);
 any :  NUM | BINDING | ID | STRING ;
+set : LBRA (NUM (COMA NUM)*) RBRA;

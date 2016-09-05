@@ -134,7 +134,7 @@ public class SchnappiGeneratorVisitor extends org.dama.datasynth.program.schnapp
     public Function visitGenids(org.dama.datasynth.program.schnappi.SchnappiParser.GenidsContext ctx){
         Parameters parameters = new Parameters();
         parameters.addParam(new Literal(ctx.NUM().getSymbol().getText()));
-        return new Function("geinds",parameters);
+        return new Function("genids",parameters);
     }
     @Override
     public Function visitSort(org.dama.datasynth.program.schnappi.SchnappiParser.SortContext ctx){
@@ -151,5 +151,13 @@ public class SchnappiGeneratorVisitor extends org.dama.datasynth.program.schnapp
             parameters.addParam(visitAny(tn));
         }
         return new Function("mappart",parameters);
+    }
+    @Override
+    public Parameters visitSet(org.dama.datasynth.program.schnappi.SchnappiParser.SetContext ctx){
+        Parameters parameters = new Parameters();
+        for(TerminalNode tn : ctx.NUM()) {
+            parameters.addParam(new Number(tn.getText()));
+        }
+        return parameters;
     }
 }

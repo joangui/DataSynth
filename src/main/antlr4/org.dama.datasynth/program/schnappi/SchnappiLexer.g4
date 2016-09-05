@@ -58,6 +58,9 @@ GENID
 SORT
     : 'sort'
     ;
+FILTER
+    : 'filter'
+    ;
 EQ
     : '='
     ;

@@ -117,6 +117,15 @@ public class SchnappiInterpreter {
             case "init" : {
                 return execInit(n);
             }
+            case "sort" : {
+                return null;
+            }
+            case "partition" : {
+                return null;
+            }
+            case "filter" : {
+                return execFilter(n);
+            }
             default: {
                 return null;
             }
@@ -126,6 +135,15 @@ public class SchnappiInterpreter {
         Any pn0 = (Any)fn.getParameters().getParam(0);
         Any pn1 = (Any)fn.getParameters().getParam(1);
         Tuple rd = table.get(pn1.getValue());
+        org.apache.spark.api.java.function.Function f = fetchFunction(pn0.getValue(), (Integer)rd.get(1));
+        JavaPairRDD<Long, Tuple> rdd = (JavaPairRDD<Long, Tuple>) rd.get(0);
+        return new Tuple(rdd.mapValues(f),1);
+    }
+
+    public Tuple execFilter(Function fn) {
+        Any pn0 = (Any)fn.getParameters().getParam(0);
+        Parameters pn1 = (Parameters) fn.getParameters().getParam(1);
+        Tuple rd = table.get(pn0.getValue());
         org.apache.spark.api.java.function.Function f = fetchFunction(pn0.getValue(), (Integer)rd.get(1));
         JavaPairRDD<Long, Tuple> rdd = (JavaPairRDD<Long, Tuple>) rd.get(0);
         return new Tuple(rdd.mapValues(f),1);
