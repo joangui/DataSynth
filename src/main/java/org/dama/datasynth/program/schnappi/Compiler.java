@@ -46,7 +46,7 @@ public class Compiler extends DependencyGraphVisitor {
         this.concatenateProgram(s.instantiate(v));
     }
 
-    private void solveEdge(DEdge e) throws CompilerException {
+    private void solveEdge(DirectedEdge e) throws CompilerException {
         /*Solver s = this.solversDB.get(e.getSignature());
         if(s == null) throw new CompilerException("Unsolvable program");
         */
@@ -63,41 +63,29 @@ public class Compiler extends DependencyGraphVisitor {
         }
     }
 
-    private void addUnionOfDependencies(Vertex v, DependencyGraph g, String suffix){
-        Set<DEdge> edges = g.outgoingEdgesOf(v);
-
-        Parameters parameters = new Parameters();
-        for(DEdge e : edges){
-            parameters.addParam(new Id(e.getTarget().getId()));
-        }
-        Function function = new Function("union",parameters);
-        Assign assign = new Assign(new Id(v.getId() + suffix),  function);
-        this.program.addStatement(assign);
-    }
-
-    private void addIncomingCartesianProduct(Vertex v, DependencyGraph g, String suffix){
-        Set<DEdge> edges = g.outgoingEdgesOf(v);
+    /*private void addIncomingCartesianProduct(Vertex v, DependencyGraph g, String suffix){
+        Set<DirectedEdge> edges = g.outgoingEdgesOf(v);
         Parameters parameters = new Parameters();
         long index = 0;
-        for(DEdge e : edges){
-            parameters.addParam( new Id(e.getTarget().getId()+".filtered["+index+"]"));
+        for(DirectedEdge e : edges){
+            parameters.addParam( new Id(graph.getEdgeTarget(e).getId()+".filtered["+index+"]"));
             ++index;
         }
         Function function = new Function("cartesian", parameters);
         Assign assign = new Assign(new Id(v.getId() + suffix),function);
         this.program.addStatement(assign);
-    }
+    }*/
 
-    private void addFilters(Edge v, DependencyGraph g){
-        Set<DEdge> edges = g.outgoingEdgesOf(v);
+    /*private void addFilters(Edge v, DependencyGraph g){
+        Set<DirectedEdge> edges = g.outgoingEdgesOf(v);
         long index = 0;
-        for(DEdge e : edges){
-            addFilter(v, v.getAttributesByName(e.getTarget().getId()), e.getTarget().getId(), index);
+        for(DirectedEdge e : edges){
+            addFilter(v, v.getAttributesByName(graph.getEdgeTarget(e).getId()), graph.getEdgeTarget(e).getId(), index);
             ++index;
         }
-    }
+    }*/
 
-    private void addFilter(Edge v, List<Attribute> attrs, String entityName, long ind){
+    /*private void addFilter(Edge v, List<Attribute> attrs, String entityName, long ind){
         Parameters parameters = new Parameters();
         for(Attribute attr : attrs){
             parameters.addParam(new Id(attr.getId()));
@@ -105,7 +93,7 @@ public class Compiler extends DependencyGraphVisitor {
         Function function = new Function("filter",parameters);
         Assign assign = new Assign(new Id(entityName + ".filtered["+ind+"]"),function);
         this.program.addStatement(assign);
-    }
+    }*/
 
     public Ast getProgram() {
         return this.program;
@@ -122,11 +110,10 @@ public class Compiler extends DependencyGraphVisitor {
     @Override
     public void visit(Entity entity) {
         if(!generatedVertices.contains(entity.getId())) {
-            for(DEdge edge : graph.outgoingEdgesOf(entity)) {
-                Vertex vertex = edge.getTarget();
-                vertex.accept(this);
+            for(Vertex neighbor : graph.getNeighbors(entity)) {
+                neighbor.accept(this);
             }
-            generatedVertices.add(entity.getId());
+            generatedVertices.add(entity.getName());
             try {
                 solveVertex(entity);
             } catch (CompilerException e) {
@@ -138,42 +125,41 @@ public class Compiler extends DependencyGraphVisitor {
     @Override
     public void visit(Attribute attribute) {
         if(!generatedVertices.contains(attribute.getId())) {
-            for(DEdge edge : graph.outgoingEdgesOf(attribute)) {
-                Vertex vertex = edge.getTarget();
-                vertex.accept(this);
+            for(Vertex neighbor : graph.getNeighbors(attribute)) {
+                neighbor.accept(this);
             }
-            if (!attribute.getId().contains(".oid")) {
-                //if (graph.outgoingEdgesOf(attribute).size() > 0) addUnionOfDependencies(attribute, graph, ".input");
+            if (!attribute.getAttributeName().contains(".oid")) {
                 try {
                     solveVertex(attribute);
                 } catch (CompilerException e) {
                     e.printStackTrace();
                 }
             } else {
-                Parameters parameters = new Parameters(new Number(String.valueOf(attribute.getEntity().getNumInstances())));
+                String entityName = attribute.getAttributeName().substring(0,attribute.getAttributeName().indexOf(".")-1);
+                Parameters parameters = new Parameters(new Number(String.valueOf(graph.getEntity(entityName).getNumInstances())));
                 Function function = new Function("genids", parameters);
-                Assign assign = new Assign(new Id(attribute.getId()), function);
+                Assign assign = new Assign(new Id(attribute.getAttributeName()), function);
                 this.program.addStatement(assign);
             }
-            generatedVertices.add(attribute.getId());
+            generatedVertices.add(attribute.getAttributeName());
         }
     }
 
     @Override
     public void visit(Edge edge) {
         if(!generatedVertices.contains(edge.getId())) {
-            for(DEdge e : graph.outgoingEdgesOf(edge)) {
-                Vertex vertex = e.getTarget();
-                vertex.accept(this);
+            for(Vertex neighbor : graph.getNeighbors(edge)) {
+                neighbor.accept(this);
             }
-            addFilters(edge, graph);
+            /*addFilters(edge, graph);
             addIncomingCartesianProduct(edge, graph, ".input");
+            */
             try {
                 solveVertex(edge);
             } catch (CompilerException e) {
                 e.printStackTrace();
             }
-            generatedVertices.add(edge.getId());
+            generatedVertices.add(edge.getName());
         }
     }
 

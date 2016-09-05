@@ -1,107 +1,60 @@
 package org.dama.datasynth.lang.dependencygraph;
 
 import org.dama.datasynth.common.Types;
-import org.dama.datasynth.lang.Ast;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Created by aprat on 20/04/16.
  */
 public class Attribute extends Vertex {
 
-    private Ast.Entity      entity          = null;
-    private Ast.Attribute   attribute       = null;
-    private String          generator       = null;
-    private List<String>    runParameters   = new ArrayList<String>();
-    private List<String>    initParameters  = new ArrayList<String>();
+    private String          attributeName   = null;
+    private Types.DataType dataType        = null;
 
     /**
-     * Class constructor
-     * @param entity The entity this task is generating something for
-     * @param attribute The attribute this task is generating
+     * Class Constructor
+     * @param attributeName The name of the attribute
+     * @param dataType The type of the attribute
      */
-    public Attribute(DependencyGraph graph, Ast.Entity entity, Ast.Attribute attribute ) {
-        super(graph, entity.getName()+"."+attribute.getName());
-        this.entity = entity;
-        this.attribute = attribute;
-        this.generator = attribute.getGenerator().getName();
-        for( String param : attribute.getGenerator().getRunParameters()) {
-            this.runParameters.add(param);
-        }
-
-        for( String param : attribute.getGenerator().getInitParameters()) {
-            this.initParameters.add(param);
-        }
+    public Attribute(String attributeName, Types.DataType dataType ) {
+        super();
+        this.attributeName = attributeName;
+        this.dataType = dataType;
     }
 
     /**
      * Gets the generator of this attribute task
      * @return The name of the generator of this attribute task
      */
-
     @Schnappi(name="generator")
     public String getGenerator() {
-        return generator;
+        /*for(DirectedEdge edge : graph.outgoingEdgesOf(this)) {
+            if(edge.getName().compareTo("generator") == 0) {
+                return ((Generator)graph.getEdgeTarget(edge)).getName();
+            }
+        }*/
+        throw new DependencyGraphConstructionException("Dependency graph is not correctly built. Attribute is missing generator");
     }
 
-
-    /**
-     * Gets the initialize method parameters
-     * @return The list of parameter types of the initialize method
-     */
-
-    @Schnappi(name="initParameters")
-    public List<String> getInitParameters() {
-        return initParameters;
-    }
-
-    /**
-     * Gets the entity this task is generating something for
-     * @return The entity
-     */
-    public Ast.Entity getEntity() {
-        return entity;
-    }
 
     /**
      * Gets the name of the attribute this task is generating something for
      * @return The attribute
      */
     public String getAttributeName() {
-        return attribute.getName();
+        return attributeName;
     }
 
     /**
      * Gets the type of the attribute this task is generating something for
      * @return The attribute
      */
-    public Types.DATATYPE getAttributeType() {
-        return attribute.getType();
+    public Types.DataType getDataType() {
+        return dataType;
     }
 
-    /**
-     * Gets the parameters of the run method of the generator
-     * @return The run parameters of the generator
-     */
-
-    public List<String> getRunParameters() {
-        return runParameters;
-    }
-
-    @Schnappi(name="runParameters")
-    public List<String> dependencyNames(){
-        List<String> ret = new LinkedList<String>();
-        for(DEdge edge : graph.outgoingEdgesOf(this)) {
-            Vertex neighbor = edge.getTarget();
-            if(neighbor.getType().compareTo("Attribute") == 0) {
-                Attribute attribute = (Attribute)neighbor;
-                ret.add(attribute.getEntity().getName()+"."+attribute.getAttributeName());
-            }
-        }
-        return ret;
+    @Override
+    public String toString(){
+        return "[" + getAttributeName() + ","+getClass().getSimpleName()+"]";
     }
 
     public void accept(DependencyGraphVisitor visitor) {

@@ -5,3 +5,4 @@ signature : {
 
 fp = new @source.generator(@source.initParameters);
 @edge.id = map(f, @source.dependencies);
+

@@ -11,7 +11,38 @@ import java.util.List;
  */
 public class Types {
 
-    public enum DATATYPE {
+    public enum Direction {
+        UNDIRECTED ("undirected"),
+        DIRECTED ("directed");
+
+        private String text = null;
+
+        Direction(String text) {
+            this.text = text;
+        }
+
+        public String getText() {
+            return text;
+        }
+
+        public static Direction fromString(String text) {
+            if (text != null) {
+                for (Direction b : Direction.values()) {
+                    if (text.equalsIgnoreCase(b.getText())) {
+                        return b;
+                    }
+                }
+            }
+            return null;
+        }
+
+        @Override
+        public String toString() {
+            return this.text;
+        }
+    }
+
+    public enum DataType {
         INTEGER(Integer.class),
         LONG(Long.class),
         STRING(String.class),
@@ -21,7 +52,7 @@ public class Types {
 
         private Class typeData;
 
-        DATATYPE(Class typeData) {
+        DataType(Class typeData) {
             this.typeData = typeData;
         }
 
@@ -30,13 +61,13 @@ public class Types {
         }
 
         /**
-         * Returns the corresponding DATATYPE to the given string.
+         * Returns the corresponding DataType to the given string.
          * @param text The string representing the datatype.
-         * @return The corresponding DATATYPE.
+         * @return The corresponding DataType.
          */
-        public static DATATYPE fromString(String text) {
+        public static DataType fromString(String text) {
             if (text != null) {
-                for (DATATYPE b : DATATYPE.values()) {
+                for (DataType b : DataType.values()) {
                     if (text.equalsIgnoreCase(b.getText())) {
                         return b;
                     }
@@ -64,7 +95,7 @@ public class Types {
      * @return The retrieved method.
      * @throws Exception if the method does not exist.
      */
-    public static Method getMethod(Generator generator, String methodName, List<DATATYPE> parameterTypes, DATATYPE returnType) throws Exception {
+    public static Method getMethod(Generator generator, String methodName, List<DataType> parameterTypes, DataType returnType) throws Exception {
         Method[] methods = generator.getClass().getMethods();
         for(Method m : methods) {
             String mName = m.getName();
@@ -88,7 +119,7 @@ public class Types {
             }
         }
         String paramsString = new String();
-        for(DATATYPE param : parameterTypes) {
+        for(DataType param : parameterTypes) {
             paramsString = paramsString+","+param.getText();
         }
         throw new Exception("Generator "+generator.getClass().getName()+" does not have a method with name "+methodName+" with paramters "+parameterTypes.size()+" parameters <"+paramsString+"> and return type "+(returnType != null ? returnType.getText() : "null"));

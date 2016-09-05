@@ -67,13 +67,13 @@ public class DataSynth {
             start = System.currentTimeMillis();
             Ast ast = parser.parse(new String(encoded, "UTF8"));
             ast.doSemanticAnalysis();
-            DependencyGraph graph = new DependencyGraph(ast);
+            /*DependencyGraph graph = new DependencyGraph(ast);
 
             TextDependencyGraphPrinter printer = new TextDependencyGraphPrinter(graph);
             List<Vertex> roots = graph.getEntities();
             for(Vertex vertex : roots) {
                 vertex.accept(printer);
-            }
+            }*/
 
             /*SchnappiLexer SchLexer = new SchnappiLexer( new ANTLRFileStream("src/main/resources/solvers/entitySolver.spi"));
             CommonTokenStream tokens = new CommonTokenStream( SchLexer );
@@ -89,7 +89,7 @@ public class DataSynth {
                 System.out.println("\n >" + s.instantiate().getRoot().toStringTabbed(""));
             }*/
 
-            Compiler c = new Compiler(graph,"src/main/resources/solvers");
+            /*Compiler c = new Compiler(graph,"src/main/resources/solvers");
             start = System.currentTimeMillis();
             c.synthesizeProgram();
             end = System.currentTimeMillis();
@@ -109,6 +109,7 @@ public class DataSynth {
             end = System.currentTimeMillis();
             logger.info(" Query executed in  "+(end-start) + " ms");
             logger.info("Execution finished");
+            */
 
             /*executor.execute(execPlan);
             executor.dummyExecute();

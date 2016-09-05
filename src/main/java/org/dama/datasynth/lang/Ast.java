@@ -11,7 +11,7 @@ public class Ast {
     /**
      * A node of the AST
      */
-    public static class Node {
+    public static abstract class Node {
 
         /**
          * The name of the AST node
@@ -33,6 +33,9 @@ public class Ast {
         public String getName() {
             return name;
         }
+
+        public abstract void accept(AstVisitor visitor);
+
     }
 
     /**
@@ -43,7 +46,7 @@ public class Ast {
         /**
          * The data type of the attribute.
          */
-        private Types.DATATYPE type;
+        private Types.DataType type;
 
         /**
          * The generator to generate this attribute
@@ -55,7 +58,7 @@ public class Ast {
          * @param name The name of the attribute.
          * @param type The data type of the attribute.
          */
-        public Attribute(String name, Types.DATATYPE type, Generator generator) {
+        public Attribute(String name, Types.DataType type, Generator generator) {
             super(name);
             this.type = type;
             this.generator = generator;
@@ -65,8 +68,13 @@ public class Ast {
             return generator;
         }
 
-        public Types.DATATYPE getType() {
+        public Types.DataType getType() {
             return type;
+        }
+
+        @Override
+        public void accept(AstVisitor visitor) {
+            visitor.visit(this);
         }
     }
 
@@ -114,6 +122,29 @@ public class Ast {
         public void addAttribute(Attribute attribute) { attributes.add(attribute);}
 
 
+        @Override
+        public void accept(AstVisitor visitor) {
+            visitor.visit(this);
+        }
+    }
+
+    public static class Atomic extends Node {
+
+        private Types.DataType dataType = null;
+
+        public Atomic(String name, Types.DataType dataType) {
+            super(name);
+            this.dataType = dataType;
+        }
+
+        @Override
+        public void accept(AstVisitor visitor) {
+            visitor.visit(this);
+        }
+
+        public Types.DataType getDataType() {
+            return dataType;
+        }
     }
 
     /**
@@ -124,12 +155,12 @@ public class Ast {
         /**
          * The list of parameters of the init method of the generator.
          */
-        private List<String> initParameters = new ArrayList<String>();
+        private List<Atomic> initParameters = new ArrayList<Atomic>();
 
         /**
          * The list of parameters of the run method of the generator
          */
-        private List<String> runParameters = new ArrayList<String>();
+        private List<Atomic> runParameters = new ArrayList<Atomic>();
 
         /**
          * Class Constructor
@@ -139,27 +170,32 @@ public class Ast {
             super(name);
         }
 
+        @Override
+        public void accept(AstVisitor visitor) {
+            visitor.visit(this);
+        }
+
         /**
          * Gets the list of parameters of the run method for this generator
          */
-        public List<String> getRunParameters() { return runParameters; }
+        public List<Atomic> getRunParameters() { return runParameters; }
 
         /**
          * Gets the list of parameters for the init method this generator
          */
-        public List<String> getInitParameters() { return initParameters; }
+        public List<Atomic> getInitParameters() { return initParameters; }
 
         /**
          * Adds a run method parameter
          * @param parameter The parameter to add
          */
-        public void addRunParameter(String parameter)  { runParameters.add(parameter);}
+        public void addRunParameter(Atomic parameter)  { runParameters.add(parameter);}
 
         /**
          * Adds an init method parameter
          * @param parameter The parameter to add
          */
-        public void addInitParameter(String parameter)  { initParameters.add(parameter);}
+        public void addInitParameter(Atomic parameter)  { initParameters.add(parameter);}
 
     }
 
@@ -167,58 +203,95 @@ public class Ast {
      * A generator in the AST
      */
     public static class Edge extends Node {
-        private Entity entity;
-        private int[] cardinality;
-        private List<Attribute> attributes;
-        private Generator generator;
+
+        private String          source = null;
+        private String          target = null;
+        private Types.Direction direction = null;
+        private Generator       sourceCardinalityGenerator = null;
+        private Generator       targetCardinalityGenerator = null;
+        private Long            sourceCardinalityNumber = -1L;
+        private Long            targetCardinalityNumber = -1L;
+        private Generator       correllation = null;
+
         /**
          * Class Constructor
          * @param name The name of the generator
          */
-        public Edge(String name) {
+        public Edge(String name, String source, String target, Types.Direction direction) {
             super(name);
-            this.cardinality = new int[2];
-            this.attributes = new ArrayList<Attribute>();
+            this.source = source;
+            this.target = target;
+            this.direction = direction;
         }
 
-        public Edge(String name, Generator gen) {
-            super(name);
-            this.cardinality = new int[2];
-            this.generator = gen;
-            this.attributes = new ArrayList<Attribute>();
+        public String getSource() {
+            return source;
         }
 
-        public Entity getEntity() {
-            return entity;
+        public String getTarget() {
+            return target;
         }
 
-        public void setOrigin(Entity entity) {
-            this.entity = entity;
+        public Types.Direction getDirection() {
+            return direction;
         }
 
-        public int[] getCardinality() {
-            return cardinality;
+        public void setSource(String source) {
+            this.source = source;
         }
 
-        public void setCardinality(int cardinality, int i) {
-            this.cardinality[i] = cardinality;
+        public void setTarget(String target) {
+            this.target = target;
         }
 
-        public void addAttribute(Attribute atr){
-            this.attributes.add(atr);
+        public void setDirection(Types.Direction direction) {
+            this.direction = direction;
         }
 
-        public List<Attribute> getAttributes() {
-            return attributes;
+        public Generator getSourceCardinalityGenerator() {
+            return sourceCardinalityGenerator;
         }
 
-
-        public List<Attribute> getAllAttributes(){
-            ArrayList<Attribute> result = new ArrayList<>();
-            result.addAll(this.attributes);
-            return result;
+        public void setSourceCardinalityGenerator(Generator sourceCardinalityGenerator) {
+            this.sourceCardinalityGenerator = sourceCardinalityGenerator;
         }
-        public String getGenerator(){ return generator.getName();}
+
+        public Generator getTargetCardinalityGenerator() {
+            return targetCardinalityGenerator;
+        }
+
+        public void setTargetCardinalityGenerator(Generator targetCardinalityGenerator) {
+            this.targetCardinalityGenerator = targetCardinalityGenerator;
+        }
+
+        public Long getSourceCardinalityNumber() {
+            return sourceCardinalityNumber;
+        }
+
+        public void setSourceCardinalityNumber(Long sourceCardinalityNumber) {
+            this.sourceCardinalityNumber = sourceCardinalityNumber;
+        }
+
+        public Long getTargetCardinalityNumber() {
+            return targetCardinalityNumber;
+        }
+
+        public void setTargetCardinalityNumber(Long targetCardinalityNumber) {
+            this.targetCardinalityNumber = targetCardinalityNumber;
+        }
+
+        public Generator getCorrellation() {
+            return correllation;
+        }
+
+        public void setCorrellation(Generator correllation) {
+            this.correllation = correllation;
+        }
+
+        @Override
+        public void accept(AstVisitor visitor) {
+            visitor.visit(this);
+        }
     }
 
     /**
@@ -279,8 +352,8 @@ public class Ast {
             String entityName = entity.getName();
             for( Attribute attribute : entity.getAttributes() ) {
                 Generator generator = attribute.getGenerator();
-                for( String parameter : generator.getRunParameters()) {
-                    if((parameter.compareTo("oid") != 0) && !attributes.get(entityName).contains(parameter)) {
+                for( Atomic parameter : generator.getRunParameters()) {
+                    if((parameter.getName().compareTo("oid") != 0) && !attributes.get(entityName).contains(parameter)) {
                         throw new SemanticException("Entity "+entityName+" does not contain an attribute named "+parameter);
                     }
                 }

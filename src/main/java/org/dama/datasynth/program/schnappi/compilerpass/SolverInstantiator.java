@@ -1,6 +1,5 @@
 package org.dama.datasynth.program.schnappi.compilerpass;
 
-import org.dama.datasynth.lang.dependencygraph.ExecutableVertex;
 import org.dama.datasynth.lang.dependencygraph.Vertex;
 import org.dama.datasynth.program.schnappi.CompilerException;
 import org.dama.datasynth.program.schnappi.ast.*;

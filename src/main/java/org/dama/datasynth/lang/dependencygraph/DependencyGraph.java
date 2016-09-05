@@ -9,33 +9,155 @@ import java.util.*;
 /**
  * Created by quim on 5/12/16.
  */
-public class DependencyGraph  extends DirectedMultigraph<Vertex,DEdge> {
+public class DependencyGraph  {
 
-    private List<Vertex> entities = new ArrayList<Vertex>();
+    private HashMap<String,Entity>      entities    = null;
+    private HashMap<String,Attribute>   attributes  = null;
+    private HashMap<String,Edge>        edges       = null;
+
+    private DirectedMultigraph<Vertex, DirectedEdge> graph = null;
 
     /**
      * Constructor
-     * @param ast The ast to build the dependency graph from
-     * @throws Exception
      */
-    public DependencyGraph(Ast ast) {
-        super((v1, v2) -> new DEdge(v1, v2));
-        initialize(ast);
+    public DependencyGraph() {
+        graph = new DirectedMultigraph<Vertex,DirectedEdge>((v1, v2) -> new DirectedEdge("UNDEFINED"));
     }
 
+    /**
+     * Adds a Vertex of type Entity into the graph
+     * @param entity The Entity to add
+     */
+    public void addEntityVertex(Entity entity ) {
+        if(this.entities.put(entity.getName(), entity) != null) throw new DependencyGraphConstructionException("Entity with name "+entity.getName()+" already exists.");
+        graph.addVertex(entity);
+    }
+
+    /**
+     * Adds a Vertex of type Attribute into the graph
+     * @param attribute The Attribute to add
+     */
+    public void addAttributeVertex(Attribute attribute ) {
+        if(this.attributes.put(attribute.getAttributeName(), attribute) != null) throw new DependencyGraphConstructionException("Attribute with name "+attribute.getAttributeName()+" already exists.");
+        graph.addVertex(attribute);
+    }
+
+    /**
+     * Adds a Vertex of type Edge into the graph
+     * @param edge The Edge to add
+     */
+    public void addEdgeVertex(Edge edge) {
+        if(this.edges.put(edge.getName(), edge) != null) throw new DependencyGraphConstructionException("Edge with name "+edge.getName()+" already exists.");
+        graph.addVertex(edge);
+    }
+
+    /**
+     * Adds a Vertex of type Generator into the graph
+     * @param generator The Generator to add
+     */
+    public void addGeneratorVertex(Generator generator) {
+        graph.addVertex(generator);
+    }
+
+    /**
+     * Adds a Vertex of type Literal into the graph
+     * @param literal The Literal to add
+     */
+    public void addGeneratorVertex(Literal literal) {
+        graph.addVertex(literal);
+    }
+
+    /**
+     * Gets the neighbors of a Vertex
+     * @param vertex The Vertex to retrieve the neighbors from
+     * @return A list with the neighbors of the Vertex
+     */
+    public List<Vertex> getNeighbors(Vertex vertex) {
+        if(!graph.containsVertex(vertex)) throw new DependencyGraphConstructionException("Error when querying the dependency graph. Vertex "+vertex.getId()+" of type "+vertex.getType()+" does not exist");
+        Set<DirectedEdge> edges = graph.outgoingEdgesOf(vertex);
+        List<Vertex> neighbors = new ArrayList<Vertex>();
+        for(DirectedEdge edge : edges) {
+            neighbors.add(graph.getEdgeTarget(edge));
+        }
+        return neighbors;
+    }
+
+    /**
+     * Gets the neighbros of a Vertex connected with edge with a given label
+     * @param vertex The Vertex to query the neighbors from
+     * @param label The label of the edge
+     * @return The list of neighbors connected with edges with the given label.
+     */
+    public List<Vertex> getNeighbors(Vertex vertex, String label) {
+        if(!graph.containsVertex(vertex)) throw new DependencyGraphConstructionException("Error when querying the dependency graph. Vertex "+vertex.getId()+" of type "+vertex.getType()+" does not exist");
+        Set<DirectedEdge> edges = graph.outgoingEdgesOf(vertex);
+        List<Vertex> neighbors = new ArrayList<Vertex>();
+        for(DirectedEdge edge : edges) {
+            if(edge.getName().compareTo(label) == 0) {
+                neighbors.add(graph.getEdgeTarget(edge));
+            }
+        }
+        return neighbors;
+    }
+
+    /**
+     * Gets the Entity Vertex with the given name
+     * @param entityName The name of the entity
+     * @return The Entity Vertex. null if the entity does not exist
+     */
+    public Entity getEntity(String entityName) {
+        return entities.get(entityName);
+    }
+
+    /**
+     * Gets the Attribute Vertex with the given name
+     * @param attributeName The name of the attribute
+     * @return The Attribute Vertex. null if the attribute does not exist
+     */
+    public Attribute getAttribute(String attributeName) {
+        return attributes.get(attributeName);
+    }
+
+    /**
+     * Gets the Edge Vertex with the given name
+     * @param edgeName The name of the Edge
+     * @return The Edge Vertex. null if the Edge does not exist
+     */
+    public Edge getEdge(String edgeName) {
+        return edges.get(edgeName);
+    }
+
+    /**
+     * Adds a dependency between two vertices
+     * @param source The source vertex
+     * @param target The edge vertex
+     * @param label The
+     */
+    public void addDependency(Vertex source, Vertex target, String label) {
+        if(!graph.containsVertex(source)) throw new DependencyGraphConstructionException("Error when adding a dependency. Source vertex "+source.getId()+" of type "+source.getType()+" does not exist");
+        if(!graph.containsVertex(target)) throw new DependencyGraphConstructionException("Error when adding a dependency. Target vertex "+target.getId()+" of type "+target.getType()+" does not exist");
+        graph.addEdge(source,target, new DirectedEdge(label));
+    }
+
+    /**
+     * Gets the list of entities in the dependency graph
+     * @return The list of entities.
+     */
+    public List<Entity> getEntities() {
+        return new ArrayList(entities.values());
+    }
 
     /**
      * Initializes the dependency graph given an Ast
      * @param ast The Ast to initialize the dependency graph from
      */
-    private void initialize(Ast ast) {
-        //############################################################################
+    /*private void initialize(Ast ast) {
         Map<String,Attribute> tasks = new TreeMap<String,Attribute>();
         for(Ast.Entity entity : ast.getEntities()) {
             Vertex entityTask = new Entity(this,entity.getName());
             entities.add(entityTask);
             //g.addVertex(entityTask);
-            Attribute oid = new Attribute(this,entity,new Ast.Attribute("oid", Types.DATATYPE.INTEGER, new Ast.Generator("IdGenerator")));
+            Attribute oid = new Attribute(this,entity,new Ast.Attribute("oid", Types.DataType.INTEGER, new Ast.Generator("IdGenerator")));
             tasks.put(entity.getName()+".oid", oid);
             addVertex(oid);
             addVertex(entityTask);
@@ -48,7 +170,6 @@ public class DependencyGraph  extends DirectedMultigraph<Vertex,DEdge> {
                 addEdge(entityTask,task);
             }
         }
-        //############################################################################
 
         Set<Attribute> processed = new TreeSet<Attribute>((t1, t2) -> { return t1.toString().compareTo(t2.toString());});
         for(Map.Entry<String,Attribute> task : tasks.entrySet() ) {
@@ -75,7 +196,6 @@ public class DependencyGraph  extends DirectedMultigraph<Vertex,DEdge> {
         }
         System.out.println("Processed " + processed.size() + " Tasks " + tasks.size());
         if(processed.size() != tasks.size()) throw new RuntimeException("Critical internal Error. Dependency plan wrongly built. Some nodes might be missing");
-        //Now process the edges which represent relationships between different entities
 
         Map<String, Entity> entities = new HashMap<>();
         for(Vertex vtx : this.entities) {
@@ -97,13 +217,5 @@ public class DependencyGraph  extends DirectedMultigraph<Vertex,DEdge> {
         return entities;
     }
 
-/**
-     * Prints the dependency graph
-     */
-    /*public void print(){
-        for(DEdge e: edgeSet()){
-            System.out.println(e.getSource().getType() + " :: " + e.getTarget().getType());
-            System.out.println(e.getSource().getId() + " <- " + e.getTarget().getId());
-        }
-    }*/
+    */
 }

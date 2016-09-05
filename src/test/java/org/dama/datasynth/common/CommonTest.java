@@ -19,40 +19,40 @@ public class CommonTest {
     @Test
     public void DATATYPETest(){
 
-        DATATYPETestAssertEqualsHelper("integer",Types.DATATYPE.INTEGER);
-        DATATYPETestAssertEqualsHelper("Integer",Types.DATATYPE.INTEGER);
-        DATATYPETestAssertEqualsHelper("INteGER",Types.DATATYPE.INTEGER);
+        DATATYPETestAssertEqualsHelper("integer", Types.DataType.INTEGER);
+        DATATYPETestAssertEqualsHelper("Integer", Types.DataType.INTEGER);
+        DATATYPETestAssertEqualsHelper("INteGER", Types.DataType.INTEGER);
 
-        DATATYPETestAssertEqualsHelper("long",Types.DATATYPE.LONG);
-        DATATYPETestAssertEqualsHelper("Long",Types.DATATYPE.LONG);
-        DATATYPETestAssertEqualsHelper("LONg",Types.DATATYPE.LONG);
+        DATATYPETestAssertEqualsHelper("long", Types.DataType.LONG);
+        DATATYPETestAssertEqualsHelper("Long", Types.DataType.LONG);
+        DATATYPETestAssertEqualsHelper("LONg", Types.DataType.LONG);
 
-        DATATYPETestAssertEqualsHelper("boolean",Types.DATATYPE.BOOLEAN);
-        DATATYPETestAssertEqualsHelper("Boolean",Types.DATATYPE.BOOLEAN);
-        DATATYPETestAssertEqualsHelper("BoOLean",Types.DATATYPE.BOOLEAN);
+        DATATYPETestAssertEqualsHelper("boolean", Types.DataType.BOOLEAN);
+        DATATYPETestAssertEqualsHelper("Boolean", Types.DataType.BOOLEAN);
+        DATATYPETestAssertEqualsHelper("BoOLean", Types.DataType.BOOLEAN);
 
-        DATATYPETestAssertEqualsHelper("float",Types.DATATYPE.FLOAT);
-        DATATYPETestAssertEqualsHelper("Float",Types.DATATYPE.FLOAT);
-        DATATYPETestAssertEqualsHelper("fLoAt",Types.DATATYPE.FLOAT);
+        DATATYPETestAssertEqualsHelper("float", Types.DataType.FLOAT);
+        DATATYPETestAssertEqualsHelper("Float", Types.DataType.FLOAT);
+        DATATYPETestAssertEqualsHelper("fLoAt", Types.DataType.FLOAT);
 
-        DATATYPETestAssertEqualsHelper("double",Types.DATATYPE.DOUBLE);
-        DATATYPETestAssertEqualsHelper("Double",Types.DATATYPE.DOUBLE);
-        DATATYPETestAssertEqualsHelper("DoUble",Types.DATATYPE.DOUBLE);
+        DATATYPETestAssertEqualsHelper("double", Types.DataType.DOUBLE);
+        DATATYPETestAssertEqualsHelper("Double", Types.DataType.DOUBLE);
+        DATATYPETestAssertEqualsHelper("DoUble", Types.DataType.DOUBLE);
 
-        DATATYPETestAssertEqualsHelper("string",Types.DATATYPE.STRING);
-        DATATYPETestAssertEqualsHelper("String",Types.DATATYPE.STRING);
-        DATATYPETestAssertEqualsHelper("StRing",Types.DATATYPE.STRING);
+        DATATYPETestAssertEqualsHelper("string", Types.DataType.STRING);
+        DATATYPETestAssertEqualsHelper("String", Types.DataType.STRING);
+        DATATYPETestAssertEqualsHelper("StRing", Types.DataType.STRING);
 
-        DATATYPETestAssertNotEqualsHelper("strng", Types.DATATYPE.STRING);
+        DATATYPETestAssertNotEqualsHelper("strng", Types.DataType.STRING);
 
     }
 
-    private void DATATYPETestAssertEqualsHelper(String text, Types.DATATYPE type) {
-        assertEquals("Unable to find type "+text, Types.DATATYPE.fromString(text),type);
+    private void DATATYPETestAssertEqualsHelper(String text, Types.DataType type) {
+        assertEquals("Unable to find type "+text, Types.DataType.fromString(text),type);
     }
 
-    private void DATATYPETestAssertNotEqualsHelper(String text, Types.DATATYPE type) {
-        assertNotEquals("Type "+text+" should not exist", Types.DATATYPE.fromString(text),type);
+    private void DATATYPETestAssertNotEqualsHelper(String text, Types.DataType type) {
+        assertNotEquals("Type "+text+" should not exist", Types.DataType.fromString(text),type);
     }
 
     @Test
@@ -74,17 +74,17 @@ public class CommonTest {
             System.exit(1);
         }
         assertNotEquals("Generator org.dama.datasynth.generators.CDFGenerator should exist", generator, null);
-        List<Types.DATATYPE> parameters = new ArrayList<Types.DATATYPE>();
+        List<Types.DataType> parameters = new ArrayList<Types.DataType>();
         try {
-            parameters.add(Types.DATATYPE.STRING);
-            parameters.add(Types.DATATYPE.STRING);
-            parameters.add(Types.DATATYPE.STRING);
-            parameters.add(Types.DATATYPE.STRING);
+            parameters.add(Types.DataType.STRING);
+            parameters.add(Types.DataType.STRING);
+            parameters.add(Types.DataType.STRING);
+            parameters.add(Types.DataType.STRING);
             assertNotEquals("Function CDFGenerator.initialize with parameters String, String, String, String does not exist", Types.getMethod(generator, "initialize", parameters, null), null);
             assertNotEquals("Function CDFGenerator.initialize ", Types.getUntypedMethod(generator, "initialize"), null);
             parameters.clear();
-            parameters.add(Types.DATATYPE.LONG);
-            assertNotEquals("Function CDFGenerator.run with Long and return type String does not exist", Types.getMethod(generator, "run", parameters, Types.DATATYPE.STRING), null);
+            parameters.add(Types.DataType.LONG);
+            assertNotEquals("Function CDFGenerator.run with Long and return type String does not exist", Types.getMethod(generator, "run", parameters, Types.DataType.STRING), null);
         } catch (Exception e) {
             Assert.fail("Test failed due to exception");
             e.printStackTrace();

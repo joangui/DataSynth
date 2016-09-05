@@ -16,11 +16,11 @@ public class MethodSerializable implements Serializable {
 
     private Generator g;
     private String                  functionName;
-    private List<Types.DATATYPE>    parameters;
-    private Types.DATATYPE          returnType;
+    private List<Types.DataType>    parameters;
+    private Types.DataType returnType;
     private Method                  method;
 
-    public MethodSerializable(Generator g, String functionName, List<Types.DATATYPE> parameters, Types.DATATYPE returnType) {
+    public MethodSerializable(Generator g, String functionName, List<Types.DataType> parameters, Types.DataType returnType) {
         this.g              = g;
         this.functionName   = functionName;
         this.parameters     = parameters;
@@ -52,7 +52,7 @@ public class MethodSerializable implements Serializable {
             out.writeObject(g);
             out.writeUTF(functionName);
             out.writeInt(parameters.size());
-            for(Types.DATATYPE dataType : parameters) {
+            for(Types.DataType dataType : parameters) {
                 out.writeUTF(dataType.getText());
             }
             out.writeUTF(returnType.getText());
@@ -65,12 +65,12 @@ public class MethodSerializable implements Serializable {
         try {
             g = (Generator)in.readObject();
             functionName = in.readUTF();
-            parameters = new ArrayList<Types.DATATYPE>();
+            parameters = new ArrayList<Types.DataType>();
             int numParameters = in.readInt();
             for(int i = 0; i < numParameters; ++i) {
-                parameters.add(Types.DATATYPE.fromString(in.readUTF()));
+                parameters.add(Types.DataType.fromString(in.readUTF()));
             }
-            returnType = Types.DATATYPE.fromString(in.readUTF());
+            returnType = Types.DataType.fromString(in.readUTF());
             method = Types.getMethod(g,functionName,parameters, returnType);
         } catch(java.io.IOException iOE) {
             iOE.printStackTrace();

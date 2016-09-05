@@ -5,12 +5,18 @@ package org.dama.datasynth.lang.dependencygraph;
  */
 public class Generator extends Vertex {
 
-    public Generator(DependencyGraph graph, String str) {
-        super(graph, str);
+    private String name;
+
+    public Generator(String name) {
+        this.name = name;
     }
 
     @Override
     public void accept(DependencyGraphVisitor visitor) {
         visitor.visit(this);
+    }
+
+    public String getName() {
+        return name;
     }
 }

@@ -1,8 +1,5 @@
 package org.dama.datasynth.lang.dependencygraph;
 
-import java.util.LinkedList;
-import java.util.List;
-
 /**
  * Created by aprat on 20/04/16.
  */
@@ -11,36 +8,38 @@ public class Entity extends Vertex  {
     /**
      * The entity name
      */
-    private String  entity;
+    private String name;
+    private long numInstances;
 
     /**
      * The name of the entity
-     * @param entity
+     * @graph The depenceny graph
+     * @param name
      */
-    public Entity(DependencyGraph graph, String entity) {
-        super(graph,entity);
-        this.entity = entity;
-    }
-
-    @Schnappi(name="attributes")
-    public List<String> dependencyNames(){
-        List<String> ret = new LinkedList<String>();
-        for(DEdge edge : graph.outgoingEdgesOf(this)) {
-            Vertex neighbor = edge.getTarget();
-            if(neighbor.getType().compareTo("Attribute") == 0) {
-                Attribute attribute = (Attribute)neighbor;
-                ret.add(attribute.getEntity().getName()+"."+attribute.getAttributeName());
-            }
-        }
-        return ret;
+    public Entity(String name, long numInstances) {
+        this.name = name;
+        this.numInstances = numInstances;
     }
 
     /**
      * Gets the entity name
      * @return The entity name
      */
-    public String getEntity() {
-        return entity;
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Gets the number of instances
+     * @return The number of instances
+     */
+    public long getNumInstances() {
+        return numInstances;
+    }
+
+    @Override
+    public String toString(){
+        return "[" + name + ","+getClass().getSimpleName()+"]";
     }
 
     @Override

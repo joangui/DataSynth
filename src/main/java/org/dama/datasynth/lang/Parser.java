@@ -3,7 +3,6 @@ package org.dama.datasynth.lang;
 import org.dama.datasynth.common.Types;
 import java.io.StringReader;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,9 +10,16 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.mortbay.util.ajax.JSON;
 
 public class Parser {
+
+
+    private Ast.Generator parseGenerator(JSONObject jsonGenerator) {
+        if(jsonGenerator != null) {
+
+        }
+        return null;
+    }
 
     /**
      * Parses a data definition schema
@@ -42,20 +48,27 @@ public class Parser {
                         Ast.Generator gen = new Ast.Generator((String) generator.get("name"));
                         JSONArray runParameters = (JSONArray) generator.get("runParameters");
                         for (Object runParameter : runParameters) {
-                            gen.addRunParameter((String) (runParameter));
+                            gen.addInitParameter( new Ast.Atomic((String)runParameter, Types.DataType.STRING));
                         }
 
                         JSONArray initParameters = (JSONArray) generator.get("initParameters");
                         for (Object initParameter : initParameters) {
-                            gen.addInitParameter(initParameter.toString());
+                            if( initParameter instanceof Long) {
+                                gen.addInitParameter(new Ast.Atomic(((Long) initParameter).toString(), Types.DataType.LONG));
+                            } else if(initParameter instanceof Double) {
+                                gen.addInitParameter(new Ast.Atomic(((Double) initParameter).toString(), Types.DataType.DOUBLE));
+                            } else if(initParameter instanceof String) {
+                                gen.addInitParameter(new Ast.Atomic(((String) initParameter), Types.DataType.STRING));
+                            } else {
+                                throw new SyntacticException("Error when parsing json. Unrecognizable attribute type at initParamters");
+                            }
                         }
 
                         Ast.Attribute attr = new Ast.Attribute(
-                                (String) attribute.get("name"),
-                                Types.DATATYPE.fromString((String) attribute.get("type")),
+                                ent.getName()+"."+attribute.get("name"),
+                                Types.DataType.fromString((String) attribute.get("type")),
                                 gen
                         );
-                        System.out.println("Inserting " + ent.getName() + "." + attr.getName());
                         hmAttr.put(ent.getName() + "." + attr.getName(), attr);
                         if (attr.getType() == null)
                             throw new SyntacticException(((String) attribute.get("type")) + " is not a valid data type ");
@@ -66,48 +79,46 @@ public class Parser {
                 ast.addEntity(ent);
             }
 
-            for(Map.Entry<String, Ast.Attribute> entry : hmAttr.entrySet()){
-                System.out.println("Key " + entry.getKey() + " IS NULL? "+ (entry.getValue() == null));
-            }
-
             //EDGE PROCESSING
             JSONArray edges = (JSONArray)jsonObject.get("edges");
             if(edges != null) {
                 for (Object obj : edges) {
-                    JSONObject edge = (JSONObject) obj;
-                    String edgeName = (String) edge.get("name");
-                    JSONObject generator = (JSONObject) edge.get("generator");
-                    Ast.Generator gen = new Ast.Generator((String) generator.get("name"));
-                    JSONArray runParameters = (JSONArray) generator.get("runParameters");
-                    for (Object runParameter : runParameters) {
-                        gen.addRunParameter((String) (runParameter));
+                    JSONObject jsonedge = (JSONObject) obj;
+                    String edgeName = (String) jsonedge.get("name");
+                    String edgeDirection = (String) jsonedge.get("direction");
+                    String edgeSource = (String) jsonedge.get("source");
+                    String edgeTarget = (String) jsonedge.get("target");
+
+                    Ast.Edge edge = new Ast.Edge(edgeName, edgeSource, edgeTarget, Types.Direction.fromString(edgeDirection));
+
+                    JSONObject sourceCardinality = (JSONObject) jsonedge.get("sourceCardinality");
+                    if(sourceCardinality != null) {
+                        JSONObject jsonGenerator = (JSONObject)sourceCardinality.get("generator");
+                        edge.setSourceCardinalityGenerator(parseGenerator(jsonGenerator));
+                        Long number = (Long)sourceCardinality.get("number");
+                        edge.setSourceCardinalityNumber(number);
+
                     }
 
-                    JSONArray initParameters = (JSONArray) generator.get("initParameters");
-                    for (Object initParameter : initParameters) {
-                        gen.addInitParameter(initParameter.toString());
+                    JSONObject targetCardinality = (JSONObject) jsonedge.get("targetCardinality");
+                    if(targetCardinality != null) {
+                        JSONObject jsonGenerator = (JSONObject)targetCardinality.get("generator");
+                        edge.setTargetCardinalityGenerator(parseGenerator(jsonGenerator));
+                        Long number = (Long)targetCardinality.get("number");
+                        edge.setTargetCardinalityNumber(number);
+
                     }
-                    Ast.Edge edg = new Ast.Edge(edgeName, gen);
-                    String entity = (String) edge.get("entity");
-                    Ast.Entity attrEnt = hm.get(entity);
-                    edg.setOrigin(attrEnt);
-                    for (Object objattr : (JSONArray) edge.get("attributes")) {
-                        String attr = (String) objattr;
-                        System.out.println("Fetching " + attrEnt.getName() + "." + attr);
-                        edg.addAttribute(hmAttr.get(attrEnt.getName() + "." + attr));
+
+                    JSONObject correllation = (JSONObject) jsonedge.get("correllation");
+                    if(correllation != null) {
+                        JSONObject jsonGenerator = (JSONObject)correllation.get("generator");
+                        edge.setCorrellation(parseGenerator(jsonGenerator));
                     }
-                    ast.addEdge(edg);
-                /*JSONArray cardinality = (JSONArray)edge.get("cardinality");
-                int i = 0;
-                for(Object c: cardinality) {
-                    edg.setCardinality(Integer.parseInt(c.toString()),i);
-                    ++i;
-                }*/
+
                 }
             }
         } catch(ParseException pe) {
-            System.out.println("position: " + pe.getPosition());
-            System.out.println(pe);
+            throw new SyntacticException("Syntactic Exception Error: "+pe.toString());
         } catch(IOException ioe) {
             System.out.println(ioe);
         }

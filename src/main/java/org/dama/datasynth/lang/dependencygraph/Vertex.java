@@ -9,37 +9,48 @@ import java.lang.annotation.RetentionPolicy;
  */
 public abstract class Vertex {
 
+    private static int nextId = 0;
+
+    private int id;
+
     @Retention(RetentionPolicy.RUNTIME)
     @Inherited
     public @interface Schnappi {
        String name();
     }
 
-    private String id;
-    protected DependencyGraph graph = null;
 
-    public Vertex(DependencyGraph graph, String str){
-        this.graph = graph;
-        this.id = str;
+    /**
+     * Constructor
+     */
+    public Vertex(){
+        this.id = nextId++;
     }
 
-    public Boolean compareTo(Vertex v){
-        if(!(this.getClass() == v.getClass())) return false;
-        return this.id.equalsIgnoreCase(v.getId());
-    }
-
-
+    /**
+     * Gets the unique id of the vertex
+     * @return The unique id of the vertex
+     */
     @Schnappi(name = "id")
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
+    /**
+     * Gets the type of the vertex
+     * @return A String with the type of the vertex.
+     */
     public String getType() {
         return getClass().getSimpleName();
+    }
+
+    /**
+     * Checks whether the vertex is of the given type
+     * @param type The type to check for
+     * @return True if the vertex is of the given type. False otherwise.
+     */
+    public boolean isType(String type) {
+        return getType().compareTo(type) == 0;
     }
 
     @Override

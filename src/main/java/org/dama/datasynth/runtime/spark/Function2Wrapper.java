@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class Function2Wrapper extends MethodSerializable implements Function<Tuple, Tuple> {
 
-    public Function2Wrapper(Generator g, String functionName, List<Types.DATATYPE> parameters, Types.DATATYPE returnType) {
+    public Function2Wrapper(Generator g, String functionName, List<Types.DataType> parameters, Types.DataType returnType) {
         super(g,functionName,parameters, returnType);
     }
 

@@ -42,10 +42,8 @@ public class TextDependencyGraphPrinter extends DependencyGraphVisitor {
     }
 
     private void explode(Vertex vertex) {
-        List<Vertex> neighbors = new LinkedList<Vertex>();
-        for(DEdge edge : graph.outgoingEdgesOf(vertex)) {
-            Vertex source = edge.getTarget();
-            source.accept(this);
+        for(Vertex neighbor : graph.getNeighbors(vertex)) {
+            neighbor.accept(this);
         }
     }
 
