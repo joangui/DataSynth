@@ -1,6 +1,11 @@
 package org.dama.datasynth.lang;
 
 import org.dama.datasynth.common.Types;
+import org.dama.datasynth.lang.semanticcheckpasses.AttributeValidName;
+import org.dama.datasynth.lang.semanticcheckpasses.EdgeEndpointsExist;
+import org.dama.datasynth.lang.semanticcheckpasses.GeneratorsExist;
+import org.dama.datasynth.lang.semanticcheckpasses.GeneratorRunParametersValid;
+
 import java.util.*;
 
 /**
@@ -294,39 +299,41 @@ public class Ast {
         }
     }
 
-    /**
-     * The list of entities of the AST 
-     */
-    private List<Entity> entities = new ArrayList<Entity>();
+    private Map<String,Entity>      entities = new HashMap<String,Entity>();
+    private Map<String,Edge>        edges = new HashMap<String,Edge>();
+
+
+    private Map<String,Attribute>   attributes = new HashMap<String,Attribute>();
 
     /**
      * Gets the list of entities of the AST
      */
-    public List<Entity> getEntities() { return entities; }
+    public Map<String, Entity> getEntities() { return entities; }
 
     /**
      * Adds a new entity into the AST
      */
-    public void addEntity( Entity entity ) { entities.add(entity); }
+    public void addEntity( Entity entity ) { entities.put(entity.getName(),entity); }
 
-    /**
-     * The list of edges of the AST
-     */
-    private List<Edge> edges = new ArrayList<Edge>();
 
     /**
      * Adds a new edge into the AST
      */
-    public void addEdge(Edge edg) { edges.add(edg); }
+    public void addEdge(Edge edge) { edges.put(edge.getName(), edge); }
+
     /**
      * Gets the list of edges of the AST
      */
-    public List<Edge> getEdges() { return edges; }
+    public Map<String, Edge> getEdges() { return edges; }
 
-    /**
-     * Adds a new edge into the AST
-     */
-    public void addEntity( Edge edg ) { edges.add(edg); }
+
+    public void addAtrribute(Attribute attribute) {
+        attributes.put(attribute.getName(), attribute);
+    }
+
+    public Map<String, Attribute> getAttributes() {
+        return attributes;
+    }
 
 
     /**
@@ -335,29 +342,15 @@ public class Ast {
      * @throws SemanticException
      */
     public void doSemanticAnalysis() throws SemanticException {
-        Map<String,Set<String>> attributes = new HashMap<String,Set<String>>();
-        for(Entity entity : entities ) {
-            String entityName = entity.getName();
-            Set<String> attributeNames = new TreeSet<String>();
-            for( Attribute attribute : entity.getAttributes() ) {
-                String attributeName = attribute.getName();
-                if(attributeName.compareTo("oid") == 0) throw new SemanticException("Attribute name \"oid\" is reserved.");
-                attributeNames.add(attributeName);
-            }
-            if(attributes.containsKey(entityName)) throw new SemanticException("Two entities with the same name: "+entityName+". Entity names must be unique");
-            attributes.put(entityName,attributeNames);
-        }
 
-        for(Entity entity : entities ) {
-            String entityName = entity.getName();
-            for( Attribute attribute : entity.getAttributes() ) {
-                Generator generator = attribute.getGenerator();
-                for( Atomic parameter : generator.getRunParameters()) {
-                    if((parameter.getName().compareTo("oid") != 0) && !attributes.get(entityName).contains(parameter)) {
-                        throw new SemanticException("Entity "+entityName+" does not contain an attribute named "+parameter);
-                    }
-                }
-            }
-        }
+
+        AttributeValidName attributeValidName = new AttributeValidName();
+        attributeValidName.check(this);
+        GeneratorsExist generatorExists = new GeneratorsExist();
+        generatorExists.check(this);
+        GeneratorRunParametersValid generatorRunParametersValid = new GeneratorRunParametersValid();
+        generatorRunParametersValid.check(this);
+        EdgeEndpointsExist edgeEndpointsExist = new EdgeEndpointsExist();
+        edgeEndpointsExist.check(this);
     }
 }

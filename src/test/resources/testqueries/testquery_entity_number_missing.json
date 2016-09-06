@@ -1,0 +1,19 @@
+
+{
+  "entities" : [
+    {
+      "name" : "person",
+      "attributes" : [
+        {
+          "name" : "attribute1",
+          "type" : "double",
+          "generator" : {
+            "name" : "org.dama.datasynth.generators.CDFGenerator",
+            "runParameters" : [],
+            "initParameters" : []
+          }
+        }
+      ]
+    }
+  ]
+}

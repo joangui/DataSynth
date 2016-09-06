@@ -3,7 +3,7 @@
   "entities" : [
     {
       "name" : "person",
-      "number" : 10,
+      "number" : "10",
       "attributes" : [
         {
           "name" : "country",
@@ -39,8 +39,8 @@
     {
       "name" : "friendship",
       "direction" : "undirected",
-      "source" : "person",
-      "target" : "person",
+      "source" : "Person",
+      "target" : "Person",
       "sourceCardinality" : {
         "generator" : {
             "name" : "org.dama.datasynth.generators.ZipfDistribution",
@@ -59,8 +59,8 @@
     {
       "name" : "parent",
       "direction" : "directed",
-      "source" : "person",
-      "target" : "person",
+      "source" : "Person",
+      "target" : "Person",
       "sourceCardinality" : {
         "generator" : {
           "name" : "org.dama.datasynth.generators.UniformDistribution",

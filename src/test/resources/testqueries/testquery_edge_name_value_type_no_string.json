@@ -1,0 +1,31 @@
+
+{
+  "entities" : [
+    {
+      "name" : "person",
+      "number" : 10
+    }
+  ],
+  "edges" : [
+    {
+      "name" : 10,
+      "direction" : "undirected",
+      "source" : "person",
+      "target" : "person",
+      "sourceCardinality" : {
+        "generator" : {
+            "name" : "org.dama.datasynth.generators.ZipfDistribution",
+            "runParameters" : [],
+            "initParameters" : [1.7]
+          }
+      },
+      "correllation" : {
+        "generator" : {
+          "name" : "org.dama.datasynth.generators.HashCombiner",
+          "runParameters" : ["country","name"],
+          "initParameters" : []
+        }
+      }
+    }
+  ]
+}

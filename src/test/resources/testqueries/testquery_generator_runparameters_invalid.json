@@ -1,0 +1,20 @@
+
+{
+  "entities" : [
+    {
+      "name" : "person",
+      "number" : 10,
+      "attributes" : [
+        {
+          "name" : "attribute1",
+          "type" : "string",
+          "generator" : {
+            "name" : "org.dama.datasynth.generators.CDFGenerator",
+            "runParameters" : ["invalid"],
+            "initParameters" : []
+          }
+        }
+      ]
+    }
+  ]
+}
