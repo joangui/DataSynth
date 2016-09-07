@@ -11,9 +11,9 @@ import java.util.*;
  */
 public class DependencyGraph  {
 
-    private HashMap<String,Entity>      entities    = null;
-    private HashMap<String,Attribute>   attributes  = null;
-    private HashMap<String,Edge>        edges       = null;
+    private Map<String,Entity>      entities    = null;
+    private Map<String,Attribute>   attributes  = null;
+    private Map<String,Edge>        edges       = null;
 
     private DirectedMultigraph<Vertex, DirectedEdge> graph = null;
 
@@ -22,6 +22,9 @@ public class DependencyGraph  {
      */
     public DependencyGraph() {
         graph = new DirectedMultigraph<Vertex,DirectedEdge>((v1, v2) -> new DirectedEdge("UNDEFINED"));
+        entities = new HashMap<String,Entity>();
+        attributes = new HashMap<String,Attribute>();
+        edges = new HashMap<String,Edge>();
     }
 
     /**
@@ -63,7 +66,7 @@ public class DependencyGraph  {
      * Adds a Vertex of type Literal into the graph
      * @param literal The Literal to add
      */
-    public void addGeneratorVertex(Literal literal) {
+    public void addLiteralVertex(Literal literal) {
         graph.addVertex(literal);
     }
 

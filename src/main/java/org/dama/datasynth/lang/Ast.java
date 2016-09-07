@@ -91,7 +91,7 @@ public class Ast {
         /**
          * The list of attributes of the entity
          */
-        protected List<Attribute>  attributes = new ArrayList<Attribute>();
+        protected Map<String, Attribute> attributes = new HashMap<String,Attribute>();
 
         /**
          * The number of entities
@@ -118,13 +118,15 @@ public class Ast {
          * Get the attributes of the entity
          * @return The attributes of the entity
          */
-        public List<Attribute> getAttributes() { return attributes; }
+        public Map<String, Attribute> getAttributes() { return attributes; }
 
         /**
          * Adds a new attribute to the entity
          * @param attribute The attribute to be added
          */
-        public void addAttribute(Attribute attribute) { attributes.add(attribute);}
+        public void addAttribute(Attribute attribute) {
+            if(attributes.put(attribute.getName(),attribute) != null)  throw new SemanticException(SemanticException.SemanticExceptionType.ATTRIBUTE_NAME_REPEATED,attribute.getName());
+        }
 
 
         @Override
@@ -201,7 +203,6 @@ public class Ast {
          * @param parameter The parameter to add
          */
         public void addInitParameter(Atomic parameter)  { initParameters.add(parameter);}
-
     }
 
     /**
@@ -302,9 +303,6 @@ public class Ast {
     private Map<String,Entity>      entities = new HashMap<String,Entity>();
     private Map<String,Edge>        edges = new HashMap<String,Edge>();
 
-
-    private Map<String,Attribute>   attributes = new HashMap<String,Attribute>();
-
     /**
      * Gets the list of entities of the AST
      */
@@ -327,15 +325,6 @@ public class Ast {
     public Map<String, Edge> getEdges() { return edges; }
 
 
-    public void addAtrribute(Attribute attribute) {
-        attributes.put(attribute.getName(), attribute);
-    }
-
-    public Map<String, Attribute> getAttributes() {
-        return attributes;
-    }
-
-
     /**
      * Performs a semantic analysis over the AST.
      * Checks for valid parameter names for generators
@@ -343,14 +332,13 @@ public class Ast {
      */
     public void doSemanticAnalysis() throws SemanticException {
 
-
+        EdgeEndpointsExist edgeEndpointsExist = new EdgeEndpointsExist();
+        edgeEndpointsExist.check(this);
         AttributeValidName attributeValidName = new AttributeValidName();
         attributeValidName.check(this);
         GeneratorsExist generatorExists = new GeneratorsExist();
         generatorExists.check(this);
         GeneratorRunParametersValid generatorRunParametersValid = new GeneratorRunParametersValid();
         generatorRunParametersValid.check(this);
-        EdgeEndpointsExist edgeEndpointsExist = new EdgeEndpointsExist();
-        edgeEndpointsExist.check(this);
     }
 }

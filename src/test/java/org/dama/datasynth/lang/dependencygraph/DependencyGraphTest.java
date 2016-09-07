@@ -3,6 +3,7 @@ package org.dama.datasynth.lang.dependencygraph;
 import org.dama.datasynth.common.Types;
 import org.dama.datasynth.lang.Ast;
 import org.dama.datasynth.lang.SemanticException;
+import org.dama.datasynth.lang.dependencygraph.builder.DependencyGraphBuilder;
 import org.junit.Test;
 
 import java.util.List;
@@ -63,19 +64,19 @@ public class DependencyGraphTest {
             assertTrue(neighbors.get(1).isType("Attribute") && (((Attribute)neighbors.get(1)).getAttributeName().compareTo("Person.age") == 0));
 
             neighbors = graph.getNeighbors(edgeFriendship,"source");
-            assertTrue(neighbors.get(0).isType("Entity") && (((Attribute)neighbors.get(0)).getAttributeName().compareTo("Person") == 0));
+            assertTrue(neighbors.get(0).isType("Entity") && (((Entity)neighbors.get(0)).getName().compareTo("Person") == 0));
 
             neighbors = graph.getNeighbors(edgeFriendship,"target");
-            assertTrue(neighbors.get(0).isType("Entity") && (((Attribute)neighbors.get(0)).getAttributeName().compareTo("Person") == 0));
+            assertTrue(neighbors.get(0).isType("Entity") && (((Entity)neighbors.get(0)).getName().compareTo("Person") == 0));
 
         } catch(DependencyGraphConstructionException e) {
             assertTrue(e.getMessage(),false);
         }
 
 
-            assertEquals(graph.getEntity("Message"),null);
-            assertEquals(graph.getAttribute("country"),null);
-            assertEquals(graph.getEdge("friendship"),null);
+        assertEquals(graph.getEntity("Message"),null);
+        assertEquals(graph.getAttribute("country"),null);
+        assertEquals(graph.getEdge("friendship"),null);
 
         Entity entityMessage = new Entity("Message",100);
         boolean exceptionThrown = false;
@@ -107,22 +108,22 @@ public class DependencyGraphTest {
     public void testInitialize(){
         Ast ast = new Ast();
         Ast.Entity entity = new Ast.Entity("person",100L);
-        Ast.Generator attributeCountryGenerator = new Ast.Generator("org.dama.datasynth.CDFGenerator");
+        Ast.Generator attributeCountryGenerator = new Ast.Generator("org.dama.datasynth.generators.CDFGenerator");
         attributeCountryGenerator.addInitParameter( new Ast.Atomic("countries.txt", Types.DataType.STRING));
         attributeCountryGenerator.addInitParameter( new Ast.Atomic("0",Types.DataType.INTEGER));
         attributeCountryGenerator.addInitParameter( new Ast.Atomic("1",Types.DataType.INTEGER));
         attributeCountryGenerator.addInitParameter( new Ast.Atomic("|", Types.DataType.STRING));
 
-        Ast.Generator attributeNameGenerator = new Ast.Generator("org.dama.datasynth.CorrellationGenerator");
+        Ast.Generator attributeNameGenerator = new Ast.Generator("org.dama.datasynth.generators.CorrellationGenerator");
         attributeNameGenerator.addInitParameter(new Ast.Atomic("names.txt", Types.DataType.STRING));
         attributeNameGenerator.addInitParameter(new Ast.Atomic("0", Types.DataType.INTEGER));
         attributeNameGenerator.addInitParameter(new Ast.Atomic("1", Types.DataType.INTEGER));
         attributeNameGenerator.addInitParameter(new Ast.Atomic("|", Types.DataType.STRING));
 
-        attributeNameGenerator.addRunParameter( new Ast.Atomic("country",Types.DataType.STRING));
+        attributeNameGenerator.addRunParameter( new Ast.Atomic("person.country",Types.DataType.STRING));
 
-        Ast.Attribute attributeCounty = new Ast.Attribute("country", Types.DataType.STRING, attributeCountryGenerator);
-        Ast.Attribute attributeName = new Ast.Attribute("name", Types.DataType.STRING, attributeNameGenerator);
+        Ast.Attribute attributeCounty = new Ast.Attribute("person.country", Types.DataType.STRING, attributeCountryGenerator);
+        Ast.Attribute attributeName = new Ast.Attribute("person.name", Types.DataType.STRING, attributeNameGenerator);
 
         entity.addAttribute(attributeCounty);
         entity.addAttribute(attributeName);
@@ -137,18 +138,15 @@ public class DependencyGraphTest {
             assertTrue(true);
         }
 
-        assertTrue("Test not implemented",false);
-
-        /*
-        DependencyGraph dependencyGraph = new DependencyGraph(ast);
-        List<Vertex> entities = dependencyGraph.getEntities();
+        DependencyGraph dependencyGraph = DependencyGraphBuilder.buildDependencyGraph(ast);
+        List<Entity> entities = dependencyGraph.getEntities();
         try {
             assertTrue(entities.size() == 1);
         } catch(AssertionError e) {
             System.err.println("Number of entities "+entities.size());
             throw e;
         }
-        assertTrue(entities.get(0).getId().compareTo("person") == 0);
+        assertTrue(entities.get(0).getName().compareTo("person") == 0);
         assertTrue(entities.get(0).getType().compareTo("Entity") == 0);
         Entity person = (Entity) entities.get(0);
 
@@ -156,6 +154,7 @@ public class DependencyGraphTest {
         boolean countryAttributeFound = false;
         boolean oidAttributeFound = false;
 
+        /*
         Set<DirectedEdge> attributes = dependencyGraph.outgoingEdgesOf(person);
         for(DirectedEdge edge : attributes) {
             if(dependencyGraph.getEdgeTarget(edge).getType().compareTo("Attribute") == 0) {

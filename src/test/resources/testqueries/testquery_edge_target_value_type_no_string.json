@@ -22,7 +22,7 @@
       "correllation" : {
         "generator" : {
           "name" : "org.dama.datasynth.generators.HashCombiner",
-          "runParameters" : ["country","name"],
+          "runParameters" : ["person.country","person.name"],
           "initParameters" : []
         }
       }

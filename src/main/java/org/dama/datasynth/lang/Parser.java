@@ -19,17 +19,19 @@ public class Parser {
             String name = getFieldNoNull(jsonGenerator, "Generator", "name",String.class);
             generator = new Ast.Generator(name);
             JSONArray runParameters = (JSONArray) jsonGenerator.get("runParameters");
-            if(runParameters == null) throw new SyntacticException("Generator runParameters does not exist");
+            if(runParameters == null) throw new SyntacticException(SyntacticException.SyntacticExceptionType.MISSING_FIELD,"runParameters");
             for (Object runParameter : runParameters) {
                 try {
+                    String attributeName = (String)runParameter;
+                    if(attributeName.indexOf(".") == -1) throw new SyntacticException(SyntacticException.SyntacticExceptionType.ILLFORMED_ATTRIBUTE_NAME,attributeName);
                     generator.addRunParameter(new Ast.Atomic((String) runParameter, Types.DataType.STRING));
                 } catch(ClassCastException e) {
-                    throw new SyntacticException("Invalid non-string runParameter");
+                    throw new SyntacticException(SyntacticException.SyntacticExceptionType.INVALID_FIELD_TYPE, ". Non-string run parameter");
                 }
             }
 
             JSONArray initParameters = (JSONArray) jsonGenerator.get("initParameters");
-            if(initParameters == null) throw new SyntacticException("Generator initParameters does not exist");
+            if(initParameters == null) throw new SyntacticException(SyntacticException.SyntacticExceptionType.MISSING_FIELD, " initParameters in Generator");
             for (Object initParameter : initParameters) {
                 if( initParameter instanceof Long) {
                     generator.addInitParameter(new Ast.Atomic(((Long) initParameter).toString(), Types.DataType.LONG));
@@ -38,7 +40,7 @@ public class Parser {
                 } else if(initParameter instanceof String) {
                     generator.addInitParameter(new Ast.Atomic(((String) initParameter), Types.DataType.STRING));
                 } else {
-                    throw new SyntacticException("Error when parsing json. Unrecognizable attribute type at initParamters");
+                    throw new SyntacticException(SyntacticException.SyntacticExceptionType.INVALID_VALUE_TYPE," when parsing initParameters");
                 }
             }
         }
@@ -49,13 +51,13 @@ public class Parser {
         try{
             return type.cast(jsonObject.get(fieldName));
         } catch(ClassCastException e) {
-            throw new SyntacticException(objectType+" \""+fieldName+"\" must be of type "+type.getSimpleName());
+            throw new SyntacticException(SyntacticException.SyntacticExceptionType.INVALID_FIELD_TYPE,objectType+" \""+fieldName+"\" must be of type "+type.getSimpleName());
         }
     }
 
     private <T> T getFieldNoNull(JSONObject jsonObject, String objectType, String fieldName, Class<T> type) throws SyntacticException {
         T fieldValue = type.cast(getField(jsonObject,objectType,fieldName,type));
-        if(fieldValue == null) throw new SyntacticException(objectType+" must have a field \""+fieldName+"\" ");
+        if(fieldValue == null) throw new SyntacticException(SyntacticException.SyntacticExceptionType.MISSING_FIELD, objectType+" must have a field \""+fieldName+"\" ");
         return fieldValue;
     }
 
@@ -82,20 +84,21 @@ public class Parser {
                     for (Object objj : attributes) {
                         JSONObject attribute = (JSONObject) objj;
                         String attributeName = getFieldNoNull(attribute,"Attribute","name",String.class);
+
+
                         String attributeTypeString = getFieldNoNull(attribute,"attribute","type",String.class);
                         Types.DataType attributeType = Types.DataType.fromString(attributeTypeString);
 
                         JSONObject generator = (JSONObject) attribute.get("generator");
-                        if(generator == null) throw new SyntacticException("Attribute must have a \"generator\" field");
+                        if(generator == null) throw new SyntacticException(SyntacticException.SyntacticExceptionType.MISSING_FIELD, "Attribute must have a \"generator\" field");
                         Ast.Generator gen = parseGenerator(generator);
                         Ast.Attribute attr = new Ast.Attribute(
                                 ent.getName()+"."+attributeName,
                                 attributeType,
                                 gen
                         );
-                        ast.addAtrribute(attr);
                         if (attr.getType() == null)
-                            throw new SyntacticException(((String) attribute.get("type")) + " is not a valid data type ");
+                            throw new SyntacticException(SyntacticException.SyntacticExceptionType.INVALID_ATTRIBUTE_TYPE,((String) attribute.get("type")));
 
                         ent.addAttribute(attr);
                     }
@@ -114,7 +117,7 @@ public class Parser {
                     String edgeTarget = getFieldNoNull(jsonedge, "Edge", "target", String.class);
 
                     Types.Direction direction = Types.Direction.fromString(edgeDirection);
-                    if(direction == null) throw new SyntacticException("Edge direction must be either \"directed\" or \"undirected\"");
+                    if(direction == null) throw new SyntacticException(SyntacticException.SyntacticExceptionType.INVALID_DIRECTION_TYPE, edgeDirection+" .Edge direction must be either \"directed\" or \"undirected\"");
                     Ast.Edge edge = new Ast.Edge(edgeName, edgeSource, edgeTarget, direction);
 
                     JSONObject sourceCardinality = (JSONObject) jsonedge.get("sourceCardinality");
@@ -136,15 +139,14 @@ public class Parser {
                     if(edge.getDirection() == Types.Direction.DIRECTED) {
                         if(((edge.getSourceCardinalityGenerator() != null) && edge.getSourceCardinalityNumber() != null) ||
                           ((edge.getTargetCardinalityGenerator() != null) && edge.getTargetCardinalityNumber() != null)) {
-                            throw new SyntacticException("Either source or target cardinality is missing");
+                            throw new SyntacticException(SyntacticException.SyntacticExceptionType.MISSING_FIELD, ". Either source or target cardinality is missing");
                         }
                     } else if(edge.getDirection() == Types.Direction.UNDIRECTED) {
                         if(!((edge.getSourceCardinalityGenerator() != null) || edge.getSourceCardinalityNumber() != null) &&
                                ! ((edge.getTargetCardinalityGenerator() != null) || edge.getTargetCardinalityNumber() != null)) {
-                            throw new SyntacticException("Either source or target cardinality is missing");
+                            throw new SyntacticException(SyntacticException.SyntacticExceptionType.MISSING_FIELD, ". Either source or target cardinality is missing");
                         }
                     }
-
 
                     JSONObject correllation = (JSONObject) jsonedge.get("correllation");
                     if(correllation != null) {
@@ -157,13 +159,12 @@ public class Parser {
             }
             ast.doSemanticAnalysis();
         } catch(ParseException pe) {
-            throw new SyntacticException(pe.toString());
+            throw new SyntacticException(SyntacticException.SyntacticExceptionType.PARSING_ERROR, pe.toString());
         } catch(SemanticException e) {
             throw e;
         } catch(IOException ioe) {
             System.out.println(ioe);
         }
-
         return ast;
     }
 }

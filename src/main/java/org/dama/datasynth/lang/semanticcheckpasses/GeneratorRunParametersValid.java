@@ -8,12 +8,14 @@ import org.dama.datasynth.lang.SemanticException;
 /**
  * Created by aprat on 6/09/16.
  */
-public class GeneratorRunParametersValid implements AstVisitor {
+public class GeneratorRunParametersValid extends AstVisitor<Ast.Node> {
 
     private Ast ast = null;
+    private Ast.Node context = null;
     public void check(Ast ast) {
         this.ast = ast;
         for(Ast.Entity entity : ast.getEntities().values()) {
+            context = entity;
             entity.accept(this);
         }
 
@@ -23,18 +25,21 @@ public class GeneratorRunParametersValid implements AstVisitor {
     }
 
     @Override
-    public void visit(Ast.Entity entity) {
-        for(Ast.Attribute attribute : entity.getAttributes()) {
-            Ast.Generator generator = attribute.getGenerator();
-            for(Ast.Atomic attr : generator.getRunParameters()) {
-                if (ast.getAttributes().get(entity.getName()+"."+attr.getName()) == null)
-                    throw new SemanticException("Attribute does not exist.");
-            }
+    public Ast.Node visit(Ast.Entity entity) {
+        for(Ast.Attribute attribute : entity.getAttributes().values()) {
+            attribute.accept(this);
         }
+        return entity;
     }
 
     @Override
-    public void visit(Ast.Edge edge) {
+    public Ast.Node visit(Ast.Attribute attribute) {
+        attribute.getGenerator().accept(this);
+        return attribute;
+    }
+
+    @Override
+    public Ast.Node visit(Ast.Edge edge) {
         Ast.Generator sourceCardinalityGenerator = edge.getSourceCardinalityGenerator();
         if(sourceCardinalityGenerator != null) {
             sourceCardinalityGenerator.accept(this);
@@ -44,19 +49,27 @@ public class GeneratorRunParametersValid implements AstVisitor {
         if(targetCardinalityGenerator != null) {
             targetCardinalityGenerator.accept(this);
         }
+        edge.getCorrellation().accept(this);
+        return edge;
     }
 
     @Override
-    public void visit(Ast.Generator generator) {
+    public Ast.Node visit(Ast.Generator generator) {
+        for(Ast.Atomic parameter : generator.getRunParameters()) {
+            if(context instanceof Ast.Entity) {
+                Ast.Entity entity = (Ast.Entity) context;
+                if(entity.getAttributes().get(parameter.getName()) == null) {
+                    throw new SemanticException(SemanticException.SemanticExceptionType.ATTRIBUTE_NAME_UNEXISTING,parameter.getName()+" in "+entity.getName());
+                }
+            } else if( context instanceof Ast.Edge) {
+                Ast.Edge edge = (Ast.Edge) context;
+                Ast.Entity source = ast.getEntities().get(edge.getSource());
+                if(source.getAttributes().get(parameter.getName()) == null) {
+                    throw new SemanticException(SemanticException.SemanticExceptionType.ATTRIBUTE_NAME_UNEXISTING,parameter.getName()+" in "+source.getName());
+                }
+            }
+        }
+        return generator;
     }
 
-    @Override
-    public void visit(Ast.Attribute attribute) {
-        attribute.getGenerator().accept(this);
-    }
-
-    @Override
-    public void visit(Ast.Atomic atomic) {
-
-    }
 }

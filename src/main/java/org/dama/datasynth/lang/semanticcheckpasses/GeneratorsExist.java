@@ -8,7 +8,7 @@ import org.dama.datasynth.lang.SemanticException;
 /**
  * Created by aprat on 6/09/16.
  */
-public class GeneratorsExist implements AstVisitor {
+public class GeneratorsExist extends AstVisitor<Ast.Node> {
 
     public void check(Ast ast) {
         for(Ast.Entity entity : ast.getEntities().values()) {
@@ -21,14 +21,15 @@ public class GeneratorsExist implements AstVisitor {
     }
 
     @Override
-    public void visit(Ast.Entity entity) {
-        for(Ast.Attribute attribute : entity.getAttributes()) {
+    public Ast.Node visit(Ast.Entity entity) {
+        for(Ast.Attribute attribute : entity.getAttributes().values()) {
             attribute.accept(this);
         }
+        return entity;
     }
 
     @Override
-    public void visit(Ast.Edge edge) {
+    public Ast.Node visit(Ast.Edge edge) {
         Ast.Generator sourceCardinalityGenerator = edge.getSourceCardinalityGenerator();
         if(sourceCardinalityGenerator != null) {
             sourceCardinalityGenerator.accept(this);
@@ -38,25 +39,24 @@ public class GeneratorsExist implements AstVisitor {
         if(targetCardinalityGenerator != null) {
             targetCardinalityGenerator.accept(this);
         }
+        return edge;
     }
 
     @Override
-    public void visit(Ast.Generator generator) {
+    public Ast.Node visit(Ast.Generator generator) {
         try {
             Types.getGenerator(generator.getName());
         }
         catch ( Exception e) {
-            throw new SemanticException("Generator \""+generator.getName()+"\" not found");
+            throw new SemanticException(SemanticException.SemanticExceptionType.GENERATOR_NOT_EXISTS,generator.getName());
         }
+        return generator;
     }
 
     @Override
-    public void visit(Ast.Attribute attribute) {
+    public Ast.Node visit(Ast.Attribute attribute) {
         attribute.getGenerator().accept(this);
+        return attribute;
     }
 
-    @Override
-    public void visit(Ast.Atomic atomic) {
-
-    }
 }

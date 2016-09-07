@@ -28,7 +28,7 @@
           "type" : "String",
           "generator" : {
             "name" : "org.dama.datasynth.generators.CorrellationGenerator",
-            "runParameters" : ["country"],
+            "runParameters" : ["person.country"],
             "initParameters" : ["/namesByCountry.txt"," "]
           }
         }
@@ -51,7 +51,7 @@
       "correllation" : {
         "generator" : {
           "name" : "org.dama.datasynth.generators.HashCombiner",
-          "runParameters" : [10,"name"],
+          "runParameters" : [10,"person.name"],
           "initParameters" : []
         }
       }
@@ -74,7 +74,7 @@
       "correllation" : {
         "generator" : {
           "name" : "org.dama.datasynth.generators.HashCombiner",
-          "runParameters" : ["country"],
+          "runParameters" : ["person.country"],
           "initParameters" : []
         }
       }

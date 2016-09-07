@@ -11,7 +11,7 @@ import java.util.Set;
 /**
  * Created by aprat on 6/09/16.
  */
-public class AttributeValidName implements AstVisitor {
+public class AttributeValidName extends AstVisitor<Ast.Node> {
 
     private Set<String> observedAttributes = new HashSet<String>();
 
@@ -22,28 +22,18 @@ public class AttributeValidName implements AstVisitor {
     }
 
     @Override
-    public void visit(Ast.Entity entity) {
-        for(Ast.Attribute attribute : entity.getAttributes()) {
+    public Ast.Node visit(Ast.Entity entity) {
+        for(Ast.Attribute attribute : entity.getAttributes().values()) {
             attribute.accept(this);
         }
+        return entity;
     }
 
-    @Override
-    public void visit(Ast.Edge edge) {
-    }
 
     @Override
-    public void visit(Ast.Generator generator) {
-    }
-
-    @Override
-    public void visit(Ast.Attribute attribute) {
-        if(observedAttributes.add(attribute.getName()) == false) throw new SemanticException("Repeated attribute "+attribute.getName());
-        if(attribute.getName().contains("oid")) throw new SemanticException("Invalid attribute name \"oid\". Reserved name.");
-    }
-
-    @Override
-    public void visit(Ast.Atomic atomic) {
-
+    public Ast.Node visit(Ast.Attribute attribute) {
+        if(observedAttributes.add(attribute.getName()) == false) throw new SemanticException(SemanticException.SemanticExceptionType.ATTRIBUTE_NAME_REPEATED,attribute.getName());
+        if(attribute.getName().contains("oid")) throw new SemanticException(SemanticException.SemanticExceptionType.ATTRIBUTE_NAME_OID,"");
+        return attribute;
     }
 }
