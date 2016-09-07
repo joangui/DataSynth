@@ -9,6 +9,11 @@ import org.dama.datasynth.lang.dependencygraph.DependencyGraph;
 public class DependencyGraphBuilder {
 
 
+    /**
+     * Builds a DependencyGraph out of an Ast
+     * @param ast The Ast to build the dependency graph from
+     * @return The dependency graph.
+     */
     public static DependencyGraph buildDependencyGraph(Ast ast) {
         DependencyGraph graph = new DependencyGraph();
         VerticesInserter verticesInserter = new VerticesInserter();

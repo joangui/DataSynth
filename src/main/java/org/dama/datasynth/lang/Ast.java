@@ -311,13 +311,13 @@ public class Ast {
     /**
      * Adds a new entity into the AST
      */
-    public void addEntity( Entity entity ) { entities.put(entity.getName(),entity); }
+    protected void addEntity( Entity entity ) { entities.put(entity.getName(),entity); }
 
 
     /**
      * Adds a new edge into the AST
      */
-    public void addEdge(Edge edge) { edges.put(edge.getName(), edge); }
+    protected void addEdge(Edge edge) { edges.put(edge.getName(), edge); }
 
     /**
      * Gets the list of edges of the AST

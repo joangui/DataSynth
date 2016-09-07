@@ -1,14 +1,12 @@
 package org.dama.datasynth.runtime;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.function.PairFunction;
 import org.dama.datasynth.DataSynthConfig;
 import org.dama.datasynth.SparkEnv;
-import org.dama.datasynth.common.Types;
-import org.dama.datasynth.program.Ast;
-import org.dama.datasynth.program.schnappi.ast.*;
+import org.dama.datasynth.schnappi.ast.Ast;
+import org.dama.datasynth.schnappi.ast.*;
 import org.dama.datasynth.runtime.spark.untyped.Function0Wrapper;
 import org.dama.datasynth.runtime.spark.untyped.Function2Wrapper;
 import org.dama.datasynth.runtime.spark.untyped.FunctionWrapper;
@@ -17,8 +15,6 @@ import org.dama.datasynth.utils.Tuple;
 import org.dama.datasynth.utils.TupleUtils;
 import scala.Tuple2;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

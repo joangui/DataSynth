@@ -5,24 +5,16 @@ package org.dama.datasynth;
 //import static javafx.application.Platform.exit;
 
 import com.beust.jcommander.JCommander;
-import org.dama.datasynth.lang.dependencygraph.DependencyGraph;
-import org.dama.datasynth.lang.dependencygraph.TextDependencyGraphPrinter;
-import org.dama.datasynth.lang.dependencygraph.Vertex;
 import org.dama.datasynth.lang.Ast;
 import org.dama.datasynth.lang.Parser;
 import org.dama.datasynth.lang.SemanticException;
 import org.dama.datasynth.lang.SyntacticException;
-import org.dama.datasynth.program.schnappi.Compiler;
-import org.dama.datasynth.program.schnappi.printer.AstTreePrinter;
-import org.dama.datasynth.program.schnappi.ast.Operation;
-import org.dama.datasynth.runtime.SchnappiInterpreter;
 import org.dama.datasynth.utils.LogFormatter;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import java.util.List;
 import java.util.logging.*;
 
 /**
