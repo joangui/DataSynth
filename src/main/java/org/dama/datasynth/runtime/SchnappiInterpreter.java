@@ -142,7 +142,7 @@ public class SchnappiInterpreter {
 
     public Tuple execFilter(Function fn) {
         Any pn0 = (Any)fn.getParameters().getParam(0);
-        Parameters pn1 = (Parameters) fn.getParameters().getParam(1);
+        Any pn1 = (Any)fn.getParameters().getParam(1);
         Tuple rd = table.get(pn0.getValue());
         org.apache.spark.api.java.function.Function f = fetchFunction(pn0.getValue(), (Integer)rd.get(1));
         JavaPairRDD<Long, Tuple> rdd = (JavaPairRDD<Long, Tuple>) rd.get(0);

@@ -5,6 +5,8 @@ package org.dama.datasynth;
 //import static javafx.application.Platform.exit;
 
 import com.beust.jcommander.JCommander;
+import org.antlr.v4.runtime.ANTLRFileStream;
+import org.antlr.v4.runtime.CommonTokenStream;
 import org.dama.datasynth.lang.dependencygraph.DependencyGraph;
 import org.dama.datasynth.lang.dependencygraph.TextDependencyGraphPrinter;
 import org.dama.datasynth.lang.dependencygraph.Vertex;
@@ -13,8 +15,12 @@ import org.dama.datasynth.lang.Parser;
 import org.dama.datasynth.lang.SemanticException;
 import org.dama.datasynth.lang.SyntacticException;
 import org.dama.datasynth.program.schnappi.Compiler;
+import org.dama.datasynth.program.schnappi.SchnappiGeneratorVisitor;
+import org.dama.datasynth.program.schnappi.SchnappiLexer;
+import org.dama.datasynth.program.schnappi.SchnappiParser;
 import org.dama.datasynth.program.schnappi.printer.AstTreePrinter;
 import org.dama.datasynth.program.schnappi.ast.Operation;
+import org.dama.datasynth.program.solvers.Solver;
 import org.dama.datasynth.runtime.SchnappiInterpreter;
 import org.dama.datasynth.utils.LogFormatter;
 
@@ -75,21 +81,25 @@ public class DataSynth {
                 vertex.accept(printer);
             }
 
-            /*SchnappiLexer SchLexer = new SchnappiLexer( new ANTLRFileStream("src/main/resources/solvers/entitySolver.spi"));
+            SchnappiLexer SchLexer = new SchnappiLexer( new ANTLRFileStream("src/main/resources/sample.spi"));
             CommonTokenStream tokens = new CommonTokenStream( SchLexer );
             SchnappiParser SchParser = new SchnappiParser( tokens );
             SchnappiParser.SolverContext sctx = SchParser.solver();
             SchnappiGeneratorVisitor visitor = new SchnappiGeneratorVisitor();
-            Node n = visitor.visitSolver(sctx);
-            String printedAst = "\n > " + n.toStringTabbed("");
-            logger.log(Level.FINE, printedAst);*/
+            Solver s = visitor.visitSolver(sctx);
+            AstTreePrinter astTreePrinter = new AstTreePrinter();
+            System.out.println("HELLO");
+            for(Operation operation : s.ast.getStatements()) {
+                System.out.println("WHAT");
+                operation.accept(astTreePrinter);
+            }
 
             /*ArrayList<Solver> solvers = Loader.loadSolvers("src/main/resources/solvers");
             for(Solver s : solvers){
                 System.out.println("\n >" + s.instantiate().getRoot().toStringTabbed(""));
             }*/
 
-            Compiler c = new Compiler(graph,"src/main/resources/solvers");
+            /*Compiler c = new Compiler(graph,"src/main/resources/solvers");
             start = System.currentTimeMillis();
             c.synthesizeProgram();
             end = System.currentTimeMillis();
@@ -99,16 +109,16 @@ public class DataSynth {
             AstTreePrinter astTreePrinter = new AstTreePrinter();
             for(Operation operation : c.getProgram().getStatements()) {
                 operation.accept(astTreePrinter);
-            }
+            }*/
 
-            start = System.currentTimeMillis();
+            /*start = System.currentTimeMillis();
             SchnappiInterpreter schInt = new SchnappiInterpreter(config);
             schInt.execProgram(c.getProgram());
             schInt.dumpData();
 
             end = System.currentTimeMillis();
             logger.info(" Query executed in  "+(end-start) + " ms");
-            logger.info("Execution finished");
+            logger.info("Execution finished");*/
 
             /*executor.execute(execPlan);
             executor.dummyExecute();

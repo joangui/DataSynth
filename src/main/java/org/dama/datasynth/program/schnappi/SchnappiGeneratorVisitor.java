@@ -8,6 +8,9 @@ import org.dama.datasynth.program.schnappi.ast.Number;
 import org.dama.datasynth.program.schnappi.ast.Operation;
 import org.dama.datasynth.program.solvers.Solver;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by quim on 5/17/16.
  */
@@ -28,7 +31,8 @@ public class SchnappiGeneratorVisitor extends org.dama.datasynth.program.schnapp
 
     @Override
     public Signature visitSignature(org.dama.datasynth.program.schnappi.SchnappiParser.SignatureContext ctx){
-        return new Signature(ctx.source().VTYPE().getText(), ctx.target().VTYPE().getText());
+        if(ctx != null) return new Signature(ctx.source().VTYPE().getText(), ctx.target().VTYPE().getText());
+        return null;
     }
 
     @Override
@@ -86,6 +90,9 @@ public class SchnappiGeneratorVisitor extends org.dama.datasynth.program.schnapp
         else if(ctx.reduce() != null) return visitReduce(ctx.reduce());
         else if(ctx.union() != null) return visitUnion(ctx.union());
         else if(ctx.eqjoin() != null) return visitEqjoin(ctx.eqjoin());
+        else if(ctx.sort() != null) return visitSort(ctx.sort());
+        else if(ctx.partition() != null) return visitPartition(ctx.partition());
+        else if(ctx.filter() != null) return visitFilter(ctx.filter());
         return null;
     }
 
@@ -153,11 +160,19 @@ public class SchnappiGeneratorVisitor extends org.dama.datasynth.program.schnapp
         return new Function("mappart",parameters);
     }
     @Override
-    public Parameters visitSet(org.dama.datasynth.program.schnappi.SchnappiParser.SetContext ctx){
+    public Function visitFilter(org.dama.datasynth.program.schnappi.SchnappiParser.FilterContext ctx){
         Parameters parameters = new Parameters();
+        parameters.addParam(visitAny(ctx.any()));
+        Parameters indices = visitSet(ctx.set());
+        parameters.mergeParams(indices);
+        return new Function("filter",parameters);
+    }
+    @Override
+    public Parameters visitSet(org.dama.datasynth.program.schnappi.SchnappiParser.SetContext ctx){
+        Parameters params = new Parameters();
         for(TerminalNode tn : ctx.NUM()) {
-            parameters.addParam(new Number(tn.getText()));
+            params.addParam(new Number(tn.getText()));
         }
-        return parameters;
+        return params;
     }
 }
