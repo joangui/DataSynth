@@ -104,6 +104,41 @@ public class DependencyGraph  {
     }
 
     /**
+     * Gets the incoming neighbors of a Vertex
+     * @param vertex The Vertex to retrieve the neighbors from
+     * @return A list with the neighbors of the Vertex
+     */
+    public List<Vertex> getIncomingNeighbors(Vertex vertex) {
+        if(!graph.containsVertex(vertex)) throw new DependencyGraphConstructionException("Error when querying the dependency graph. Vertex "+vertex.getId()+" of type "+vertex.getType()+" does not exist");
+        Set<DirectedEdge> edges = graph.incomingEdgesOf(vertex);
+        List<Vertex> neighbors = new ArrayList<Vertex>();
+        for(DirectedEdge edge : edges) {
+            neighbors.add(graph.getEdgeSource(edge));
+        }
+        return neighbors;
+    }
+
+
+    /**
+     * Gets the incoming neighbros of a Vertex connected with edge with a given label
+     * @param vertex The Vertex to query the neighbors from
+     * @param label The label of the edge
+     * @return The list of incoming neighbors connected with edges with the given label.
+     */
+    public List<Vertex> getIncomingNeighbors(Vertex vertex, String label) {
+        if(!graph.containsVertex(vertex)) throw new DependencyGraphConstructionException("Error when querying the dependency graph. Vertex "+vertex.getId()+" of type "+vertex.getType()+" does not exist");
+        Set<DirectedEdge> edges = graph.incomingEdgesOf(vertex);
+        List<Vertex> neighbors = new ArrayList<Vertex>();
+        for(DirectedEdge edge : edges) {
+            if(edge.getName().compareTo(label) == 0) {
+                neighbors.add(graph.getEdgeSource(edge));
+            }
+        }
+        return neighbors;
+    }
+
+
+    /**
      * Gets the Entity Vertex with the given name
      * @param entityName The name of the entity
      * @return The Entity Vertex. null if the entity does not exist

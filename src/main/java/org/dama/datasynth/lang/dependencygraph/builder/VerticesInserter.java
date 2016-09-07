@@ -32,6 +32,9 @@ public class VerticesInserter extends AstVisitor<Vertex> {
     public Vertex visit(Ast.Entity astEntity) {
         Entity entity = new Entity(astEntity.getName(), astEntity.getNumInstances());
         graph.addEntityVertex(entity);
+        Attribute oidAttribute = new Attribute("person.oid", Types.DataType.LONG);
+        graph.addAttributeVertex(oidAttribute);
+        graph.addDependency(entity,oidAttribute,"attribute");
         for(Ast.Attribute astAttribute : astEntity.getAttributes().values()) {
             astAttribute.accept(this);
             Attribute attribute = graph.getAttribute(astAttribute.getName());

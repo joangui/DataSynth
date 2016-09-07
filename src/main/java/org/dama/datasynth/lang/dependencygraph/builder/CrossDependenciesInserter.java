@@ -1,6 +1,5 @@
 package org.dama.datasynth.lang.dependencygraph.builder;
 
-import org.dama.datasynth.common.Types;
 import org.dama.datasynth.lang.Ast;
 import org.dama.datasynth.lang.AstVisitor;
 import org.dama.datasynth.lang.dependencygraph.*;
@@ -30,15 +29,19 @@ public class CrossDependenciesInserter extends AstVisitor<Ast.Node> {
         }
     }
 
-    private void solveGeneratorDependencieS(Vertex vertex, Ast.Generator astGenerator, String generatorRelationName) {
+    private void solveGeneratorOidDependency(Vertex vertex, Ast.Generator astGenerator, String generatorRelationName, String entityName) {
+        List<Vertex> neighbors = graph.getNeighbors(vertex,generatorRelationName);
+        Generator generator = (Generator)(neighbors.get(0));
+        graph.addDependency(generator,graph.getAttribute(entityName+".oid"),"runParameter");
+    }
 
+    private void solveGeneratorDependencies(Vertex vertex, Ast.Generator astGenerator, String generatorRelationName) {
         List<Vertex> neighbors = graph.getNeighbors(vertex,generatorRelationName);
         Generator generator = (Generator)(neighbors.get(0));
         for(Ast.Atomic param : astGenerator.getRunParameters()) {
             Attribute attributeParameter = graph.getAttribute(param.getName());
             graph.addDependency(generator,attributeParameter,"runParameter");
         }
-
     }
 
     @Override
@@ -53,12 +56,20 @@ public class CrossDependenciesInserter extends AstVisitor<Ast.Node> {
     public Ast.Edge visit(Ast.Edge astEdge) {
         Edge edge = graph.getEdge(astEdge.getName());
         if(astEdge.getSourceCardinalityGenerator() != null) {
-           solveGeneratorDependencieS(edge,astEdge.getSourceCardinalityGenerator(),"sourceCardinality");
+            solveGeneratorOidDependency(edge,astEdge.getSourceCardinalityGenerator(),"sourceCardinality",astEdge.getSource());
+            solveGeneratorDependencies(edge,astEdge.getSourceCardinalityGenerator(),"sourceCardinality");
         }
 
         if(astEdge.getTargetCardinalityGenerator() != null) {
-            solveGeneratorDependencieS(edge,astEdge.getTargetCardinalityGenerator(),"targetCardinality");
+            solveGeneratorOidDependency(edge,astEdge.getSourceCardinalityGenerator(),"targetCardinality",astEdge.getSource());
+            solveGeneratorDependencies(edge,astEdge.getTargetCardinalityGenerator(),"targetCardinality");
         }
+
+        solveGeneratorOidDependency(edge,astEdge.getCorrellation(),"correllation",astEdge.getSource());
+        if(astEdge.getTarget().compareTo(astEdge.getSource()) != 0) {
+            solveGeneratorOidDependency(edge,astEdge.getCorrellation(),"correllation",astEdge.getTarget());
+        }
+        solveGeneratorDependencies(edge,astEdge.getCorrellation(),"correllation");
         return astEdge;
     }
 
@@ -66,7 +77,9 @@ public class CrossDependenciesInserter extends AstVisitor<Ast.Node> {
     @Override
     public Ast.Attribute visit(Ast.Attribute astAttribute) {
         Attribute attribute = graph.getAttribute(astAttribute.getName());
-        solveGeneratorDependencieS(attribute,astAttribute.getGenerator(),"generator");
+        Entity entity = (Entity)graph.getIncomingNeighbors(attribute,"attribute").get(0);
+        solveGeneratorOidDependency(attribute,astAttribute.getGenerator(),"generator",entity.getName());
+        solveGeneratorDependencies(attribute,astAttribute.getGenerator(),"generator");
         return astAttribute;
     }
 

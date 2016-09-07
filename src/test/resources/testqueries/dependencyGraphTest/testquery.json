@@ -1,0 +1,74 @@
+
+{
+  "entities" : [
+    {
+      "name" : "person",
+      "number" : 10,
+      "attributes" : [
+        {
+          "name" : "country",
+          "type" : "String",
+          "generator" : {
+            "name" : "org.dama.datasynth.generators.CDFGenerator",
+            "runParameters" : [],
+            "initParameters" : ["/dicLocations.txt",1,5," "]
+          }
+        },
+        {
+          "name" : "name",
+          "type" : "String",
+          "generator" : {
+            "name" : "org.dama.datasynth.generators.DFGenerator",
+            "runParameters" : ["person.country"],
+            "initParameters" : ["/email.txt",0,1," "]
+          }
+        }
+      ]
+    }
+  ],
+  "edges" : [
+    {
+      "name" : "friendship",
+      "direction" : "undirected",
+      "source" : "person",
+      "target" : "person",
+      "sourceCardinality" : {
+        "generator" : {
+            "name" : "org.dama.datasynth.generators.ZipfDistribution",
+            "runParameters" : [],
+            "initParameters" : [1.7]
+          }
+      },
+      "correllation" : {
+        "generator" : {
+          "name" : "org.dama.datasynth.generators.HashCombiner",
+          "runParameters" : ["person.country","person.name"],
+          "initParameters" : []
+        }
+      }
+    },
+    {
+      "name" : "parent",
+      "direction" : "directed",
+      "source" : "person",
+      "target" : "person",
+      "sourceCardinality" : {
+        "generator" : {
+          "name" : "org.dama.datasynth.generators.UniformDistribution",
+          "runParameters" : [],
+          "initParameters" : [0,3]
+        }
+      },
+      "targetCardinality" : {
+        "number" : 1
+      },
+      "correllation" : {
+        "generator" : {
+          "name" : "org.dama.datasynth.generators.HashCombiner",
+          "runParameters" : ["person.country"],
+          "initParameters" : []
+        }
+      }
+    }
+  ]
+}

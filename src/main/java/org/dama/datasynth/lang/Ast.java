@@ -331,7 +331,6 @@ public class Ast {
      * @throws SemanticException
      */
     public void doSemanticAnalysis() throws SemanticException {
-
         EdgeEndpointsExist edgeEndpointsExist = new EdgeEndpointsExist();
         edgeEndpointsExist.check(this);
         AttributeValidName attributeValidName = new AttributeValidName();

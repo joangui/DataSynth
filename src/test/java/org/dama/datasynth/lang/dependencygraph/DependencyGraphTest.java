@@ -1,5 +1,6 @@
 package org.dama.datasynth.lang.dependencygraph;
 
+import org.dama.datasynth.TestHelpers;
 import org.dama.datasynth.common.Types;
 import org.dama.datasynth.lang.Ast;
 import org.dama.datasynth.lang.SemanticException;
@@ -106,7 +107,7 @@ public class DependencyGraphTest {
 
     @Test
     public void testInitialize(){
-        Ast ast = new Ast();
+        /*Ast ast = new Ast();
         Ast.Entity entity = new Ast.Entity("person",100L);
         Ast.Generator attributeCountryGenerator = new Ast.Generator("org.dama.datasynth.generators.CDFGenerator");
         attributeCountryGenerator.addInitParameter( new Ast.Atomic("countries.txt", Types.DataType.STRING));
@@ -137,6 +138,9 @@ public class DependencyGraphTest {
             e.printStackTrace();
             assertTrue(true);
         }
+        */
+
+        Ast ast = TestHelpers.testQuery("src/test/resources/testqueries/dependencyGraphTest/testquery.json");
 
         DependencyGraph dependencyGraph = DependencyGraphBuilder.buildDependencyGraph(ast);
         List<Entity> entities = dependencyGraph.getEntities();
@@ -150,62 +154,25 @@ public class DependencyGraphTest {
         assertTrue(entities.get(0).getType().compareTo("Entity") == 0);
         Entity person = (Entity) entities.get(0);
 
-        boolean nameAttributeFound = false;
-        boolean countryAttributeFound = false;
-        boolean oidAttributeFound = false;
+        List<Vertex> attributes = dependencyGraph.getNeighbors(person,"attribute");
+        Attribute oidAttribute = ((Attribute)attributes.get(0));
+        assertTrue(oidAttribute.getAttributeName().compareTo("person.oid") == 0);
+        Attribute countryAttribute = ((Attribute)attributes.get(1));
+        assertTrue(countryAttribute.getAttributeName().compareTo("person.country") == 0);
+        Attribute nameAttribute = ((Attribute)attributes.get(2));
+        assertTrue(nameAttribute.getAttributeName().compareTo("person.name") == 0);
 
-        /*
-        Set<DirectedEdge> attributes = dependencyGraph.outgoingEdgesOf(person);
-        for(DirectedEdge edge : attributes) {
-            if(dependencyGraph.getEdgeTarget(edge).getType().compareTo("Attribute") == 0) {
-                Attribute attribute = (Attribute) dependencyGraph.getEdgeTarget(edge);
-                switch (attribute.getAttributeName()) {
-                    case "oid": {
-                        oidAttributeFound = true;
-                    }
-                    break;
-                    case "name": {
-                        nameAttributeFound = true;
-                        Set<DirectedEdge> attributes2 = dependencyGraph.outgoingEdgesOf(attribute);
-                        boolean countryAttribute2Found = false;
-                        boolean oidAttribute2Found = false;
-                        for (DirectedEdge edge2 : attributes2) {
-                            if(dependencyGraph.getEdgeTarget(edge2).getType().compareTo("Attribute") == 0) {
-                                Attribute attribute2 = (Attribute) dependencyGraph.getEdgeTarget(edge2);
-                                switch (attribute2.getAttributeName()) {
-                                    case "oid":
-                                        oidAttribute2Found = true;
-                                        break;
-                                    case "country":
-                                        countryAttribute2Found = true;
-                                        break;
-                                }
-                            }
-                        }
-                        assertTrue(oidAttribute2Found && countryAttribute2Found);
-                    }
-                    break;
-                    case "country": {
-                        countryAttributeFound = true;
-                        Set<DirectedEdge> attributes2 = dependencyGraph.outgoingEdgesOf(attribute);
-                        boolean oidAttribute2Found = false;
-                        for (DirectedEdge edge2 : attributes2) {
-                            if(dependencyGraph.getEdgeTarget(edge2).getType().compareTo("Attribute") == 0) {
-                                Attribute attribute2 = (Attribute) dependencyGraph.getEdgeTarget(edge2);
-                                switch (attribute2.getAttributeName()) {
-                                    case "oid":
-                                        oidAttribute2Found = true;
-                                        break;
-                                }
-                            }
-                        }
-                        assertTrue(oidAttribute2Found);
-                    }
-                    break;
-                }
-            }
-        }
-        assertTrue(nameAttributeFound && countryAttributeFound && oidAttributeFound);
-        */
+        Generator generator = (Generator)dependencyGraph.getNeighbors(nameAttribute,"generator").get(0);
+        List<Vertex> runParameters = dependencyGraph.getNeighbors(generator,"runParameter");
+        Attribute oidRunParameter = (Attribute)runParameters.get(0);
+        assertTrue(oidRunParameter.getAttributeName().compareTo("person.oid") == 0);
+        Attribute countryRunParameter = (Attribute)runParameters.get(1);
+        assertTrue(countryRunParameter.getAttributeName().compareTo("person.country") == 0);
+
+        generator = (Generator)dependencyGraph.getNeighbors(countryAttribute,"generator").get(0);
+        runParameters = dependencyGraph.getNeighbors(generator,"runParameter");
+        oidRunParameter = (Attribute)runParameters.get(0);
+        assertTrue(oidRunParameter.getAttributeName().compareTo("person.oid") == 0);
+
     }
 }

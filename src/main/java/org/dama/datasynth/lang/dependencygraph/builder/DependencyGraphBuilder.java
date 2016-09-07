@@ -2,7 +2,6 @@ package org.dama.datasynth.lang.dependencygraph.builder;
 
 import org.dama.datasynth.lang.Ast;
 import org.dama.datasynth.lang.dependencygraph.DependencyGraph;
-import org.dama.datasynth.lang.dependencygraph.builder.VerticesInserter;
 
 /**
  * Created by aprat on 7/09/16.
