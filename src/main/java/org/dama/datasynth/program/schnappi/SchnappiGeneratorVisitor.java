@@ -93,6 +93,7 @@ public class SchnappiGeneratorVisitor extends org.dama.datasynth.program.schnapp
         else if(ctx.sort() != null) return visitSort(ctx.sort());
         else if(ctx.partition() != null) return visitPartition(ctx.partition());
         else if(ctx.filter() != null) return visitFilter(ctx.filter());
+        else if(ctx.mappart() != null) return visitMappart(ctx.mappart());
         return null;
     }
 
@@ -132,6 +133,7 @@ public class SchnappiGeneratorVisitor extends org.dama.datasynth.program.schnapp
             if(tn.NUM() != null) any = new Number(tn.getText());
             if(tn.STRING() != null) any = new StringLiteral(tn.getText());
             if(tn.BINDING() != null) any = new Binding(tn.getText());
+            if(tn.ID() != null) any = new Id(tn.getText());
             parameters.addParam(any);
         }
         return parameters;

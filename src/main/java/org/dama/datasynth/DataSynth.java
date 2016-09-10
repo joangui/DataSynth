@@ -88,9 +88,7 @@ public class DataSynth {
             SchnappiGeneratorVisitor visitor = new SchnappiGeneratorVisitor();
             Solver s = visitor.visitSolver(sctx);
             AstTreePrinter astTreePrinter = new AstTreePrinter();
-            System.out.println("HELLO");
             for(Operation operation : s.ast.getStatements()) {
-                System.out.println("WHAT");
                 operation.accept(astTreePrinter);
             }
 

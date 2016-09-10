@@ -9,6 +9,8 @@ import org.dama.datasynth.SparkEnv;
 import org.dama.datasynth.common.Types;
 import org.dama.datasynth.program.Ast;
 import org.dama.datasynth.program.schnappi.ast.*;
+import org.dama.datasynth.program.schnappi.ast.Number;
+import org.dama.datasynth.runtime.spark.SchnappiFilter;
 import org.dama.datasynth.runtime.spark.untyped.Function0Wrapper;
 import org.dama.datasynth.runtime.spark.untyped.Function2Wrapper;
 import org.dama.datasynth.runtime.spark.untyped.FunctionWrapper;
@@ -142,9 +144,30 @@ public class SchnappiInterpreter {
 
     public Tuple execFilter(Function fn) {
         Any pn0 = (Any)fn.getParameters().getParam(0);
-        Any pn1 = (Any)fn.getParameters().getParam(1);
+        SchnappiFilter filter = new SchnappiFilter();
+        ArrayList<Integer> filtIds = new ArrayList<>();
+        for(int i = 1; i < fn.getParameters().params.size(); ++i) filtIds.add(Integer.parseInt(fn.getParameters().getParam(i).toString()));
         Tuple rd = table.get(pn0.getValue());
-        org.apache.spark.api.java.function.Function f = fetchFunction(pn0.getValue(), (Integer)rd.get(1));
+        String generatorName = "org.dama.datasynth.runtime.spark.SchnappiFilter";
+        Generator generator = null;
+        try {
+            generator = (Generator)Class.forName(generatorName).newInstance();
+        } catch (ClassNotFoundException cNFE) {
+            cNFE.printStackTrace();
+        } catch (InstantiationException iE) {
+            iE.printStackTrace();
+        } catch (IllegalAccessException iAE) {
+            iAE.printStackTrace();
+        } finally {
+            //System.exit(1);
+        }
+        Object [] params = new Object[filtIds.size()];
+        for(int index = 0; index < filtIds.size(); ++index) {
+            params[index] = filtIds.get(index);
+        }
+        UntypedMethod method = new UntypedMethod(generator,"initialize");
+        method.invoke(params);
+        org.apache.spark.api.java.function.Function f = new FunctionWrapper(generator, "run");
         JavaPairRDD<Long, Tuple> rdd = (JavaPairRDD<Long, Tuple>) rd.get(0);
         return new Tuple(rdd.mapValues(f),1);
     }
