@@ -29,13 +29,17 @@ public class Compiler extends DependencyGraphVisitor {
 
     private void loadSolvers(String dir){
         for(Solver s : Loader.loadSolvers(dir)) {
-            this.solversDB.put(s.getSignature().getSource(),s);
+            this.solversDB.put(s.getSignature().getBindings().values().iterator().next(),s);
         }
     }
 
     public void synthesizeProgram(){
-        for(Vertex v : graph.getEntities()) {
-            v.accept(this);
+        for(Entity v : graph.getEntities()) {
+            visit(v);
+        }
+
+        for(Edge v : graph.getEdges()) {
+            visit(v);
         }
     }
 

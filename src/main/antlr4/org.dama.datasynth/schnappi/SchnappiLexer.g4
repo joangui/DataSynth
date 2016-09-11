@@ -40,8 +40,8 @@ REDUCEKW
     : 'reduce'
     ;
 
-NEW
-    : 'new'
+INIT
+    : 'init'
     ;
 
 EQJOIN
@@ -60,6 +60,14 @@ SORT
     ;
 FILTER
     : 'filter'
+    ;
+
+EQQ
+    : '=='
+    ;
+
+NEQ
+    : '!='
     ;
 EQ
     : '='
@@ -108,10 +116,10 @@ SIGNATURE
     : 'signature'
     ;
 PART
-    : 'partition'
+    : 'part'
     ;
 MAPPART
-    : 'mapPartition'
+    : 'mappart'
     ;
 ID
 : (ALPHA)+
@@ -143,6 +151,10 @@ ESC
     )
   ;
 
+NUM
+: DIGIT+
+;
+
 DIGIT
   : '0'..'9'
   ;
@@ -166,9 +178,6 @@ STRING
     '\''
   ;
 
-NUM
-: DIGIT+
-;
 
 
 

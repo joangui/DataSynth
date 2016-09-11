@@ -1,6 +1,5 @@
 signature : {
-    @source = Entity
-    @target = Attribute
+    @source = Entity;
 }
 
 @source.name = union(@source->attribute.name);

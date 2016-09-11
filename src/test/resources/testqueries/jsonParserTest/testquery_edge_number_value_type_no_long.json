@@ -71,13 +71,7 @@
       "targetCardinality" : {
         "number" : "1"
       },
-      "correllation" : {
-        "generator" : {
-          "name" : "org.dama.datasynth.generators.HashCombiner",
-          "requires" : ["country"],
-          "init" : []
-        }
-      }
+      "correlates" : ["person.country","person.name"]
     }
   ]
 }

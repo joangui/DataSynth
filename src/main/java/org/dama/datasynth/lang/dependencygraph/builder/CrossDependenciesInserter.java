@@ -58,20 +58,24 @@ public class CrossDependenciesInserter extends AstVisitor<Ast.Node> {
         graph.addDependency(edge,graph.getAttribute(astEdge.getSource()+".oid"),"source");
         graph.addDependency(edge,graph.getAttribute(astEdge.getTarget()+".oid"),"target");
         if(astEdge.getSourceCardinalityGenerator() != null) {
-            solveGeneratorOidDependency(edge,astEdge.getSourceCardinalityGenerator(),"sourceCardinality",astEdge.getSource());
-            solveGeneratorDependencies(edge,astEdge.getSourceCardinalityGenerator(),"sourceCardinality");
+            Attribute attribute = graph.getAttribute(astEdge.getName()+".sourceCardinality");
+            Generator generator = (Generator)graph.getNeighbors(attribute,"generator").get(0);
+            Attribute oidAttribute = graph.getAttribute(astEdge.getSource()+".oid");
+            graph.addDependency(generator,oidAttribute,"requires");
+            solveGeneratorDependencies(attribute,astEdge.getSourceCardinalityGenerator(),"generator");
         }
 
         if(astEdge.getTargetCardinalityGenerator() != null) {
-            solveGeneratorOidDependency(edge,astEdge.getSourceCardinalityGenerator(),"targetCardinality",astEdge.getSource());
-            solveGeneratorDependencies(edge,astEdge.getTargetCardinalityGenerator(),"targetCardinality");
+            Attribute attribute = graph.getAttribute(astEdge.getName()+".targetCardinality");
+            Generator generator = (Generator)graph.getNeighbors(attribute,"generator").get(0);
+            Attribute oidAttribute = graph.getAttribute(astEdge.getTarget()+".oid");
+            graph.addDependency(generator,oidAttribute,"requires");
+            solveGeneratorDependencies(attribute,astEdge.getTargetCardinalityGenerator(),"generator");
         }
 
-        solveGeneratorOidDependency(edge,astEdge.getCorrellation(),"correllation",astEdge.getSource());
-        if(astEdge.getTarget().compareTo(astEdge.getSource()) != 0) {
-            solveGeneratorOidDependency(edge,astEdge.getCorrellation(),"correllation",astEdge.getTarget());
+        for(Ast.Atomic atomic : astEdge.getCorrelates()) {
+            graph.addDependency(edge,graph.getAttribute(atomic.getName()),"correlates");
         }
-        solveGeneratorDependencies(edge,astEdge.getCorrellation(),"correllation");
         return astEdge;
     }
 

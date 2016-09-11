@@ -1,10 +1,7 @@
 package org.dama.datasynth.lang;
 
 import org.dama.datasynth.common.Types;
-import org.dama.datasynth.lang.semanticcheckpasses.AttributeValidName;
-import org.dama.datasynth.lang.semanticcheckpasses.EdgeEndpointsExist;
-import org.dama.datasynth.lang.semanticcheckpasses.GeneratorsExist;
-import org.dama.datasynth.lang.semanticcheckpasses.GeneratorRunParametersValid;
+import org.dama.datasynth.lang.semanticcheckpasses.*;
 
 import java.util.*;
 
@@ -221,7 +218,7 @@ public class Ast {
         private Generator       targetCardinalityGenerator = null;
         private Long            sourceCardinalityNumber = null;
         private Long            targetCardinalityNumber = null;
-        private Generator       correllation = null;
+        private List<Atomic>    correlates = null;
 
         /**
          * Class Constructor
@@ -232,6 +229,7 @@ public class Ast {
             this.source = source;
             this.target = target;
             this.direction = direction;
+            this.correlates = new ArrayList<Atomic>();
         }
 
         public String getSource() {
@@ -290,13 +288,14 @@ public class Ast {
             this.targetCardinalityNumber = targetCardinalityNumber;
         }
 
-        public Generator getCorrellation() {
-            return correllation;
+        public List<Ast.Atomic> getCorrelates() {
+            return correlates;
         }
 
-        public void setCorrellation(Generator correllation) {
-            this.correllation = correllation;
+        public void addCorrelates(Atomic correlates) {
+            this.correlates.add(correlates);
         }
+
 
         @Override
         public void accept(AstVisitor visitor) {
@@ -337,11 +336,14 @@ public class Ast {
     public void doSemanticAnalysis() throws SemanticException {
         EdgeEndpointsExist edgeEndpointsExist = new EdgeEndpointsExist();
         edgeEndpointsExist.check(this);
+        EdgeCorrelatesValid edgeCorrelatesValid = new EdgeCorrelatesValid();
+        edgeCorrelatesValid.check(this);
         AttributeValidName attributeValidName = new AttributeValidName();
         attributeValidName.check(this);
         GeneratorsExist generatorExists = new GeneratorsExist();
         generatorExists.check(this);
         GeneratorRunParametersValid generatorRunParametersValid = new GeneratorRunParametersValid();
         generatorRunParametersValid.check(this);
+
     }
 }

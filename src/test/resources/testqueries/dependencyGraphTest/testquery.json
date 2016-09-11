@@ -39,13 +39,7 @@
             "requires" : []
           }
       },
-      "correllation" : {
-        "generator" : {
-          "name" : "org.dama.datasynth.generators.HashCombiner",
-          "init" : [],
-          "requires" : ["person.country","person.name"]
-        }
-      }
+      "correlates" :["person.country","person.name"]
     },
     {
       "name" : "parent",
@@ -62,13 +56,7 @@
       "targetCardinality" : {
         "number" : 1
       },
-      "correllation" : {
-        "generator" : {
-          "name" : "org.dama.datasynth.generators.HashCombiner",
-          "init" : [],
-          "requires" : ["person.country"]
-        }
-      }
+      "correlates" : ["person.country"]
     }
   ]
 }

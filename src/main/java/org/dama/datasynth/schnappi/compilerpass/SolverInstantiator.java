@@ -8,6 +8,7 @@ import org.dama.datasynth.schnappi.CompilerException;
 import org.dama.datasynth.schnappi.ast.*;
 import org.dama.datasynth.schnappi.ast.Number;
 import org.dama.datasynth.schnappi.ast.Visitor;
+import org.dama.datasynth.schnappi.solver.DependencyGraphMatcher;
 import org.dama.datasynth.schnappi.solver.Solver;
 
 import java.lang.reflect.InvocationTargetException;
@@ -33,25 +34,17 @@ public class SolverInstantiator implements Visitor {
 
 
     private List<Expression> processBinding(Binding binding) {
-        List<Vertex> frontier = new ArrayList<Vertex>();
-        frontier.add(vertex);
-        for(int i = 1; i < binding.getBindingChain().size()-1; ++i) {
-            String edgeName = binding.getBindingChain().get(i);
-            List<Vertex> nextFrontier = new ArrayList<Vertex>();
-            for(Vertex next : frontier) {
-                nextFrontier.addAll(graph.getNeighbors(next,edgeName));
-            }
-            frontier = nextFrontier;
-        }
-        String propertyName = binding.getBindingChain().get(binding.getBindingChain().size()-1);
+        List<Vertex.PropertyValue> values = DependencyGraphMatcher.match(graph,vertex,binding.getBindingChain());
         List<Expression> retList = new ArrayList<Expression>();
-        for(Vertex next : frontier) {
-           Vertex.PropertyValue value = next.getProperties().get(propertyName);
-            if(value == null) throw new CompilerException(CompilerException.CompilerExceptionType.UNEXISITING_VERTEX_PROPERTY,propertyName+" in vertex of type "+next.getType());
-            if(value.getDataType() != Types.DataType.STRING) {
-               retList.add(new Number(value.getValue()));
+        for(Vertex.PropertyValue value : values) {
+            if (value.getDataType() != Types.DataType.STRING) {
+                retList.add(new org.dama.datasynth.schnappi.ast.Number(value.getValue()));
             } else {
-                retList.add(new StringLiteral(value.getValue()));
+                if (graph.getEntity(value.getValue()) != null || graph.getAttribute(value.getValue()) != null || graph.getEdge(value.getValue()) != null) {
+                    retList.add(new Id(value.getValue()));
+                } else {
+                    retList.add(new StringLiteral(value.getValue()));
+                }
             }
         }
         return retList;

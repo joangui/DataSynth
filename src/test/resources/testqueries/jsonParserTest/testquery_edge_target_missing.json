@@ -18,13 +18,7 @@
             "init" : [1.7]
           }
       },
-      "correllation" : {
-        "generator" : {
-          "name" : "org.dama.datasynth.generators.HashCombiner",
-          "requires" : ["person.country","person.name"],
-          "init" : []
-        }
-      }
+      "correlates" : ["person.country","person.name"]
     }
   ]
 }

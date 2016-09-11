@@ -31,8 +31,12 @@ public class SchnappiGeneratorVisitor extends org.dama.datasynth.schnappi.Schnap
 
     @Override
     public Signature visitSignature(org.dama.datasynth.schnappi.SchnappiParser.SignatureContext ctx){
-        if(ctx != null) return new Signature(ctx.source().VTYPE().getText(), ctx.target().VTYPE().getText());
-        return null;
+        Signature signature = new Signature();
+        signature.addBinding(ctx.source().ID().getText(), ctx.source().VTYPE().getText());
+        for(org.dama.datasynth.schnappi.SchnappiParser.SignatureoperationContext operationCtx : ctx.signatureoperation()) {
+            signature.addOperation(visitAtomic(operationCtx.atomic(0)),visitAtomic(operationCtx.atomic(1)), Signature.LogicOperator.fromString(operationCtx.logicoperation().getText()));
+        }
+        return signature;
     }
 
     @Override
@@ -43,18 +47,7 @@ public class SchnappiGeneratorVisitor extends org.dama.datasynth.schnappi.Schnap
 
     @Override
     public Function visitInit(org.dama.datasynth.schnappi.SchnappiParser.InitContext ctx){
-        Parameters parameters = new Parameters();
-        Expression expr = null;
-        if(ctx.binding() != null) {
-            List<String> bindingChain = new ArrayList<String>();
-            for(TerminalNode node : ctx.binding().ID()) {
-                bindingChain.add(node.getText());
-            }
-            expr = new Binding(bindingChain);
-        }
-        if(ctx.ID() != null) expr = new StringLiteral(ctx.ID().getText());
-        parameters.addParam(expr);
-        parameters.mergeParams(visitParams(ctx.params()));
+        Parameters parameters = visitParams(ctx.params());
         Function function= new Function("init", parameters);
         return function;
     }
@@ -70,7 +63,7 @@ public class SchnappiGeneratorVisitor extends org.dama.datasynth.schnappi.Schnap
             }
             atomic = new Binding(bindingChain);
         }
-        if(ctx.ID() != null) atomic = new Id(ctx.ID().getText());
+        if(ctx.var() != null) atomic = new Var(ctx.var().getText());
         return new Assign(atomic, visitExpr(ctx.expr()));
     }
 
@@ -95,7 +88,7 @@ public class SchnappiGeneratorVisitor extends org.dama.datasynth.schnappi.Schnap
             return new Binding(bindingChain);
         }
         if(ctx.STRING() != null)  return new StringLiteral(ctx.getText());
-        if(ctx.ID() != null)  return new Id(ctx.getText());
+        if(ctx.var() != null)  return new Var(ctx.getText());
         return null;
     }
 
@@ -157,7 +150,7 @@ public class SchnappiGeneratorVisitor extends org.dama.datasynth.schnappi.Schnap
                 }
                 atomic = new Binding(bindingChain);
             }
-            if(tn.ID() != null) atomic = new Id(tn.getText());
+            if(tn.var() != null) atomic = new Id(tn.getText());
             parameters.addParam(atomic);
         }
         return parameters;

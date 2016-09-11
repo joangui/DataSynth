@@ -48,7 +48,10 @@ public class VerticesInserter extends AstVisitor<Vertex> {
         Edge edge = new Edge(astEdge.getName(), astEdge.getDirection());
         graph.addEdgeVertex(edge);
         if(astEdge.getSourceCardinalityGenerator() != null) {
-            graph.addDependency(edge,visit(astEdge.getSourceCardinalityGenerator()),"sourceCardinality");
+            Attribute attribute = new Attribute(astEdge.getName()+".sourceCardinality", Types.DataType.LONG);
+            graph.addAttributeVertex(attribute);
+            graph.addDependency(attribute,visit(astEdge.getSourceCardinalityGenerator()),"generator");
+            graph.addDependency(edge,attribute,"sourceCardinality");
         } else if(astEdge.getSourceCardinalityNumber() != null) {
             Literal number = new Literal(astEdge.getSourceCardinalityNumber());
             graph.addLiteralVertex(number);
@@ -56,14 +59,15 @@ public class VerticesInserter extends AstVisitor<Vertex> {
         }
 
         if(astEdge.getTargetCardinalityGenerator() != null) {
-            graph.addDependency(edge,visit(astEdge.getTargetCardinalityGenerator()),"targetCardinality");
+            Attribute attribute = new Attribute(astEdge.getName()+".targetCardinality", Types.DataType.LONG);
+            graph.addAttributeVertex(attribute);
+            graph.addDependency(attribute,visit(astEdge.getTargetCardinalityGenerator()),"generator");
+            graph.addDependency(edge,attribute,"targetCardinality");
         } else if(astEdge.getTargetCardinalityNumber() != null) {
             Literal number = new Literal(astEdge.getTargetCardinalityNumber());
             graph.addLiteralVertex(number);
             graph.addDependency(edge,number,"targetCardinality");
         }
-
-        graph.addDependency(edge,visit(astEdge.getCorrellation()),"correllation");
         return edge;
     }
 
@@ -73,7 +77,7 @@ public class VerticesInserter extends AstVisitor<Vertex> {
         graph.addGeneratorVertex(generator);
         for(Ast.Atomic atomic : astGenerator.getInitParameters()) {
             Literal literal = visit(atomic);
-            graph.addDependency(generator,literal,"init");
+            graph.addDependency(generator,literal,"initparam");
         }
         return generator;
     }

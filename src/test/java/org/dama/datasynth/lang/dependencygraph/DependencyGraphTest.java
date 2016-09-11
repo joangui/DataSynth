@@ -156,14 +156,14 @@ public class DependencyGraphTest {
         Attribute countryRunParameter = (Attribute)requires.get(1);
         assertTrue(countryRunParameter.getName().compareTo("person.country") == 0);
 
-        assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"init").get(0)).getValue().compareTo("/email.txt") == 0);
-        assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"init").get(0)).getDataType() == Types.DataType.STRING);
-        assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"init").get(1)).getValue().compareTo("0") == 0);
-        assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"init").get(1)).getDataType() == Types.DataType.LONG);
-        assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"init").get(2)).getValue().compareTo("1") == 0);
-        assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"init").get(2)).getDataType() == Types.DataType.LONG);
-        assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"init").get(3)).getValue().compareTo(" ") == 0);
-        assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"init").get(3)).getDataType() == Types.DataType.STRING);
+        assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"initparam").get(0)).getValue().compareTo("/email.txt") == 0);
+        assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"initparam").get(0)).getDataType() == Types.DataType.STRING);
+        assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"initparam").get(1)).getValue().compareTo("0") == 0);
+        assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"initparam").get(1)).getDataType() == Types.DataType.LONG);
+        assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"initparam").get(2)).getValue().compareTo("1") == 0);
+        assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"initparam").get(2)).getDataType() == Types.DataType.LONG);
+        assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"initparam").get(3)).getValue().compareTo(" ") == 0);
+        assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"initparam").get(3)).getDataType() == Types.DataType.STRING);
 
 
 
@@ -178,27 +178,24 @@ public class DependencyGraphTest {
         assertTrue(((Attribute)dependencyGraph.getNeighbors(edge,"source").get(0)).getName().compareTo("person.oid") == 0);
         assertTrue(((Attribute)dependencyGraph.getNeighbors(edge,"target").get(0)).getName().compareTo("person.oid") == 0);
 
-        Generator sourceCardinality = (Generator)dependencyGraph.getNeighbors(edge,"sourceCardinality").get(0);
-        oidAttribute  = (Attribute)dependencyGraph.getNeighbors(sourceCardinality,"requires").get(0);
+        Attribute sourceCardinality = (Attribute)dependencyGraph.getNeighbors(edge,"sourceCardinality").get(0);
+        Generator sourceCardinalityGenerator = (Generator)dependencyGraph.getNeighbors(sourceCardinality,"generator").get(0);
+        oidAttribute  = (Attribute)dependencyGraph.getNeighbors(sourceCardinalityGenerator,"requires").get(0);
         assertTrue(oidAttribute.getName().compareTo("person.oid") == 0);
 
-        assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"init").get(0)).getValue().compareTo("/dicLocations.txt") == 0);
-        assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"init").get(0)).getDataType() == Types.DataType.STRING);
-        assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"init").get(1)).getValue().compareTo("1") == 0);
-        assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"init").get(1)).getDataType() == Types.DataType.LONG);
-        assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"init").get(2)).getValue().compareTo("5") == 0);
-        assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"init").get(2)).getDataType() == Types.DataType.LONG);
-        assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"init").get(3)).getValue().compareTo(" ") == 0);
-        assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"init").get(3)).getDataType() == Types.DataType.STRING);
+        assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"initparam").get(0)).getValue().compareTo("/dicLocations.txt") == 0);
+        assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"initparam").get(0)).getDataType() == Types.DataType.STRING);
+        assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"initparam").get(1)).getValue().compareTo("1") == 0);
+        assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"initparam").get(1)).getDataType() == Types.DataType.LONG);
+        assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"initparam").get(2)).getValue().compareTo("5") == 0);
+        assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"initparam").get(2)).getDataType() == Types.DataType.LONG);
+        assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"initparam").get(3)).getValue().compareTo(" ") == 0);
+        assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"initparam").get(3)).getDataType() == Types.DataType.STRING);
 
-        Generator correllation = (Generator)dependencyGraph.getNeighbors(edge,"correllation").get(0);
-        oidAttribute  = (Attribute)dependencyGraph.getNeighbors(correllation,"requires").get(0);
-        assertTrue(oidAttribute.getName().compareTo("person.oid") == 0);
-
-        countryAttribute  = (Attribute)dependencyGraph.getNeighbors(correllation,"requires").get(1);
+        countryAttribute = (Attribute)dependencyGraph.getNeighbors(edge,"correlates").get(0);
         assertTrue(countryAttribute.getName().compareTo("person.country") == 0);
 
-        nameAttribute  = (Attribute)dependencyGraph.getNeighbors(correllation,"requires").get(2);
+        nameAttribute  = (Attribute)dependencyGraph.getNeighbors(edge,"correlates").get(1);
         assertTrue(nameAttribute.getName().compareTo("person.name") == 0);
 
 
@@ -209,17 +206,15 @@ public class DependencyGraphTest {
         assertTrue(((Attribute)dependencyGraph.getNeighbors(edge,"source").get(0)).getName().compareTo("person.oid") == 0);
         assertTrue(((Attribute)dependencyGraph.getNeighbors(edge,"target").get(0)).getName().compareTo("person.oid") == 0);
 
-        sourceCardinality = (Generator)dependencyGraph.getNeighbors(edge,"sourceCardinality").get(0);
-        oidAttribute  = (Attribute)dependencyGraph.getNeighbors(sourceCardinality,"requires").get(0);
+        sourceCardinality = (Attribute)dependencyGraph.getNeighbors(edge,"sourceCardinality").get(0);
+        sourceCardinalityGenerator = (Generator)dependencyGraph.getNeighbors(sourceCardinality,"generator").get(0);
+        oidAttribute  = (Attribute)dependencyGraph.getNeighbors(sourceCardinalityGenerator,"requires").get(0);
         assertTrue(oidAttribute.getName().compareTo("person.oid") == 0);
 
         Literal targetCardinality = (Literal)dependencyGraph.getNeighbors(edge,"targetCardinality").get(0);
         assertTrue(targetCardinality.getValue().compareTo("1") == 0 && (targetCardinality.getDataType() == Types.DataType.LONG));
 
-        correllation = (Generator)dependencyGraph.getNeighbors(edge,"correllation").get(0);
-        oidAttribute  = (Attribute)dependencyGraph.getNeighbors(correllation,"requires").get(0);
-        assertTrue(oidAttribute.getName().compareTo("person.oid") == 0);
-        countryAttribute  = (Attribute)dependencyGraph.getNeighbors(correllation,"requires").get(1);
+        countryAttribute  = (Attribute)dependencyGraph.getNeighbors(edge,"correlates").get(0);
         assertTrue(countryAttribute.getName().compareTo("person.country") == 0);
 
     }

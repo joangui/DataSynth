@@ -1,8 +1,14 @@
 signature : {
-    @source = Edge
-    @target = Attribute
+    @A = Edge;
+    @A->source.name == @A->target.name;
+    @A.direction == 'undirected';
 }
 
-fp = new @source->generator.name(@source->generator.init);
-@edge.name = map(f, @source.dependencies);
+hashgenerator = init('org.dama.datasynth.generators.HashCombiner');
+hashdependencies = union(@A->source.name,@A->correlates.name);
+hashattribute = map(hashgenerator,hashdependencies);
+table = union(@A->source.name,hashattribute,@A->sourcecardinality.name);
+sorted = sort(table,1);
+edgegenerator = init('org.dama.datasynth.generators.UndirectedEdgeGenerator');
+@A.name = mappart(edgegenerator,sorted,10000);
 

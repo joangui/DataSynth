@@ -49,7 +49,6 @@ public class GeneratorRunParametersValid extends AstVisitor<Ast.Node> {
         if(targetCardinalityGenerator != null) {
             targetCardinalityGenerator.accept(this);
         }
-        edge.getCorrellation().accept(this);
         return edge;
     }
 

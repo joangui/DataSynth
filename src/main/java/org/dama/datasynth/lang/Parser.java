@@ -148,10 +148,18 @@ public class Parser {
                         }
                     }
 
-                    JSONObject correllation = (JSONObject) jsonedge.get("correllation");
-                    if(correllation != null) {
-                        JSONObject jsonGenerator = (JSONObject)correllation.get("generator");
-                        edge.setCorrellation(parseGenerator(jsonGenerator));
+                    JSONArray correlates = (JSONArray) jsonedge.get("correlates");
+                    if(correlates != null) {
+                        for(Object correlated : correlates) {
+                            try {
+                                String attributeName = (String)correlated;
+                                if(attributeName.indexOf(".") == -1) throw new SyntacticException(SyntacticException.SyntacticExceptionType.ILLFORMED_ATTRIBUTE_NAME,attributeName);
+                                edge.addCorrelates(new Ast.Atomic((String) attributeName));
+                            } catch(ClassCastException e) {
+                                throw new SyntacticException(SyntacticException.SyntacticExceptionType.INVALID_FIELD_TYPE, ". Non-string run parameter");
+                            }
+                        }
+
                     }
                     ast.addEdge(edge);
 

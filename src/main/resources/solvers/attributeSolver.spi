@@ -1,8 +1,7 @@
 signature : {
-    @source = Attribute
-    @target = Attribute
+    @source = Attribute;
 }
 
-f = new @source->generator.name(@source->generator->init.value);
+f = init(@source->generator.name,@source->generator->initparam.value);
 rparams = union(@source->generator->requires.name);
 @source.name = map(f, rparams);

@@ -48,36 +48,7 @@
             "init" : [1.7]
           }
       },
-      "correllation" : {
-        "generator" : {
-          "name" : "org.dama.datasynth.generators.HashCombiner",
-          "requires" : ["person.country","person.name"],
-          "init" : []
-        }
-      }
-    },
-    {
-      "name" : "parent",
-      "direction" : "directed",
-      "source" : "person",
-      "target" : "person",
-      "sourceCardinality" : {
-        "generator" : {
-          "name" : "org.dama.datasynth.generators.UniformDistribution",
-          "requires" : [],
-          "init" : [0,3]
-        }
-      },
-      "targetCardinality" : {
-        "number" : 1
-      },
-      "correllation" : {
-        "generator" : {
-          "name" : "org.dama.datasynth.generators.HashCombiner",
-          "requires" : ["person.country"],
-          "init" : []
-        }
-      }
+      "correlates" : ["person.country","person.name"]
     }
   ]
 }
