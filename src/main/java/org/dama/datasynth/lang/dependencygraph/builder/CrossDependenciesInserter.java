@@ -32,7 +32,7 @@ public class CrossDependenciesInserter extends AstVisitor<Ast.Node> {
     private void solveGeneratorOidDependency(Vertex vertex, Ast.Generator astGenerator, String generatorRelationName, String entityName) {
         List<Vertex> neighbors = graph.getNeighbors(vertex,generatorRelationName);
         Generator generator = (Generator)(neighbors.get(0));
-        graph.addDependency(generator,graph.getAttribute(entityName+".oid"),"runParameter");
+        graph.addDependency(generator,graph.getAttribute(entityName+".oid"),"requires");
     }
 
     private void solveGeneratorDependencies(Vertex vertex, Ast.Generator astGenerator, String generatorRelationName) {
@@ -40,7 +40,7 @@ public class CrossDependenciesInserter extends AstVisitor<Ast.Node> {
         Generator generator = (Generator)(neighbors.get(0));
         for(Ast.Atomic param : astGenerator.getRunParameters()) {
             Attribute attributeParameter = graph.getAttribute(param.getName());
-            graph.addDependency(generator,attributeParameter,"runParameter");
+            graph.addDependency(generator,attributeParameter,"requires");
         }
     }
 
@@ -55,6 +55,8 @@ public class CrossDependenciesInserter extends AstVisitor<Ast.Node> {
     @Override
     public Ast.Edge visit(Ast.Edge astEdge) {
         Edge edge = graph.getEdge(astEdge.getName());
+        graph.addDependency(edge,graph.getAttribute(astEdge.getSource()+".oid"),"source");
+        graph.addDependency(edge,graph.getAttribute(astEdge.getTarget()+".oid"),"target");
         if(astEdge.getSourceCardinalityGenerator() != null) {
             solveGeneratorOidDependency(edge,astEdge.getSourceCardinalityGenerator(),"sourceCardinality",astEdge.getSource());
             solveGeneratorDependencies(edge,astEdge.getSourceCardinalityGenerator(),"sourceCardinality");

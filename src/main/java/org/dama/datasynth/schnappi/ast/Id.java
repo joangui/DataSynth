@@ -3,7 +3,7 @@ package org.dama.datasynth.schnappi.ast;
 /**
  * Created by aprat on 24/08/16.
  */
-public class Id extends Any {
+public class Id extends Atomic {
     public Id(String value) {
         super(value);
     }

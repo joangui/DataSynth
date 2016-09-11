@@ -10,8 +10,8 @@
           "type" : "String",
           "generator" : {
             "name" : "org.dama.datasynth.generators.CDFGenerator",
-            "runParameters" : [],
-            "initParameters" : ["/dicLocations.txt",1,5," "]
+            "requires" : [],
+            "init" : ["/dicLocations.txt",1,5," "]
           }
         },
         {
@@ -19,8 +19,8 @@
           "type" : "String",
           "generator" : {
             "name" : "org.dama.datasynth.generators.DFGenerator",
-            "runParameters" : [],
-            "initParameters" : ["/email.txt",0,1," "]
+            "requires" : [],
+            "init" : ["/email.txt",0,1," "]
           }
         },
         {
@@ -28,8 +28,8 @@
           "type" : "String",
           "generator" : {
             "name" : "org.dama.datasynth.generators.DateGenerator",
-            "runParameters" : [],
-            "initParameters" : ["dd-MM-yyyy","01-01-1980","01-01-1990"]
+            "requires" : [],
+            "init" : ["dd-MM-yyyy","01-01-1980","01-01-1990"]
           }
         },
         {
@@ -37,8 +37,8 @@
           "type" : "String",
           "generator" : {
             "name" : "org.dama.datasynth.generators.CorrellationGenerator",
-            "runParameters" : ["country"],
-            "initParameters" : ["/namesByCountry.txt"," "]
+            "requires" : ["person.country"],
+            "init" : ["/namesByCountry.txt"," "]
           }
         },
         {
@@ -46,8 +46,8 @@
           "type" : "Long",
           "generator" : {
             "name" : "org.dama.datasynth.generators.DateBasedIDGenerator",
-            "runParameters" : ["oid","creationDate"],
-            "initParameters" : ["dd-MM-yyyy"]
+            "requires" : ["person.creationDate"],
+            "init" : ["dd-MM-yyyy"]
           }
         },
         {
@@ -55,8 +55,8 @@
           "type" : "String",
           "generator" : {
             "name" : "org.dama.datasynth.generators.MailGenerator",
-            "runParameters" : ["name"],
-            "initParameters" : ["/email.txt"]
+            "requires" : ["person.name"],
+            "init" : ["/email.txt"]
           }
         }
       ]

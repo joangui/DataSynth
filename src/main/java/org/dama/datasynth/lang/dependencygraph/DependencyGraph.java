@@ -1,7 +1,5 @@
 package org.dama.datasynth.lang.dependencygraph;
 
-import org.dama.datasynth.common.Types;
-import org.dama.datasynth.lang.Ast;
 import org.jgrapht.graph.DirectedMultigraph;
 
 import java.util.*;
@@ -41,7 +39,7 @@ public class DependencyGraph  {
      * @param attribute The Attribute to add
      */
     public void addAttributeVertex(Attribute attribute ) {
-        if(this.attributes.put(attribute.getAttributeName(), attribute) != null) throw new DependencyGraphConstructionException("Attribute with name "+attribute.getAttributeName()+" already exists.");
+        if(this.attributes.put(attribute.getName(), attribute) != null) throw new DependencyGraphConstructionException("Attribute with name "+attribute.getName()+" already exists.");
         graph.addVertex(attribute);
     }
 
@@ -68,6 +66,39 @@ public class DependencyGraph  {
      */
     public void addLiteralVertex(Literal literal) {
         graph.addVertex(literal);
+    }
+
+    /**
+     * Gets the Source of an edge
+     * @param edge The edge to get the source from
+     * @return The source vertex of the edge.
+     */
+    public Vertex getEdgeSource(DirectedEdge edge) {
+        return graph.getEdgeSource(edge);
+    }
+
+    /**
+     * Gets the Target of an edge
+     * @param edge The edge to get the target from
+     * @return The target vertex of the edge.
+     */
+    public Vertex getEdgeTarget(DirectedEdge edge) {
+        return graph.getEdgeTarget(edge);
+    }
+
+    /**
+     * Gets the edges of a Vertex
+     * @param vertex The Vertex to retrieve the edges from
+     * @return A list with the edges of the Vertex
+     */
+    public List<DirectedEdge> getEdges(Vertex vertex) {
+        if(!graph.containsVertex(vertex)) throw new DependencyGraphConstructionException("Error when querying the dependency graph. Vertex "+vertex.getId()+" of type "+vertex.getType()+" does not exist");
+        Set<DirectedEdge> edges = graph.outgoingEdgesOf(vertex);
+        List<DirectedEdge> neighbors = new ArrayList<DirectedEdge>();
+        for(DirectedEdge edge : edges) {
+            neighbors.add(edge);
+        }
+        return neighbors;
     }
 
     /**
@@ -185,75 +216,12 @@ public class DependencyGraph  {
         return new ArrayList(entities.values());
     }
 
+
     /**
-     * Initializes the dependency graph given an Ast
-     * @param ast The Ast to initialize the dependency graph from
+     * Gets the list of edges in the dependency graph
+     * @return The list of edges.
      */
-    /*private void initialize(Ast ast) {
-        Map<String,Attribute> tasks = new TreeMap<String,Attribute>();
-        for(Ast.Entity entity : ast.getEntities()) {
-            Vertex entityTask = new Entity(this,entity.getName());
-            entities.add(entityTask);
-            //g.addVertex(entityTask);
-            Attribute oid = new Attribute(this,entity,new Ast.Attribute("oid", Types.DataType.INTEGER, new Ast.Generator("IdGenerator")));
-            tasks.put(entity.getName()+".oid", oid);
-            addVertex(oid);
-            addVertex(entityTask);
-            addEdge(entityTask,oid);
-            for(Ast.Attribute attribute : entity.getAttributes()) {
-                Attribute task = new Attribute(this,entity,attribute);
-                tasks.put(task.getEntity().getName()+"."+task.getAttributeName(),task);
-                addVertex(task);
-                addEdge(task,oid);
-                addEdge(entityTask,task);
-            }
-        }
-
-        Set<Attribute> processed = new TreeSet<Attribute>((t1, t2) -> { return t1.toString().compareTo(t2.toString());});
-        for(Map.Entry<String,Attribute> task : tasks.entrySet() ) {
-            if(task.getKey().substring(task.getKey().length()-3, task.getKey().length()).equalsIgnoreCase("oid")){
-                processed.add(task.getValue());
-            }else if( !processed.contains(task.getValue())) {
-                List<Attribute> toProcess = new LinkedList<Attribute>();
-                toProcess.add(task.getValue());
-                while(!toProcess.isEmpty()) {
-                    Attribute currentTask = toProcess.get(0);
-                    toProcess.remove(0);
-                    processed.add(currentTask);
-                    for (String param : currentTask.getRunParameters()) {
-                        Attribute otherTask = tasks.get(currentTask.getEntity().getName()+"."+param);
-                        if (otherTask != null) {
-                            if (!processed.contains(otherTask)) {
-                                toProcess.add(otherTask);
-                            }
-                            addEdge(currentTask,otherTask);
-                        }
-                    }
-                }
-            }
-        }
-        System.out.println("Processed " + processed.size() + " Tasks " + tasks.size());
-        if(processed.size() != tasks.size()) throw new RuntimeException("Critical internal Error. Dependency plan wrongly built. Some nodes might be missing");
-
-        Map<String, Entity> entities = new HashMap<>();
-        for(Vertex vtx : this.entities) {
-            entities.put(vtx.getId(), (Entity) vtx);
-        }
-
-        for(Ast.Edge edge : ast.getEdges()) {
-            Entity entity = entities.get(edge.getEntity().getName());
-            ArrayList<Attribute> attributes = new ArrayList<Attribute>();
-            String orig = edge.getEntity().getName();
-            for(Ast.Attribute attr : edge.getEntity().getAttributes()) attributes.add(tasks.get(orig+"."+attr.getName()));
-            Edge et = new Edge(this, edge, entity, attributes);
-            addVertex(et);
-            addEdge(et,entity);
-        }
+    public List<Edge> getEdges() {
+        return new ArrayList(edges.values());
     }
-
-    public List<Vertex> getEntities() {
-        return entities;
-    }
-
-    */
 }

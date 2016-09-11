@@ -3,7 +3,6 @@ package org.dama.datasynth.lang.dependencygraph;
 import org.dama.datasynth.TestHelpers;
 import org.dama.datasynth.common.Types;
 import org.dama.datasynth.lang.Ast;
-import org.dama.datasynth.lang.SemanticException;
 import org.dama.datasynth.lang.dependencygraph.builder.DependencyGraphBuilder;
 import org.junit.Test;
 
@@ -16,6 +15,28 @@ import static org.junit.Assert.*;
  */
 public class DependencyGraphTest {
 
+    @Test
+    public void testPropertyValue() {
+
+        Vertex.PropertyValue value = new Vertex.PropertyValue(new Boolean(true));
+        assertTrue(value.getValue().compareTo("true") == 0);
+
+        value = new Vertex.PropertyValue(new Integer(1));
+        assertTrue(value.getValue().compareTo("1") == 0);
+
+        value = new Vertex.PropertyValue(new Long(1));
+        assertTrue(value.getValue().compareTo("1") == 0);
+
+        value = new Vertex.PropertyValue(new Float(1.0));
+        assertTrue(value.getValue().compareTo("1.0") == 0);
+
+        value = new Vertex.PropertyValue(new Double(1.0));
+        assertTrue(value.getValue().compareTo("1.0") == 0);
+
+        value = new Vertex.PropertyValue(new String("test"));
+        assertTrue(value.getValue().compareTo("test") == 0);
+
+    }
     @Test
     public void testMethods() {
 
@@ -51,18 +72,18 @@ public class DependencyGraphTest {
             graph.getEdge("Person-Friendship-Person");
 
             List<Vertex> neighbors = graph.getNeighbors(entityPerson);
-            assertTrue(neighbors.get(0).isType("Attribute") && (((Attribute)neighbors.get(0)).getAttributeName().compareTo("Person.name") == 0));
-            assertTrue(neighbors.get(1).isType("Attribute") && (((Attribute)neighbors.get(1)).getAttributeName().compareTo("Person.country") == 0));
-            assertTrue(neighbors.get(2).isType("Attribute") && (((Attribute)neighbors.get(2)).getAttributeName().compareTo("Person.age") == 0));
+            assertTrue(neighbors.get(0).isType("Attribute") && (((Attribute)neighbors.get(0)).getName().compareTo("Person.name") == 0));
+            assertTrue(neighbors.get(1).isType("Attribute") && (((Attribute)neighbors.get(1)).getName().compareTo("Person.country") == 0));
+            assertTrue(neighbors.get(2).isType("Attribute") && (((Attribute)neighbors.get(2)).getName().compareTo("Person.age") == 0));
 
             neighbors = graph.getNeighbors(entityPerson,"attribute");
-            assertTrue(neighbors.get(0).isType("Attribute") && (((Attribute)neighbors.get(0)).getAttributeName().compareTo("Person.name") == 0));
-            assertTrue(neighbors.get(1).isType("Attribute") && (((Attribute)neighbors.get(1)).getAttributeName().compareTo("Person.country") == 0));
-            assertTrue(neighbors.get(2).isType("Attribute") && (((Attribute)neighbors.get(2)).getAttributeName().compareTo("Person.age") == 0));
+            assertTrue(neighbors.get(0).isType("Attribute") && (((Attribute)neighbors.get(0)).getName().compareTo("Person.name") == 0));
+            assertTrue(neighbors.get(1).isType("Attribute") && (((Attribute)neighbors.get(1)).getName().compareTo("Person.country") == 0));
+            assertTrue(neighbors.get(2).isType("Attribute") && (((Attribute)neighbors.get(2)).getName().compareTo("Person.age") == 0));
 
             neighbors = graph.getNeighbors(attributeName,"dependsOn");
-            assertTrue(neighbors.get(0).isType("Attribute") && (((Attribute)neighbors.get(0)).getAttributeName().compareTo("Person.country") == 0));
-            assertTrue(neighbors.get(1).isType("Attribute") && (((Attribute)neighbors.get(1)).getAttributeName().compareTo("Person.age") == 0));
+            assertTrue(neighbors.get(0).isType("Attribute") && (((Attribute)neighbors.get(0)).getName().compareTo("Person.country") == 0));
+            assertTrue(neighbors.get(1).isType("Attribute") && (((Attribute)neighbors.get(1)).getName().compareTo("Person.age") == 0));
 
             neighbors = graph.getNeighbors(edgeFriendship,"source");
             assertTrue(neighbors.get(0).isType("Entity") && (((Entity)neighbors.get(0)).getName().compareTo("Person") == 0));
@@ -107,41 +128,7 @@ public class DependencyGraphTest {
 
     @Test
     public void testInitialize(){
-        /*Ast ast = new Ast();
-        Ast.Entity entity = new Ast.Entity("person",100L);
-        Ast.Generator attributeCountryGenerator = new Ast.Generator("org.dama.datasynth.generators.CDFGenerator");
-        attributeCountryGenerator.addInitParameter( new Ast.Atomic("countries.txt", Types.DataType.STRING));
-        attributeCountryGenerator.addInitParameter( new Ast.Atomic("0",Types.DataType.INTEGER));
-        attributeCountryGenerator.addInitParameter( new Ast.Atomic("1",Types.DataType.INTEGER));
-        attributeCountryGenerator.addInitParameter( new Ast.Atomic("|", Types.DataType.STRING));
-
-        Ast.Generator attributeNameGenerator = new Ast.Generator("org.dama.datasynth.generators.CorrellationGenerator");
-        attributeNameGenerator.addInitParameter(new Ast.Atomic("names.txt", Types.DataType.STRING));
-        attributeNameGenerator.addInitParameter(new Ast.Atomic("0", Types.DataType.INTEGER));
-        attributeNameGenerator.addInitParameter(new Ast.Atomic("1", Types.DataType.INTEGER));
-        attributeNameGenerator.addInitParameter(new Ast.Atomic("|", Types.DataType.STRING));
-
-        attributeNameGenerator.addRunParameter( new Ast.Atomic("person.country",Types.DataType.STRING));
-
-        Ast.Attribute attributeCounty = new Ast.Attribute("person.country", Types.DataType.STRING, attributeCountryGenerator);
-        Ast.Attribute attributeName = new Ast.Attribute("person.name", Types.DataType.STRING, attributeNameGenerator);
-
-        entity.addAttribute(attributeCounty);
-        entity.addAttribute(attributeName);
-
-        ast.addEntity(entity);
-
-        try {
-            ast.doSemanticAnalysis();
-        } catch (SemanticException e) {
-            System.err.println(e.getMessage());
-            e.printStackTrace();
-            assertTrue(true);
-        }
-        */
-
         Ast ast = TestHelpers.testQuery("src/test/resources/testqueries/dependencyGraphTest/testquery.json");
-
         DependencyGraph dependencyGraph = DependencyGraphBuilder.buildDependencyGraph(ast);
         List<Entity> entities = dependencyGraph.getEntities();
         try {
@@ -156,23 +143,84 @@ public class DependencyGraphTest {
 
         List<Vertex> attributes = dependencyGraph.getNeighbors(person,"attribute");
         Attribute oidAttribute = ((Attribute)attributes.get(0));
-        assertTrue(oidAttribute.getAttributeName().compareTo("person.oid") == 0);
+        assertTrue(oidAttribute.getName().compareTo("person.oid") == 0);
         Attribute countryAttribute = ((Attribute)attributes.get(1));
-        assertTrue(countryAttribute.getAttributeName().compareTo("person.country") == 0);
+        assertTrue(countryAttribute.getName().compareTo("person.country") == 0);
         Attribute nameAttribute = ((Attribute)attributes.get(2));
-        assertTrue(nameAttribute.getAttributeName().compareTo("person.name") == 0);
+        assertTrue(nameAttribute.getName().compareTo("person.name") == 0);
 
         Generator generator = (Generator)dependencyGraph.getNeighbors(nameAttribute,"generator").get(0);
-        List<Vertex> runParameters = dependencyGraph.getNeighbors(generator,"runParameter");
-        Attribute oidRunParameter = (Attribute)runParameters.get(0);
-        assertTrue(oidRunParameter.getAttributeName().compareTo("person.oid") == 0);
-        Attribute countryRunParameter = (Attribute)runParameters.get(1);
-        assertTrue(countryRunParameter.getAttributeName().compareTo("person.country") == 0);
+        List<Vertex> requires = dependencyGraph.getNeighbors(generator,"requires");
+        Attribute oidRunParameter = (Attribute)requires.get(0);
+        assertTrue(oidRunParameter.getName().compareTo("person.oid") == 0);
+        Attribute countryRunParameter = (Attribute)requires.get(1);
+        assertTrue(countryRunParameter.getName().compareTo("person.country") == 0);
+
+        assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"init").get(0)).getValue().compareTo("/email.txt") == 0);
+        assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"init").get(0)).getDataType() == Types.DataType.STRING);
+        assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"init").get(1)).getValue().compareTo("0") == 0);
+        assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"init").get(1)).getDataType() == Types.DataType.LONG);
+        assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"init").get(2)).getValue().compareTo("1") == 0);
+        assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"init").get(2)).getDataType() == Types.DataType.LONG);
+        assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"init").get(3)).getValue().compareTo(" ") == 0);
+        assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"init").get(3)).getDataType() == Types.DataType.STRING);
+
+
 
         generator = (Generator)dependencyGraph.getNeighbors(countryAttribute,"generator").get(0);
-        runParameters = dependencyGraph.getNeighbors(generator,"runParameter");
-        oidRunParameter = (Attribute)runParameters.get(0);
-        assertTrue(oidRunParameter.getAttributeName().compareTo("person.oid") == 0);
+        requires = dependencyGraph.getNeighbors(generator,"requires");
+        oidRunParameter = (Attribute)requires.get(0);
+        assertTrue(oidRunParameter.getName().compareTo("person.oid") == 0);
+
+        Edge edge = dependencyGraph.getEdge("friendship.person.person");
+        assertTrue(edge != null);
+        assertTrue(edge.getDirection() == Types.Direction.UNDIRECTED);
+        assertTrue(((Attribute)dependencyGraph.getNeighbors(edge,"source").get(0)).getName().compareTo("person.oid") == 0);
+        assertTrue(((Attribute)dependencyGraph.getNeighbors(edge,"target").get(0)).getName().compareTo("person.oid") == 0);
+
+        Generator sourceCardinality = (Generator)dependencyGraph.getNeighbors(edge,"sourceCardinality").get(0);
+        oidAttribute  = (Attribute)dependencyGraph.getNeighbors(sourceCardinality,"requires").get(0);
+        assertTrue(oidAttribute.getName().compareTo("person.oid") == 0);
+
+        assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"init").get(0)).getValue().compareTo("/dicLocations.txt") == 0);
+        assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"init").get(0)).getDataType() == Types.DataType.STRING);
+        assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"init").get(1)).getValue().compareTo("1") == 0);
+        assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"init").get(1)).getDataType() == Types.DataType.LONG);
+        assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"init").get(2)).getValue().compareTo("5") == 0);
+        assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"init").get(2)).getDataType() == Types.DataType.LONG);
+        assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"init").get(3)).getValue().compareTo(" ") == 0);
+        assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"init").get(3)).getDataType() == Types.DataType.STRING);
+
+        Generator correllation = (Generator)dependencyGraph.getNeighbors(edge,"correllation").get(0);
+        oidAttribute  = (Attribute)dependencyGraph.getNeighbors(correllation,"requires").get(0);
+        assertTrue(oidAttribute.getName().compareTo("person.oid") == 0);
+
+        countryAttribute  = (Attribute)dependencyGraph.getNeighbors(correllation,"requires").get(1);
+        assertTrue(countryAttribute.getName().compareTo("person.country") == 0);
+
+        nameAttribute  = (Attribute)dependencyGraph.getNeighbors(correllation,"requires").get(2);
+        assertTrue(nameAttribute.getName().compareTo("person.name") == 0);
+
+
+
+        edge = dependencyGraph.getEdge("parent.person.person");
+        assertTrue(edge != null);
+        assertTrue(edge.getDirection() == Types.Direction.DIRECTED);
+        assertTrue(((Attribute)dependencyGraph.getNeighbors(edge,"source").get(0)).getName().compareTo("person.oid") == 0);
+        assertTrue(((Attribute)dependencyGraph.getNeighbors(edge,"target").get(0)).getName().compareTo("person.oid") == 0);
+
+        sourceCardinality = (Generator)dependencyGraph.getNeighbors(edge,"sourceCardinality").get(0);
+        oidAttribute  = (Attribute)dependencyGraph.getNeighbors(sourceCardinality,"requires").get(0);
+        assertTrue(oidAttribute.getName().compareTo("person.oid") == 0);
+
+        Literal targetCardinality = (Literal)dependencyGraph.getNeighbors(edge,"targetCardinality").get(0);
+        assertTrue(targetCardinality.getValue().compareTo("1") == 0 && (targetCardinality.getDataType() == Types.DataType.LONG));
+
+        correllation = (Generator)dependencyGraph.getNeighbors(edge,"correllation").get(0);
+        oidAttribute  = (Attribute)dependencyGraph.getNeighbors(correllation,"requires").get(0);
+        assertTrue(oidAttribute.getName().compareTo("person.oid") == 0);
+        countryAttribute  = (Attribute)dependencyGraph.getNeighbors(correllation,"requires").get(1);
+        assertTrue(countryAttribute.getName().compareTo("person.country") == 0);
 
     }
 }

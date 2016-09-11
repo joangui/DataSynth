@@ -2,8 +2,7 @@ package org.dama.datasynth.lang.dependencygraph;
 
 import org.dama.datasynth.DataSynth;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -15,6 +14,9 @@ public class TextDependencyGraphPrinter extends DependencyGraphVisitor {
     private static final Logger logger= Logger.getLogger( DataSynth.class.getSimpleName() );
 
     private int                 indents     = -1;
+
+    private Map<Long,Long> visited = new HashMap<Long,Long>();
+    private Stack<String>  edgeNames = new Stack<String>();
 
 
     public TextDependencyGraphPrinter(DependencyGraph graph) {
@@ -33,7 +35,7 @@ public class TextDependencyGraphPrinter extends DependencyGraphVisitor {
         }
         if(indents != 0 ) {
             if(direct) {
-                strBuilder.append("|__");
+                strBuilder.append("|_{"+edgeNames.peek()+"}>");
             } else {
                 strBuilder.append("|**");
             }
@@ -42,49 +44,83 @@ public class TextDependencyGraphPrinter extends DependencyGraphVisitor {
     }
 
     private void explode(Vertex vertex) {
-        for(Vertex neighbor : graph.getNeighbors(vertex)) {
-            neighbor.accept(this);
+        for(DirectedEdge edge : graph.getEdges(vertex)) {
+            edgeNames.push(edge.getName());
+            graph.getEdgeTarget(edge).accept(this);
+            edgeNames.pop();
         }
     }
 
+    private void printVertex(Vertex vertex) {
+        logger.log(Level.FINE, new String(indents(true) + vertex.toString()));
+    }
+
+    public void print() {
+
+        List<Entity> entities = graph.getEntities();
+        for(Entity entity : entities) {
+            entity.accept(this);
+        }
+
+        List<Edge> edges = graph.getEdges();
+        for(Edge edge : edges) {
+            edge.accept(this);
+        }
+
+    }
 
     @Override
     public void visit(Entity entity) {
         indents++;
-        logger.log(Level.FINE,new String(indents(true)+entity.toString()));
-        explode(entity);
+        printVertex(entity);
+        if(visited.get(entity.getId()) == null) {
+            visited.put(entity.getId(),1L);
+            explode(entity);
+        }
         indents--;
     }
 
     @Override
     public void visit(Attribute attribute) {
         indents++;
-        logger.log(Level.FINE,new String(indents(true)+attribute.toString()));
-        explode(attribute);
+        printVertex(attribute);
+        if(visited.get(attribute.getId()) == null) {
+            visited.put(attribute.getId(), 1L);
+            explode(attribute);
+        }
         indents--;
     }
 
     @Override
-    public void visit(Edge relation) {
+    public void visit(Edge edge) {
         indents++;
-        logger.log(Level.FINE,new String(indents(true)+relation.toString()));
-        explode(relation);
+        printVertex(edge);
+        if(visited.get(edge.getId()) == null) {
+            visited.put(edge.getId(), 1L);
+            explode(edge);
+        }
         indents--;
     }
 
     @Override
     public void visit(Generator generator) {
         indents++;
-        logger.log(Level.FINE,new String(indents(true)+generator.toString()));
-        explode(generator);
+        printVertex(generator);
+        if(visited.get(generator.getId()) == null) {
+            visited.put(generator.getId(), 1L);
+            explode(generator);
+        }
         indents--;
     }
 
     @Override
     public void visit(Literal literal) {
         indents++;
-        logger.log(Level.FINE,new String(indents(true)+literal.toString()));
-        explode(literal);
+        printVertex(literal);
+        if(visited.get(literal.getId()) == null) {
+            visited.put(literal.getId(), 1L);
+            explode(literal);
+        }
         indents--;
     }
 }

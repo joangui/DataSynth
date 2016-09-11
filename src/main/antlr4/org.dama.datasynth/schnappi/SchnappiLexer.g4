@@ -78,6 +78,10 @@ FSLASH
     : '/'
     ;
 
+ARROW
+    : '->'
+    ;
+
 VTYPE
     : ATTR | ENTITY | RELATION;
 
@@ -116,7 +120,7 @@ TARGET
 ;
 
 BINDING
-: '@'(ID)(POINT ID)
+: '@'(ID)((POINT | ARROW) ID)+
 ;
 
 ESC

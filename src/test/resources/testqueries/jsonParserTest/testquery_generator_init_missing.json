@@ -10,7 +10,7 @@
           "type" : "string",
           "generator" : {
             "name" : "org.dama.datasynth.generators.CDFGenerator",
-            "runParameters" : []
+            "requires" : []
           }
         }
       ]

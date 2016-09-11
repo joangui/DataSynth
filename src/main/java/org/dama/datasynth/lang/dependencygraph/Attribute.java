@@ -7,9 +7,6 @@ import org.dama.datasynth.common.Types;
  */
 public class Attribute extends Vertex {
 
-    private String          attributeName   = null;
-    private Types.DataType dataType        = null;
-
     /**
      * Class Constructor
      * @param attributeName The name of the attribute
@@ -17,15 +14,14 @@ public class Attribute extends Vertex {
      */
     public Attribute(String attributeName, Types.DataType dataType ) {
         super();
-        this.attributeName = attributeName;
-        this.dataType = dataType;
+        properties.put("name",new PropertyValue(attributeName));
+        properties.put("datatype",new PropertyValue(dataType.getText()));
     }
 
     /**
      * Gets the generator of this attribute task
      * @return The name of the generator of this attribute task
      */
-    @Schnappi(name="generator")
     public String getGenerator() {
         /*for(DirectedEdge edge : graph.outgoingEdgesOf(this)) {
             if(edge.getName().compareTo("generator") == 0) {
@@ -40,8 +36,8 @@ public class Attribute extends Vertex {
      * Gets the name of the attribute this task is generating something for
      * @return The attribute
      */
-    public String getAttributeName() {
-        return attributeName;
+    public String getName() {
+        return properties.get("name").getValue();
     }
 
     /**
@@ -49,12 +45,12 @@ public class Attribute extends Vertex {
      * @return The attribute
      */
     public Types.DataType getDataType() {
-        return dataType;
+        return Types.DataType.fromString(properties.get("datatype").getValue());
     }
 
     @Override
     public String toString(){
-        return "[" + getAttributeName() + ","+getClass().getSimpleName()+"]";
+        return "[" + getName() + ","+getClass().getSimpleName()+"]";
     }
 
     public void accept(DependencyGraphVisitor visitor) {

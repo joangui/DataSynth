@@ -4,8 +4,8 @@ import org.dama.datasynth.lang.dependencygraph.*;
 import org.dama.datasynth.lang.dependencygraph.Literal;
 import org.dama.datasynth.schnappi.ast.Ast;
 import org.dama.datasynth.schnappi.ast.Number;
-import org.dama.datasynth.schnappi.solvers.Loader;
-import org.dama.datasynth.schnappi.solvers.Solver;
+import org.dama.datasynth.schnappi.solver.Loader;
+import org.dama.datasynth.schnappi.solver.Solver;
 
 import java.util.*;
 
@@ -41,7 +41,7 @@ public class Compiler extends DependencyGraphVisitor {
 
     private void solveVertex(Vertex v) throws CompilerException {
         Solver s = this.solversDB.get(v.getType());
-        if(s == null) throw new CompilerException("Unsolvable program. No solver for type "+v.getType());
+        if(s == null) throw new CompilerException(CompilerException.CompilerExceptionType.UNSOLVABLE_PROGRAM, "No solver for type "+v.getType());
         this.concatenateProgram(s.instantiate(v));
     }
 
@@ -56,8 +56,8 @@ public class Compiler extends DependencyGraphVisitor {
     }
 
     private void concatenateProgram(Ast p){
-        List<org.dama.datasynth.schnappi.schnappi.ast.Operation> statements = p.getStatements();
-        for(org.dama.datasynth.schnappi.schnappi.ast.Operation statement : statements){
+        List<org.dama.datasynth.schnappi.ast.Operation> statements = p.getStatements();
+        for(org.dama.datasynth.schnappi.ast.Operation statement : statements){
             this.program.addStatement(statement);
         }
     }
@@ -124,23 +124,23 @@ public class Compiler extends DependencyGraphVisitor {
     @Override
     public void visit(Attribute attribute) {
         if(!generatedVertices.contains(attribute.getId())) {
-            for(Vertex neighbor : graph.getNeighbors(attribute)) {
-                neighbor.accept(this);
-            }
-            if (!attribute.getAttributeName().contains(".oid")) {
+            if (!attribute.getName().contains(".oid")) {
+                for(Vertex neighbor : graph.getNeighbors(attribute)) {
+                    neighbor.accept(this);
+                }
                 try {
                     solveVertex(attribute);
                 } catch (CompilerException e) {
                     e.printStackTrace();
                 }
             } else {
-                String entityName = attribute.getAttributeName().substring(0,attribute.getAttributeName().indexOf(".")-1);
-                org.dama.datasynth.schnappi.schnappi.ast.Parameters parameters = new org.dama.datasynth.schnappi.schnappi.ast.Parameters(new Number(String.valueOf(graph.getEntity(entityName).getNumInstances())));
-                org.dama.datasynth.schnappi.schnappi.ast.Function function = new org.dama.datasynth.schnappi.schnappi.ast.Function("genids", parameters);
-                org.dama.datasynth.schnappi.schnappi.ast.Assign assign = new org.dama.datasynth.schnappi.schnappi.ast.Assign(new org.dama.datasynth.schnappi.schnappi.ast.Id(attribute.getAttributeName()), function);
+                String entityName = attribute.getName().substring(0,attribute.getName().indexOf("."));
+                org.dama.datasynth.schnappi.ast.Parameters parameters = new org.dama.datasynth.schnappi.ast.Parameters(new Number(String.valueOf(graph.getEntity(entityName).getNumInstances())));
+                org.dama.datasynth.schnappi.ast.Function function = new org.dama.datasynth.schnappi.ast.Function("genids", parameters);
+                org.dama.datasynth.schnappi.ast.Assign assign = new org.dama.datasynth.schnappi.ast.Assign(new org.dama.datasynth.schnappi.ast.Id(attribute.getName()), function);
                 this.program.addStatement(assign);
             }
-            generatedVertices.add(attribute.getAttributeName());
+            generatedVertices.add(attribute.getName());
         }
     }
 
@@ -164,11 +164,13 @@ public class Compiler extends DependencyGraphVisitor {
 
     @Override
     public void visit(Generator generator) {
-        throw new CompilerException("Method visit Generator in compiler not implemented.");
+        for(Vertex vertex : graph.getNeighbors(generator,"requires")) {
+            vertex.accept(this);
+        }
     }
 
     @Override
     public void visit(Literal literal) {
-        throw new CompilerException("Method visit Literal in compiler not implemented.");
+        throw new RuntimeException("Method visit Literal in compiler not implemented.");
     }
 }

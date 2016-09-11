@@ -1,4 +1,4 @@
-package org.dama.datasynth.schnappi.solvers;
+package org.dama.datasynth.schnappi.solver;
 
 import org.dama.datasynth.lang.dependencygraph.Vertex;
 import org.dama.datasynth.schnappi.ast.Ast;

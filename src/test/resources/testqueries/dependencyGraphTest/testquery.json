@@ -10,8 +10,8 @@
           "type" : "String",
           "generator" : {
             "name" : "org.dama.datasynth.generators.CDFGenerator",
-            "runParameters" : [],
-            "initParameters" : ["/dicLocations.txt",1,5," "]
+            "init" : ["/dicLocations.txt",1,5," "],
+            "requires" : []
           }
         },
         {
@@ -19,8 +19,8 @@
           "type" : "String",
           "generator" : {
             "name" : "org.dama.datasynth.generators.DFGenerator",
-            "runParameters" : ["person.country"],
-            "initParameters" : ["/email.txt",0,1," "]
+            "init" : ["/email.txt",0,1," "],
+            "requires" : ["person.country"]
           }
         }
       ]
@@ -35,15 +35,15 @@
       "sourceCardinality" : {
         "generator" : {
             "name" : "org.dama.datasynth.generators.ZipfDistribution",
-            "runParameters" : [],
-            "initParameters" : [1.7]
+            "init" : [1.7],
+            "requires" : []
           }
       },
       "correllation" : {
         "generator" : {
           "name" : "org.dama.datasynth.generators.HashCombiner",
-          "runParameters" : ["person.country","person.name"],
-          "initParameters" : []
+          "init" : [],
+          "requires" : ["person.country","person.name"]
         }
       }
     },
@@ -55,8 +55,8 @@
       "sourceCardinality" : {
         "generator" : {
           "name" : "org.dama.datasynth.generators.UniformDistribution",
-          "runParameters" : [],
-          "initParameters" : [0,3]
+          "init" : [0,3],
+          "requires" : []
         }
       },
       "targetCardinality" : {
@@ -65,8 +65,8 @@
       "correllation" : {
         "generator" : {
           "name" : "org.dama.datasynth.generators.HashCombiner",
-          "runParameters" : ["person.country"],
-          "initParameters" : []
+          "init" : [],
+          "requires" : ["person.country"]
         }
       }
     }

@@ -66,9 +66,9 @@ public class JsonParserTest {
     public void testSyntaxGeneratorFields() {
         testSyntacticError("src/test/resources/testqueries/jsonParserTest/testquery_generator_name_missing.json", SyntacticException.SyntacticExceptionType.MISSING_FIELD);
         testSyntacticError("src/test/resources/testqueries/jsonParserTest/testquery_generator_name_value_type_no_string.json", SyntacticException.SyntacticExceptionType.INVALID_FIELD_TYPE);
-        testSyntacticError("src/test/resources/testqueries/jsonParserTest/testquery_generator_runparameters_no_string.json", SyntacticException.SyntacticExceptionType.INVALID_FIELD_TYPE);
-        testSyntacticError("src/test/resources/testqueries/jsonParserTest/testquery_generator_runparameters_missing.json", SyntacticException.SyntacticExceptionType.MISSING_FIELD);
-        testSyntacticError("src/test/resources/testqueries/jsonParserTest/testquery_generator_initparameters_missing.json", SyntacticException.SyntacticExceptionType.MISSING_FIELD);
+        testSyntacticError("src/test/resources/testqueries/jsonParserTest/testquery_generator_requires_no_string.json", SyntacticException.SyntacticExceptionType.INVALID_FIELD_TYPE);
+        testSyntacticError("src/test/resources/testqueries/jsonParserTest/testquery_generator_requires_missing.json", SyntacticException.SyntacticExceptionType.MISSING_FIELD);
+        testSyntacticError("src/test/resources/testqueries/jsonParserTest/testquery_generator_init_missing.json", SyntacticException.SyntacticExceptionType.MISSING_FIELD);
     }
 
     @Test
@@ -79,7 +79,7 @@ public class JsonParserTest {
     @Test
     public void testSemanticGenerator(){
         testSemanticError("src/test/resources/testqueries/jsonParserTest/testquery_generator_name_invalid.json", SemanticException.SemanticExceptionType.GENERATOR_NOT_EXISTS);
-        testSemanticError("src/test/resources/testqueries/jsonParserTest/testquery_generator_runparameters_invalid.json", SemanticException.SemanticExceptionType.ATTRIBUTE_NAME_UNEXISTING);
+        testSemanticError("src/test/resources/testqueries/jsonParserTest/testquery_generator_requires_invalid.json", SemanticException.SemanticExceptionType.ATTRIBUTE_NAME_UNEXISTING);
     }
 
     @Test

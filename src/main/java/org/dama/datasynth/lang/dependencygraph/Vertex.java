@@ -1,39 +1,59 @@
 package org.dama.datasynth.lang.dependencygraph;
 
+import com.oracle.webservices.internal.api.message.PropertySet;
+import org.dama.datasynth.common.Types;
+
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * Created by quim on 5/10/16.
  */
 public abstract class Vertex {
 
-    private static int nextId = 0;
+    private static long nextId = 0;
 
-    private int id;
+    public static class PropertyValue {
 
-    @Retention(RetentionPolicy.RUNTIME)
-    @Inherited
-    public @interface Schnappi {
-       String name();
-    }
+        private String value;
+        private Types.DataType dataType;
+
+        public PropertyValue(Object value) {
+            this.value = value.toString();
+            this.dataType = Types.DataType.fromObject(value);
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public Types.DataType getDataType() {
+            return dataType;
+        }
+    };
+
+    protected Map<String,PropertyValue> properties = null;
 
 
     /**
      * Constructor
      */
     public Vertex(){
-        this.id = nextId++;
+        properties = new HashMap<String,PropertyValue>();
+        properties.put("id",new PropertyValue(nextId));
+        nextId++;
     }
 
     /**
      * Gets the unique id of the vertex
      * @return The unique id of the vertex
      */
-    @Schnappi(name = "id")
-    public int getId() {
-        return id;
+     public long getId() {
+        return Long.parseLong(properties.get("id").getValue());
     }
 
     /**
@@ -51,6 +71,10 @@ public abstract class Vertex {
      */
     public boolean isType(String type) {
         return getType().compareTo(type) == 0;
+    }
+
+    public Map<String,PropertyValue> getProperties() {
+        return properties;
     }
 
     @Override

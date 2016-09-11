@@ -5,10 +5,17 @@ package org.dama.datasynth.lang.dependencygraph;
  */
 public class Generator extends Vertex {
 
-    private String name;
-
     public Generator(String name) {
-        this.name = name;
+        properties.put("name",new PropertyValue(name));
+    }
+
+    public String getName() {
+        return properties.get("name").getValue();
+    }
+
+    @Override
+    public String toString(){
+        return "[" + getName() + ","+getClass().getSimpleName()+"]";
     }
 
     @Override
@@ -16,7 +23,4 @@ public class Generator extends Vertex {
         visitor.visit(this);
     }
 
-    public String getName() {
-        return name;
-    }
 }

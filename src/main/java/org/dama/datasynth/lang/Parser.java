@@ -18,9 +18,9 @@ public class Parser {
         if(jsonGenerator != null) {
             String name = getFieldNoNull(jsonGenerator, "Generator", "name",String.class);
             generator = new Ast.Generator(name);
-            JSONArray runParameters = (JSONArray) jsonGenerator.get("runParameters");
-            if(runParameters == null) throw new SyntacticException(SyntacticException.SyntacticExceptionType.MISSING_FIELD,"runParameters");
-            for (Object runParameter : runParameters) {
+            JSONArray requires = (JSONArray) jsonGenerator.get("requires");
+            if(requires == null) throw new SyntacticException(SyntacticException.SyntacticExceptionType.MISSING_FIELD,"requires");
+            for (Object runParameter : requires) {
                 try {
                     String attributeName = (String)runParameter;
                     if(attributeName.indexOf(".") == -1) throw new SyntacticException(SyntacticException.SyntacticExceptionType.ILLFORMED_ATTRIBUTE_NAME,attributeName);
@@ -30,9 +30,9 @@ public class Parser {
                 }
             }
 
-            JSONArray initParameters = (JSONArray) jsonGenerator.get("initParameters");
-            if(initParameters == null) throw new SyntacticException(SyntacticException.SyntacticExceptionType.MISSING_FIELD, " initParameters in Generator");
-            for (Object initParameter : initParameters) {
+            JSONArray init = (JSONArray) jsonGenerator.get("init");
+            if(init == null) throw new SyntacticException(SyntacticException.SyntacticExceptionType.MISSING_FIELD, " init in Generator");
+            for (Object initParameter : init) {
                 if( initParameter instanceof Long) {
                     generator.addInitParameter(new Ast.Atomic(((Long) initParameter).toString(), Types.DataType.LONG));
                 } else if(initParameter instanceof Double) {
@@ -40,7 +40,7 @@ public class Parser {
                 } else if(initParameter instanceof String) {
                     generator.addInitParameter(new Ast.Atomic(((String) initParameter), Types.DataType.STRING));
                 } else {
-                    throw new SyntacticException(SyntacticException.SyntacticExceptionType.INVALID_VALUE_TYPE," when parsing initParameters");
+                    throw new SyntacticException(SyntacticException.SyntacticExceptionType.INVALID_VALUE_TYPE," when parsing init");
                 }
             }
         }
@@ -118,8 +118,8 @@ public class Parser {
 
                     Types.Direction direction = Types.Direction.fromString(edgeDirection);
                     if(direction == null) throw new SyntacticException(SyntacticException.SyntacticExceptionType.INVALID_DIRECTION_TYPE, edgeDirection+" .Edge direction must be either \"directed\" or \"undirected\"");
-                    Ast.Edge edge = new Ast.Edge(edgeName, edgeSource, edgeTarget, direction);
 
+                    Ast.Edge edge = new Ast.Edge(edgeName+"."+edgeSource+"."+edgeTarget, edgeSource, edgeTarget, direction);
                     JSONObject sourceCardinality = (JSONObject) jsonedge.get("sourceCardinality");
                     if(sourceCardinality != null) {
                         JSONObject jsonGenerator = (JSONObject)sourceCardinality.get("generator");

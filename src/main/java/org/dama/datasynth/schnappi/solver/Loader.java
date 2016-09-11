@@ -1,4 +1,4 @@
-package org.dama.datasynth.schnappi.solvers;
+package org.dama.datasynth.schnappi.solver;
 
 import org.apache.commons.io.FileUtils;
 import org.dama.datasynth.DataSynth;

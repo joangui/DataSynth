@@ -4,7 +4,7 @@ import org.dama.datasynth.DataSynth;
 import org.dama.datasynth.schnappi.ast.*;
 import org.dama.datasynth.schnappi.ast.Number;
 import org.dama.datasynth.schnappi.ast.Visitor;
-import org.dama.datasynth.schnappi.solvers.Solver;
+import org.dama.datasynth.schnappi.solver.Solver;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -101,7 +101,7 @@ public class AstTreePrinter implements Visitor {
     }
 
     @Override
-    public void visit(Any n) {
+    public void visit(Atomic n) {
         indents++;
         logger.log(Level.FINE,(indents(true)+n.toString()));
         indents--;

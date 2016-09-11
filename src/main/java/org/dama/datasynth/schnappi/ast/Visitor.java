@@ -1,8 +1,6 @@
 package org.dama.datasynth.schnappi.ast;
 
-import org.dama.datasynth.schnappi.ast.*;
-import org.dama.datasynth.schnappi.ast.Number;
-import org.dama.datasynth.schnappi.solvers.Solver;
+import org.dama.datasynth.schnappi.solver.Solver;
 
 /**
  * Created by quim on 5/30/16.
@@ -16,7 +14,7 @@ public interface Visitor {
     public abstract void visit(Signature n);
     public abstract void visit(Solver n);
     public abstract void visit(Operation n);
-    public abstract void visit(Any n);
+    public abstract void visit(Atomic n);
     public abstract void visit(Id n);
     public abstract void visit(StringLiteral n);
     public abstract void visit(Number n);

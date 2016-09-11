@@ -10,7 +10,8 @@
           "type" : "string",
           "generator" : {
             "name" : "org.dama.datasynth.generators.CDFGenerator",
-            "initParameters" : []
+            "requires" : ["person.invalid"],
+            "init" : []
           }
         }
       ]

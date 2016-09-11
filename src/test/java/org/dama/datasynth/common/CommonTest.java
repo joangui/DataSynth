@@ -9,6 +9,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by aprat on 18/08/16.
@@ -45,6 +46,19 @@ public class CommonTest {
 
         DATATYPETestAssertNotEqualsHelper("strng", Types.DataType.STRING);
 
+
+        DATATYPETestFromObjectHelper(new Boolean(true), "boolean");
+        DATATYPETestFromObjectHelper(new Integer(1), "integer");
+        DATATYPETestFromObjectHelper(new Long(1), "long");
+        DATATYPETestFromObjectHelper(new Float(1.0), "float");
+        DATATYPETestFromObjectHelper(new Double(1.0), "double");
+        DATATYPETestFromObjectHelper(new String("test"), "string");
+
+    }
+
+    private <T> void DATATYPETestFromObjectHelper(T var, String type) {
+        Types.DataType dataType = Types.DataType.fromObject(var);
+        assertEquals(dataType,Types.DataType.fromString(type));
     }
 
     private void DATATYPETestAssertEqualsHelper(String text, Types.DataType type) {

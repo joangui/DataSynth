@@ -57,7 +57,7 @@ public class VerticesInserter extends AstVisitor<Vertex> {
 
         if(astEdge.getTargetCardinalityGenerator() != null) {
             graph.addDependency(edge,visit(astEdge.getTargetCardinalityGenerator()),"targetCardinality");
-        } else if(astEdge.getSourceCardinalityNumber() != null) {
+        } else if(astEdge.getTargetCardinalityNumber() != null) {
             Literal number = new Literal(astEdge.getTargetCardinalityNumber().toString(), Types.DataType.LONG);
             graph.addLiteralVertex(number);
             graph.addDependency(edge,number,"targetCardinality");
@@ -73,7 +73,7 @@ public class VerticesInserter extends AstVisitor<Vertex> {
         graph.addGeneratorVertex(generator);
         for(Ast.Atomic atomic : astGenerator.getInitParameters()) {
             Literal literal = visit(atomic);
-            graph.addDependency(generator,literal,"initParameter");
+            graph.addDependency(generator,literal,"init");
         }
         return generator;
     }

@@ -8,29 +8,19 @@ import org.dama.datasynth.common.Types;
 public class Edge extends Vertex {
 
 
-    private String name     = null;
-    private Types.Direction direction;
 
     public Edge(String name, Types.Direction direction) {
         super();
-        this.name = name;
-        this.direction = direction;
+        properties.put("name",new PropertyValue(name));
+        properties.put("direction",new PropertyValue(direction.getText()));
     }
 
     public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+        return properties.get("name").getValue();
     }
 
     public Types.Direction getDirection() {
-        return direction;
-    }
-
-    public void setDirection(Types.Direction direction) {
-        this.direction = direction;
+        return Types.Direction.fromString(properties.get("direction").getValue());
     }
 
     @Override
@@ -40,6 +30,6 @@ public class Edge extends Vertex {
 
     @Override
     public String toString(){
-        return "[" + name + ","+direction.toString()+","+getClass().getSimpleName()+"]";
+        return "[" + getName() + ","+getDirection().toString()+","+getClass().getSimpleName()+"]";
     }
 }

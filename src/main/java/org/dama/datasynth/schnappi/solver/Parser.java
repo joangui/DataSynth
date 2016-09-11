@@ -1,10 +1,10 @@
-package org.dama.datasynth.schnappi.solvers;
+package org.dama.datasynth.schnappi.solver;
 
 import org.antlr.v4.runtime.ANTLRFileStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.dama.datasynth.schnappi.SchnappiGeneratorVisitor;
-import org.dama.datasynth.schnappi.schnappi.SchnappiLexer;
-import org.dama.datasynth.schnappi.schnappi.SchnappiParser;
+import org.dama.datasynth.schnappi.SchnappiLexer;
+import org.dama.datasynth.schnappi.SchnappiParser;
 
 import java.io.IOException;
 

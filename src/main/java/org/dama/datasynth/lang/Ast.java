@@ -215,8 +215,8 @@ public class Ast {
         private Types.Direction direction = null;
         private Generator       sourceCardinalityGenerator = null;
         private Generator       targetCardinalityGenerator = null;
-        private Long            sourceCardinalityNumber = -1L;
-        private Long            targetCardinalityNumber = -1L;
+        private Long            sourceCardinalityNumber = null;
+        private Long            targetCardinalityNumber = null;
         private Generator       correllation = null;
 
         /**

@@ -3,6 +3,6 @@ signature : {
     @target = Attribute
 }
 
-fp = new @source.generator(@source.initParameters);
-@edge.id = map(f, @source.dependencies);
+fp = new @source->generator.name(@source->generator.init);
+@edge.name = map(f, @source.dependencies);
 

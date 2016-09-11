@@ -14,15 +14,15 @@
       "sourceCardinality" : {
         "generator" : {
             "name" : "org.dama.datasynth.generators.ZipfDistribution",
-            "runParameters" : [],
-            "initParameters" : [1.7]
+            "requires" : [],
+            "init" : [1.7]
           }
       },
       "correllation" : {
         "generator" : {
           "name" : "org.dama.datasynth.generators.HashCombiner",
-          "runParameters" : ["person.country","person.name"],
-          "initParameters" : []
+          "requires" : ["person.country","person.name"],
+          "init" : []
         }
       }
     }

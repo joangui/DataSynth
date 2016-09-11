@@ -8,8 +8,6 @@ public class Entity extends Vertex  {
     /**
      * The entity name
      */
-    private String name;
-    private long numInstances;
 
     /**
      * The name of the entity
@@ -17,16 +15,16 @@ public class Entity extends Vertex  {
      * @param name
      */
     public Entity(String name, long numInstances) {
-        this.name = name;
-        this.numInstances = numInstances;
+        properties.put("name",new PropertyValue(name));
+        properties.put("number", new PropertyValue(numInstances));
     }
 
     /**
      * Gets the entity name
      * @return The entity name
      */
-    public String getName() {
-        return name;
+    public String getName(){
+        return properties.get("name").getValue();
     }
 
     /**
@@ -34,12 +32,12 @@ public class Entity extends Vertex  {
      * @return The number of instances
      */
     public long getNumInstances() {
-        return numInstances;
+        return Long.parseLong(properties.get("number").getValue());
     }
 
     @Override
     public String toString(){
-        return "[" + name + ","+getClass().getSimpleName()+"]";
+        return "[" + getName() + ","+getClass().getSimpleName()+"]";
     }
 
     @Override

@@ -5,7 +5,7 @@ import org.dama.datasynth.schnappi.CompilerException;
 import org.dama.datasynth.schnappi.ast.*;
 import org.dama.datasynth.schnappi.ast.Number;
 import org.dama.datasynth.schnappi.ast.Visitor;
-import org.dama.datasynth.schnappi.solvers.Solver;
+import org.dama.datasynth.schnappi.solver.Solver;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -26,6 +26,8 @@ public class SolverInstantiator implements Visitor {
 
 
     private Method findMethod(Vertex vertex, String methodName) {
+        throw new RuntimeException("Method not implemented");
+        /*
         Method [] methods =  null;
         String className = "org.dama.datasynth.lang.dependencygraph."+vertex.getType();
         try {
@@ -43,33 +45,11 @@ public class SolverInstantiator implements Visitor {
             }
         }
         throw new CompilerException("Error when processing binding. Unable to find a method with name \""+methodName+"\" in vertex of type "+vertex.getType());
+        */
     }
 
     private List<Expression> processBinding(Binding binding) {
         List<Expression> retList = new LinkedList<Expression>();
-        String value = binding.getValue();
-        int pointIndex = value.indexOf('.');
-        String methodName = value.substring(pointIndex+1,value.length());
-        Method method = findMethod(vertex,methodName);
-        try {
-            Class returnType = method.getReturnType();
-            if(String.class.isAssignableFrom(returnType)) {
-                retList.add(new Any((String)method.invoke(vertex)));
-            } else {
-                if(Collection.class.isAssignableFrom(returnType)) {
-                    Collection<String> strs = (Collection)method.invoke(vertex);
-                    for(String str : strs) {
-                        retList.add(new Any(str));
-                    }
-                } else {
-                    throw new CompilerException("Method " + method.getName() + " in type " + vertex.getType() + " has an invalid return type "+returnType.getName());
-                }
-            }
-        } catch (IllegalAccessException e) {
-            throw new CompilerException("Method "+method.getName()+" in type "+vertex.getType()+" cannot be called for binding substitution purposes");
-        } catch (InvocationTargetException e) {
-            throw new CompilerException("Method "+method.getName()+" in type "+vertex.getType()+" cannot be called for binding substitution purposes");
-        }
         return retList;
     }
 
@@ -79,17 +59,16 @@ public class SolverInstantiator implements Visitor {
             n.getId().accept(this);
         } else {
             List<Expression> exprs = processBinding((Binding)n.getId());
-            if(exprs.size() > 1) throw new CompilerException("Invalid binding replacement in assign operation. Cannot assign more than one expression.");
-            if(exprs.size() == 0) throw new CompilerException("Invalid binding replacement in assign operation. Binding in assign operation must return one corresponding binging");
-        //    if(exprs.get(0).getType().compareTo("Id") != 0) throw new CompilerException("Invalid binding replacement in assign operation. Cannot assign an expression to something different than an Id.");
-            n.setId(new Id(((Any)exprs.get(0)).getValue()));
+            if(exprs.size() > 1) throw new CompilerException(CompilerException.CompilerExceptionType.INVALID_BINDING_ASSIGN, "Cannot assign more than one expression.");
+            if(exprs.size() == 0) throw new CompilerException(CompilerException.CompilerExceptionType.INVALID_BINDING_ASSIGN, "Binding in assign operation must return one corresponding binging");
+            n.setId(new Id(((Atomic)exprs.get(0)).getValue()));
         }
 
         if(n.getExpression().getType().compareTo("Binding") != 0) {
             n.getExpression().accept(this);
         } else {
             List<Expression> exprs = processBinding((Binding)n.getExpression());
-            if(exprs.size() > 1) throw new CompilerException("Invalid binding replacement in assign operation. Cannot assign more than one expression.");
+            if(exprs.size() > 1) throw new CompilerException(CompilerException.CompilerExceptionType.INVALID_BINDING_ASSIGN, "Cannot assign more than one expression.");
             n.setExpression(exprs.get(0));
         }
     }
@@ -144,7 +123,7 @@ public class SolverInstantiator implements Visitor {
     }
 
     @Override
-    public void visit(Any any) {
+    public void visit(Atomic atomic) {
 
     }
 

@@ -10,8 +10,8 @@
           "type" : "string",
           "generator" : {
             "name" : "org.dama.datasynth.generators.invalid",
-            "runParameters" : [],
-            "initParameters" : []
+            "requires" : [],
+            "init" : []
           }
         }
       ]

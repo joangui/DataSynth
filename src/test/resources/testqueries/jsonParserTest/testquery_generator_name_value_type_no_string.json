@@ -10,8 +10,8 @@
           "type" : "string",
           "generator" : {
             "name" : 10,
-            "runParameters" : [],
-            "initParameters" : []
+            "requires" : [],
+            "init" : []
           }
         }
       ]

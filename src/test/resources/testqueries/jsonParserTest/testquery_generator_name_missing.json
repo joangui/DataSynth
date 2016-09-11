@@ -9,8 +9,8 @@
           "name" : "attribute1",
           "type" : "string",
           "generator" : {
-            "runParameters" : [],
-            "initParameters" : []
+            "requires" : [],
+            "init" : []
           }
         }
       ]

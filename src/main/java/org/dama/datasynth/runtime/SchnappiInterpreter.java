@@ -46,7 +46,7 @@ public class SchnappiInterpreter {
 
     public Tuple execInit(Function fn){
         Parameters pn = (Parameters) fn.getParameters();
-        String generatorName = ((Any)pn.getParam(0)).getValue();
+        String generatorName = ((Atomic)pn.getParam(0)).getValue();
         Generator generator = null;
         try {
             generator = (Generator)Class.forName(generatorName).newInstance();
@@ -84,10 +84,10 @@ public class SchnappiInterpreter {
                 return table.get(((Binding) n).getValue());
             case "Id":
                 return table.get(((Id) n).getValue());
-            case "Any":
-                Tuple aux = table.get(((Any) n).getValue());
+            case "Atomic":
+                Tuple aux = table.get(((Atomic) n).getValue());
                 if(aux != null) return aux;
-                return new Tuple(((Any)n).getValue(),1);
+                return new Tuple(((Atomic)n).getValue(),1);
             case "Function":
                 return execFunc((Function)n);
             default:
@@ -119,8 +119,8 @@ public class SchnappiInterpreter {
         }
     }
     public Tuple execMap(Function fn) {
-        Any pn0 = (Any)fn.getParameters().getParam(0);
-        Any pn1 = (Any)fn.getParameters().getParam(1);
+        Atomic pn0 = (Atomic)fn.getParameters().getParam(0);
+        Atomic pn1 = (Atomic)fn.getParameters().getParam(1);
         Tuple rd = table.get(pn1.getValue());
         org.apache.spark.api.java.function.Function f = fetchFunction(pn0.getValue(), (Integer)rd.get(1));
         JavaPairRDD<Long, Tuple> rdd = (JavaPairRDD<Long, Tuple>) rd.get(0);
@@ -169,7 +169,7 @@ public class SchnappiInterpreter {
 
     public Tuple execGenids(Function fn){
         Parameters pn = fn.getParameters();
-        int n = Integer.parseInt(((Any)pn.getParam(0)).getValue());
+        int n = Integer.parseInt(((Atomic)pn.getParam(0)).getValue());
         List<Long> init = new ArrayList<Long>();
         for(long i = 0; i < n; ++i) {
             init.add(i);

@@ -75,6 +75,11 @@ public class Types {
             }
             return null;
         }
+
+        public static <T> DataType fromObject(T object)  {
+                return fromString(object.getClass().getSimpleName());
+        }
+
     }
 
     /**

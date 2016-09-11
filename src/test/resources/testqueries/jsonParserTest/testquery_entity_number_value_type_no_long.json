@@ -10,8 +10,8 @@
           "type" : "String",
           "generator" : {
             "name" : "org.dama.datasynth.generators.CDFGenerator",
-            "runParameters" : [],
-            "initParameters" : ["/dicLocations.txt",1,5," "]
+            "requires" : [],
+            "init" : ["/dicLocations.txt",1,5," "]
           }
         },
         {
@@ -19,8 +19,8 @@
           "type" : "String",
           "generator" : {
             "name" : "org.dama.datasynth.generators.DFGenerator",
-            "runParameters" : [],
-            "initParameters" : ["/email.txt",0,1," "]
+            "requires" : [],
+            "init" : ["/email.txt",0,1," "]
           }
         },
         {
@@ -28,8 +28,8 @@
           "type" : "String",
           "generator" : {
             "name" : "org.dama.datasynth.generators.CorrellationGenerator",
-            "runParameters" : ["person.country"],
-            "initParameters" : ["/namesByCountry.txt"," "]
+            "requires" : ["person.country"],
+            "init" : ["/namesByCountry.txt"," "]
           }
         }
       ]
@@ -44,15 +44,15 @@
       "sourceCardinality" : {
         "generator" : {
             "name" : "org.dama.datasynth.generators.ZipfDistribution",
-            "runParameters" : [],
-            "initParameters" : [1.7]
+            "requires" : [],
+            "init" : [1.7]
           }
       },
       "correllation" : {
         "generator" : {
           "name" : "org.dama.datasynth.generators.HashCombiner",
-          "runParameters" : ["person.country","person.name"],
-          "initParameters" : []
+          "requires" : ["person.country","person.name"],
+          "init" : []
         }
       }
     },
@@ -64,8 +64,8 @@
       "sourceCardinality" : {
         "generator" : {
           "name" : "org.dama.datasynth.generators.UniformDistribution",
-          "runParameters" : [],
-          "initParameters" : [0,3]
+          "requires" : [],
+          "init" : [0,3]
         }
       },
       "targetCardinality" : {
@@ -74,8 +74,8 @@
       "correllation" : {
         "generator" : {
           "name" : "org.dama.datasynth.generators.HashCombiner",
-          "runParameters" : ["person.country"],
-          "initParameters" : []
+          "requires" : ["person.country"],
+          "init" : []
         }
       }
     }

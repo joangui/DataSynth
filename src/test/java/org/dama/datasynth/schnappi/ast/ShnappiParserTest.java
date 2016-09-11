@@ -1,7 +1,7 @@
 package org.dama.datasynth.schnappi.ast;
 
-import org.dama.datasynth.schnappi.solvers.Loader;
-import org.dama.datasynth.schnappi.solvers.Solver;
+import org.dama.datasynth.schnappi.solver.Loader;
+import org.dama.datasynth.schnappi.solver.Solver;
 import org.junit.Test;
 
 import java.util.ArrayList;
