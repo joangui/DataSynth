@@ -1,5 +1,6 @@
 package org.dama.datasynth.schnappi.solver;
 
+import org.dama.datasynth.lang.dependencygraph.DependencyGraph;
 import org.dama.datasynth.lang.dependencygraph.Vertex;
 import org.dama.datasynth.schnappi.ast.Ast;
 import org.dama.datasynth.schnappi.ast.*;
@@ -28,9 +29,9 @@ public class Solver extends Node {
         return ast;
     }
 
-    public Ast instantiate(Vertex v){
+    public Ast instantiate(DependencyGraph graph, Vertex v){
         Ast bound = new Ast(this.ast);
-        SolverInstantiator instantiator = new SolverInstantiator(this,v);
+        SolverInstantiator instantiator = new SolverInstantiator(graph, this,v);
         for(Operation operation : bound.getStatements()) {
             operation.accept(instantiator);
         }

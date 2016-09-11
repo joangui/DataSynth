@@ -135,13 +135,17 @@ public class Ast {
         }
     }
 
-    public static class Atomic extends Node {
+    public static class  Atomic<T> extends Node {
 
-        private Types.DataType dataType = null;
+        private T element = null;
 
-        public Atomic(String name, Types.DataType dataType) {
-            super(name);
-            this.dataType = dataType;
+        public Atomic(T element) {
+            super(element.toString());
+            this.element = element;
+        }
+
+        public T getElement() {
+            return element;
         }
 
         @Override
@@ -150,7 +154,7 @@ public class Ast {
         }
 
         public Types.DataType getDataType() {
-            return dataType;
+            return Types.DataType.fromObject(element);
         }
     }
 

@@ -1,14 +1,9 @@
 package org.dama.datasynth.lang.dependencygraph;
 
-import com.oracle.webservices.internal.api.message.PropertySet;
 import org.dama.datasynth.common.Types;
 
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 /**
  * Created by quim on 5/10/16.

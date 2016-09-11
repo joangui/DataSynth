@@ -20,7 +20,7 @@ public class Compiler extends DependencyGraphVisitor {
         }
         });
     private Ast program             = new Ast();
-    private Set<String>             generatedVertices   = new HashSet<String>();
+    private Set<Long>             generatedVertices   = new HashSet<Long>();
 
     public Compiler(DependencyGraph graph, String dir){
         super(graph);
@@ -42,7 +42,7 @@ public class Compiler extends DependencyGraphVisitor {
     private void solveVertex(Vertex v) throws CompilerException {
         Solver s = this.solversDB.get(v.getType());
         if(s == null) throw new CompilerException(CompilerException.CompilerExceptionType.UNSOLVABLE_PROGRAM, "No solver for type "+v.getType());
-        this.concatenateProgram(s.instantiate(v));
+        this.concatenateProgram(s.instantiate(graph,v));
     }
 
     private void solveEdge(DirectedEdge e) throws CompilerException {
@@ -112,7 +112,7 @@ public class Compiler extends DependencyGraphVisitor {
             for(Vertex neighbor : graph.getNeighbors(entity)) {
                 neighbor.accept(this);
             }
-            generatedVertices.add(entity.getName());
+            generatedVertices.add(entity.getId());
             try {
                 solveVertex(entity);
             } catch (CompilerException e) {
@@ -140,7 +140,7 @@ public class Compiler extends DependencyGraphVisitor {
                 org.dama.datasynth.schnappi.ast.Assign assign = new org.dama.datasynth.schnappi.ast.Assign(new org.dama.datasynth.schnappi.ast.Id(attribute.getName()), function);
                 this.program.addStatement(assign);
             }
-            generatedVertices.add(attribute.getName());
+            generatedVertices.add(attribute.getId());
         }
     }
 
@@ -158,7 +158,7 @@ public class Compiler extends DependencyGraphVisitor {
             } catch (CompilerException e) {
                 e.printStackTrace();
             }
-            generatedVertices.add(edge.getName());
+            generatedVertices.add(edge.getId());
         }
     }
 

@@ -4,22 +4,30 @@ package org.dama.datasynth;
 
 
 import com.beust.jcommander.JCommander;
+import org.antlr.v4.runtime.ANTLRFileStream;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.dama.datasynth.lang.dependencygraph.DependencyGraph;
+import org.dama.datasynth.lang.dependencygraph.TextDependencyGraphPrinter;
 import org.dama.datasynth.lang.Ast;
 import org.dama.datasynth.lang.Parser;
 import org.dama.datasynth.lang.SemanticException;
 import org.dama.datasynth.lang.SyntacticException;
-import org.dama.datasynth.lang.dependencygraph.DependencyGraph;
-import org.dama.datasynth.lang.dependencygraph.TextDependencyGraphPrinter;
 import org.dama.datasynth.lang.dependencygraph.builder.DependencyGraphBuilder;
 import org.dama.datasynth.schnappi.ast.Operation;
 import org.dama.datasynth.schnappi.ast.printer.AstTreePrinter;
+import org.dama.datasynth.schnappi.Compiler;
+import org.dama.datasynth.schnappi.SchnappiGeneratorVisitor;
+import org.dama.datasynth.schnappi.SchnappiLexer;
+import org.dama.datasynth.schnappi.SchnappiParser;
+import org.dama.datasynth.schnappi.ast.printer.AstTreePrinter;
+import org.dama.datasynth.schnappi.ast.Operation;
+import org.dama.datasynth.schnappi.solver.Solver;
 import org.dama.datasynth.utils.LogFormatter;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import java.util.List;
 import java.util.logging.*;
 
 /**
@@ -69,20 +77,35 @@ public class DataSynth {
             TextDependencyGraphPrinter printer = new TextDependencyGraphPrinter(graph);
             printer.print();
 
+            /*
             org.dama.datasynth.schnappi.Compiler c = new org.dama.datasynth.schnappi.Compiler(graph,"src/main/resources/solvers");
+            SchnappiLexer SchLexer = new SchnappiLexer( new ANTLRFileStream("src/main/resources/sample.spi"));
+            CommonTokenStream tokens = new CommonTokenStream( SchLexer );
+            SchnappiParser SchParser = new SchnappiParser( tokens );
+            SchnappiParser.SolverContext sctx = SchParser.solver();
+            SchnappiGeneratorVisitor visitor = new SchnappiGeneratorVisitor();
+            Solver s = visitor.visitSolver(sctx);
+            AstTreePrinter astTreePrinter = new AstTreePrinter();
+            for(Operation operation : s.ast.getStatements()) {
+                operation.accept(astTreePrinter);
+            }
+            */
+
+
+            Compiler c = new Compiler(graph,"src/main/resources/solvers");
             start = System.currentTimeMillis();
             c.synthesizeProgram();
             end = System.currentTimeMillis();
             logger.info(" Query compiled in  "+(end-start) + " ms");
+
 
             logger.log(Level.FINE,"\nPrinting Schnappi Ast\n");
             AstTreePrinter astTreePrinter = new AstTreePrinter();
             for(Operation operation : c.getProgram().getStatements()) {
                 operation.accept(astTreePrinter);
             }
-            /*
 
-            start = System.currentTimeMillis();
+            /*start = System.currentTimeMillis();
             SchnappiInterpreter schInt = new SchnappiInterpreter(config);
             schInt.execProgram(c.getProgram());
             schInt.dumpData();

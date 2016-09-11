@@ -1,16 +1,28 @@
 package org.dama.datasynth.schnappi.ast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by quim on 5/18/16.
  */
 public class Binding extends Atomic {
 
-    public Binding(String value) {
-        super(value);
+    private List<String> bindingChain = null;
+
+    public Binding(List<String> bindingChain) {
+        super(bindingChain.toString());
+        this.bindingChain = bindingChain;
     }
 
     public Binding(Binding id) {
-        super(id.getValue());
+        super(id.bindingChain.toString());
+        this.bindingChain = new ArrayList<String>();
+        this.bindingChain.addAll(id.bindingChain);
+    }
+
+    public List<String> getBindingChain() {
+        return bindingChain;
     }
 
     @Override
@@ -25,6 +37,6 @@ public class Binding extends Atomic {
 
     @Override
     public String toString() {
-        return "<Binding,"+value+">";
+        return "<Binding,"+bindingChain.toString()+">";
     }
 }

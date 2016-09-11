@@ -3,6 +3,6 @@ signature : {
     @target = Attribute
 }
 
-f = new @source->generator.name(@source->generator.init);
+f = new @source->generator.name(@source->generator->init.value);
 rparams = union(@source->generator->requires.name);
 @source.name = map(f, rparams);

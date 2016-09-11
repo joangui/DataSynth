@@ -58,6 +58,9 @@ GENID
 SORT
     : 'sort'
     ;
+FILTER
+    : 'filter'
+    ;
 EQ
     : '='
     ;
@@ -80,6 +83,10 @@ FSLASH
 
 ARROW
     : '->'
+    ;
+
+ARROBA
+    : '@'
     ;
 
 VTYPE
@@ -108,19 +115,6 @@ MAPPART
     ;
 ID
 : (ALPHA)+
-;
-
-
-SOURCE
-: '@source'
-;
-
-TARGET
-: '@target'
-;
-
-BINDING
-: '@'(ID)((POINT | ARROW) ID)+
 ;
 
 ESC

@@ -32,7 +32,7 @@ public class VerticesInserter extends AstVisitor<Vertex> {
     public Vertex visit(Ast.Entity astEntity) {
         Entity entity = new Entity(astEntity.getName(), astEntity.getNumInstances());
         graph.addEntityVertex(entity);
-        Attribute oidAttribute = new Attribute("person.oid", Types.DataType.LONG);
+        Attribute oidAttribute = new Attribute(astEntity.getName()+".oid", Types.DataType.LONG);
         graph.addAttributeVertex(oidAttribute);
         graph.addDependency(entity,oidAttribute,"attribute");
         for(Ast.Attribute astAttribute : astEntity.getAttributes().values()) {
@@ -50,7 +50,7 @@ public class VerticesInserter extends AstVisitor<Vertex> {
         if(astEdge.getSourceCardinalityGenerator() != null) {
             graph.addDependency(edge,visit(astEdge.getSourceCardinalityGenerator()),"sourceCardinality");
         } else if(astEdge.getSourceCardinalityNumber() != null) {
-            Literal number = new Literal(astEdge.getSourceCardinalityNumber().toString(), Types.DataType.LONG);
+            Literal number = new Literal(astEdge.getSourceCardinalityNumber());
             graph.addLiteralVertex(number);
             graph.addDependency(edge,number,"sourceCardinality");
         }
@@ -58,7 +58,7 @@ public class VerticesInserter extends AstVisitor<Vertex> {
         if(astEdge.getTargetCardinalityGenerator() != null) {
             graph.addDependency(edge,visit(astEdge.getTargetCardinalityGenerator()),"targetCardinality");
         } else if(astEdge.getTargetCardinalityNumber() != null) {
-            Literal number = new Literal(astEdge.getTargetCardinalityNumber().toString(), Types.DataType.LONG);
+            Literal number = new Literal(astEdge.getTargetCardinalityNumber());
             graph.addLiteralVertex(number);
             graph.addDependency(edge,number,"targetCardinality");
         }
@@ -80,7 +80,7 @@ public class VerticesInserter extends AstVisitor<Vertex> {
 
     @Override
     public Literal visit(Ast.Atomic atomic) {
-        Literal literal = new Literal(atomic.getName(), atomic.getDataType());
+        Literal literal = new Literal(atomic.getElement());
         graph.addLiteralVertex(literal);
         return literal;
     }

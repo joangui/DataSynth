@@ -1,5 +1,8 @@
 package org.dama.datasynth.schnappi.compilerpass;
 
+import org.apache.ivy.ant.IvyMakePom;
+import org.dama.datasynth.common.Types;
+import org.dama.datasynth.lang.dependencygraph.DependencyGraph;
 import org.dama.datasynth.lang.dependencygraph.Vertex;
 import org.dama.datasynth.schnappi.CompilerException;
 import org.dama.datasynth.schnappi.ast.*;
@@ -10,6 +13,8 @@ import org.dama.datasynth.schnappi.solver.Solver;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by aprat on 22/08/16.
@@ -18,40 +23,40 @@ public class SolverInstantiator implements Visitor {
 
     private Solver solver = null;
     private Vertex vertex = null;
+    private DependencyGraph graph = null;
 
-    public SolverInstantiator(Solver solver, Vertex vertex) {
+    public SolverInstantiator(DependencyGraph graph, Solver solver, Vertex vertex) {
+        this.graph = graph;
         this.solver = solver;
         this.vertex = vertex;
     }
 
 
-    private Method findMethod(Vertex vertex, String methodName) {
-        throw new RuntimeException("Method not implemented");
-        /*
-        Method [] methods =  null;
-        String className = "org.dama.datasynth.lang.dependencygraph."+vertex.getType();
-        try {
-            methods = vertex.getClass().asSubclass(Class.forName(className)).getMethods();
-        } catch(ClassNotFoundException e) {
-            throw new CompilerException("Error when processing binding. Unable to gind Class of type "+className+". Class not found.");
+    private List<Expression> processBinding(Binding binding) {
+        List<Vertex> frontier = new ArrayList<Vertex>();
+        frontier.add(vertex);
+        for(int i = 1; i < binding.getBindingChain().size()-1; ++i) {
+            String edgeName = binding.getBindingChain().get(i);
+            List<Vertex> nextFrontier = new ArrayList<Vertex>();
+            for(Vertex next : frontier) {
+                nextFrontier.addAll(graph.getNeighbors(next,edgeName));
+            }
+            frontier = nextFrontier;
         }
-
-        for(Method m : methods) {
-            if(m.getParameterCount() == 0) {
-                if (m.isAnnotationPresent(Vertex.Schnappi.class)) {
-                    Vertex.Schnappi annotation = m.getAnnotation(org.dama.datasynth.lang.dependencygraph.Vertex.Schnappi.class);
-                    if (annotation.name().compareTo(methodName) == 0) return m;
-                }
+        String propertyName = binding.getBindingChain().get(binding.getBindingChain().size()-1);
+        List<Expression> retList = new ArrayList<Expression>();
+        for(Vertex next : frontier) {
+           Vertex.PropertyValue value = next.getProperties().get(propertyName);
+            if(value == null) throw new CompilerException(CompilerException.CompilerExceptionType.UNEXISITING_VERTEX_PROPERTY,propertyName+" in vertex of type "+next.getType());
+            if(value.getDataType() != Types.DataType.STRING) {
+               retList.add(new Number(value.getValue()));
+            } else {
+                retList.add(new StringLiteral(value.getValue()));
             }
         }
-        throw new CompilerException("Error when processing binding. Unable to find a method with name \""+methodName+"\" in vertex of type "+vertex.getType());
-        */
-    }
-
-    private List<Expression> processBinding(Binding binding) {
-        List<Expression> retList = new LinkedList<Expression>();
         return retList;
     }
+
 
     @Override
     public void visit(Assign n) {

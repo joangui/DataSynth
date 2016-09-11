@@ -7,9 +7,8 @@ import org.dama.datasynth.common.Types;
  */
 public class Literal extends Vertex {
 
-    public Literal(String value, Types.DataType dataType ) {
+    public <T> Literal(T value) {
         properties.put("value", new PropertyValue(value));
-        properties.put("datatype",new PropertyValue(dataType.getText()));
     }
 
     public String getValue() {
@@ -17,7 +16,7 @@ public class Literal extends Vertex {
     }
 
     public Types.DataType getDataType() {
-        return Types.DataType.fromString(properties.get("datatype").getValue());
+        return properties.get("value").getDataType();
     }
 
 

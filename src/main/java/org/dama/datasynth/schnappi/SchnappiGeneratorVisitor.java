@@ -1,22 +1,26 @@
 package org.dama.datasynth.schnappi;
 
 
+import org.antlr.v4.runtime.tree.TerminalNode;
 import org.dama.datasynth.schnappi.ast.Ast;
-import org.dama.datasynth.schnappi.ast.Atomic;
+import org.dama.datasynth.schnappi.ast.*;
 import org.dama.datasynth.schnappi.ast.Number;
 import org.dama.datasynth.schnappi.ast.Operation;
 import org.dama.datasynth.schnappi.solver.Solver;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by quim on 5/17/16.
  */
-public class SchnappiGeneratorVisitor extends org.dama.datasynth.schnappi.SchnappiParserBaseVisitor<org.dama.datasynth.schnappi.ast.Node> {
+public class SchnappiGeneratorVisitor extends org.dama.datasynth.schnappi.SchnappiParserBaseVisitor<Node> {
 
     @Override
     public Solver visitSolver(org.dama.datasynth.schnappi.SchnappiParser.SolverContext ctx){
 
 
-        org.dama.datasynth.schnappi.ast.Signature signature = visitSignature(ctx.signature());
+        Signature signature = visitSignature(ctx.signature());
         Ast ast = new Ast();
         for(org.dama.datasynth.schnappi.SchnappiParser.OpContext op :  ctx.program().op()) {
            ast.addStatement(visitOp(op));
@@ -26,8 +30,9 @@ public class SchnappiGeneratorVisitor extends org.dama.datasynth.schnappi.Schnap
     }
 
     @Override
-    public org.dama.datasynth.schnappi.ast.Signature visitSignature(org.dama.datasynth.schnappi.SchnappiParser.SignatureContext ctx){
-        return new org.dama.datasynth.schnappi.ast.Signature(ctx.source().VTYPE().getText(), ctx.target().VTYPE().getText());
+    public Signature visitSignature(org.dama.datasynth.schnappi.SchnappiParser.SignatureContext ctx){
+        if(ctx != null) return new Signature(ctx.source().VTYPE().getText(), ctx.target().VTYPE().getText());
+        return null;
     }
 
     @Override
@@ -37,118 +42,168 @@ public class SchnappiGeneratorVisitor extends org.dama.datasynth.schnappi.Schnap
     }
 
     @Override
-    public org.dama.datasynth.schnappi.ast.Function visitInit(org.dama.datasynth.schnappi.SchnappiParser.InitContext ctx){
-        org.dama.datasynth.schnappi.ast.Parameters parameters = new org.dama.datasynth.schnappi.ast.Parameters();
-        Atomic atomic = null;
-        if(ctx.BINDING() != null) atomic = new org.dama.datasynth.schnappi.ast.Binding(ctx.BINDING().getText());
-        if(ctx.ID() != null) atomic = new org.dama.datasynth.schnappi.ast.StringLiteral(ctx.ID().getText());
-        parameters.addParam(atomic);
+    public Function visitInit(org.dama.datasynth.schnappi.SchnappiParser.InitContext ctx){
+        Parameters parameters = new Parameters();
+        Expression expr = null;
+        if(ctx.binding() != null) {
+            List<String> bindingChain = new ArrayList<String>();
+            for(TerminalNode node : ctx.binding().ID()) {
+                bindingChain.add(node.getText());
+            }
+            expr = new Binding(bindingChain);
+        }
+        if(ctx.ID() != null) expr = new StringLiteral(ctx.ID().getText());
+        parameters.addParam(expr);
         parameters.mergeParams(visitParams(ctx.params()));
-        org.dama.datasynth.schnappi.ast.Function function= new org.dama.datasynth.schnappi.ast.Function("init", parameters);
+        Function function= new Function("init", parameters);
         return function;
     }
 
     @Override
-    public org.dama.datasynth.schnappi.ast.Assign visitAssig(org.dama.datasynth.schnappi.SchnappiParser.AssigContext ctx) {
+    public Assign visitAssig(org.dama.datasynth.schnappi.SchnappiParser.AssigContext ctx) {
 
         Atomic atomic = null;
-        if(ctx.BINDING() != null) atomic = new org.dama.datasynth.schnappi.ast.Binding(ctx.BINDING().getText());
-        if(ctx.ID() != null) atomic = new org.dama.datasynth.schnappi.ast.Id(ctx.ID().getText());
-        return new org.dama.datasynth.schnappi.ast.Assign(atomic, visitExpr(ctx.expr()));
+        if(ctx.binding() != null) {
+            List<String> bindingChain = new ArrayList<String>();
+            for(TerminalNode node : ctx.binding().ID()) {
+                bindingChain.add(node.getText());
+            }
+            atomic = new Binding(bindingChain);
+        }
+        if(ctx.ID() != null) atomic = new Id(ctx.ID().getText());
+        return new Assign(atomic, visitExpr(ctx.expr()));
     }
 
     @Override
-    public org.dama.datasynth.schnappi.ast.Expression visitExpr(org.dama.datasynth.schnappi.SchnappiParser.ExprContext ctx){
+    public Expression visitExpr(org.dama.datasynth.schnappi.SchnappiParser.ExprContext ctx){
         if(ctx.funcs() != null) {
             return visitFuncs(ctx.funcs());
-        } else if(ctx.any() != null) {
-            return visitAny(ctx.any());
+        } else if(ctx.atomic() != null) {
+            return visitAtomic(ctx.atomic());
         }
         return null;
     }
 
     @Override
-    public Atomic visitAny(org.dama.datasynth.schnappi.SchnappiParser.AnyContext ctx) {
+    public Atomic visitAtomic(org.dama.datasynth.schnappi.SchnappiParser.AtomicContext ctx) {
         if(ctx.NUM() != null)  return new Number(ctx.getText());
-        if(ctx.BINDING() != null)  return new org.dama.datasynth.schnappi.ast.Binding(ctx.getText());
-        if(ctx.STRING() != null)  return new org.dama.datasynth.schnappi.ast.StringLiteral(ctx.getText());
-        if(ctx.ID() != null)  return new org.dama.datasynth.schnappi.ast.Id(ctx.getText());
+        if(ctx.binding() != null){
+            List<String> bindingChain = new ArrayList<String>();
+            for(TerminalNode node : ctx.binding().ID()) {
+                bindingChain.add(node.getText());
+            }
+            return new Binding(bindingChain);
+        }
+        if(ctx.STRING() != null)  return new StringLiteral(ctx.getText());
+        if(ctx.ID() != null)  return new Id(ctx.getText());
         return null;
     }
 
 
     @Override
-    public org.dama.datasynth.schnappi.ast.Expression visitFuncs(org.dama.datasynth.schnappi.SchnappiParser.FuncsContext ctx){
+    public Expression visitFuncs(org.dama.datasynth.schnappi.SchnappiParser.FuncsContext ctx){
         if(ctx.init() != null) return visitInit(ctx.init());
         else if(ctx.genids() != null) return visitGenids(ctx.genids());
         else if(ctx.map() != null) return visitMap(ctx.map());
         else if(ctx.reduce() != null) return visitReduce(ctx.reduce());
         else if(ctx.union() != null) return visitUnion(ctx.union());
         else if(ctx.eqjoin() != null) return visitEqjoin(ctx.eqjoin());
+        else if(ctx.sort() != null) return visitSort(ctx.sort());
+        else if(ctx.partition() != null) return visitPartition(ctx.partition());
+        else if(ctx.filter() != null) return visitFilter(ctx.filter());
+        else if(ctx.mappart() != null) return visitMappart(ctx.mappart());
         return null;
     }
 
     @Override
-    public org.dama.datasynth.schnappi.ast.Function visitMap(org.dama.datasynth.schnappi.SchnappiParser.MapContext ctx) {
-        org.dama.datasynth.schnappi.ast.Parameters parameters = new org.dama.datasynth.schnappi.ast.Parameters();
-        for(org.dama.datasynth.schnappi.SchnappiParser.AnyContext tn : ctx.any()) {
-                parameters.addParam(visitAny(tn));
+    public Function visitMap(org.dama.datasynth.schnappi.SchnappiParser.MapContext ctx) {
+        Parameters parameters = new Parameters();
+        for(org.dama.datasynth.schnappi.SchnappiParser.AtomicContext tn : ctx.atomic()) {
+                parameters.addParam(visitAtomic(tn));
         }
-        return new org.dama.datasynth.schnappi.ast.Function("map",parameters);
+        return new Function("map",parameters);
     }
 
     @Override
-    public org.dama.datasynth.schnappi.ast.Function visitUnion(org.dama.datasynth.schnappi.SchnappiParser.UnionContext ctx){
-        return new org.dama.datasynth.schnappi.ast.Function("union",(visitParams(ctx.params())));
+    public Function visitUnion(org.dama.datasynth.schnappi.SchnappiParser.UnionContext ctx){
+        return new Function("union",(visitParams(ctx.params())));
     }
 
     @Override
-    public org.dama.datasynth.schnappi.ast.Function visitReduce(org.dama.datasynth.schnappi.SchnappiParser.ReduceContext ctx) {
-        org.dama.datasynth.schnappi.ast.Parameters parameters = new org.dama.datasynth.schnappi.ast.Parameters();
-        for(org.dama.datasynth.schnappi.SchnappiParser.AnyContext tn : ctx.any()) {
-                parameters.addParam(visitAny(tn));
+    public Function visitReduce(org.dama.datasynth.schnappi.SchnappiParser.ReduceContext ctx) {
+        Parameters parameters = new Parameters();
+        for(org.dama.datasynth.schnappi.SchnappiParser.AtomicContext tn : ctx.atomic()) {
+                parameters.addParam(visitAtomic(tn));
         }
-        return new org.dama.datasynth.schnappi.ast.Function("reduce",parameters);
+        return new Function("reduce",parameters);
     }
 
     @Override
-    public org.dama.datasynth.schnappi.ast.Function visitEqjoin(org.dama.datasynth.schnappi.SchnappiParser.EqjoinContext ctx){
-        return new org.dama.datasynth.schnappi.ast.Function("eqjoin",visitParams(ctx.params()));
+    public Function visitEqjoin(org.dama.datasynth.schnappi.SchnappiParser.EqjoinContext ctx){
+        return new Function("eqjoin",visitParams(ctx.params()));
     }
 
     @Override
-    public org.dama.datasynth.schnappi.ast.Parameters visitParams(org.dama.datasynth.schnappi.SchnappiParser.ParamsContext ctx){
-        org.dama.datasynth.schnappi.ast.Parameters parameters = new org.dama.datasynth.schnappi.ast.Parameters();
-        for( org.dama.datasynth.schnappi.SchnappiParser.AnyContext tn : ctx.any()){
+    public Parameters visitParams(org.dama.datasynth.schnappi.SchnappiParser.ParamsContext ctx){
+        Parameters parameters = new Parameters();
+        for( org.dama.datasynth.schnappi.SchnappiParser.AtomicContext tn : ctx.atomic()){
             Atomic atomic = null;
             if(tn.NUM() != null) atomic = new Number(tn.getText());
-            if(tn.STRING() != null) atomic = new org.dama.datasynth.schnappi.ast.StringLiteral(tn.getText());
-            if(tn.BINDING() != null) atomic = new org.dama.datasynth.schnappi.ast.Binding(tn.getText());
+            if(tn.STRING() != null) atomic = new StringLiteral(tn.getText());
+            if(tn.binding() != null) {
+                List<String> bindingChain = new ArrayList<String>();
+                for(TerminalNode node : tn.binding().ID()) {
+                    bindingChain.add(node.getText());
+                }
+                atomic = new Binding(bindingChain);
+            }
+            if(tn.ID() != null) atomic = new Id(tn.getText());
             parameters.addParam(atomic);
         }
         return parameters;
     }
 
     @Override
-    public org.dama.datasynth.schnappi.ast.Function visitGenids(org.dama.datasynth.schnappi.SchnappiParser.GenidsContext ctx){
-        org.dama.datasynth.schnappi.ast.Parameters parameters = new org.dama.datasynth.schnappi.ast.Parameters();
-        parameters.addParam(new org.dama.datasynth.schnappi.ast.Literal(ctx.NUM().getSymbol().getText()));
-        return new org.dama.datasynth.schnappi.ast.Function("geinds",parameters);
+    public Function visitGenids(org.dama.datasynth.schnappi.SchnappiParser.GenidsContext ctx){
+        Parameters parameters = new Parameters();
+        parameters.addParam(new Literal(ctx.NUM().getSymbol().getText()));
+        return new Function("genids",parameters);
     }
+
     @Override
-    public org.dama.datasynth.schnappi.ast.Function visitSort(org.dama.datasynth.schnappi.SchnappiParser.SortContext ctx){
-        return new org.dama.datasynth.schnappi.ast.Function("sort",(visitParams(ctx.params())));
+    public Function visitSort(org.dama.datasynth.schnappi.SchnappiParser.SortContext ctx){
+        return new Function("sort",(visitParams(ctx.params())));
     }
+
     @Override
-    public org.dama.datasynth.schnappi.ast.Function visitPartition(org.dama.datasynth.schnappi.SchnappiParser.PartitionContext ctx){
-        return new org.dama.datasynth.schnappi.ast.Function("partition",(visitParams(ctx.params())));
+    public Function visitPartition(org.dama.datasynth.schnappi.SchnappiParser.PartitionContext ctx){
+        return new Function("partition",(visitParams(ctx.params())));
     }
+
     @Override
-    public org.dama.datasynth.schnappi.ast.Function visitMappart(org.dama.datasynth.schnappi.SchnappiParser.MappartContext ctx){
-        org.dama.datasynth.schnappi.ast.Parameters parameters = new org.dama.datasynth.schnappi.ast.Parameters();
-        for(org.dama.datasynth.schnappi.SchnappiParser.AnyContext tn : ctx.any()) {
-            parameters.addParam(visitAny(tn));
+    public Function visitMappart(org.dama.datasynth.schnappi.SchnappiParser.MappartContext ctx){
+        Parameters parameters = new Parameters();
+        for(org.dama.datasynth.schnappi.SchnappiParser.AtomicContext tn : ctx.atomic()) {
+            parameters.addParam(visitAtomic(tn));
         }
-        return new org.dama.datasynth.schnappi.ast.Function("mappart",parameters);
+        return new Function("mappart",parameters);
+    }
+
+    @Override
+    public Function visitFilter(org.dama.datasynth.schnappi.SchnappiParser.FilterContext ctx){
+        Parameters parameters = new Parameters();
+        parameters.addParam(visitAtomic(ctx.atomic()));
+        Parameters indices = visitSet(ctx.set());
+        parameters.mergeParams(indices);
+        return new Function("filter",parameters);
+    }
+
+    @Override
+    public Parameters visitSet(org.dama.datasynth.schnappi.SchnappiParser.SetContext ctx){
+        Parameters params = new Parameters();
+        for(TerminalNode tn : ctx.NUM()) {
+            params.addParam(new Number(tn.getText()));
+        }
+        return params;
     }
 }

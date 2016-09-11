@@ -5,8 +5,10 @@ import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.function.PairFunction;
 import org.dama.datasynth.DataSynthConfig;
 import org.dama.datasynth.SparkEnv;
+import org.dama.datasynth.common.Types;
 import org.dama.datasynth.schnappi.ast.Ast;
 import org.dama.datasynth.schnappi.ast.*;
+import org.dama.datasynth.runtime.spark.SchnappiFilter;
 import org.dama.datasynth.runtime.spark.untyped.Function0Wrapper;
 import org.dama.datasynth.runtime.spark.untyped.Function2Wrapper;
 import org.dama.datasynth.runtime.spark.untyped.FunctionWrapper;
@@ -113,6 +115,15 @@ public class SchnappiInterpreter {
             case "init" : {
                 return execInit(n);
             }
+            case "sort" : {
+                return null;
+            }
+            case "partition" : {
+                return null;
+            }
+            case "filter" : {
+                return execFilter(n);
+            }
             default: {
                 return null;
             }
@@ -123,6 +134,36 @@ public class SchnappiInterpreter {
         Atomic pn1 = (Atomic)fn.getParameters().getParam(1);
         Tuple rd = table.get(pn1.getValue());
         org.apache.spark.api.java.function.Function f = fetchFunction(pn0.getValue(), (Integer)rd.get(1));
+        JavaPairRDD<Long, Tuple> rdd = (JavaPairRDD<Long, Tuple>) rd.get(0);
+        return new Tuple(rdd.mapValues(f),1);
+    }
+
+    public Tuple execFilter(Function fn) {
+        Atomic pn0 = (Atomic)fn.getParameters().getParam(0);
+        SchnappiFilter filter = new SchnappiFilter();
+        ArrayList<Integer> filtIds = new ArrayList<>();
+        for(int i = 1; i < fn.getParameters().params.size(); ++i) filtIds.add(Integer.parseInt(fn.getParameters().getParam(i).toString()));
+        Tuple rd = table.get(pn0.getValue());
+        String generatorName = "org.dama.datasynth.runtime.spark.SchnappiFilter";
+        Generator generator = null;
+        try {
+            generator = (Generator)Class.forName(generatorName).newInstance();
+        } catch (ClassNotFoundException cNFE) {
+            cNFE.printStackTrace();
+        } catch (InstantiationException iE) {
+            iE.printStackTrace();
+        } catch (IllegalAccessException iAE) {
+            iAE.printStackTrace();
+        } finally {
+            //System.exit(1);
+        }
+        Object [] params = new Object[filtIds.size()];
+        for(int index = 0; index < filtIds.size(); ++index) {
+            params[index] = filtIds.get(index);
+        }
+        UntypedMethod method = new UntypedMethod(generator,"initialize");
+        method.invoke(params);
+        org.apache.spark.api.java.function.Function f = new FunctionWrapper(generator, "run");
         JavaPairRDD<Long, Tuple> rdd = (JavaPairRDD<Long, Tuple>) rd.get(0);
         return new Tuple(rdd.mapValues(f),1);
     }

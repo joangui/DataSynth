@@ -24,7 +24,7 @@ public class Parser {
                 try {
                     String attributeName = (String)runParameter;
                     if(attributeName.indexOf(".") == -1) throw new SyntacticException(SyntacticException.SyntacticExceptionType.ILLFORMED_ATTRIBUTE_NAME,attributeName);
-                    generator.addRunParameter(new Ast.Atomic((String) runParameter, Types.DataType.STRING));
+                    generator.addRunParameter(new Ast.Atomic((String) runParameter));
                 } catch(ClassCastException e) {
                     throw new SyntacticException(SyntacticException.SyntacticExceptionType.INVALID_FIELD_TYPE, ". Non-string run parameter");
                 }
@@ -34,11 +34,11 @@ public class Parser {
             if(init == null) throw new SyntacticException(SyntacticException.SyntacticExceptionType.MISSING_FIELD, " init in Generator");
             for (Object initParameter : init) {
                 if( initParameter instanceof Long) {
-                    generator.addInitParameter(new Ast.Atomic(((Long) initParameter).toString(), Types.DataType.LONG));
+                    generator.addInitParameter(new Ast.Atomic(((Long) initParameter)));
                 } else if(initParameter instanceof Double) {
-                    generator.addInitParameter(new Ast.Atomic(((Double) initParameter).toString(), Types.DataType.DOUBLE));
+                    generator.addInitParameter(new Ast.Atomic(((Double) initParameter)));
                 } else if(initParameter instanceof String) {
-                    generator.addInitParameter(new Ast.Atomic(((String) initParameter), Types.DataType.STRING));
+                    generator.addInitParameter(new Ast.Atomic(((String) initParameter)));
                 } else {
                     throw new SyntacticException(SyntacticException.SyntacticExceptionType.INVALID_VALUE_TYPE," when parsing init");
                 }
