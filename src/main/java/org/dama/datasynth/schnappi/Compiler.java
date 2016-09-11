@@ -45,18 +45,8 @@ public class Compiler extends DependencyGraphVisitor {
 
     private void solveVertex(Vertex v) throws CompilerException {
         Solver s = this.solversDB.get(v.getType());
-        if(s == null) throw new CompilerException(CompilerException.CompilerExceptionType.UNSOLVABLE_PROGRAM, "No solver for type "+v.getType());
+        if(s == null || !s.eval(graph,v)) throw new CompilerException(CompilerException.CompilerExceptionType.UNSOLVABLE_PROGRAM, "No solver for type "+v.getType());
         this.concatenateProgram(s.instantiate(graph,v));
-    }
-
-    private void solveEdge(DirectedEdge e) throws CompilerException {
-        /*Solver s = this.solversDB.get(e.getSignature());
-        if(s == null) throw new CompilerException("Unsolvable program");
-        */
-        //this.concatenateProgram(s.instantiate(e));
-        //cool stuff happening here
-        //this.merge(solversDB.get(e.getSignature()).instantiate(e.getSource(), e.getTarget()));
-        // this.program.appendSomeStuffSomePlace(
     }
 
     private void concatenateProgram(Ast p){
@@ -66,48 +56,8 @@ public class Compiler extends DependencyGraphVisitor {
         }
     }
 
-    /*private void addIncomingCartesianProduct(Vertex v, DependencyGraph g, String suffix){
-        Set<DirectedEdge> edges = g.outgoingEdgesOf(v);
-        Parameters parameters = new Parameters();
-        long index = 0;
-        for(DirectedEdge e : edges){
-            parameters.addParam( new Id(graph.getEdgeTarget(e).getId()+".filtered["+index+"]"));
-            ++index;
-        }
-        Function function = new Function("cartesian", parameters);
-        Assign assign = new Assign(new Id(v.getId() + suffix),function);
-        this.program.addStatement(assign);
-    }*/
-
-    /*private void addFilters(Edge v, DependencyGraph g){
-        Set<DirectedEdge> edges = g.outgoingEdgesOf(v);
-        long index = 0;
-        for(DirectedEdge e : edges){
-            addFilter(v, v.getAttributesByName(graph.getEdgeTarget(e).getId()), graph.getEdgeTarget(e).getId(), index);
-            ++index;
-        }
-    }*/
-
-    /*private void addFilter(Edge v, List<Attribute> attrs, String entityName, long ind){
-        Parameters parameters = new Parameters();
-        for(Attribute attr : attrs){
-            parameters.addParam(new Id(attr.getId()));
-        }
-        Function function = new Function("filter",parameters);
-        Assign assign = new Assign(new Id(entityName + ".filtered["+ind+"]"),function);
-        this.program.addStatement(assign);
-    }*/
-
     public Ast getProgram() {
         return this.program;
-    }
-
-    public void setProgram(Ast program) {
-        this.program = program;
-    }
-
-    private void merge(Solver solver){
-        program.merge(solver.getOperations());
     }
 
     @Override
@@ -154,9 +104,6 @@ public class Compiler extends DependencyGraphVisitor {
             for(Vertex neighbor : graph.getNeighbors(edge)) {
                 neighbor.accept(this);
             }
-            /*addFilters(edge, graph);
-            addIncomingCartesianProduct(edge, graph, ".input");
-            */
             try {
                 solveVertex(edge);
             } catch (CompilerException e) {

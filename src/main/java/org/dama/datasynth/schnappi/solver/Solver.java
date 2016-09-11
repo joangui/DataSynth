@@ -38,6 +38,10 @@ public class Solver extends Node {
         return bound;
     }
 
+    public boolean eval(DependencyGraph graph, Vertex v) {
+        return signature.eval(graph,v);
+    }
+
     @Override
     public void accept(Visitor visitor) {
         visitor.visit(this);
