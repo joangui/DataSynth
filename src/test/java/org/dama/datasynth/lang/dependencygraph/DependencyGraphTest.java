@@ -178,7 +178,7 @@ public class DependencyGraphTest {
         assertTrue(((Attribute)dependencyGraph.getNeighbors(edge,"source").get(0)).getName().compareTo("person.oid") == 0);
         assertTrue(((Attribute)dependencyGraph.getNeighbors(edge,"target").get(0)).getName().compareTo("person.oid") == 0);
 
-        Attribute sourceCardinality = (Attribute)dependencyGraph.getNeighbors(edge,"sourceCardinality").get(0);
+        Attribute sourceCardinality = (Attribute)dependencyGraph.getNeighbors(edge,"sourcecardinality").get(0);
         Generator sourceCardinalityGenerator = (Generator)dependencyGraph.getNeighbors(sourceCardinality,"generator").get(0);
         oidAttribute  = (Attribute)dependencyGraph.getNeighbors(sourceCardinalityGenerator,"requires").get(0);
         assertTrue(oidAttribute.getName().compareTo("person.oid") == 0);
@@ -206,12 +206,12 @@ public class DependencyGraphTest {
         assertTrue(((Attribute)dependencyGraph.getNeighbors(edge,"source").get(0)).getName().compareTo("person.oid") == 0);
         assertTrue(((Attribute)dependencyGraph.getNeighbors(edge,"target").get(0)).getName().compareTo("person.oid") == 0);
 
-        sourceCardinality = (Attribute)dependencyGraph.getNeighbors(edge,"sourceCardinality").get(0);
+        sourceCardinality = (Attribute)dependencyGraph.getNeighbors(edge,"sourcecardinality").get(0);
         sourceCardinalityGenerator = (Generator)dependencyGraph.getNeighbors(sourceCardinality,"generator").get(0);
         oidAttribute  = (Attribute)dependencyGraph.getNeighbors(sourceCardinalityGenerator,"requires").get(0);
         assertTrue(oidAttribute.getName().compareTo("person.oid") == 0);
 
-        Literal targetCardinality = (Literal)dependencyGraph.getNeighbors(edge,"targetCardinality").get(0);
+        Literal targetCardinality = (Literal)dependencyGraph.getNeighbors(edge,"targetcardinality").get(0);
         assertTrue(targetCardinality.getValue().compareTo("1") == 0 && (targetCardinality.getDataType() == Types.DataType.LONG));
 
         countryAttribute  = (Attribute)dependencyGraph.getNeighbors(edge,"correlates").get(0);

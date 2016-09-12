@@ -14,7 +14,7 @@ init : INIT LPAR params RPAR;
 funcs : map | reduce | eqjoin | genids | union | init | sort | partition | mappart | filter;
 assig : (VAR var | binding) EQ expr;
 map : MAPKW LPAR atomic COMA atomic RPAR;
-mappart : MAPPART LPAR atomic COMA atomic COMA atomic RPAR;
+mappart : MAPPART LPAR atomic COMA atomic RPAR;
 reduce : REDUCEKW LPAR atomic COMA atomic RPAR;
 eqjoin : EQJOIN LPAR params RPAR;
 union : UNION LPAR (params)? RPAR;

@@ -10,5 +10,5 @@ var hashattribute = map(hashgenerator,hashdependencies);
 var table = union(@A->source.name,hashattribute,@A->sourcecardinality.name);
 var sorted = sort(table,1);
 var edgegenerator = init('org.dama.datasynth.generators.edgegenerators.UndirectedEdgeGenerator');
-@A.name = mappart(edgegenerator,sorted,10000);
+@A.name = mappart(edgegenerator,sorted);
 

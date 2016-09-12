@@ -48,25 +48,25 @@ public class VerticesInserter extends AstVisitor<Vertex> {
         Edge edge = new Edge(astEdge.getName(), astEdge.getDirection());
         graph.addEdgeVertex(edge);
         if(astEdge.getSourceCardinalityGenerator() != null) {
-            Attribute attribute = new Attribute(astEdge.getName()+".sourceCardinality", Types.DataType.LONG);
+            Attribute attribute = new Attribute(astEdge.getName()+".sourcecardinality", Types.DataType.LONG);
             graph.addAttributeVertex(attribute);
             graph.addDependency(attribute,visit(astEdge.getSourceCardinalityGenerator()),"generator");
-            graph.addDependency(edge,attribute,"sourceCardinality");
+            graph.addDependency(edge,attribute,"sourcecardinality");
         } else if(astEdge.getSourceCardinalityNumber() != null) {
             Literal number = new Literal(astEdge.getSourceCardinalityNumber());
             graph.addLiteralVertex(number);
-            graph.addDependency(edge,number,"sourceCardinality");
+            graph.addDependency(edge,number,"sourcecardinality");
         }
 
         if(astEdge.getTargetCardinalityGenerator() != null) {
-            Attribute attribute = new Attribute(astEdge.getName()+".targetCardinality", Types.DataType.LONG);
+            Attribute attribute = new Attribute(astEdge.getName()+".targetcardinality", Types.DataType.LONG);
             graph.addAttributeVertex(attribute);
             graph.addDependency(attribute,visit(astEdge.getTargetCardinalityGenerator()),"generator");
-            graph.addDependency(edge,attribute,"targetCardinality");
+            graph.addDependency(edge,attribute,"targetcardinality");
         } else if(astEdge.getTargetCardinalityNumber() != null) {
             Literal number = new Literal(astEdge.getTargetCardinalityNumber());
             graph.addLiteralVertex(number);
-            graph.addDependency(edge,number,"targetCardinality");
+            graph.addDependency(edge,number,"targetcardinality");
         }
         return edge;
     }

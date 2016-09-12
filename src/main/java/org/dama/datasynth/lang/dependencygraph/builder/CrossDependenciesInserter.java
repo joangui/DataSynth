@@ -58,7 +58,7 @@ public class CrossDependenciesInserter extends AstVisitor<Ast.Node> {
         graph.addDependency(edge,graph.getAttribute(astEdge.getSource()+".oid"),"source");
         graph.addDependency(edge,graph.getAttribute(astEdge.getTarget()+".oid"),"target");
         if(astEdge.getSourceCardinalityGenerator() != null) {
-            Attribute attribute = graph.getAttribute(astEdge.getName()+".sourceCardinality");
+            Attribute attribute = graph.getAttribute(astEdge.getName()+".sourcecardinality");
             Generator generator = (Generator)graph.getNeighbors(attribute,"generator").get(0);
             Attribute oidAttribute = graph.getAttribute(astEdge.getSource()+".oid");
             graph.addDependency(generator,oidAttribute,"requires");
@@ -66,7 +66,7 @@ public class CrossDependenciesInserter extends AstVisitor<Ast.Node> {
         }
 
         if(astEdge.getTargetCardinalityGenerator() != null) {
-            Attribute attribute = graph.getAttribute(astEdge.getName()+".targetCardinality");
+            Attribute attribute = graph.getAttribute(astEdge.getName()+".targetcardinality");
             Generator generator = (Generator)graph.getNeighbors(attribute,"generator").get(0);
             Attribute oidAttribute = graph.getAttribute(astEdge.getTarget()+".oid");
             graph.addDependency(generator,oidAttribute,"requires");

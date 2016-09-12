@@ -139,13 +139,37 @@ public class SchnappiInterpreter {
     }
 
     private Tuple execMappart(Function function) {
-        Id pn0 = (Id)function.getParameters().getParam(0);
+        Atomic pn0 = (Atomic)function.getParameters().getParam(0);
         Atomic pn1 = (Atomic)function.getParameters().getParam(1);
         Tuple rd = table.get(pn1.getValue());
-        org.apache.spark.api.java.function.PairFlatMapFunction<Iterator<Tuple2<Long,Tuple>>,Long,Tuple> f =  (PairFlatMapFunction<Iterator<Tuple2<Long,Tuple>>,Long,Tuple>) tuples -> null;
+        org.apache.spark.api.java.function.PairFlatMapFunction<Iterator<Tuple2<Long,Tuple>>,Long,Tuple> f =  (PairFlatMapFunction<Iterator<Tuple2<Long,Tuple>>,Long,Tuple>) tuples -> {
+            int blockSize = 10000;
+            ArrayList<Tuple2<Long,Tuple>> retList = new ArrayList<Tuple2<Long,Tuple>>();
+            ArrayList<Tuple2<Long,Tuple>>  currentBlock = new ArrayList<Tuple2<Long,Tuple>>();
+            ArrayList<Integer>  neighborCount = new ArrayList<Integer>();
+            while(tuples.hasNext()) {
+                currentBlock.clear();
+                neighborCount.clear();
+                while (currentBlock.size() < blockSize && tuples.hasNext()) {
+                    currentBlock.add(tuples.next());
+                    neighborCount.add(0);
+                }
+                for(int i = 0; i < currentBlock.size(); ++i) {
+                    for(int j = i; j < currentBlock.size() && j - i < 1000; ++j) {
+                        if((Long)currentBlock.get(i)._2().get(2) > neighborCount.get(i) &&
+                            (Long)currentBlock.get(j)._2().get(2) > neighborCount.get(j)
+                                ) {
+                            retList.add(new Tuple2<Long,Tuple>(currentBlock.get(i)._1(), new Tuple(currentBlock.get(j)._1)));
+                            neighborCount.set(i,neighborCount.get(i)+1);
+                            neighborCount.set(j,neighborCount.get(j)+1);
+                        }
+                    }
+                }
+            }
+            return retList;
+        };
         JavaPairRDD<Long, Tuple> rdd = (JavaPairRDD<Long, Tuple>) rd.get(0);
-        JavaPairRDD<Long, Tuple> partitoned = rdd.repartition(100);
-        JavaPairRDD<Long, Tuple> result = partitoned.mapPartitionsToPair(f);
+        JavaPairRDD<Long, Tuple> result = rdd.mapPartitionsToPair(f);
         return new Tuple(result,1);
     }
 
