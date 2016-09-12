@@ -15,7 +15,7 @@ public class DateBasedIDGenerator extends Generator {
         this.format = dateFormat;
     }
 
-    public Long run(Long seed, Long id, String date) {
+    public Long run(Long id, String date) {
         SimpleDateFormat formatter = new SimpleDateFormat(format);
         Long milliseconds = 0L;
         try {

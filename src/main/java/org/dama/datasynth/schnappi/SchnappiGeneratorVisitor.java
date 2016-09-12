@@ -2,6 +2,7 @@ package org.dama.datasynth.schnappi;
 
 
 import org.antlr.v4.runtime.tree.TerminalNode;
+import org.dama.datasynth.common.Types;
 import org.dama.datasynth.schnappi.ast.Ast;
 import org.dama.datasynth.schnappi.ast.*;
 import org.dama.datasynth.schnappi.ast.Number;
@@ -15,6 +16,7 @@ import java.util.List;
  * Created by quim on 5/17/16.
  */
 public class SchnappiGeneratorVisitor extends org.dama.datasynth.schnappi.SchnappiParserBaseVisitor<Node> {
+
 
     @Override
     public Solver visitSolver(org.dama.datasynth.schnappi.SchnappiParser.SolverContext ctx){
@@ -57,11 +59,7 @@ public class SchnappiGeneratorVisitor extends org.dama.datasynth.schnappi.Schnap
 
         Atomic atomic = null;
         if(ctx.binding() != null) {
-            List<String> bindingChain = new ArrayList<String>();
-            for(TerminalNode node : ctx.binding().ID()) {
-                bindingChain.add(node.getText());
-            }
-            atomic = new Binding(bindingChain);
+            atomic = visitBinding(ctx.binding());
         }
         if(ctx.var() != null) atomic = new Var(ctx.var().getText());
         return new Assign(atomic, visitExpr(ctx.expr()));
@@ -78,15 +76,16 @@ public class SchnappiGeneratorVisitor extends org.dama.datasynth.schnappi.Schnap
     }
 
     @Override
+    public Number visitNum(org.dama.datasynth.schnappi.SchnappiParser.NumContext ctx) {
+        if(ctx.INTEGER() != null) return new Number(ctx.INTEGER().getText(), Types.DataType.LONG);
+        if(ctx.FLOATING() != null) return new Number(ctx.INTEGER().getText(), Types.DataType.DOUBLE);
+        return null;
+    }
+
+    @Override
     public Atomic visitAtomic(org.dama.datasynth.schnappi.SchnappiParser.AtomicContext ctx) {
-        if(ctx.NUM() != null)  return new Number(ctx.getText());
-        if(ctx.binding() != null){
-            List<String> bindingChain = new ArrayList<String>();
-            for(TerminalNode node : ctx.binding().ID()) {
-                bindingChain.add(node.getText());
-            }
-            return new Binding(bindingChain);
-        }
+        if(ctx.num() != null)  return visitNum(ctx.num());
+        if(ctx.binding() != null) return visitBinding(ctx.binding());
         if(ctx.STRING() != null)  return new StringLiteral(ctx.getText().replace("\'",""));
         if(ctx.var() != null)  return new Var(ctx.getText());
         return null;
@@ -137,18 +136,23 @@ public class SchnappiGeneratorVisitor extends org.dama.datasynth.schnappi.Schnap
     }
 
     @Override
+    public Binding visitBinding(org.dama.datasynth.schnappi.SchnappiParser.BindingContext binding) {
+        List<String> bindingChain = new ArrayList<String>();
+        for(TerminalNode node : binding.ID()) {
+            bindingChain.add(node.getText());
+        }
+        return new Binding(bindingChain);
+    }
+
+    @Override
     public Parameters visitParams(org.dama.datasynth.schnappi.SchnappiParser.ParamsContext ctx){
         Parameters parameters = new Parameters();
         for( org.dama.datasynth.schnappi.SchnappiParser.AtomicContext tn : ctx.atomic()){
             Atomic atomic = null;
-            if(tn.NUM() != null) atomic = new Number(tn.getText());
-            if(tn.STRING() != null) atomic = new StringLiteral(tn.getText());
+            if(tn.num() != null) atomic = visitNum(tn.num());
+            if(tn.STRING() != null) atomic = new StringLiteral(tn.getText().replace("\'",""));
             if(tn.binding() != null) {
-                List<String> bindingChain = new ArrayList<String>();
-                for(TerminalNode node : tn.binding().ID()) {
-                    bindingChain.add(node.getText());
-                }
-                atomic = new Binding(bindingChain);
+                atomic = visitBinding(tn.binding());
             }
             if(tn.var() != null) atomic = new Id(tn.getText());
             parameters.addParam(atomic);
@@ -159,13 +163,18 @@ public class SchnappiGeneratorVisitor extends org.dama.datasynth.schnappi.Schnap
     @Override
     public Function visitGenids(org.dama.datasynth.schnappi.SchnappiParser.GenidsContext ctx){
         Parameters parameters = new Parameters();
-        parameters.addParam(new Literal(ctx.NUM().getSymbol().getText()));
+        parameters.addParam(new Number(ctx.INTEGER().getSymbol().getText(), Types.DataType.LONG));
         return new Function("genids",parameters);
     }
 
     @Override
     public Function visitSort(org.dama.datasynth.schnappi.SchnappiParser.SortContext ctx){
-        return new Function("sort",(visitParams(ctx.params())));
+        Parameters params = new Parameters();
+        params.addParam(ctx.ID() != null ? new Id(ctx.ID().getText()) : visitBinding(ctx.binding()));
+        for( Expression expr : visitParams(ctx.params()).getParams()) {
+            params.addParam(expr);
+        }
+        return new Function("sort",params);
     }
 
     @Override
@@ -194,8 +203,8 @@ public class SchnappiGeneratorVisitor extends org.dama.datasynth.schnappi.Schnap
     @Override
     public Parameters visitSet(org.dama.datasynth.schnappi.SchnappiParser.SetContext ctx){
         Parameters params = new Parameters();
-        for(TerminalNode tn : ctx.NUM()) {
-            params.addParam(new Number(tn.getText()));
+        for(TerminalNode tn : ctx.INTEGER()) {
+            params.addParam(new Number(tn.getText(), Types.DataType.LONG));
         }
         return params;
     }

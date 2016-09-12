@@ -2,6 +2,8 @@ package org.dama.datasynth.runtime;
 
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.function.FlatMapFunction;
+import org.apache.spark.api.java.function.ForeachPartitionFunction;
 import org.apache.spark.api.java.function.PairFunction;
 import org.dama.datasynth.DataSynthConfig;
 import org.dama.datasynth.SparkEnv;
@@ -13,19 +15,19 @@ import org.dama.datasynth.runtime.spark.untyped.Function0Wrapper;
 import org.dama.datasynth.runtime.spark.untyped.Function2Wrapper;
 import org.dama.datasynth.runtime.spark.untyped.FunctionWrapper;
 import org.dama.datasynth.runtime.spark.untyped.UntypedMethod;
+import org.dama.datasynth.schnappi.ast.Number;
 import org.dama.datasynth.utils.Tuple;
 import org.dama.datasynth.utils.TupleUtils;
 import scala.Tuple2;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.Serializable;
+import java.util.*;
 
 /**
  * Created by quim on 6/6/16.
  */
 public class SchnappiInterpreter {
+
     private Map<String, Tuple> table;
     private Map<String, Generator> generators;
     private DataSynthConfig config;
@@ -35,13 +37,16 @@ public class SchnappiInterpreter {
         table = new HashMap<String, Tuple>();
         generators = new HashMap<String, Generator>();
     }
+
     public SchnappiInterpreter(DataSynthConfig config){
         this();
         this.config = config;
     }
+
     public void execProgram(Ast ast){
         for(Operation child : ast.getStatements()) execOp(child);
     }
+
     public void execOp(Operation n){
         execAssig((Assign)n);
     }
@@ -86,17 +91,18 @@ public class SchnappiInterpreter {
                 return table.get(((Binding) n).getValue());
             case "Id":
                 return table.get(((Id) n).getValue());
-            case "Atomic":
-                Tuple aux = table.get(((Atomic) n).getValue());
-                if(aux != null) return aux;
-                return new Tuple(((Atomic)n).getValue(),1);
+            case "Var":
+                return table.get(((Atomic) n).getValue());
+            case "Number":
+                return new Tuple(((Number)n).getObject(),1);
             case "Function":
                 return execFunc((Function)n);
+            case "StringLiteral":
+                return new Tuple(((StringLiteral)n).getValue(),1);
             default:
                 throw new ExecutionException("Unsupported type of expression "+n.getType());
         }
     }
-
 
     public Tuple execFunc(Function n){
         switch(n.getName()){
@@ -116,19 +122,72 @@ public class SchnappiInterpreter {
                 return execInit(n);
             }
             case "sort" : {
-                return null;
+                return execSort(n);
+
             }
-            case "partition" : {
-                return null;
+            case "mappart": {
+                return execMappart(n);
             }
             case "filter" : {
                 return execFilter(n);
             }
             default: {
-                return null;
+                throw new ExecutionException("Unsupported function "+n.getName());
             }
         }
     }
+
+    private Tuple execMappart(Function function) {
+        /*Id pn0 = (Id)function.getParameters().getParam(0);
+        Atomic pn1 = (Atomic)function.getParameters().getParam(1);
+        Tuple rd = table.get(pn1.getValue());
+        org.apache.spark.api.java.function.Function f = fetchFunction(pn0.getValue(), (Integer)rd.get(1));
+        JavaPairRDD<Long, Tuple> rdd = (JavaPairRDD<Long, Tuple>) rd.get(0);
+        JavaPairRDD<Long, Tuple> partitoned = rdd.repartition(100);
+        return new Tuple(partitoned.mapPartitions(f),1);
+        */
+        return null;
+    }
+
+    private static class TupleComparator implements Comparator<Tuple>, Serializable {
+
+        private List<Long> columns = null;
+
+        public TupleComparator(Long ... args) {
+            columns = new ArrayList<Long>();
+            for(Long arg : args) {
+                columns.add(arg);
+            }
+        }
+
+        @Override
+        public int compare(Tuple tuple1, Tuple tuple2) {
+            for(int i = 0; i < columns.size(); ++i) {
+               if(tuple1.get(columns.get(i).intValue()).hashCode() != tuple2.get(columns.get(i).intValue()).hashCode()) {
+                  if ( (Long)tuple1.get(columns.get(i).intValue()) < (Long)(tuple2.get(columns.get(i).intValue()))) {
+                      return -1;
+                   }
+                   return 1;
+               }
+            }
+            return new Long(((Long)tuple1.get(1) - (Long)(tuple2.get(1)))).intValue();
+        }
+    }
+
+
+
+
+    public Tuple execSort(Function fn) {
+        Id id = (Id)fn.getParameters().getParam(0);
+        Number column = (Number)fn.getParameters().getParam(1);
+        Tuple rd = table.get(id.getValue());
+        JavaPairRDD<Long, Tuple> rdd = (JavaPairRDD<Long, Tuple>) table.get(id.getValue()).get(0);
+        PairFunction<Tuple2<Long,Tuple>, Tuple, Long> swapLongTuple = (PairFunction<Tuple2<Long, Tuple>, Tuple, Long>) tuple -> new Tuple2 < Tuple, Long > (tuple._2, tuple._1);
+        PairFunction<Tuple2<Tuple,Long>, Long, Tuple> swapTupleLong = (PairFunction<Tuple2<Tuple, Long>, Long, Tuple>) tuple -> new Tuple2 < Long, Tuple > (tuple._2, tuple._1);
+        JavaPairRDD <Long, Tuple> sortedRdd = rdd.mapToPair(swapLongTuple).sortByKey(new TupleComparator((Long)column.getObject()), true,100).mapToPair(swapTupleLong);
+        return new Tuple(sortedRdd,rd.get(1));
+    }
+
     public Tuple execMap(Function fn) {
         Atomic pn0 = (Atomic)fn.getParameters().getParam(0);
         Atomic pn1 = (Atomic)fn.getParameters().getParam(1);
@@ -249,6 +308,7 @@ public class SchnappiInterpreter {
         }
         return fw;
     }
+
     public Object fetchParameter(String param){
         if(table.get(param) != null) return table.get(param);
         else return param;

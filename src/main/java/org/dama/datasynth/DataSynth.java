@@ -13,6 +13,7 @@ import org.dama.datasynth.lang.Parser;
 import org.dama.datasynth.lang.SemanticException;
 import org.dama.datasynth.lang.SyntacticException;
 import org.dama.datasynth.lang.dependencygraph.builder.DependencyGraphBuilder;
+import org.dama.datasynth.runtime.SchnappiInterpreter;
 import org.dama.datasynth.schnappi.ast.Operation;
 import org.dama.datasynth.schnappi.ast.printer.AstTreePrinter;
 import org.dama.datasynth.schnappi.Compiler;
@@ -105,19 +106,13 @@ public class DataSynth {
                 operation.accept(astTreePrinter);
             }
 
-            /*start = System.currentTimeMillis();
+            start = System.currentTimeMillis();
             SchnappiInterpreter schInt = new SchnappiInterpreter(config);
             schInt.execProgram(c.getProgram());
             schInt.dumpData();
-
             end = System.currentTimeMillis();
             logger.info(" Query executed in  "+(end-start) + " ms");
             logger.info("Execution finished");
-            */
-
-            /*executor.execute(execPlan);
-            executor.dummyExecute();
-            executor.dumpData(config.outputDir);*/
 
             return;
         } catch(IOException iOE) {

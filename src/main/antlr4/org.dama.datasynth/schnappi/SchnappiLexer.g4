@@ -97,6 +97,10 @@ ARROBA
     : '@'
     ;
 
+VAR
+    : 'var'
+    ;
+
 VTYPE
     : ATTR | ENTITY | RELATION;
 
@@ -151,7 +155,11 @@ ESC
     )
   ;
 
-NUM
+FLOATING
+    : DIGIT+ POINT DIGIT+
+    ;
+
+INTEGER
 : DIGIT+
 ;
 
@@ -177,13 +185,6 @@ STRING
     )*
     '\''
   ;
-
-
-
-
-
-LITERAL
-: STRING | NUM;
 
 WS
 : ('\t' | '\r' | '\n' | ' ')+ -> skip ;

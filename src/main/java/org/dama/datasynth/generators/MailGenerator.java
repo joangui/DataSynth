@@ -9,7 +9,7 @@ public class MailGenerator extends Generator {
         private DFGenerator g;
         public void initialize(String file) {
             g = new DFGenerator();
-            g.initialize(file, "0", "1", " ");
+            g.initialize(file, 0L, 1L, " ");
         }
         public String run(Long id, String name) {
             return name + "@" + g.run(id);

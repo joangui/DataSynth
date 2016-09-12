@@ -91,8 +91,8 @@ public class CommonTest {
         List<Types.DataType> parameters = new ArrayList<Types.DataType>();
         try {
             parameters.add(Types.DataType.STRING);
-            parameters.add(Types.DataType.STRING);
-            parameters.add(Types.DataType.STRING);
+            parameters.add(Types.DataType.LONG);
+            parameters.add(Types.DataType.LONG);
             parameters.add(Types.DataType.STRING);
             assertNotEquals("Function CDFGenerator.initialize with parameters String, String, String, String does not exist", Types.getMethod(generator, "initialize", parameters, null), null);
             assertNotEquals("Function CDFGenerator.initialize ", Types.getUntypedMethod(generator, "initialize"), null);

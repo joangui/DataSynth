@@ -38,7 +38,11 @@ public class SolverInstantiator implements Visitor {
         List<Expression> retList = new ArrayList<Expression>();
         for(Vertex.PropertyValue value : values) {
             if (value.getDataType() != Types.DataType.STRING) {
-                retList.add(new org.dama.datasynth.schnappi.ast.Number(value.getValue()));
+                if(value.getDataType() == Types.DataType.LONG) {
+                    retList.add(new org.dama.datasynth.schnappi.ast.Number(value.getValue(), Types.DataType.LONG));
+                } else if(value.getDataType() == Types.DataType.DOUBLE) {
+                    retList.add(new org.dama.datasynth.schnappi.ast.Number(value.getValue(), Types.DataType.DOUBLE));
+                }
             } else {
                 if (graph.getEntity(value.getValue()) != null || graph.getAttribute(value.getValue()) != null || graph.getEdge(value.getValue()) != null) {
                     retList.add(new Id(value.getValue()));

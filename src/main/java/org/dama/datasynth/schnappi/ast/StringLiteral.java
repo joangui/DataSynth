@@ -9,11 +9,16 @@ public class StringLiteral extends Literal {
     }
 
     public StringLiteral(StringLiteral literal) {
-        super(literal.getValue());
+        super(literal);
+    }
+
+    @Override
+    public StringLiteral copy() {
+        return new StringLiteral(this);
     }
 
     @Override
     public java.lang.String toString() {
-        return "<string,"+value+">";
+        return "<String,"+value+">";
     }
 }

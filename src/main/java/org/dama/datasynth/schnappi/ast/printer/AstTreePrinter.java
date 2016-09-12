@@ -109,16 +109,22 @@ public class AstTreePrinter implements Visitor {
 
     @Override
     public void visit(Id n) {
-
+        indents++;
+        logger.log(Level.FINE,(indents(true)+n.toString()));
+        indents--;
     }
 
     @Override
     public void visit(StringLiteral n) {
-
+        indents++;
+        logger.log(Level.FINE,(indents(true)+n.toString()));
+        indents--;
     }
 
     @Override
     public void visit(Number n) {
-
+        indents++;
+        logger.log(Level.FINE,(indents(true)+n.toString()));
+        indents--;
     }
 }

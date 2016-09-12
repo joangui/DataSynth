@@ -2,6 +2,6 @@ signature : {
     @source = Attribute;
 }
 
-f = init(@source->generator.name,@source->generator->initparam.value);
-rparams = union(@source->generator->requires.name);
+var f = init(@source->generator.name,@source->generator->initparam.value);
+var rparams = union(@source->generator->requires.name);
 @source.name = map(f, rparams);

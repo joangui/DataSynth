@@ -13,9 +13,9 @@ import org.dama.datasynth.utils.Sampler;
 public class CDFGenerator extends Generator {
         private Sampler s;
         public CDFGenerator(){}
-        public void initialize(String file, String x, String y, String sep ){
+        public void initialize(String file, Long x, Long y, String sep ){
             CSVReader csv = new CSVReader(file, sep);
-            this.s = new CDFSampler(csv.fetchSubMatrix(Integer.parseInt(x), Integer.parseInt(y)));
+            this.s = new CDFSampler(csv.fetchSubMatrix(x.intValue(), y.intValue()));
         }
         public String run(Long id){
             return s.takeSample(MurmurHash.hash64(id.toString()));

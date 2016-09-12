@@ -1,5 +1,6 @@
 package org.dama.datasynth.schnappi;
 
+import org.dama.datasynth.common.Types;
 import org.dama.datasynth.lang.dependencygraph.*;
 import org.dama.datasynth.lang.dependencygraph.Literal;
 import org.dama.datasynth.schnappi.ast.Ast;
@@ -89,7 +90,7 @@ public class Compiler extends DependencyGraphVisitor {
                 }
             } else {
                 String entityName = attribute.getName().substring(0,attribute.getName().indexOf("."));
-                org.dama.datasynth.schnappi.ast.Parameters parameters = new org.dama.datasynth.schnappi.ast.Parameters(new Number(String.valueOf(graph.getEntity(entityName).getNumInstances())));
+                org.dama.datasynth.schnappi.ast.Parameters parameters = new org.dama.datasynth.schnappi.ast.Parameters(new Number(String.valueOf(graph.getEntity(entityName).getNumInstances()), Types.DataType.LONG));
                 org.dama.datasynth.schnappi.ast.Function function = new org.dama.datasynth.schnappi.ast.Function("genids", parameters);
                 org.dama.datasynth.schnappi.ast.Assign assign = new org.dama.datasynth.schnappi.ast.Assign(new org.dama.datasynth.schnappi.ast.Id(attribute.getName()), function);
                 this.program.addStatement(assign);
