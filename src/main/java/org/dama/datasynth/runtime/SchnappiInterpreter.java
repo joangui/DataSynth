@@ -4,6 +4,7 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.function.FlatMapFunction;
 import org.apache.spark.api.java.function.ForeachPartitionFunction;
+import org.apache.spark.api.java.function.PairFlatMapFunction;
 import org.apache.spark.api.java.function.PairFunction;
 import org.dama.datasynth.DataSynthConfig;
 import org.dama.datasynth.SparkEnv;
@@ -138,15 +139,14 @@ public class SchnappiInterpreter {
     }
 
     private Tuple execMappart(Function function) {
-        /*Id pn0 = (Id)function.getParameters().getParam(0);
+        Id pn0 = (Id)function.getParameters().getParam(0);
         Atomic pn1 = (Atomic)function.getParameters().getParam(1);
         Tuple rd = table.get(pn1.getValue());
-        org.apache.spark.api.java.function.Function f = fetchFunction(pn0.getValue(), (Integer)rd.get(1));
+        org.apache.spark.api.java.function.PairFlatMapFunction<Iterator<Tuple2<Long,Tuple>>,Long,Tuple> f =  (PairFlatMapFunction<Iterator<Tuple2<Long,Tuple>>,Long,Tuple>) tuples -> null;
         JavaPairRDD<Long, Tuple> rdd = (JavaPairRDD<Long, Tuple>) rd.get(0);
         JavaPairRDD<Long, Tuple> partitoned = rdd.repartition(100);
-        return new Tuple(partitoned.mapPartitions(f),1);
-        */
-        return null;
+        JavaPairRDD<Long, Tuple> result = partitoned.mapPartitionsToPair(f);
+        return new Tuple(result,1);
     }
 
     private static class TupleComparator implements Comparator<Tuple>, Serializable {
