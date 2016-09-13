@@ -57,7 +57,7 @@ public class Types {
     public enum DataType {
         INTEGER(Integer.class),
         LONG(Long.class),
-        STRING(String.clasFunction<Iterable<Tuple2<Longs),
+        STRING(String.class),
         FLOAT(Float.class),
         DOUBLE(Double.class),
         BOOLEAN(Boolean.class);
