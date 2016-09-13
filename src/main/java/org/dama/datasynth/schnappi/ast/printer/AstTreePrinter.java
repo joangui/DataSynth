@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 
 /**
  * Created by aprat on 19/08/16.
+ * Schnappi ast visitor that prints the ast in text format
  */
 public class AstTreePrinter implements Visitor {
 

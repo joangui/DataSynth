@@ -7,6 +7,7 @@ import java.util.*;
 
 /**
  * Created by aprat on 10/04/16.
+ * Class representing an ast of the query language
  */
 public class Ast {
 
@@ -36,6 +37,10 @@ public class Ast {
             return name;
         }
 
+        /**
+         * Accept method used by the visitors when the exact type of the node is not available.
+         * @param visitor The visitor visiting the node.
+         */
         public abstract void accept(AstVisitor visitor);
 
     }
@@ -66,10 +71,18 @@ public class Ast {
             this.generator = generator;
         }
 
+        /**
+         * Gets the generator node of this attribute
+         * @return The generator node
+         */
         public Generator getGenerator() {
             return generator;
         }
 
+        /**
+         * Gets the data type of the attribute
+         * @return The data type of the attribute
+         */
         public Types.DataType getType() {
             return type;
         }
@@ -150,6 +163,10 @@ public class Ast {
             visitor.visit(this);
         }
 
+        /**
+         * Gets the data type of the atomic
+         * @return The data type of the atomic.
+         */
         public Types.DataType getDataType() {
             return Types.DataType.fromObject(element);
         }
@@ -232,66 +249,106 @@ public class Ast {
             this.correlates = new ArrayList<Atomic>();
         }
 
+        /**
+         * Gets the name of the source entity of the edge
+         * @return The name of the source entity of the edge
+         */
         public String getSource() {
             return source;
         }
 
+        /**
+         * Gets the name of the target entity of the edge.
+         * @return The name of the target entity of the edge.
+         */
         public String getTarget() {
             return target;
         }
 
+        /**
+         * Gets the direction of the edge
+         * @return The direction of the edge
+         */
         public Types.Direction getDirection() {
             return direction;
         }
 
-        public void setSource(String source) {
-            this.source = source;
-        }
-
-        public void setTarget(String target) {
-            this.target = target;
-        }
-
-        public void setDirection(Types.Direction direction) {
-            this.direction = direction;
-        }
-
+        /**
+         * Gets the source cardinality generator of the edge
+         * @return The source cardinality generator of the edge
+         */
         public Generator getSourceCardinalityGenerator() {
             return sourceCardinalityGenerator;
         }
 
+        /**
+         * Sets the source cardinality generator of the edge
+         * @param sourceCardinalityGenerator The source cardinality generator
+         */
         public void setSourceCardinalityGenerator(Generator sourceCardinalityGenerator) {
             this.sourceCardinalityGenerator = sourceCardinalityGenerator;
         }
 
+        /**
+         * Gets the target cardinality generator of the edge
+         * @return The target cardinality generator of the edge
+         */
         public Generator getTargetCardinalityGenerator() {
             return targetCardinalityGenerator;
         }
 
+        /**
+         * Sets the target cardinality generator of the edge
+         * @param targetCardinalityGenerator The target cardinality generator
+         */
         public void setTargetCardinalityGenerator(Generator targetCardinalityGenerator) {
             this.targetCardinalityGenerator = targetCardinalityGenerator;
         }
 
+        /**
+         * Gets the source cardinality number of the generator
+         * @return
+         */
         public Long getSourceCardinalityNumber() {
             return sourceCardinalityNumber;
         }
 
+        /**
+         * Sets the source cardinality number of the generator
+         * @param sourceCardinalityNumber The source cardinality number to set
+         */
         public void setSourceCardinalityNumber(Long sourceCardinalityNumber) {
             this.sourceCardinalityNumber = sourceCardinalityNumber;
         }
 
+        /**
+         * Gets the target cardinality number of the generator
+         * @return
+         */
         public Long getTargetCardinalityNumber() {
             return targetCardinalityNumber;
         }
 
+        /**
+         * Sets the target cardinality number of the generator
+         * @param targetCardinalityNumber The target cardinality number to set
+         */
         public void setTargetCardinalityNumber(Long targetCardinalityNumber) {
             this.targetCardinalityNumber = targetCardinalityNumber;
         }
 
+        /**
+         * Gets the list of the correlates attributes
+         * @return The list of correlates attributes
+         */
         public List<Ast.Atomic> getCorrelates() {
             return correlates;
         }
 
+        /**
+         * Add an attribute to the list of the correlates attributes
+         * @param correlates The attribute to add.
+         */
         public void addCorrelates(Atomic correlates) {
             this.correlates.add(correlates);
         }
@@ -342,8 +399,7 @@ public class Ast {
         attributeValidName.check(this);
         GeneratorsExist generatorExists = new GeneratorsExist();
         generatorExists.check(this);
-        GeneratorRunParametersValid generatorRunParametersValid = new GeneratorRunParametersValid();
-        generatorRunParametersValid.check(this);
-
+        GeneratorRequiresValid generatorRequiresValid = new GeneratorRequiresValid();
+        generatorRequiresValid.check(this);
     }
 }

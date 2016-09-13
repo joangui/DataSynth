@@ -7,16 +7,24 @@ import org.dama.datasynth.lang.dependencygraph.*;
 
 /**
  * Created by aprat on 4/09/16.
+ * Ast visitor that adds the corresponding vertices to a dependency graph.
  */
 public class VerticesInserter extends AstVisitor<Vertex> {
 
     private DependencyGraph graph = null;
 
 
+    /**
+     * Constructor
+     */
     public VerticesInserter() {
     }
 
-
+    /**
+     * Executes the visitor over the ast.
+     * @param graph The dependency graph to build the dependencies at.
+     * @param ast  The ast to get the dependencies from.
+     */
     public void run(DependencyGraph graph, Ast ast) {
         this.graph = graph;
         for(Ast.Entity entity : ast.getEntities().values()) {

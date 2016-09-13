@@ -5,6 +5,7 @@ import org.dama.datasynth.lang.dependencygraph.DependencyGraph;
 
 /**
  * Created by aprat on 7/09/16.
+ * Builder to construct dependency graphs out of an ast.
  */
 public class DependencyGraphBuilder {
 

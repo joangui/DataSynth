@@ -7,11 +7,18 @@ import org.dama.datasynth.lang.SemanticException;
 
 /**
  * Created by aprat on 6/09/16.
+ * Visitor that performs a semantic check over the ast.
+ * Checks that the "requires" attributes of the generator are valid
  */
-public class GeneratorRunParametersValid extends AstVisitor<Ast.Node> {
+public class GeneratorRequiresValid extends AstVisitor<Ast.Node> {
 
     private Ast ast = null;
     private Ast.Node context = null;
+
+    /**
+     * Performs the check over the ast.
+     * @param ast The ast to check
+     */
     public void check(Ast ast) {
         this.ast = ast;
         for(Ast.Entity entity : ast.getEntities().values()) {

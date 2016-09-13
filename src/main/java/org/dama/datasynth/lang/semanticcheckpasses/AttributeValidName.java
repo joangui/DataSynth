@@ -10,11 +10,17 @@ import java.util.Set;
 
 /**
  * Created by aprat on 6/09/16.
+ * Visitor that performs a semantic check over the Ast.
+ * It checks whether the names specified for attributes are valid.
  */
 public class AttributeValidName extends AstVisitor<Ast.Node> {
 
     private Set<String> observedAttributes = new HashSet<String>();
 
+    /**
+     * Performs the check over the ast.
+     * @param ast The ast to check
+     */
     public void check(Ast ast) {
         for(Ast.Entity entity : ast.getEntities().values()) {
             entity.accept(this);

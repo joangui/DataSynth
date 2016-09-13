@@ -7,13 +7,15 @@ import java.util.Map;
 
 /**
  * Created by quim on 5/10/16.
+ * Abstract class used to represent a vertex in the dependency graph.
  */
 public abstract class Vertex {
 
-    private static long nextId = 0;
 
+    /**
+     * Represents a property value in the dependency graph.
+     */
     public static class PropertyValue {
-
         private String value;
         private Types.DataType dataType;
 
@@ -30,6 +32,8 @@ public abstract class Vertex {
             return dataType;
         }
     };
+
+    private static long nextId = 0;
 
     protected Map<String,PropertyValue> properties = null;
 

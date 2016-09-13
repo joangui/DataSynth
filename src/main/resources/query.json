@@ -15,12 +15,12 @@
           }
         },
         {
-          "name" : "email",
+          "name" : "creationDate",
           "type" : "String",
           "generator" : {
-            "name" : "org.dama.datasynth.generators.DFGenerator",
+            "name" : "org.dama.datasynth.generators.DateGenerator",
             "requires" : [],
-            "init" : ["/email.txt",0,1," "]
+            "init" : ["dd-MM-yyyy","01-01-1980","01-01-1990"]
           }
         },
         {
@@ -30,6 +30,24 @@
             "name" : "org.dama.datasynth.generators.CorrellationGenerator",
             "requires" : ["person.country"],
             "init" : ["/namesByCountry.txt"," "]
+          }
+        },
+        {
+          "name" : "id",
+          "type" : "Long",
+          "generator" : {
+            "name" : "org.dama.datasynth.generators.DateBasedIDGenerator",
+            "requires" : ["person.creationDate"],
+            "init" : ["dd-MM-yyyy"]
+          }
+        },
+        {
+          "name" : "email",
+          "type" : "String",
+          "generator" : {
+            "name" : "org.dama.datasynth.generators.MailGenerator",
+            "requires" : ["person.name"],
+            "init" : ["/email.txt"]
           }
         }
       ]

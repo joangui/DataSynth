@@ -7,6 +7,8 @@ import org.dama.datasynth.lang.SemanticException;
 
 /**
  * Created by aprat on 6/09/16.
+ * Visitor that performs a semantic check over the ast.
+ * Checks that the used generators exist.
  */
 public class GeneratorsExist extends AstVisitor<Ast.Node> {
 

@@ -6,6 +6,8 @@ import java.util.*;
 
 /**
  * Created by quim on 5/12/16.
+ * This class represents a dependency graph, which is modeled completely as a property graph, and used to represent
+ * the dependencies between the different elements to generate.
  */
 public class DependencyGraph  {
 

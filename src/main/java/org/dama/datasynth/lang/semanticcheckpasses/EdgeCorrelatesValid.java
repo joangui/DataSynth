@@ -6,11 +6,17 @@ import org.dama.datasynth.lang.SemanticException;
 
 /**
  * Created by aprat on 6/09/16.
+ * Visitor that performs a semantic check over the ast.
+ * Checks that the attribute names in the correlates feature are valid.
  */
 public class EdgeCorrelatesValid extends AstVisitor<Ast.Node> {
 
     private Ast ast = null;
 
+    /**
+     * Performs the check over the ast.
+     * @param ast The ast to check
+     */
     public void check(Ast ast) {
         this.ast = ast;
         for(Ast.Edge edge : ast.getEdges().values()) {

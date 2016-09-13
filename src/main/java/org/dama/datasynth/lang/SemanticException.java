@@ -2,6 +2,7 @@ package org.dama.datasynth.lang;
 
 /**
  * Created by aprat on 10/04/16.
+ * Represents a semantic exception
  */
 public class SemanticException extends RuntimeException {
 

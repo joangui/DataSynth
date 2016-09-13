@@ -10,9 +10,18 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+/**
+ * Parser for the DataSynth queries
+ */
 public class Parser {
 
 
+    /**
+     * Parses a generator subquery
+     * @param jsonGenerator The json object representing the generator
+     * @return An Ast.Generator node representing the parsed generator
+     * @throws SyntacticException
+     */
     private Ast.Generator parseGenerator(JSONObject jsonGenerator) throws SyntacticException{
         Ast.Generator generator = null;
         if(jsonGenerator != null) {
@@ -47,6 +56,16 @@ public class Parser {
         return generator;
     }
 
+    /**
+     * Gets a field from a json object and checks its type
+     * @param jsonObject The json object to get the field from
+     * @param objectType The string representing the type of the json object
+     * @param fieldName The name of the field to get
+     * @param type The Class type of the field to get
+     * @param <T> The type of the field to get
+     * @return An object with the field value of the specified type.
+     * @throws SyntacticException if the field is not of the given type.
+     */
     private <T>  T getField(JSONObject jsonObject, String objectType, String fieldName, Class<T> type) throws SyntacticException{
         try{
             return type.cast(jsonObject.get(fieldName));
@@ -55,6 +74,16 @@ public class Parser {
         }
     }
 
+    /**
+     * Gets a field from a json object, checks its type and checks it is not null
+     * @param jsonObject The json object to get the field from
+     * @param objectType The string representing the type of the json object
+     * @param fieldName The name of the field to get
+     * @param type The Class type of the field to get
+     * @param <T> The type of the field to get
+     * @return An object with the field value of the specified type.
+     * @throws SyntacticException if the field is not of the given type or does not exist
+     */
     private <T> T getFieldNoNull(JSONObject jsonObject, String objectType, String fieldName, Class<T> type) throws SyntacticException {
         T fieldValue = type.cast(getField(jsonObject,objectType,fieldName,type));
         if(fieldValue == null) throw new SyntacticException(SyntacticException.SyntacticExceptionType.MISSING_FIELD, objectType+" must have a field \""+fieldName+"\" ");
@@ -62,9 +91,9 @@ public class Parser {
     }
 
     /**
-     * Parses a data definition schema
-     * @param str
-     * @return
+     * Parses a query
+     * @param str A string representing the query
+     * @return An Ast of the query
      */
     public Ast parse( String str ) throws SyntacticException, SemanticException {
         Ast ast = new Ast();

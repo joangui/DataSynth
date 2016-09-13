@@ -8,16 +8,24 @@ import java.util.List;
 
 /**
  * Created by aprat on 4/09/16.
+ * Visitor that creates the corss-dependencies of a dependency graph, given an Ast.
  */
 public class CrossDependenciesInserter extends AstVisitor<Ast.Node> {
 
     private DependencyGraph graph = null;
 
-
+    /**
+     * Constructor
+     */
     public CrossDependenciesInserter() {
     }
 
 
+    /**
+     * Executes the visitor over the ast.
+     * @param graph The dependency graph to build the dependencies at.
+     * @param ast  The ast to get the dependencies from.
+     */
     public void run(DependencyGraph graph, Ast ast) {
         this.graph = graph;
         for(Ast.Entity entity : ast.getEntities().values()) {
@@ -29,12 +37,25 @@ public class CrossDependenciesInserter extends AstVisitor<Ast.Node> {
         }
     }
 
+    /**
+     * Solves the dependenceis between a generator and an entity.oid attribute
+     * @param vertex The vertex the generator is connected to
+     * @param astGenerator The Ast.Generator object the generator represents
+     * @param generatorRelationName The name of the relation connecting the vertex and the Generator vertex.
+     * @param entityName  The name of the entity to connect the Generator vertex to.
+     */
     private void solveGeneratorOidDependency(Vertex vertex, Ast.Generator astGenerator, String generatorRelationName, String entityName) {
         List<Vertex> neighbors = graph.getNeighbors(vertex,generatorRelationName);
         Generator generator = (Generator)(neighbors.get(0));
         graph.addDependency(generator,graph.getAttribute(entityName+".oid"),"requires");
     }
 
+    /**
+     * Solves the dependenceis between a generator and its "requires" attributes
+     * @param vertex The vertex the generator is connected to
+     * @param astGenerator The Ast.Generator object the generator represents
+     * @param generatorRelationName The name of the relation connecting the vertex and the Generator vertex.
+     */
     private void solveGeneratorDependencies(Vertex vertex, Ast.Generator astGenerator, String generatorRelationName) {
         List<Vertex> neighbors = graph.getNeighbors(vertex,generatorRelationName);
         Generator generator = (Generator)(neighbors.get(0));

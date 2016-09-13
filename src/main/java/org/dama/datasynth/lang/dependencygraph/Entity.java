@@ -2,17 +2,15 @@ package org.dama.datasynth.lang.dependencygraph;
 
 /**
  * Created by aprat on 20/04/16.
+ * Represents an entity element in the dependency graph
  */
 public class Entity extends Vertex  {
 
-    /**
-     * The entity name
-     */
 
     /**
-     * The name of the entity
-     * @graph The depenceny graph
-     * @param name
+     * Constructor
+     * @param name The name of the entity
+     * @param numInstances The number of instances to generate the entity
      */
     public Entity(String name, long numInstances) {
         properties.put("name",new PropertyValue(name));

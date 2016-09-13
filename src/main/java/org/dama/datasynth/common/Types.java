@@ -11,6 +11,9 @@ import java.util.List;
  */
 public class Types {
 
+    /**
+     * Used to represent the direction of ane dge
+     */
     public enum Direction {
         UNDIRECTED ("undirected"),
         DIRECTED ("directed");
@@ -21,10 +24,19 @@ public class Types {
             this.text = text;
         }
 
+        /**
+         * Gets the text of the Direction
+         * @return The text of the direction
+         */
         public String getText() {
             return text;
         }
 
+        /**
+         * Gets the corresponding Direction value based on a given text
+         * @param text The text representing the direction
+         * @return The correposnging Direction value;
+         */
         public static Direction fromString(String text) {
             if (text != null) {
                 for (Direction b : Direction.values()) {

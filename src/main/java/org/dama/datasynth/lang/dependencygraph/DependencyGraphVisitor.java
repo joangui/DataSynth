@@ -2,6 +2,7 @@ package org.dama.datasynth.lang.dependencygraph;
 
 /**
  * Created by aprat on 17/05/16.
+ * A visitor of a dependency graph.
  */
 public abstract class DependencyGraphVisitor {
 

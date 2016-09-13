@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 
 /**
  * Created by aprat on 17/05/16.
+ * Dependency graph visitor that prints the dependency graph in text format
  */
 public class TextDependencyGraphPrinter extends DependencyGraphVisitor {
 

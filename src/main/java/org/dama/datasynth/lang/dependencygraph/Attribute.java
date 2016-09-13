@@ -4,6 +4,7 @@ import org.dama.datasynth.common.Types;
 
 /**
  * Created by aprat on 20/04/16.
+ * Represents an attribute element in the dependency graph
  */
 public class Attribute extends Vertex {
 
@@ -17,20 +18,6 @@ public class Attribute extends Vertex {
         properties.put("name",new PropertyValue(attributeName));
         properties.put("datatype",new PropertyValue(dataType.getText()));
     }
-
-    /**
-     * Gets the generator of this attribute task
-     * @return The name of the generator of this attribute task
-     */
-    public String getGenerator() {
-        /*for(DirectedEdge edge : graph.outgoingEdgesOf(this)) {
-            if(edge.getName().compareTo("generator") == 0) {
-                return ((Generator)graph.getEdgeTarget(edge)).getName();
-            }
-        }*/
-        throw new DependencyGraphConstructionException("Dependency graph is not correctly built. Attribute is missing generator");
-    }
-
 
     /**
      * Gets the name of the attribute this task is generating something for
@@ -53,6 +40,7 @@ public class Attribute extends Vertex {
         return "[" + getName() + ","+getClass().getSimpleName()+"]";
     }
 
+    @Override
     public void accept(DependencyGraphVisitor visitor) {
         visitor.visit(this);
     }

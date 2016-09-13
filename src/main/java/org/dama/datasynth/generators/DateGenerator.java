@@ -11,6 +11,7 @@ import java.util.*;
 
 /**
  * Created by aprat on 19/04/16.
+ * Generator that generates dates uniformly distributed within a given range.
  */
 public class DateGenerator extends Generator {
 
@@ -18,6 +19,13 @@ public class DateGenerator extends Generator {
     private long dateEnd;
     private String format;
     private String timeZone = "GMT";
+
+    /**
+     * Initializes the generator
+     * @param format The format of the output edges
+     * @param dateStart The start date of the date range
+     * @param dateEnd The end date of the date range
+     */
     public void initialize(String format, String dateStart, String dateEnd) {
         this.format = format;
         GregorianCalendar calendar = new GregorianCalendar();
@@ -36,6 +44,11 @@ public class DateGenerator extends Generator {
     }
 
 
+    /**
+     * Generates a date uniformly distributed, within the date range.
+     * @param id Unused
+     * @return A new date uniformly distributed within the date range.
+     */
     public String run(Long id) {
         Random rand = new Random();
         rand.setSeed(MurmurHash.hash64(id.toString()));

@@ -15,15 +15,6 @@
           }
         },
         {
-          "name" : "email",
-          "type" : "String",
-          "generator" : {
-            "name" : "org.dama.datasynth.generators.DFGenerator",
-            "requires" : [],
-            "init" : ["/email.txt",0,1," "]
-          }
-        },
-        {
           "name" : "creationDate",
           "type" : "String",
           "generator" : {
@@ -51,7 +42,7 @@
           }
         },
         {
-          "name" : "fullMail",
+          "name" : "email",
           "type" : "String",
           "generator" : {
             "name" : "org.dama.datasynth.generators.MailGenerator",

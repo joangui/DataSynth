@@ -48,11 +48,11 @@ public class SchnappiInterpreter {
         for(Operation child : ast.getStatements()) execOp(child);
     }
 
-    public void execOp(Operation n){
+    private void execOp(Operation n){
         execAssig((Assign)n);
     }
 
-    public Tuple execInit(Function fn){
+    private Tuple execInit(Function fn){
         Parameters pn = (Parameters) fn.getParameters();
         String generatorName = ((Atomic)pn.getParam(0)).getValue();
         Generator generator = null;
@@ -79,13 +79,13 @@ public class SchnappiInterpreter {
         return new Tuple(generator,1);
     }
 
-    public void execAssig(Assign assign) {
+    private void execAssig(Assign assign) {
         Tuple tuple = execExpr(assign.getExpression());
         if(tuple.get(0) instanceof JavaPairRDD) table.put(assign.getId().getValue(), tuple);
         if(tuple.get(0) instanceof Generator) generators.put(assign.getId().getValue(), ((Generator)tuple.get(0)));
     }
 
-    public Tuple execExpr(Expression n) {
+    private Tuple execExpr(Expression n) {
         String type = n.getType();
         switch (type) {
             case "Binding":
@@ -333,7 +333,7 @@ public class SchnappiInterpreter {
         return fw;
     }
 
-    public Object fetchParameter(String param){
+    private Object fetchParameter(String param){
         if(table.get(param) != null) return table.get(param);
         else return param;
     }
@@ -348,13 +348,4 @@ public class SchnappiInterpreter {
         }
     }
 
-    /*private void deleteDir(File file) {
-        File[] contents = file.listFiles();
-        if (contents != null) {
-            for (File f : contents) {
-                deleteDir(f);
-            }
-        }
-        file.delete();
-    }*/
 }

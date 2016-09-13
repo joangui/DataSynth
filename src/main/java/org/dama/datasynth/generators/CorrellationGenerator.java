@@ -10,11 +10,19 @@ import java.util.Map;
 
 /**
  * Created by aprat on 19/04/16.
+ * Generator used to get values correlated with others. Expects a file with two columns.
+ * The first contains the prior values while the second contains the correlated ones.
+ * Correlated values are returned uniformly distributed. File must be sorted by the first column.
  */
 public class CorrellationGenerator extends Generator {
 
     Map<String,Sampler> samplers;
 
+    /**
+     * Initializes the generator
+     * @param fileName The file name where the correlated values are stored
+     * @param sep The separator that separates the columns
+     */
     public void initialize(String fileName, String sep) {
         samplers = new HashMap<String,Sampler>();
         CSVReader reader = new CSVReader(fileName,sep);
@@ -40,8 +48,14 @@ public class CorrellationGenerator extends Generator {
         }
     }
 
-    public String run(Long id, String country) {
-        return samplers.get(country).takeSample(MurmurHash.hash64(id.toString()));
+    /**
+     * Given a value, returns the correlated one
+     * @param id Unused.
+     * @param prior The prior value.
+     * @return A correlated value uniformly distributed
+     */
+    public String run(Long id, String prior) {
+        return samplers.get(prior).takeSample(MurmurHash.hash64(id.toString()));
     }
 
 }
