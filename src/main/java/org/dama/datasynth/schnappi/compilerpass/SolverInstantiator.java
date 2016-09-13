@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
 
 /**
  * Created by aprat on 22/08/16.
+ * Schnappi Ast Visitor that to instantiate a solver
  */
 public class SolverInstantiator implements Visitor {
 
@@ -33,6 +34,11 @@ public class SolverInstantiator implements Visitor {
     }
 
 
+    /**
+     * Processes a binding
+     * @param binding The binding to process
+     * @return The list of expressions resulting from this binding
+     */
     private List<Expression> processBinding(Binding binding) {
         List<Vertex.PropertyValue> values = DependencyGraphMatcher.match(graph,vertex,binding.getBindingChain());
         List<Expression> retList = new ArrayList<Expression>();

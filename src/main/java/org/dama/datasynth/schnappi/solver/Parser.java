@@ -10,8 +10,14 @@ import java.io.IOException;
 
 /**
  * Created by quim on 5/5/16.
+ * Parser for the schnappi solvers
  */
 public class Parser {
+    /**
+     * Parses a solver file
+     * @param file The filename to parse
+     * @return The solver
+     */
     public static Solver parse( String file ){
         SchnappiLexer SchLexer = null;
         try {

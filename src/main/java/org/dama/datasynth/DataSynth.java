@@ -4,8 +4,6 @@ package org.dama.datasynth;
 
 
 import com.beust.jcommander.JCommander;
-import org.antlr.v4.runtime.ANTLRFileStream;
-import org.antlr.v4.runtime.CommonTokenStream;
 import org.dama.datasynth.lang.dependencygraph.DependencyGraph;
 import org.dama.datasynth.lang.dependencygraph.TextDependencyGraphPrinter;
 import org.dama.datasynth.lang.Ast;
@@ -17,12 +15,6 @@ import org.dama.datasynth.runtime.SchnappiInterpreter;
 import org.dama.datasynth.schnappi.ast.Operation;
 import org.dama.datasynth.schnappi.ast.printer.AstTreePrinter;
 import org.dama.datasynth.schnappi.Compiler;
-import org.dama.datasynth.schnappi.SchnappiGeneratorVisitor;
-import org.dama.datasynth.schnappi.SchnappiLexer;
-import org.dama.datasynth.schnappi.SchnappiParser;
-import org.dama.datasynth.schnappi.ast.printer.AstTreePrinter;
-import org.dama.datasynth.schnappi.ast.Operation;
-import org.dama.datasynth.schnappi.solver.Solver;
 import org.dama.datasynth.utils.LogFormatter;
 
 import java.io.IOException;
@@ -87,7 +79,7 @@ public class DataSynth {
             SchnappiGeneratorVisitor visitor = new SchnappiGeneratorVisitor();
             Solver s = visitor.visitSolver(sctx);
             AstTreePrinter astTreePrinter = new AstTreePrinter();
-            for(Operation operation : s.ast.getStatements()) {
+            for(Operation operation : s.ast.getOperations()) {
                 operation.accept(astTreePrinter);
             }
             */
@@ -102,7 +94,7 @@ public class DataSynth {
 
             logger.log(Level.FINE,"\nPrinting Schnappi Ast\n");
             AstTreePrinter astTreePrinter = new AstTreePrinter();
-            for(Operation operation : c.getProgram().getStatements()) {
+            for(Operation operation : c.getProgram().getOperations()) {
                 operation.accept(astTreePrinter);
             }
 

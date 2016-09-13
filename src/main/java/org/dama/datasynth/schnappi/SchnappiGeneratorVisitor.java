@@ -14,6 +14,7 @@ import java.util.List;
 
 /**
  * Created by quim on 5/17/16.
+ * Visitor implementing the ANTLR visitor that generates the Ast of the solvers
  */
 public class SchnappiGeneratorVisitor extends org.dama.datasynth.schnappi.SchnappiParserBaseVisitor<Node> {
 
@@ -25,7 +26,7 @@ public class SchnappiGeneratorVisitor extends org.dama.datasynth.schnappi.Schnap
         Signature signature = visitSignature(ctx.signature());
         Ast ast = new Ast();
         for(org.dama.datasynth.schnappi.SchnappiParser.OpContext op :  ctx.program().op()) {
-           ast.addStatement(visitOp(op));
+           ast.addOperation(visitOp(op));
 
         }
         return new Solver(signature,ast);

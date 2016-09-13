@@ -5,6 +5,7 @@ import org.dama.datasynth.schnappi.solver.Solver;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.assertTrue;
 
@@ -16,7 +17,7 @@ public class ShnappiParserTest {
     @Test
     public void schnappiParserTest(){
         try {
-            ArrayList<Solver> solvers = Loader.loadSolvers("src/main/resources/solvers");
+            List<Solver> solvers = Loader.loadSolvers("src/main/resources/solvers");
         } catch(Exception e) {
             assertTrue("Error when parsing solvers.",false);
         }

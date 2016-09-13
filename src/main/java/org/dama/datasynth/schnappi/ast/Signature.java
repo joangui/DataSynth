@@ -12,6 +12,7 @@ import java.util.Map;
 
 /**
  * Created by quim on 5/25/16.
+ * Represents a solver signature in the Schnappi Ast
  */
 public class Signature extends Node {
 
@@ -50,33 +51,61 @@ public class Signature extends Node {
             this.right = right;
             this.operator = operator;
         }
-
     };
 
     private Map<String,String>  bindings = new HashMap<String,String>();
     private List<Operation>     operations = new ArrayList<Operation>();
 
+    /**
+     * Constructor
+     */
     public Signature(){
     }
 
+    /**
+     * Copy constructor
+     * @param signature The signature to copy from
+     */
     public Signature(Signature signature) {
         bindings = new HashMap<String,String>(signature.bindings);
         operations = new ArrayList<Operation>(signature.operations);
     }
 
+    /**
+     * Adds a signature operation to the signature
+     * @param left The left part of the comparison operation
+     * @param right The right part of the comparison operation
+     * @param operator The operator
+     */
     public void addOperation(Atomic left, Atomic right, LogicOperator operator) {
         operations.add(new Operation(left, right, operator));
     }
 
+    /**
+     * Adds a binding to the signature
+     * @param name The name of the binding
+     * @param type The type of the binding
+     */
     public void addBinding(String name, String type) {
         bindings.put(name,type);
     }
 
+    /**
+     * Gets the bindings of the signature
+     * @return The bindings of the signature
+     */
     public Map<String, String> getBindings() {
         return bindings;
     }
 
 
+    /**
+     * Decodes an atomic
+     * @param graph The graph to use to decode the atomic
+     * @param v The vertex the atomic should be matched against in case it is a binding
+     * @param atomic The atomic to decode
+     * @return The property value after decoding the atomic
+     */
     private Vertex.PropertyValue decodeAtomic(DependencyGraph graph, Vertex v, Atomic atomic)  {
        switch(atomic.getType()) {
            case "Binding":
@@ -92,6 +121,13 @@ public class Signature extends Node {
 
     }
 
+    /**
+     * Compares two property values
+     * @param left The left property value in the comparison
+     * @param right The right property value in the comparison
+     * @param operator The operator of the comparison
+     * @return The result of the comparison
+     */
     private boolean comparePropertyValues(Vertex.PropertyValue left, Vertex.PropertyValue right, LogicOperator operator) {
         switch(operator) {
             case EQ:
@@ -104,6 +140,12 @@ public class Signature extends Node {
         throw new CompilerException(CompilerException.CompilerExceptionType.INVALID_BINDING_EXPRESSION, ". Unsupported logic operator "+operator.getText());
     }
 
+    /**
+     * Evaluates a vertex against this signature
+     * @param graph The dependency graph used for the evaluation
+     * @param v The vertex to evaluate
+     * @return True if the signature holds for the vertex
+     */
     public boolean eval(DependencyGraph graph, Vertex v) {
         for(Operation operation : operations) {
                 if(!comparePropertyValues(decodeAtomic(graph,v,operation.left), decodeAtomic(graph,v,operation.right), operation.operator)){

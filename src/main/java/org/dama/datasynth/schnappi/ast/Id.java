@@ -2,12 +2,22 @@ package org.dama.datasynth.schnappi.ast;
 
 /**
  * Created by aprat on 24/08/16.
+ * Represents an Id in the Schnappi Ast
  */
 public class Id extends Atomic {
-    public Id(String value) {
-        super(value);
+
+    /**
+     * Constructor
+     * @param name The name of the Id
+     */
+    public Id(String name) {
+        super(name);
     }
 
+    /**
+     * Copy constructor
+     * @param id The id to copy from
+     */
     public Id(Id id) {
         super(id.getValue());
     }
@@ -18,7 +28,7 @@ public class Id extends Atomic {
     }
 
     @Override
-    public java.lang.String toString() {
+    public String toString() {
         return "<id,"+value+">";
     }
 }

@@ -4,6 +4,7 @@ import org.dama.datasynth.schnappi.solver.Solver;
 
 /**
  * Created by quim on 5/30/16.
+ * Schnappi Ast visitor interface
  */
 public interface Visitor {
     public abstract void visit(Assign n);

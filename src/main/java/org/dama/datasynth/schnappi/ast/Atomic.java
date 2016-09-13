@@ -2,25 +2,34 @@ package org.dama.datasynth.schnappi.ast;
 
 /**
  * Created by aprat on 24/08/16.
+ * Represents an Atomic expression (single element) in the Schnappi Ast.
  */
 public class Atomic extends Expression {
 
     protected String value;
 
+    /**
+     * Constructor
+     * @param value The value of the atomic
+     */
     public Atomic(String value) {
         this.value = value;
     }
 
+    /**
+     * Copy constructor
+     * @param atomic The atomic to copy from
+     */
     public Atomic(Atomic atomic) {
         this.value = atomic.value;
     }
 
+    /**
+     * Gets the value of teh atomic
+     * @return The value of the atomic.
+     */
     public String getValue() {
         return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
     }
 
     @Override

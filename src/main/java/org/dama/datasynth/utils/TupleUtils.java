@@ -8,9 +8,7 @@ import org.apache.spark.api.java.function.Function2;
 public final class TupleUtils {
     public static Tuple concatenate(Tuple t1, Tuple t2){
         Tuple r = new Tuple(t1);
-        //System.out.print("T1 " + t1 + " r " + r + " T2 " + t2);
         r.addAll(t2);
-        //System.out.println("AFTER T1 " + t1 + " r " + r + " T2 " + t2);
         return r;
     }
     public static Function2<Tuple,Tuple,Tuple> join = new Function2<Tuple,Tuple,Tuple>(){

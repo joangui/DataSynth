@@ -9,7 +9,7 @@ import java.util.List;
  */
 public class Ast {
 
-    protected List<Operation> statements = new LinkedList<Operation>();
+    protected List<Operation> operations = new LinkedList<Operation>();
 
     /**
      * Constructor
@@ -22,8 +22,8 @@ public class Ast {
      * @param ast The ast to copy from
      */
     public Ast(Ast ast) {
-        for(Operation operation : ast.statements) {
-            statements.add(operation.copy());
+        for(Operation operation : ast.operations) {
+            operations.add(operation.copy());
         }
     }
 
@@ -31,19 +31,16 @@ public class Ast {
      * Adds a statement to the Ast.
      * @param statement The statement to add
      */
-    public void addStatement(Operation statement) {
-        statements.add(statement);
+    public void addOperation(Operation statement) {
+        operations.add(statement);
     }
 
     /**
      *
      * @return
      */
-    public List<Operation> getStatements(){
-        return statements;
+    public List<Operation> getOperations(){
+        return operations;
     }
 
-    public void merge(Ast ast) {
-        statements.addAll(ast.getStatements());
-    }
 }

@@ -5,20 +5,38 @@ import java.lang.StringBuilder;
 import java.io.Serializable;
 /**
  * Created by quim on 4/19/16.
+ * Class used to read CSV files
  */
 public class CSVReader implements Serializable{
     public String[] array;
     private String sep;
-    public CSVReader(String str, String sep){
+
+    /**
+     * Constructor
+     * @param filename The csv file name
+     * @param sep The separator
+     */
+    public CSVReader(String filename, String sep){
         this.sep = sep;
-        init(str, sep);
+        init(filename, sep);
     }
-    public CSVReader(String str){
-        init(str, " ");
+
+    /**
+     * Constructor with a default separator of " "
+     * @param filename The csv file name.
+     */
+    public CSVReader(String filename){
+        init(filename, " ");
     }
-    private void init(String str, String sep) {
+
+    /**
+     * Initializes the reader
+     * @param filename The csv file name
+     * @param sep The separator
+     */
+    private void init(String filename, String sep) {
         try{
-            Scanner inFile1 = new Scanner(getClass().getResourceAsStream(str));
+            Scanner inFile1 = new Scanner(getClass().getResourceAsStream(filename));
             StringBuilder sb = new StringBuilder();
             while(inFile1.hasNext()) {
                 String line = inFile1.nextLine();
@@ -26,15 +44,20 @@ public class CSVReader implements Serializable{
             }
             this.array = sb.toString().split("\n");
         }catch (Exception e) {
-            System.err.println("Exception when oppening file: "+str);
+            System.err.println("Exception when oppening file: "+filename);
             e.printStackTrace();
         }
     }
 
+    /**
+     * Gets the ith line of the csv
+     * @param i The line to get
+     * @return The ith line of the csv
+     */
     public String getLine(int i){
-
         return this.array[i];
     }
+
 
     public String toString(){
         return toString(" ",",");

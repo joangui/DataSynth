@@ -2,6 +2,7 @@ package org.dama.datasynth.schnappi.ast;
 
 /**
  * Created by aprat on 24/08/16.
+ * This class represents a Variable in the Schnappi Ast.
  */
 public class Var extends Atomic {
     public Var(String value) {

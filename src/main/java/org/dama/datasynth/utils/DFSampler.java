@@ -4,6 +4,7 @@ import java.util.Random;
 
 /**
  * Created by quim on 4/19/16.
+ * Distribution Function Sampler
  */
 public class DFSampler extends Sampler{
         public DFSampler(String str){

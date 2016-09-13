@@ -14,9 +14,17 @@ import java.util.List;
 
 /**
  * Created by aprat on 11/09/16.
+ * Static class with helper functions to match against dependency graphs
  */
 public class DependencyGraphMatcher {
 
+    /**
+     * Matches a binding chain agains a dependency graph
+     * @param graph The dependency graph
+     * @param vertex The vertex used in the binding chain
+     * @param matchChain The binding Chain
+     * @return A list of property values resulting from matching the chain
+     */
     public static List<Vertex.PropertyValue> match(DependencyGraph graph, Vertex vertex, List<String> matchChain) {
         List<Vertex> frontier = new ArrayList<Vertex>();
         frontier.add(vertex);

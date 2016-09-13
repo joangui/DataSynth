@@ -2,13 +2,10 @@ package org.dama.datasynth.runtime;
 
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
-import org.apache.spark.api.java.function.FlatMapFunction;
-import org.apache.spark.api.java.function.ForeachPartitionFunction;
 import org.apache.spark.api.java.function.PairFlatMapFunction;
 import org.apache.spark.api.java.function.PairFunction;
 import org.dama.datasynth.DataSynthConfig;
 import org.dama.datasynth.SparkEnv;
-import org.dama.datasynth.common.Types;
 import org.dama.datasynth.runtime.spark.untyped.*;
 import org.dama.datasynth.schnappi.ast.Ast;
 import org.dama.datasynth.schnappi.ast.*;
@@ -42,7 +39,7 @@ public class SchnappiInterpreter {
     }
 
     public void execProgram(Ast ast){
-        for(Operation child : ast.getStatements()) execOp(child);
+        for(Operation child : ast.getOperations()) execOp(child);
     }
 
     private void execOp(Operation n){

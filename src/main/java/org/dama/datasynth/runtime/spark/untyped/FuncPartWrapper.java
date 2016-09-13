@@ -6,15 +6,16 @@ import org.dama.datasynth.runtime.Generator;
 import org.dama.datasynth.utils.Tuple;
 import scala.Tuple2;
 
+import java.util.Iterator;
+
 /**
  * Created by quim on 9/13/16.
  */
-public class FuncPartWrapper extends UntypedMethod implements PairFlatMapFunction<Iterable<Tuple2<Long,Tuple>>,Long,Tuple> {
-    //Function<Iterable<Tuple2<Long, Tuple>>,Iterable<Tuple2<Long, Tuple>>> {
+public class FuncPartWrapper extends UntypedMethod implements PairFlatMapFunction<Iterator<Tuple2<Long,Tuple>>,Long,Tuple> {
     public FuncPartWrapper(Generator g, String functionName){
         super(g,functionName);
     }
-    public Iterable<scala.Tuple2<Long, Tuple>> call(Iterable<scala.Tuple2<Long, Tuple>> tuples){
+    public Iterable<Tuple2<Long, Tuple>> call(Iterator<scala.Tuple2<Long, Tuple>> tuples){
         return (Iterable<scala.Tuple2<Long, Tuple>>) invoke(tuples);
     }
 }

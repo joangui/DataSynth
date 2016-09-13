@@ -25,7 +25,7 @@ public class CDFGenerator extends Generator {
      */
     public void initialize(String file, Long x, Long y, String sep ){
         CSVReader csv = new CSVReader(file, sep);
-        this.s = new CDFSampler(csv.fetchSubMatrix(x.intValue(), y.intValue()));
+        this.s = new CDFSampler(csv.fetchSubMatrix(x.intValue(), y.intValue()), 12345L);
     }
 
 

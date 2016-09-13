@@ -5,22 +5,35 @@ import java.util.List;
 
 /**
  * Created by quim on 5/18/16.
+ * Represents a Binding in the Schnappi Ast
  */
 public class Binding extends Atomic {
 
     private List<String> bindingChain = null;
 
+    /**
+     * Constructor
+     * @param bindingChain The binding chain of the binding
+     */
     public Binding(List<String> bindingChain) {
         super(bindingChain.toString());
         this.bindingChain = bindingChain;
     }
 
-    public Binding(Binding id) {
-        super(id.bindingChain.toString());
+    /**
+     * Copy constructor
+     * @param binding The binding to copy from
+     */
+    public Binding(Binding binding) {
+        super(binding.bindingChain.toString());
         this.bindingChain = new ArrayList<String>();
-        this.bindingChain.addAll(id.bindingChain);
+        this.bindingChain.addAll(binding.bindingChain);
     }
 
+    /**
+     * Gets the binding chain of the binding
+     * @return The binding chain of the binding
+     */
     public List<String> getBindingChain() {
         return bindingChain;
     }

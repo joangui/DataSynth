@@ -12,6 +12,7 @@ import java.util.*;
 
 /**
  * Created by quim on 5/5/16.
+ * The Chnappi compilers that creates a Schnappi program from a dependency graph
  */
 public class Compiler extends DependencyGraphVisitor {
 
@@ -23,17 +24,30 @@ public class Compiler extends DependencyGraphVisitor {
     private Ast program             = new Ast();
     private Set<Long>             generatedVertices   = new HashSet<Long>();
 
+    /**
+     * Constructor
+     * @param graph The dependency graph to build the Schnappi program from
+     * @param dir The directory to locate the solvers
+     */
     public Compiler(DependencyGraph graph, String dir){
         super(graph);
         loadSolvers(dir);
     }
 
+    /**
+     * Loads the solvers
+     * @param dir The folder containing the solvers
+     */
     private void loadSolvers(String dir){
         for(Solver s : Loader.loadSolvers(dir)) {
             this.solversDB.put(s.getSignature().getBindings().values().iterator().next(),s);
         }
     }
 
+
+    /**
+     * Synthetizes the Schnappi program
+     */
     public void synthesizeProgram(){
         for(Entity v : graph.getEntities()) {
             visit(v);
@@ -44,19 +58,32 @@ public class Compiler extends DependencyGraphVisitor {
         }
     }
 
+    /**
+     * Solves a vertex
+     * @param v The vertex to solve
+     * @throws CompilerException
+     */
     private void solveVertex(Vertex v) throws CompilerException {
         Solver s = this.solversDB.get(v.getType());
         if(s == null || !s.eval(graph,v)) throw new CompilerException(CompilerException.CompilerExceptionType.UNSOLVABLE_PROGRAM, "No solver for type "+v.getType());
         this.concatenateProgram(s.instantiate(graph,v));
     }
 
-    private void concatenateProgram(Ast p){
-        List<org.dama.datasynth.schnappi.ast.Operation> statements = p.getStatements();
+    /**
+     * Concatenates an existing Ast to the current program ast
+     * @param ast The ast to concatenate
+     */
+    private void concatenateProgram(Ast ast){
+        List<org.dama.datasynth.schnappi.ast.Operation> statements = ast.getOperations();
         for(org.dama.datasynth.schnappi.ast.Operation statement : statements){
-            this.program.addStatement(statement);
+            this.program.addOperation(statement);
         }
     }
 
+    /**
+     * Gets the synthetized program Ast
+     * @return The ast of the synthetized program
+     */
     public Ast getProgram() {
         return this.program;
     }
@@ -93,7 +120,7 @@ public class Compiler extends DependencyGraphVisitor {
                 org.dama.datasynth.schnappi.ast.Parameters parameters = new org.dama.datasynth.schnappi.ast.Parameters(new Number(String.valueOf(graph.getEntity(entityName).getNumInstances()), Types.DataType.LONG));
                 org.dama.datasynth.schnappi.ast.Function function = new org.dama.datasynth.schnappi.ast.Function("genids", parameters);
                 org.dama.datasynth.schnappi.ast.Assign assign = new org.dama.datasynth.schnappi.ast.Assign(new org.dama.datasynth.schnappi.ast.Id(attribute.getName()), function);
-                this.program.addStatement(assign);
+                this.program.addOperation(assign);
             }
             generatedVertices.add(attribute.getId());
         }
