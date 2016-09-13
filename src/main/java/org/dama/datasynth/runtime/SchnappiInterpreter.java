@@ -9,13 +9,10 @@ import org.apache.spark.api.java.function.PairFunction;
 import org.dama.datasynth.DataSynthConfig;
 import org.dama.datasynth.SparkEnv;
 import org.dama.datasynth.common.Types;
+import org.dama.datasynth.runtime.spark.untyped.*;
 import org.dama.datasynth.schnappi.ast.Ast;
 import org.dama.datasynth.schnappi.ast.*;
 import org.dama.datasynth.runtime.spark.SchnappiFilter;
-import org.dama.datasynth.runtime.spark.untyped.Function0Wrapper;
-import org.dama.datasynth.runtime.spark.untyped.Function2Wrapper;
-import org.dama.datasynth.runtime.spark.untyped.FunctionWrapper;
-import org.dama.datasynth.runtime.spark.untyped.UntypedMethod;
 import org.dama.datasynth.schnappi.ast.Number;
 import org.dama.datasynth.utils.Tuple;
 import org.dama.datasynth.utils.TupleUtils;
@@ -142,7 +139,7 @@ public class SchnappiInterpreter {
         Atomic pn0 = (Atomic)function.getParameters().getParam(0);
         Atomic pn1 = (Atomic)function.getParameters().getParam(1);
         Tuple rd = table.get(pn1.getValue());
-        org.apache.spark.api.java.function.PairFlatMapFunction<Iterator<Tuple2<Long,Tuple>>,Long,Tuple> f =  (PairFlatMapFunction<Iterator<Tuple2<Long,Tuple>>,Long,Tuple>) tuples -> {
+        /*org.apache.spark.api.java.function.PairFlatMapFunction<Iterator<Tuple2<Long,Tuple>>,Long,Tuple> f = (PairFlatMapFunction<Iterator<Tuple2<Long,Tuple>>,Long,Tuple>) tuples -> {
             int blockSize = 10000;
             ArrayList<Tuple2<Long,Tuple>> retList = new ArrayList<Tuple2<Long,Tuple>>();
             ArrayList<Tuple2<Long,Tuple>>  currentBlock = new ArrayList<Tuple2<Long,Tuple>>();
@@ -167,7 +164,8 @@ public class SchnappiInterpreter {
                 }
             }
             return retList;
-        };
+        };*/
+        PairFlatMapFunction f = fetchPartFunction(pn0.getValue());
         JavaPairRDD<Long, Tuple> rdd = (JavaPairRDD<Long, Tuple>) rd.get(0);
         JavaPairRDD<Long, Tuple> result = rdd.mapPartitionsToPair(f);
         return new Tuple(result,1);
@@ -306,7 +304,11 @@ public class SchnappiInterpreter {
         tuple.add(1);
         return tuple;
     }
-
+    private PairFlatMapFunction fetchPartFunction(String generatorName){
+        Generator generator = this.generators.get(generatorName);
+        PairFlatMapFunction fpw = new FuncPartWrapper(generator, "run");
+        return fpw;
+    }
     private org.apache.spark.api.java.function.Function fetchFunction(String generatorName, int numParams) {
         Generator generator = this.generators.get(generatorName);
         org.apache.spark.api.java.function.Function fw = null;
