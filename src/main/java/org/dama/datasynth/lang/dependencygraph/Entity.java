@@ -1,5 +1,7 @@
 package org.dama.datasynth.lang.dependencygraph;
 
+import org.dama.datasynth.common.Types;
+
 /**
  * Created by aprat on 20/04/16.
  * Represents an entity element in the dependency graph
@@ -13,7 +15,7 @@ public class Entity extends Vertex  {
      * @param numInstances The number of instances to generate the entity
      */
     public Entity(String name, long numInstances) {
-        properties.put("name",new PropertyValue(name));
+        properties.put("name",new PropertyValue( new Types.Id(name,false)));
         properties.put("number", new PropertyValue(numInstances));
     }
 

@@ -1,4 +1,4 @@
-package org.dama.datasynth.runtime;
+package org.dama.datasynth.generators;
 
 import java.io.Serializable;
 import java.util.List;

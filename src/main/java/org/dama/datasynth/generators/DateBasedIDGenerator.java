@@ -1,7 +1,5 @@
 package org.dama.datasynth.generators;
 
-import org.dama.datasynth.runtime.Generator;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 

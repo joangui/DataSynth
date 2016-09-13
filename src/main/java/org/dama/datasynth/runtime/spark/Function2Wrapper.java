@@ -2,7 +2,7 @@ package org.dama.datasynth.runtime.spark;
 
 import org.apache.spark.api.java.function.Function;
 import org.dama.datasynth.common.Types;
-import org.dama.datasynth.runtime.Generator;
+import org.dama.datasynth.generators.Generator;
 import org.dama.datasynth.utils.Tuple;
 
 import java.util.List;

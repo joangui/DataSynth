@@ -1,8 +1,5 @@
 package org.dama.datasynth.generators;
 
-import org.dama.datasynth.runtime.Generator;
-import umontreal.ssj.probdist.PowerDist;
-
 /**
  * Created by aprat on 5/09/16.
  * Generates values distributed using a Zipf distribution

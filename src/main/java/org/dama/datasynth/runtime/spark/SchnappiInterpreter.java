@@ -1,4 +1,4 @@
-package org.dama.datasynth.runtime;
+package org.dama.datasynth.runtime.spark;
 
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
@@ -6,10 +6,13 @@ import org.apache.spark.api.java.function.PairFlatMapFunction;
 import org.apache.spark.api.java.function.PairFunction;
 import org.dama.datasynth.DataSynthConfig;
 import org.dama.datasynth.SparkEnv;
+import org.dama.datasynth.runtime.ExecutionException;
 import org.dama.datasynth.runtime.spark.untyped.*;
+import org.dama.datasynth.runtime.spark.untyped.Function0Wrapper;
+import org.dama.datasynth.runtime.spark.untyped.Function2Wrapper;
+import org.dama.datasynth.runtime.spark.untyped.FunctionWrapper;
 import org.dama.datasynth.schnappi.ast.Ast;
 import org.dama.datasynth.schnappi.ast.*;
-import org.dama.datasynth.runtime.spark.SchnappiFilter;
 import org.dama.datasynth.schnappi.ast.Number;
 import org.dama.datasynth.utils.Tuple;
 import org.dama.datasynth.utils.TupleUtils;
@@ -23,14 +26,14 @@ import java.util.*;
  */
 public class SchnappiInterpreter {
 
-    private Map<String, Tuple> table;
-    private Map<String, Generator> generators;
+    private Map<Id, Table> idTable;
+    private Map<Var,ExpressionValue> varTable;
     private DataSynthConfig config;
 
     public SchnappiInterpreter() {
         SparkEnv.initialize();
-        table = new HashMap<String, Tuple>();
-        generators = new HashMap<String, Generator>();
+        idTable = new TreeMap<Id, Table>();
+        varTable = new TreeMap<Var,ExpressionValue>();
     }
 
     public SchnappiInterpreter(DataSynthConfig config){
@@ -46,12 +49,12 @@ public class SchnappiInterpreter {
         execAssig((Assign)n);
     }
 
-    private Tuple execInit(Function fn){
+    private ExpressionValue execInit(Function fn){
         Parameters pn = (Parameters) fn.getParameters();
         String generatorName = ((Atomic)pn.getParam(0)).getValue();
-        Generator generator = null;
+        org.dama.datasynth.generators.Generator generator = null;
         try {
-            generator = (Generator)Class.forName(generatorName).newInstance();
+            generator = (org.dama.datasynth.generators.Generator) Class.forName(generatorName).newInstance();
         } catch (ClassNotFoundException cNFE) {
             cNFE.printStackTrace();
         } catch (InstantiationException iE) {
@@ -65,41 +68,53 @@ public class SchnappiInterpreter {
         parameters.getParams().remove(0);
         Object [] params = new Object[parameters.params.size()];
         for(int index = 0; index < parameters.params.size(); ++index) {
-            params[index] = execExpr(parameters.params.get(index)).get(0);
+            ExpressionValue exprValue = execExpr(parameters.params.get(index));
+            if(exprValue.getType().compareTo("Literal") == 0) {
+                params[index] = ((Literal)exprValue).getLiteral().getObject();
+            } else {
+                throw new ExecutionException("Cannot initialize a generator with a non-literal expression");
+            }
         }
         UntypedMethod method = new UntypedMethod(generator,"initialize");
         method.invoke(params);
         JavaRDD<Tuple2<Long, Tuple>> aux = SparkEnv.sc.emptyRDD();
-        return new Tuple(generator,1);
+        return new Generator(generator);
     }
 
     private void execAssig(Assign assign) {
-        Tuple tuple = execExpr(assign.getExpression());
-        if(tuple.get(0) instanceof JavaPairRDD) table.put(assign.getId().getValue(), tuple);
-        if(tuple.get(0) instanceof Generator) generators.put(assign.getId().getValue(), ((Generator)tuple.get(0)));
+        ExpressionValue exprValue = execExpr(assign.getExpression());
+
+        if(assign.getId().getType().compareTo("Id") == 0) {
+            idTable.put(((Id)assign.getId()), (Table) exprValue);
+            return;
+        }
+
+        if(assign.getId().getType().compareTo("Var") == 0) {
+            varTable.put(((Var)assign.getId()), exprValue);
+            return;
+        }
+        throw new ExecutionException("Invalid left value in assignment. Cannot assign anything to a literal");
     }
 
-    private Tuple execExpr(Expression n) {
+    private ExpressionValue execExpr(Expression n) {
         String type = n.getType();
         switch (type) {
-            case "Binding":
-                return table.get(((Binding) n).getValue());
             case "Id":
-                return table.get(((Id) n).getValue());
+                return idTable.get(((Id) n));
             case "Var":
-                return table.get(((Atomic) n).getValue());
+                return varTable.get(((Var) n));
             case "Number":
-                return new Tuple(((Number)n).getObject(),1);
+                return new Literal(((Number)n));
             case "Function":
                 return execFunc((Function)n);
             case "StringLiteral":
-                return new Tuple(((StringLiteral)n).getValue(),1);
+                return new Literal(((StringLiteral)n));
             default:
                 throw new ExecutionException("Unsupported type of expression "+n.getType());
         }
     }
 
-    public Tuple execFunc(Function n){
+    public ExpressionValue execFunc(Function n){
         switch(n.getName()){
             case "map" : {
                 return execMap(n);
@@ -132,40 +147,34 @@ public class SchnappiInterpreter {
         }
     }
 
-    private Tuple execMappart(Function function) {
+    private Table getTable(Atomic atomic) {
+
+        if(atomic.getType().compareTo("Id") == 0) {
+            return idTable.get(((Id)atomic));
+        }
+
+        if(atomic.getType().compareTo("Var") == 0) {
+            ExpressionValue val = varTable.get(((Var)atomic));
+            if(val.getType().compareTo("Table") == 0) {
+                return ((Table)val);
+            }
+        }
+        throw new ExecutionException("Unexisting RDD with name "+atomic.getValue());
+    }
+
+    private Table execMappart(Function function) {
         Atomic pn0 = (Atomic)function.getParameters().getParam(0);
         Atomic pn1 = (Atomic)function.getParameters().getParam(1);
-        Tuple rd = table.get(pn1.getValue());
-        /*org.apache.spark.api.java.function.PairFlatMapFunction<Iterator<Tuple2<Long,Tuple>>,Long,Tuple> f = (PairFlatMapFunction<Iterator<Tuple2<Long,Tuple>>,Long,Tuple>) tuples -> {
-            int blockSize = 10000;
-            ArrayList<Tuple2<Long,Tuple>> retList = new ArrayList<Tuple2<Long,Tuple>>();
-            ArrayList<Tuple2<Long,Tuple>>  currentBlock = new ArrayList<Tuple2<Long,Tuple>>();
-            ArrayList<Integer>  neighborCount = new ArrayList<Integer>();
-            while(tuples.hasNext()) {
-                currentBlock.clear();
-                neighborCount.clear();
-                while (currentBlock.size() < blockSize && tuples.hasNext()) {
-                    currentBlock.add(tuples.next());
-                    neighborCount.add(0);
-                }
-                for(int i = 0; i < currentBlock.size(); ++i) {
-                    for(int j = i; j < currentBlock.size() && j - i < 1000; ++j) {
-                        if((Long)currentBlock.get(i)._2().get(2) > neighborCount.get(i) &&
-                            (Long)currentBlock.get(j)._2().get(2) > neighborCount.get(j)
-                                ) {
-                            retList.add(new Tuple2<Long,Tuple>(currentBlock.get(i)._1(), new Tuple(currentBlock.get(j)._1)));
-                            neighborCount.set(i,neighborCount.get(i)+1);
-                            neighborCount.set(j,neighborCount.get(j)+1);
-                        }
-                    }
-                }
-            }
-            return retList;
-        };*/
-        PairFlatMapFunction f = fetchPartFunction(pn0.getValue());
-        JavaPairRDD<Long, Tuple> rdd = (JavaPairRDD<Long, Tuple>) rd.get(0);
+
+        JavaPairRDD<Long,Tuple> rdd = getTable(pn1).getRdd();
+
+        if(pn0.getType().compareTo("Var") != 0) {
+            throw new ExecutionException("First parameter in mappart must be of type variable containing a generator");
+        }
+
+        PairFlatMapFunction f = fetchPartFunction((Var)pn0);
         JavaPairRDD<Long, Tuple> result = rdd.mapPartitionsToPair(f);
-        return new Tuple(result,1);
+        return new Table(result,1);
     }
 
     private static class TupleComparator implements Comparator<Tuple>, Serializable {
@@ -196,36 +205,36 @@ public class SchnappiInterpreter {
 
 
 
-    public Tuple execSort(Function fn) {
-        Id id = (Id)fn.getParameters().getParam(0);
+    public Table execSort(Function fn) {
+        Atomic id = (Atomic)fn.getParameters().getParam(0);
         Number column = (Number)fn.getParameters().getParam(1);
-        Tuple rd = table.get(id.getValue());
-        JavaPairRDD<Long, Tuple> rdd = (JavaPairRDD<Long, Tuple>) table.get(id.getValue()).get(0);
+        Table table = getTable(id);
+        JavaPairRDD<Long,Tuple> rdd = table.getRdd();
         PairFunction<Tuple2<Long,Tuple>, Tuple, Long> swapLongTuple = (PairFunction<Tuple2<Long, Tuple>, Tuple, Long>) tuple -> new Tuple2 < Tuple, Long > (tuple._2, tuple._1);
         PairFunction<Tuple2<Tuple,Long>, Long, Tuple> swapTupleLong = (PairFunction<Tuple2<Tuple, Long>, Long, Tuple>) tuple -> new Tuple2 < Long, Tuple > (tuple._2, tuple._1);
         JavaPairRDD <Long, Tuple> sortedRdd = rdd.mapToPair(swapLongTuple).sortByKey(new TupleComparator((Long)column.getObject()), true,100).mapToPair(swapTupleLong);
-        return new Tuple(sortedRdd,rd.get(1));
+        return new Table(sortedRdd,table.getCardinality());
     }
 
-    public Tuple execMap(Function fn) {
+    public Table execMap(Function fn) {
         Atomic pn0 = (Atomic)fn.getParameters().getParam(0);
         Atomic pn1 = (Atomic)fn.getParameters().getParam(1);
-        Tuple rd = table.get(pn1.getValue());
-        org.apache.spark.api.java.function.Function f = fetchFunction(pn0.getValue(), (Integer)rd.get(1));
-        JavaPairRDD<Long, Tuple> rdd = (JavaPairRDD<Long, Tuple>) rd.get(0);
-        return new Tuple(rdd.mapValues(f),1);
+        Table table  = getTable(pn1);
+        org.apache.spark.api.java.function.Function f = fetchFunction((Var)pn0, table.getCardinality());
+        JavaPairRDD<Long, Tuple> rdd = table.getRdd();
+        return new Table(rdd.mapValues(f),1);
     }
 
-    public Tuple execFilter(Function fn) {
+    public Table execFilter(Function fn) {
         Atomic pn0 = (Atomic)fn.getParameters().getParam(0);
         SchnappiFilter filter = new SchnappiFilter();
         ArrayList<Integer> filtIds = new ArrayList<>();
         for(int i = 1; i < fn.getParameters().params.size(); ++i) filtIds.add(Integer.parseInt(fn.getParameters().getParam(i).toString()));
-        Tuple rd = table.get(pn0.getValue());
+        Table table = getTable(pn0);
         String generatorName = "org.dama.datasynth.runtime.spark.SchnappiFilter";
-        Generator generator = null;
+        org.dama.datasynth.generators.Generator generator = null;
         try {
-            generator = (Generator)Class.forName(generatorName).newInstance();
+            generator = (org.dama.datasynth.generators.Generator) Class.forName(generatorName).newInstance();
         } catch (ClassNotFoundException cNFE) {
             cNFE.printStackTrace();
         } catch (InstantiationException iE) {
@@ -241,44 +250,33 @@ public class SchnappiInterpreter {
         }
         UntypedMethod method = new UntypedMethod(generator,"initialize");
         method.invoke(params);
-        org.apache.spark.api.java.function.Function f = new FunctionWrapper(generator, "run");
-        JavaPairRDD<Long, Tuple> rdd = (JavaPairRDD<Long, Tuple>) rd.get(0);
-        return new Tuple(rdd.mapValues(f),1);
+        org.apache.spark.api.java.function.Function f = new org.dama.datasynth.runtime.spark.untyped.FunctionWrapper(generator, "run");
+        JavaPairRDD<Long, Tuple> rdd = table.getRdd();
+        return new Table(rdd.mapValues(f),1);
     }
 
-    public Tuple execUnion(Function fn){
+    public Table execUnion(Function fn){
         JavaRDD<Tuple2<Long, Tuple>> aux = SparkEnv.sc.emptyRDD();
         JavaPairRDD<Long,Tuple> result = JavaPairRDD.fromJavaRDD(aux);
         Parameters pn = fn.getParameters();
-        if(pn.params.size() == 0) return new Tuple(result,0);
+        if(pn.params.size() == 0) return new Table(result,0);
         boolean first = true;
         for(Expression p : pn.params){
-            Tuple rdd =  execExpr(p);
-            if(rdd == null) throw new ExecutionException("Error during execution. Unable to find RDD "+p.toString()+", it does not exist");
+            ExpressionValue expr =  execExpr(p);
+            if(expr == null) throw new ExecutionException("Error during execution. Unable to find RDD "+p.toString()+", it does not exist");
+            if(expr.getType().compareTo("Table") != 0) throw new ExecutionException("Union only accepts Tables as parameters");
             if(first) {
                 first = false;
-                result = (JavaPairRDD<Long, Tuple>) rdd.get(0);
+                result = ((Table)expr).getRdd();
             } else {
-                result = result.union((JavaPairRDD<Long, Tuple>) rdd.get(0));
+                result = result.union(((Table)expr).getRdd());
             }
         }
         result = result.reduceByKey(TupleUtils.join);
-        Tuple tuple = new Tuple();
-        tuple.add(result);
-        tuple.add(pn.params.size()-1);
-        return tuple;
+        return new Table(result,pn.params.size()-1);
     }
 
-    public Tuple execReduce(Function fn) {
-   /*     org.apache.spark.api.java.function.Function f = fetchFunction(fn.getChild(0).id, Integer.parseInt(fn.getChild(1).id));
-        JavaRDD<Tuple2<Long, Tuple>> aux = SparkEnv.sc.emptyRDD();
-        JavaPairRDD<Long,Tuple> result = JavaPairRDD.fromJavaRDD(aux);
-        for(Node an : fn.children){
-            Object rdd = execAtom(an);
-            result.union((JavaPairRDD<Long,Tuple>)rdd);
-        }
-        return result;
-        */
+    public Table execReduce(Function fn) {
         throw new ExecutionException(("Operation REDUCE not implemented"));
     }
 
@@ -286,7 +284,7 @@ public class SchnappiInterpreter {
         throw new ExecutionException(("Operation Equijoin not implemented"));
     }
 
-    public Tuple execGenids(Function fn){
+    public Table execGenids(Function fn){
         Parameters pn = fn.getParameters();
         int n = Integer.parseInt(((Atomic)pn.getParam(0)).getValue());
         List<Long> init = new ArrayList<Long>();
@@ -296,30 +294,29 @@ public class SchnappiInterpreter {
         JavaRDD<Long> ids = SparkEnv.sc.parallelize(init);
         PairFunction<Long, Long, Tuple> f = (PairFunction<Long, Long, Tuple>) id -> new Tuple2<Long, Tuple>(id, new Tuple(id));
         JavaPairRDD<Long, Tuple> idss = ids.mapToPair(f);
-        Tuple tuple = new Tuple();
-        tuple.add(idss);
-        tuple.add(1);
-        return tuple;
+        return new Table(idss,1);
     }
-    private PairFlatMapFunction fetchPartFunction(String generatorName){
-        Generator generator = this.generators.get(generatorName);
-        PairFlatMapFunction fpw = new FuncPartWrapper(generator, "run");
+
+    private PairFlatMapFunction fetchPartFunction(Var variable){
+        Generator generator = (Generator)varTable.get(variable);
+        PairFlatMapFunction fpw = new FuncPartWrapper(generator.getGenerator(), "run");
         return fpw;
     }
-    private org.apache.spark.api.java.function.Function fetchFunction(String generatorName, int numParams) {
-        Generator generator = this.generators.get(generatorName);
+
+    private org.apache.spark.api.java.function.Function fetchFunction(Var variable, int numParams) {
+        Generator generator = (Generator)varTable.get(variable);
         org.apache.spark.api.java.function.Function fw = null;
         switch(numParams){
             case 0: {
-                fw = new Function0Wrapper(generator, "run");
+                fw = new Function0Wrapper(generator.getGenerator(), "run");
             }
             break;
             case 1: {
-                fw = new FunctionWrapper(generator, "run");
+                fw = new FunctionWrapper(generator.getGenerator(), "run");
             }
             break;
             case 2: {
-                fw = new Function2Wrapper(generator, "run");
+                fw = new Function2Wrapper(generator.getGenerator(), "run");
             }
             break;
             default:
@@ -332,18 +329,11 @@ public class SchnappiInterpreter {
         return fw;
     }
 
-    private Object fetchParameter(String param){
-        if(table.get(param) != null) return table.get(param);
-        else return param;
-    }
-
     public void dumpData(){
-        for( Map.Entry<String,Tuple> entry : table.entrySet() ) {
-            Object obj = entry.getValue().get(0);
-            if(obj instanceof JavaPairRDD) {
-                JavaPairRDD<String, Tuple> rdd = (JavaPairRDD<String, Tuple>) obj;
-                rdd.coalesce(1).saveAsTextFile(this.config.outputDir +"/" + entry.getKey());
-            }
+        for( Map.Entry<Id,Table> entry : idTable.entrySet() ) {
+            JavaPairRDD<Long, Tuple> rdd = entry.getValue().getRdd();
+            if(!entry.getKey().isTemporal())
+                rdd.coalesce(1).saveAsTextFile(this.config.outputDir +"/" + entry.getKey().getValue());
         }
     }
 

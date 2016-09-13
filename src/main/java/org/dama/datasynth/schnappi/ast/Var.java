@@ -4,7 +4,7 @@ package org.dama.datasynth.schnappi.ast;
  * Created by aprat on 24/08/16.
  * This class represents a Variable in the Schnappi Ast.
  */
-public class Var extends Atomic {
+public class Var extends Atomic implements Comparable<Var>{
     public Var(String value) {
         super(value);
     }
@@ -21,5 +21,10 @@ public class Var extends Atomic {
     @Override
     public String toString() {
         return "<var,"+value+">";
+    }
+
+    @Override
+    public int compareTo(Var o) {
+        return getValue().compareTo(o.getValue());
     }
 }

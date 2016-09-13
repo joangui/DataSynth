@@ -33,6 +33,7 @@ public class Number extends Literal {
      * Gets the Object equivalent of the literal
      * @return The object equivalent of the literal
      */
+    @Override
     public Object getObject() {
         if(dataType == Types.DataType.LONG) {
             return Long.parseLong(getValue());

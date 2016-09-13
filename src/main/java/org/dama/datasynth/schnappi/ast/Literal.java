@@ -4,7 +4,7 @@ package org.dama.datasynth.schnappi.ast;
  * Created by aprat on 22/08/16.
  * Represents a Literal in the Schnappi Ast.
  */
-public class Literal extends Atomic {
+public abstract class Literal extends Atomic {
 
     /**
      * Constructor
@@ -23,12 +23,10 @@ public class Literal extends Atomic {
     }
 
     @Override
-    public Literal copy() {
-        return new Literal(this);
-    }
-
-    @Override
     public String toString() {
         return "<literal,"+value+">";
     }
+
+    public abstract Object getObject();
+
 }

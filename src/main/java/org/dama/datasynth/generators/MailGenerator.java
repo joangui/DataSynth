@@ -1,7 +1,5 @@
 package org.dama.datasynth.generators;
 
-import org.dama.datasynth.runtime.Generator;
-
 /**
  * Created by quim on 4/20/16.
  * Generates an email based in a dictionary of domains with a probability distribution function.

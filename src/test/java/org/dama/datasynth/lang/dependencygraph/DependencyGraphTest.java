@@ -41,9 +41,9 @@ public class DependencyGraphTest {
     public void testMethods() {
 
         Entity entityPerson = new Entity("Person",100);
-        Attribute attributeName = new Attribute("Person.name", Types.DataType.STRING);
-        Attribute attributeCountry = new Attribute("Person.country", Types.DataType.STRING);
-        Attribute attributeAge = new Attribute("Person.age", Types.DataType.INTEGER);
+        Attribute attributeName = new Attribute("Person.name", Types.DataType.STRING, false);
+        Attribute attributeCountry = new Attribute("Person.country", Types.DataType.STRING, false);
+        Attribute attributeAge = new Attribute("Person.age", Types.DataType.INTEGER, false);
         Edge edgeFriendship = new Edge("Person-Friendship-Person", Types.Direction.UNDIRECTED);
 
         DependencyGraph graph = new DependencyGraph();

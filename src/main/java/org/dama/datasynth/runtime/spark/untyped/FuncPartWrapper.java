@@ -1,8 +1,7 @@
 package org.dama.datasynth.runtime.spark.untyped;
 
-import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.PairFlatMapFunction;
-import org.dama.datasynth.runtime.Generator;
+import org.dama.datasynth.generators.Generator;
 import org.dama.datasynth.utils.Tuple;
 import scala.Tuple2;
 

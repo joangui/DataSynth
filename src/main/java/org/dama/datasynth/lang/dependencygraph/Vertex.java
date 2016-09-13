@@ -16,15 +16,19 @@ public abstract class Vertex {
      * Represents a property value in the dependency graph.
      */
     public static class PropertyValue {
-        private String value;
+        private Object value;
         private Types.DataType dataType;
 
         public PropertyValue(Object value) {
-            this.value = value.toString();
+            this.value = value;
             this.dataType = Types.DataType.fromObject(value);
         }
 
         public String getValue() {
+            return value.toString();
+        }
+
+        public Object getObject() {
             return value;
         }
 

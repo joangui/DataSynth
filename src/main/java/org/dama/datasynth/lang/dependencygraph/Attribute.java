@@ -13,10 +13,24 @@ public class Attribute extends Vertex {
      * @param attributeName The name of the attribute
      * @param dataType The type of the attribute
      */
-    public Attribute(String attributeName, Types.DataType dataType ) {
+    public Attribute(String attributeName, Types.DataType dataType) {
         super();
-        properties.put("name",new PropertyValue(attributeName));
+        properties.put("name",new PropertyValue(new Types.Id(attributeName,false)));
         properties.put("datatype",new PropertyValue(dataType.getText()));
+        properties.put("isTemporal",new PropertyValue(new Boolean(false)));
+    }
+
+    /**
+     * Class Constructor
+     * @param attributeName The name of the attribute
+     * @param dataType The type of the attribute
+     * @param isTemporal Sets if the attribute is temporal
+     */
+    public Attribute(String attributeName, Types.DataType dataType, Boolean isTemporal ) {
+        super();
+        properties.put("name",new PropertyValue(new Types.Id(attributeName,isTemporal)));
+        properties.put("datatype",new PropertyValue(dataType.getText()));
+        properties.put("isTemporal",new PropertyValue(isTemporal));
     }
 
     /**
@@ -25,6 +39,15 @@ public class Attribute extends Vertex {
      */
     public String getName() {
         return properties.get("name").getValue();
+    }
+
+    /**
+     * Gets if the attribute is temporal
+     * @return "true" if the attribute is temporal
+     */
+    public String getIsTemporal() {
+        return properties.get("isTemporal").getValue();
+
     }
 
     /**

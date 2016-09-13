@@ -155,7 +155,7 @@ public class SchnappiGeneratorVisitor extends org.dama.datasynth.schnappi.Schnap
             if(tn.binding() != null) {
                 atomic = visitBinding(tn.binding());
             }
-            if(tn.var() != null) atomic = new Id(tn.getText());
+            if(tn.var() != null) atomic = new Var(tn.getText());
             parameters.addParam(atomic);
         }
         return parameters;
@@ -171,7 +171,7 @@ public class SchnappiGeneratorVisitor extends org.dama.datasynth.schnappi.Schnap
     @Override
     public Function visitSort(org.dama.datasynth.schnappi.SchnappiParser.SortContext ctx){
         Parameters params = new Parameters();
-        params.addParam(ctx.ID() != null ? new Id(ctx.ID().getText()) : visitBinding(ctx.binding()));
+        params.addParam(ctx.ID() != null ? new Var(ctx.ID().getText()) : visitBinding(ctx.binding()));
         for( Expression expr : visitParams(ctx.params()).getParams()) {
             params.addParam(expr);
         }

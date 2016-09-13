@@ -1,8 +1,5 @@
 package org.dama.datasynth.generators;
 
-import org.dama.datasynth.runtime.Generator;
-import org.dama.datasynth.utils.MurmurHash;
-
 /**
  * Created by aprat on 5/09/16.
  * This generator is used internally to generate correlated edges.

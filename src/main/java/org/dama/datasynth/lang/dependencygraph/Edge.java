@@ -15,7 +15,7 @@ public class Edge extends Vertex {
      */
     public Edge(String name, Types.Direction direction) {
         super();
-        properties.put("name",new PropertyValue(name));
+        properties.put("name",new PropertyValue(new Types.Id(name,false)));
         properties.put("direction",new PropertyValue(direction.getText()));
     }
 

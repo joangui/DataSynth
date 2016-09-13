@@ -1,6 +1,6 @@
 package org.dama.datasynth.common;
 
-import org.dama.datasynth.runtime.Generator;
+import org.dama.datasynth.generators.Generator;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -10,6 +10,31 @@ import java.util.List;
  * Created by aprat on 17/04/16.
  */
 public class Types {
+
+    public static class Id implements Comparable<Id> {
+
+        private String name;
+        private boolean isTemporal;
+
+        public Id(String name, boolean isTemporal) {
+            this.name = name;
+            this.isTemporal = isTemporal;
+        }
+
+        public boolean isTemporal() {
+            return isTemporal;
+        }
+
+        @Override
+        public String toString() {
+            return name;
+        }
+
+        @Override
+        public int compareTo(Id o) {
+            return name.compareTo(o.name);
+        }
+    }
 
     /**
      * Used to represent the direction of ane dge
@@ -60,7 +85,8 @@ public class Types {
         STRING(String.class),
         FLOAT(Float.class),
         DOUBLE(Double.class),
-        BOOLEAN(Boolean.class);
+        BOOLEAN(Boolean.class),
+        ID(Id.class);
 
         private Class typeData;
 

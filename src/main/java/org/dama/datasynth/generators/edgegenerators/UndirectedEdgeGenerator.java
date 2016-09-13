@@ -1,7 +1,6 @@
 package org.dama.datasynth.generators.edgegenerators;
 
-import org.apache.spark.api.java.JavaPairRDD;
-import org.dama.datasynth.runtime.Generator;
+import org.dama.datasynth.generators.Generator;
 import org.dama.datasynth.utils.Tuple;
 import scala.Tuple2;
 
@@ -20,20 +19,21 @@ public class UndirectedEdgeGenerator extends Generator {
         int blockSize = 10000;
         ArrayList<Tuple2<Long, Tuple>> retList = new ArrayList<Tuple2<Long, Tuple>>();
         ArrayList<Tuple2<Long, Tuple>> currentBlock = new ArrayList<Tuple2<Long, Tuple>>();
-        ArrayList<Integer> neighborCount = new ArrayList<Integer>();
+        ArrayList<Long> neighborCount = new ArrayList<Long>();
         while (tuples.hasNext()) {
             currentBlock.clear();
             neighborCount.clear();
             while (currentBlock.size() < blockSize && tuples.hasNext()) {
-                currentBlock.add(tuples.next());
-                neighborCount.add(0);
+                Tuple2<Long,Tuple> tuple = tuples.next();
+                currentBlock.add(tuple);
+                neighborCount.add(0L);
             }
             for (int i = 0; i < currentBlock.size(); ++i) {
-                for (int j = i; j < currentBlock.size() && j - i < 1000; ++j) {
+                for (int j = i+1; j < currentBlock.size() && j - i < 1000; ++j) {
                     if ((Long) currentBlock.get(i)._2().get(2) > neighborCount.get(i) &&
                             (Long) currentBlock.get(j)._2().get(2) > neighborCount.get(j)
                             ) {
-                        retList.add(new Tuple2<Long, Tuple>(currentBlock.get(i)._1(), new Tuple(currentBlock.get(j)._1)));
+                        retList.add(new Tuple2<Long, Tuple>(currentBlock.get(i)._1, new Tuple(currentBlock.get(j)._1)));
                         neighborCount.set(i, neighborCount.get(i) + 1);
                         neighborCount.set(j, neighborCount.get(j) + 1);
                     }

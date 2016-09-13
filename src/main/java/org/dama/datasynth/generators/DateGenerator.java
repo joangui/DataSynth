@@ -1,12 +1,9 @@
 package org.dama.datasynth.generators;
 
-import org.apache.avro.test.Simple;
-import org.dama.datasynth.runtime.Generator;
 import org.dama.datasynth.utils.MurmurHash;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**

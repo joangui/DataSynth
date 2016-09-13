@@ -43,18 +43,21 @@ public class SolverInstantiator implements Visitor {
         List<Vertex.PropertyValue> values = DependencyGraphMatcher.match(graph,vertex,binding.getBindingChain());
         List<Expression> retList = new ArrayList<Expression>();
         for(Vertex.PropertyValue value : values) {
-            if (value.getDataType() != Types.DataType.STRING) {
                 if(value.getDataType() == Types.DataType.LONG) {
                     retList.add(new org.dama.datasynth.schnappi.ast.Number(value.getValue(), Types.DataType.LONG));
-                } else if(value.getDataType() == Types.DataType.DOUBLE) {
+                    continue;
+                }
+                if(value.getDataType() == Types.DataType.DOUBLE) {
                     retList.add(new org.dama.datasynth.schnappi.ast.Number(value.getValue(), Types.DataType.DOUBLE));
+                    continue;
                 }
-            } else {
-                if (graph.getEntity(value.getValue()) != null || graph.getAttribute(value.getValue()) != null || graph.getEdge(value.getValue()) != null) {
-                    retList.add(new Id(value.getValue()));
-                } else {
-                    retList.add(new StringLiteral(value.getValue()));
+            if(value.getDataType() == Types.DataType.ID) {
+                    retList.add(new Id(value.getValue(),((Types.Id)value.getObject()).isTemporal()));
+                    continue;
                 }
+            if(value.getDataType() == Types.DataType.STRING) {
+                retList.add(new StringLiteral(value.getValue()));
+                continue;
             }
         }
         return retList;
@@ -69,7 +72,8 @@ public class SolverInstantiator implements Visitor {
             List<Expression> exprs = processBinding((Binding)n.getId());
             if(exprs.size() > 1) throw new CompilerException(CompilerException.CompilerExceptionType.INVALID_BINDING_ASSIGN, "Cannot assign more than one expression.");
             if(exprs.size() == 0) throw new CompilerException(CompilerException.CompilerExceptionType.INVALID_BINDING_ASSIGN, "Binding in assign operation must return one corresponding binging");
-            n.setId(new Id(((Atomic)exprs.get(0)).getValue()));
+            if(exprs.get(0).getType().compareTo("Id") != 0) throw new CompilerException(CompilerException.CompilerExceptionType.INVALID_BINDING_ASSIGN, "Cannot return a variable name out of a binding for the left part in an assignment");
+            n.setId((Id)exprs.get(0));
         }
 
         if(n.getExpression().getType().compareTo("Binding") != 0) {

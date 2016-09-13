@@ -11,7 +11,7 @@ import org.dama.datasynth.lang.Parser;
 import org.dama.datasynth.lang.SemanticException;
 import org.dama.datasynth.lang.SyntacticException;
 import org.dama.datasynth.lang.dependencygraph.builder.DependencyGraphBuilder;
-import org.dama.datasynth.runtime.SchnappiInterpreter;
+import org.dama.datasynth.runtime.spark.SchnappiInterpreter;
 import org.dama.datasynth.schnappi.ast.Operation;
 import org.dama.datasynth.schnappi.ast.printer.AstTreePrinter;
 import org.dama.datasynth.schnappi.Compiler;

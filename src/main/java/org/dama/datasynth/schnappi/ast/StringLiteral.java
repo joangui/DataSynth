@@ -31,4 +31,9 @@ public class StringLiteral extends Literal {
     public java.lang.String toString() {
         return "<String,"+value+">";
     }
+
+    @Override
+    public Object getObject() {
+        return getValue();
+    }
 }

@@ -1,6 +1,5 @@
 package org.dama.datasynth.generators;
 
-import org.dama.datasynth.runtime.Generator;
 import org.dama.datasynth.utils.CDFSampler;
 import org.dama.datasynth.utils.CSVReader;
 import org.dama.datasynth.utils.MurmurHash;

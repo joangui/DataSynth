@@ -1,6 +1,6 @@
 package org.dama.datasynth.common;
 
-import org.dama.datasynth.runtime.Generator;
+import org.dama.datasynth.generators.Generator;
 import org.junit.Assert;
 import org.junit.Test;
 

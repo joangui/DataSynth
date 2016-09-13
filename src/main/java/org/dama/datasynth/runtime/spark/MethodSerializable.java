@@ -1,7 +1,7 @@
 package org.dama.datasynth.runtime.spark;
 
 import org.dama.datasynth.common.Types;
-import org.dama.datasynth.runtime.Generator;
+import org.dama.datasynth.generators.Generator;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
