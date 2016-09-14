@@ -201,25 +201,53 @@ friendship.person.person = mappart(edgegenerator,sorted);
 
 The basic operads in Schnappi are tables of the form <id,attr1,attr2,...> and generator objects. The complex data generation processes must go inside generators, which are then applied to tables in parallel using map and mappart functions. 
 
-### init( g : String, args : T ...)
+#### init( g : String, args : T ...)
 
 Returns an instance of the generator with name g initialized with args. Note that the type of the arguments is undetermined, and type-checking is evaluated by the frontend at runtime. 
 
-### map( generator : Generator, t : Table)
+#### map( generator : Generator, t : Table)
 
 Returns a Table <id : Long, val : T> resuling of mapping the generator to each element of t. The frontend checks that the types of the generator run function match those of the columns of t. 
 
-### mappart( generator : Generator, t : Table)
+#### mappart( generator : Generator, t : Table)
 
 Returns a new Table <id : Long, val : T> resuling of mapping the generator to each partition of t. The frontend checks that the types of the generator run function match those of the columns of t. Currently, the number of partitions of a table is implementation defined. 
 
-### union( tables : Table ...)
+#### union( tables : Table ...)
 
 Returns a new table <id, val1 : T, val2 : T, ..., valn : T> by zipping the input tables. Input tables must be sorted by id. This is like performing a join between on the id of all the input tables.
 
-### sort( t : Table, i : Long ...) 
+#### sort( t : Table, i : Long ...) 
 
 Returns a copy of the table t sorted in ascending order on the columns specified by i.
+
+### Hooking into code generation
+
+The way we allow users to hook into the generation of Schnappi code is by using solvers. Solvers are small snippet of Schnappi code with placeholders for data queried in the dependency graph, and a Signature used to communicate the Schnappi compilers which elements of the dependency graph thes Solver can generate. The following is a solver for attributes:
+
+```
+signature : {
+    @source = Attribute;
+}
+
+var f = init(@source->generator.name,@source->generator->initparam.value);
+var rparams = union(@source->generator->requires.name);
+@source.name = map(f, rparams);
+```
+
+The Signature specifies that this solver is used to solve vertices of type Attribute in the dependency graph. Actually, the signature is a graph pattern matching query that allows multiple statements. For instance, the solver for undirected edges between nodes of the same type is:
+```
+signature : {
+    @A = Edge;
+    @A->source.name == @A->target.name;
+    @A.direction == 'undirected';
+}
+```
+This signature states that given a vertex in the dependency graph of type Edge, and this vertex source name equals vertex target name, and vertex's attribute direction equals 'undirected', then this solver can generate code to generate that vertex. The syntax "->X" specifies navigating an edge of name X (i.e. source, target, whatever) on the dependency graph, and ".Y"  specifies the value of the property with name "Y". For instance, @A->source.name means that given the Edge vertex A, we go to the source attribute (person.oid in this case) and retrieve its name. 
+
+The same syntax is used for the place holders within the snippet. The Solver instantiator just generates code by substitution the proper values obtained from the dependency graph. 
+
+When loading the tool, the compilers looks at the Solver folder for the available Solvers and loads them. When generating code, it looks for a combination of solvers that can solve all the elements of the dependency graph. So far there is not a mechanism to specify the compiler how to resolve ties between which solver to chose, but this possibility will be added in the future.
 
 ## Contributing
 
