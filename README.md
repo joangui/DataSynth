@@ -199,8 +199,27 @@ edgegenerator = init('org.dama.datasynth.generators.edgegenerators.UndirectedEdg
 friendship.person.person = mappart(edgegenerator,sorted);
 ```
 
+The basic operads in Schnappi are tables of the form <id,attr1,attr2,...> and generator objects. The complex data generation processes must go inside generators, which are then applied to tables in parallel using map and mappart functions. 
 
+### init( g : String, args : T ...)
 
+Returns an instance of the generator with name g initialized with args. Note that the type of the arguments is undetermined, and type-checking is evaluated by the frontend at runtime. 
+
+### map( generator : Generator, t : Table)
+
+Returns a Table <id : Long, val : T> resuling of mapping the generator to each element of t. The frontend checks that the types of the generator run function match those of the columns of t. 
+
+### mappart( generator : Generator, t : Table)
+
+Returns a new Table <id : Long, val : T> resuling of mapping the generator to each partition of t. The frontend checks that the types of the generator run function match those of the columns of t. Currently, the number of partitions of a table is implementation defined. 
+
+### union( tables : Table ...)
+
+Returns a new table <id, val1 : T, val2 : T, ..., valn : T> by zipping the input tables. Input tables must be sorted by id. This is like performing a join between on the id of all the input tables.
+
+### sort( t : Table, i : Long ...) 
+
+Returns a copy of the table t sorted in ascending order on the columns specified by i.
 
 ## Contributing
 
