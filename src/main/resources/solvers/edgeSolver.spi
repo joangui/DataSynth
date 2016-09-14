@@ -4,10 +4,10 @@ signature : {
     @A.direction == 'undirected';
 }
 
-var hashgenerator = init('org.dama.datasynth.generators.HashCombiner');
-var hashdependencies = union(@A->source.name,@A->correlates.name);
-var hashattribute = map(hashgenerator,hashdependencies);
-var table = union(@A->source.name,hashattribute,@A->sourcecardinality.name);
+var hgen = init('org.dama.datasynth.generators.HashCombiner');
+var hdep = union(@A->source.name,@A->correlates.name);
+var hattr = map(hgen,hdep);
+var table = union(@A->source.name,hattr,@A->sourcecardinality.name);
 var sorted = sort(table,1);
 var edgegenerator = init('org.dama.datasynth.generators.edgegenerators.UndirectedEdgeGenerator');
 @A.name = mappart(edgegenerator,sorted);

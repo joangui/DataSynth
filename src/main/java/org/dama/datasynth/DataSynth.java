@@ -98,13 +98,15 @@ public class DataSynth {
                 operation.accept(astTreePrinter);
             }
 
-            start = System.currentTimeMillis();
-            SchnappiInterpreter schInt = new SchnappiInterpreter(config);
-            schInt.execProgram(c.getProgram());
-            schInt.dumpData();
-            end = System.currentTimeMillis();
-            logger.info(" Query executed in  "+(end-start) + " ms");
-            logger.info("Execution finished");
+            if(!config.frontend) {
+                start = System.currentTimeMillis();
+                SchnappiInterpreter schInt = new SchnappiInterpreter(config);
+                schInt.execProgram(c.getProgram());
+                schInt.dumpData();
+                end = System.currentTimeMillis();
+                logger.info(" Query executed in  " + (end - start) + " ms");
+                logger.info("Execution finished");
+            }
 
             return;
         } catch(IOException iOE) {

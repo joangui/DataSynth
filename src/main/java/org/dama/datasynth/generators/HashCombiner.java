@@ -1,5 +1,7 @@
 package org.dama.datasynth.generators;
 
+import java.util.Random;
+
 /**
  * Created by aprat on 5/09/16.
  * This generator is used internally to generate correlated edges.
@@ -7,11 +9,13 @@ package org.dama.datasynth.generators;
  */
 public class HashCombiner extends Generator {
 
+    private Random random = null;
+
     /**
      * Initializes the generator
      */
     public void initialize() {
-
+        random = new Random();
     }
 
     /**
@@ -23,6 +27,7 @@ public class HashCombiner extends Generator {
      */
     public Long run(Long id, Object... args) {
         int numParameters = args.length;
+        if(numParameters == 0) return random.nextLong();
         int bitsPerParameter = 64/numParameters;
         long hashValue = 0;
         int count = 0;
