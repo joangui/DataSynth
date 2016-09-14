@@ -15,6 +15,9 @@ public class DataSynthConfig {
     @Parameter(names={"--query","-q"}, description = "Query file name", required=true)
     public String queryFile;
 
+    @Parameter(names={"--frontend","-fe"}, description = "Execute only the frontend")
+    public boolean frontend = false;
+
     @Parameter(names = {"--help","-h"}, help = true)
     public boolean help = false;
 }
