@@ -71,9 +71,11 @@ are correlated, and with a Zipf degree distribution.
 }
 ```
 
+## Generators
+
 One of the most important elements in DataSynth are generators. A Generator is a
 class that representing some sort of "functor" (a callable object). This object
-is used to generate the values for a particular attribute. For instance, the
+is used to generate the values of a given type, for instance, for a particular attribute. For instance, the
 "country" attribute values for the persons is created using the
 "org.dama.datasynth.generators.CDFGenerator" generator, wich basically generates
 values from a dictionary, containing the values and a cummulative distribution
@@ -108,7 +110,6 @@ should be:
 
 ````
 public String run(Long id, String country);
-
 ````
 
 Note that the first parameter is a Long, which is used to pass the internal oid
@@ -125,6 +126,9 @@ they can also reference other attributes of the entity to be generated. For
 instance, imagine we want to make persons of some specific countries more active
 in the dataset and thus have more connections with other persons.
 
+To sum up, generators are just like function objects that are executed (mapped) over
+a collection of elements, and for each element they produce a result using their run function.
+
 Finally, we can specify correlations between entities connected by an edge. This
 means, that there will be a larger probability that those persons with similar
 attributes are connected. Currently, the way edges are generated is very
@@ -132,12 +136,42 @@ monolithic, but this will be extended in the future and I'll show you how this
 can be done. In this case, persons from the same country are more likely to be
 connected.
 
+## Block Generators
+
+Regular generators take a particular set of parameters and produce a single result.
+There exists another type of generator that work on a set of elements and produce another
+set of elements. These generators are used, for instance, to generate edges. 
+In the example above, although it is not especified in the schema, we use an 
+UndirectedEdgeGenerator block generator over blocks of persons to create the edges. 
+So far, it is only important that you know that there are two types of generators,
+the single-element generator and the block generator. This will let you understand what
+comes now.
+
 ## The dependency property graph
 
 Given a query, the framework generates a property graph representation of the
 query, which is basically a graph of dependencies between elements to be
 generated. The following is the dependency graph of the above query:
 
+![Dependency graph exampke](dependencygraph_example.png)
+
+The dependency graph is used within the framework to query the details of the schema to generate, 
+and used to produce the data generation tasks that will actually generate the desired data. 
+Actually, what the framework does is to produce a program in an intermediate representation 
+custom language called Schnappi.
+
+### Custom data generation tasks using Schnappi
+
+Data in real world is very diverse, not only in terms of their schema but also in terms of their
+characteristics. Thus, every use case can have different needs, so having a program able to generate
+all kinds of data with all kinds of characteristics is simply impossible. 
+
+In order to allow the DataSynth framework to evolve in a scalable way, and to allow people to customize
+it according to their specific needs, we use a custom scripting language called Schnappi.
+The goal of Schnappi is three-fold:
+* To be very simple and constrained in terms of the operators and operands. Since ideally we want to generate large amounts of data, we need an interface to express the programs in a scalable way. Thus, operators in Schnappi are parallel operators or operators that can be implemented in parallel efficiently (such as map, mappart, union, sort ..). On the other hand, operands are tables and generators.
+* To abstract the backedn from the front-end. Thus, anyone can implement the backend using the desired technology, he just needs to interpres Schnappi or generate executable code out of it.
+* Allow backends to perform additional optimizations. By passing the full program to the backends, these can analyze it and perform additional optimizations based on their characteristics.
 
 
 
