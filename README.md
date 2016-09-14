@@ -167,11 +167,38 @@ characteristics. Thus, every use case can have different needs, so having a prog
 all kinds of data with all kinds of characteristics is simply impossible. 
 
 In order to allow the DataSynth framework to evolve in a scalable way, and to allow people to customize
-it according to their specific needs, we use a custom scripting language called Schnappi.
+the data generation process according to their specific needs by using a custom scripting language called Schnappi.
 The goal of Schnappi is three-fold:
 * To be very simple and constrained in terms of the operators and operands. Since ideally we want to generate large amounts of data, we need an interface to express the programs in a scalable way. Thus, operators in Schnappi are parallel operators or operators that can be implemented in parallel efficiently (such as map, mappart, union, sort ..). On the other hand, operands are tables and generators.
 * To abstract the backedn from the front-end. Thus, anyone can implement the backend using the desired technology, he just needs to interpres Schnappi or generate executable code out of it.
-* Allow backends to perform additional optimizations. By passing the full program to the backends, these can analyze it and perform additional optimizations based on their characteristics.
+* Allow backends to perform additional optimizations. By passing the full program to the backends, these can analyze it and perform additional optimizations based on their characteristics. 
+
+So basically, given a schema specified using the json, DataSynth produces Schnappi code that can then be executed. The following is the generated code for the above example. As you can see, only functions sort, mappart, map and union are used, as well as init which is used to initialize a generator. As we will see in a moment, we allow users to hook into the code generation in order to customize how data is generated, but before let's have a quick look at the Schnappi language.
+
+```
+person.oid = genids(10000);
+f = init('org.dama.datasynth.generators.CDFGenerator', '/dicLocations.txt', 1, 5,' '); 
+rparams = union(person.oid);
+person.country = map(f,rparams);
+
+f = init('org.dama.datasynth.generators.CorrellationGenerator','/namesByCountry.txt', ' '); 
+rparams = union(person.oid, person.country);
+person.name = map(f,rparams);
+
+f = init('org.dama.datasynth.generators.ZipfDistribution',1.7);
+rparams = union(person.oid);
+friendship.person.person.sourcecardinality = map(f,rparams);
+
+hgen = init('org.dama.datasynth.generators.HashCombiner');
+hdep = union(person.oid,person.country);
+hattr = map(hgen,hdep);
+table = union(person.oid, hattr, friendship.person.person.sourcecardinality);
+sorted = sort(table,1);
+edgegenerator = init('org.dama.datasynth.generators.edgegenerators.UndirectedEdgeGenerator');
+
+friendship.person.person = mappart(edgegenerator,sorted);
+```
+
 
 
 
