@@ -205,13 +205,13 @@ The basic operads in Schnappi are tables of the form <id,attr1,attr2,...> and ge
 
 Returns an instance of the generator with name g initialized with args. Note that the type of the arguments is undetermined, and type-checking is evaluated by the frontend at runtime. 
 
-#### map( generator : Generator, t : Table)
+#### map( generator : ElementGenerator, t : Table)
 
-Returns a Table <id : Long, val : T> resuling of mapping the generator to each element of t. The frontend checks that the types of the generator run function match those of the columns of t. 
+Returns a Table <id : Long, val : T> resuling of mapping the element generator to each element of t. The frontend checks that the types of the generator run function match those of the columns of t. 
 
-#### mappart( generator : Generator, t : Table)
+#### mappart( generator : BlockGenerator, t : Table)
 
-Returns a new Table <id : Long, val : T> resuling of mapping the generator to each partition of t. The frontend checks that the types of the generator run function match those of the columns of t. Currently, the number of partitions of a table is implementation defined. 
+Returns a new Table <id : Long, val : T> resuling of mapping the block generator to each partition of t. The frontend checks that the types of the generator run function match those of the columns of t. Currently, the number of partitions of a table is implementation defined. 
 
 #### union( tables : Table ...)
 
