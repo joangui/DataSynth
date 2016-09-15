@@ -47,7 +47,6 @@ public class DataSynth {
         }
         Logger.getLogger(DataSynth.class.getSimpleName()).addHandler(handler);
         Logger.getLogger(DataSynth.class.getSimpleName()).setLevel(Level.FINE);
-        //
 
         config = new DataSynthConfig();
         JCommander jcommander = new JCommander(config,args);
