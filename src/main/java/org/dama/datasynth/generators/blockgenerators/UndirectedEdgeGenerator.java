@@ -1,4 +1,4 @@
-package org.dama.datasynth.generators.edgegenerators;
+package org.dama.datasynth.generators.blockgenerators;
 
 import org.dama.datasynth.generators.Generator;
 import org.dama.datasynth.utils.Tuple;
