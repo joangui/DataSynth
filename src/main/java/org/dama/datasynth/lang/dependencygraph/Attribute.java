@@ -60,7 +60,7 @@ public class Attribute extends Vertex {
 
     @Override
     public String toString(){
-        return "[" + getName() + ","+getClass().getSimpleName()+"]";
+        return "[" + getName() + ","+getClass().getSimpleName()+", isTemporal="+getIsTemporal().toString()+"]";
     }
 
     @Override

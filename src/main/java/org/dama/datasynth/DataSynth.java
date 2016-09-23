@@ -65,6 +65,8 @@ public class DataSynth {
             Ast ast = parser.parse(new String(encoded, "UTF8"));
             ast.doSemanticAnalysis();
             DependencyGraph graph = DependencyGraphBuilder.buildDependencyGraph(ast);
+            if(config.debug)
+                graph.visualize();
 
             TextDependencyGraphPrinter printer = new TextDependencyGraphPrinter(graph);
             printer.print();
@@ -96,6 +98,7 @@ public class DataSynth {
             for(Operation operation : c.getProgram().getOperations()) {
                 operation.accept(astTreePrinter);
             }
+
 
             if(!config.frontend) {
                 start = System.currentTimeMillis();

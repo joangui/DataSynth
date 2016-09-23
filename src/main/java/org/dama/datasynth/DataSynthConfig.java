@@ -18,6 +18,9 @@ public class DataSynthConfig {
     @Parameter(names={"--frontend","-fe"}, description = "Execute only the frontend")
     public boolean frontend = false;
 
+    @Parameter(names={"--debug","-d"}, description = "Execute in debug mode")
+    public boolean debug = false;
+
     @Parameter(names = {"--help","-h"}, help = true)
     public boolean help = false;
 }

@@ -1,8 +1,19 @@
 package org.dama.datasynth.lang.dependencygraph;
 
+import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
+import com.mxgraph.layout.mxCircleLayout;
+import com.mxgraph.layout.mxFastOrganicLayout;
+import com.mxgraph.layout.mxIGraphLayout;
+import com.mxgraph.swing.mxGraphComponent;
+import org.jgraph.JGraph;
+import org.jgrapht.ext.JGraphModelAdapter;
+import org.jgrapht.ext.JGraphXAdapter;
 import org.jgrapht.graph.DirectedMultigraph;
 
+import javax.swing.*;
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 /**
  * Created by quim on 5/12/16.
@@ -14,6 +25,9 @@ public class DependencyGraph  {
     private Map<String,Entity>      entities    = null;
     private Map<String,Attribute>   attributes  = null;
     private Map<String,Edge>        edges       = null;
+    private List<Literal>           literals    = null;
+    private List<Generator>         generators  = null;
+
 
     private DirectedMultigraph<Vertex, DirectedEdge> graph = null;
 
@@ -25,6 +39,8 @@ public class DependencyGraph  {
         entities = new HashMap<String,Entity>();
         attributes = new HashMap<String,Attribute>();
         edges = new HashMap<String,Edge>();
+        literals = new ArrayList<Literal>();
+        generators = new ArrayList<Generator>();
     }
 
     /**
@@ -60,6 +76,7 @@ public class DependencyGraph  {
      */
     public void addGeneratorVertex(Generator generator) {
         graph.addVertex(generator);
+        generators.add(generator);
     }
 
     /**
@@ -68,6 +85,7 @@ public class DependencyGraph  {
      */
     public void addLiteralVertex(Literal literal) {
         graph.addVertex(literal);
+        literals.add(literal);
     }
 
     /**
@@ -225,5 +243,83 @@ public class DependencyGraph  {
      */
     public List<Edge> getEdges() {
         return new ArrayList(edges.values());
+    }
+
+    /**
+     * Gets the list of attributes of the graph
+     * @return
+     */
+    public List<Attribute> getAttributes() {
+        return new ArrayList(attributes.values());
+    }
+
+    /**
+     * Gets the literals inserted in the graph
+     * @return The list of literals in the graph;
+     */
+    public List<Literal> getLiterals() {
+        return literals;
+    }
+
+    /**
+     * Gets the generators inserted in the graph
+     * @return The generators inserted in the graph
+     */
+    public List<Generator> getGenerators() {
+        return generators;
+    }
+
+    public void visualize() {
+        JFrame frame = new JFrame("Dependency Graph");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        JGraphXAdapter<Vertex,DirectedEdge> adapter = new JGraphXAdapter<Vertex, DirectedEdge>(graph);
+        mxHierarchicalLayout layout = new mxHierarchicalLayout(adapter);
+        Object [] entities = new Object[getEntities().size()];
+        int index = 0;
+        for(Entity entity : getEntities()) {
+            entities[index] = adapter.getVertexToCellMap().get(entity);
+            index++;
+        }
+        adapter.setCellStyle("fontColor=black;fillColor=green",entities);
+        Object [] attributes = new Object[getAttributes().size()];
+        index = 0;
+        for(Attribute attribute : getAttributes()) {
+            attributes[index] = adapter.getVertexToCellMap().get(attribute);
+            index++;
+        }
+        adapter.setCellStyle("fontColor=black;fillColor=red",attributes);
+
+        Object [] edges = new Object[getEdges().size()];
+        index = 0;
+        for(Edge edge : getEdges()) {
+            edges[index] = adapter.getVertexToCellMap().get(edge);
+            index++;
+        }
+        adapter.setCellStyle("fontColor=black;fillColor=lightblue",edges);
+
+        Object [] literals = new Object[getLiterals().size()];
+        index = 0;
+        for(Literal literal : getLiterals()) {
+            literals[index] = adapter.getVertexToCellMap().get(literal);
+            index++;
+        }
+        adapter.setCellStyle("fontColor=black;fillColor=yellow",literals);
+
+        Object [] generators = new Object[getGenerators().size()];
+        index = 0;
+        for(Generator generator : getGenerators()) {
+            generators[index] = adapter.getVertexToCellMap().get(generator);
+            index++;
+        }
+        adapter.setCellStyle("fontColor=black;fillColor=orange",generators);
+
+
+
+        layout.execute(adapter.getDefaultParent());
+        frame.add(new mxGraphComponent(adapter));
+        frame.pack();
+        frame.setSize(800, 800);
+        frame.setLocation(300, 200);
+        frame.setVisible(true);
     }
 }
