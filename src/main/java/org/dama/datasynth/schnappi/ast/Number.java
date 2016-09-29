@@ -29,6 +29,11 @@ public class Number extends Literal {
         this.dataType = number.dataType;
     }
 
+    @Override
+    public <T> T accept(Visitor<T> visitor) {
+        return visitor.visit(this);
+    }
+
     /**
      * Gets the Object equivalent of the literal
      * @return The object equivalent of the literal

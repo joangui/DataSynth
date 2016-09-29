@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
  * Created by aprat on 22/08/16.
  * Schnappi Ast Visitor that to instantiate a solver
  */
-public class SolverInstantiator implements Visitor {
+public class SolverInstantiator extends Visitor {
 
     private Solver solver = null;
     private Vertex vertex = null;
@@ -65,7 +65,7 @@ public class SolverInstantiator implements Visitor {
 
 
     @Override
-    public void visit(Assign n) {
+    public Node visit(Assign n) {
         if(n.getId().getType().compareTo("Binding") != 0) {
             n.getId().accept(this);
         } else {
@@ -83,25 +83,18 @@ public class SolverInstantiator implements Visitor {
             if(exprs.size() > 1) throw new CompilerException(CompilerException.CompilerExceptionType.INVALID_BINDING_ASSIGN, "Cannot assign more than one expression.");
             n.setExpression(exprs.get(0));
         }
-    }
-
-    @Override
-    public void visit(Binding n) {
+        return null;
     }
 
 
     @Override
-    public void visit(Expression n) {
-
-    }
-
-    @Override
-    public void visit(Function n) {
+    public Node visit(Function n) {
         n.getParameters().accept(this);
+        return null;
     }
 
     @Override
-    public void visit(Parameters n) {
+    public Node visit(Parameters n) {
         try {
             ListIterator<Expression> iterator = n.getParams().listIterator();
             while(iterator.hasNext()) {
@@ -117,40 +110,17 @@ public class SolverInstantiator implements Visitor {
         } catch (NullPointerException npe) {
             npe.printStackTrace();
         }
+        return null;
     }
 
     @Override
-    public void visit(Signature n) {
-
+    public Node visit(Atomic atomic) {
+        return null;
     }
 
     @Override
-    public void visit(Solver n) {
-
+    public Node visit(Var var) {
+        return null;
     }
 
-    @Override
-    public void visit(Operation n) {
-
-    }
-
-    @Override
-    public void visit(Atomic atomic) {
-
-    }
-
-    @Override
-    public void visit(Id n) {
-
-    }
-
-    @Override
-    public void visit(StringLiteral n) {
-
-    }
-
-    @Override
-    public void visit(Number n) {
-
-    }
 }

@@ -1,7 +1,9 @@
 package org.dama.datasynth.common;
 
 import org.dama.datasynth.generators.Generator;
+import org.dama.datasynth.runtime.ExecutionException;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.List;
@@ -166,6 +168,34 @@ public class Types {
             paramsString = paramsString+","+param.getText();
         }
         throw new Exception("Generator "+generator.getClass().getName()+" does not have a method with name "+methodName+" with paramters "+parameterTypes.size()+" parameters <"+paramsString+"> and return type "+(returnType != null ? returnType.getText() : "null"));
+    }
+
+    public static Object invoke(Method method, Generator generator, Object ... params) {
+        try {
+            Parameter [] parameters = method.getParameters();
+            if(parameters.length > 0 && parameters[parameters.length-1].isVarArgs()) {
+                Object [] paramList = new Object[parameters.length];
+                for(int i = 0; i < method.getParameterCount() -1; ++i) {
+                    paramList[i] = params[i];
+                }
+                Object [] varArgsList = new Object[params.length - parameters.length +1];
+                for(int i = parameters.length-1; i < params.length; ++i) {
+                    varArgsList[i - parameters.length + 1] = params[i];
+                }
+                paramList[parameters.length -1] = varArgsList;
+                return method.invoke(generator,paramList);
+            } else {
+                return method.invoke(generator, params);
+            }
+        } catch (IllegalArgumentException e )  {
+            throw new ExecutionException("Unexisting method "+method.getName()+" with "+params.length+" parameters in Generator: "+generator.getClass().getName()+". Method has "+method.getParameterCount()+" parameters.");
+        } catch(InvocationTargetException iTE) {
+            iTE.printStackTrace();
+        } catch(IllegalAccessException iAE) {
+            iAE.printStackTrace();
+        }
+        return null;
+
     }
 
     /**

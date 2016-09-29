@@ -188,11 +188,17 @@ public class Ast {
         private List<Atomic> runParameters = new ArrayList<Atomic>();
 
         /**
+         * The return type of the generator's run function.
+         */
+        private Types.DataType returnType = null;
+
+        /**
          * Class Constructor
          * @param name The name of the generator
          */
-        public Generator(String name) {
+        public Generator(String name, Types.DataType returnType) {
             super(name);
+            this.returnType = returnType;
         }
 
         @Override
@@ -221,6 +227,15 @@ public class Ast {
          * @param parameter The parameter to add
          */
         public void addInitParameter(Atomic parameter)  { initParameters.add(parameter);}
+
+
+        /**
+         * Gets the return type of the generator's run function
+         * @return The return type.
+         */
+        public Types.DataType getReturnType() {
+            return returnType;
+        }
     }
 
     /**

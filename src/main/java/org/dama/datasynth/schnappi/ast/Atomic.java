@@ -33,8 +33,8 @@ public class Atomic extends Expression {
     }
 
     @Override
-    public void accept(Visitor visitor) {
-        visitor.visit(this);
+    public <T> T accept(Visitor<T> visitor) {
+        return visitor.visit(this);
     }
 
     @Override
@@ -45,5 +45,15 @@ public class Atomic extends Expression {
     @Override
     public Atomic copy() {
         return new Atomic(this);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return hashCode() == obj.hashCode();
+    }
+
+    @Override
+    public int hashCode() {
+        return getValue().hashCode();
     }
 }

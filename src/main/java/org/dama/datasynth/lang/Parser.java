@@ -22,11 +22,11 @@ public class Parser {
      * @return An Ast.Generator node representing the parsed generator
      * @throws SyntacticException
      */
-    private Ast.Generator parseGenerator(JSONObject jsonGenerator) throws SyntacticException{
+    private Ast.Generator parseGenerator(Types.DataType attributeType, JSONObject jsonGenerator) throws SyntacticException{
         Ast.Generator generator = null;
         if(jsonGenerator != null) {
             String name = getFieldNoNull(jsonGenerator, "Generator", "name",String.class);
-            generator = new Ast.Generator(name);
+            generator = new Ast.Generator(name,attributeType);
             JSONArray requires = (JSONArray) jsonGenerator.get("requires");
             if(requires == null) throw new SyntacticException(SyntacticException.SyntacticExceptionType.MISSING_FIELD,"requires");
             for (Object runParameter : requires) {
@@ -120,7 +120,7 @@ public class Parser {
 
                         JSONObject generator = (JSONObject) attribute.get("generator");
                         if(generator == null) throw new SyntacticException(SyntacticException.SyntacticExceptionType.MISSING_FIELD, "Attribute must have a \"generator\" field");
-                        Ast.Generator gen = parseGenerator(generator);
+                        Ast.Generator gen = parseGenerator(attributeType, generator);
                         Ast.Attribute attr = new Ast.Attribute(
                                 ent.getName()+"."+attributeName,
                                 attributeType,
@@ -152,7 +152,7 @@ public class Parser {
                     JSONObject sourceCardinality = (JSONObject) jsonedge.get("sourceCardinality");
                     if(sourceCardinality != null) {
                         JSONObject jsonGenerator = (JSONObject)sourceCardinality.get("generator");
-                        edge.setSourceCardinalityGenerator(parseGenerator(jsonGenerator));
+                        edge.setSourceCardinalityGenerator(parseGenerator(Types.DataType.LONG, jsonGenerator));
                         Long number = getField(sourceCardinality,"sourceCardinality","number",Long.class);
                         edge.setSourceCardinalityNumber(number);
                     }
@@ -160,7 +160,7 @@ public class Parser {
                     JSONObject targetCardinality = (JSONObject) jsonedge.get("targetCardinality");
                     if(targetCardinality != null) {
                         JSONObject jsonGenerator = (JSONObject)targetCardinality.get("generator");
-                        edge.setTargetCardinalityGenerator(parseGenerator(jsonGenerator));
+                        edge.setTargetCardinalityGenerator(parseGenerator(Types.DataType.LONG, jsonGenerator));
                         Long number = getField(targetCardinality,"targetCardinality","number",Long.class);
                         edge.setTargetCardinalityNumber(number);
                     }
@@ -191,7 +191,6 @@ public class Parser {
 
                     }
                     ast.addEdge(edge);
-
                 }
             }
             ast.doSemanticAnalysis();

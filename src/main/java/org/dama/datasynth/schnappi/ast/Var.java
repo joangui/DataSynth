@@ -14,6 +14,11 @@ public class Var extends Atomic implements Comparable<Var>{
     }
 
     @Override
+    public <T> T accept(Visitor<T> visitor) {
+        return visitor.visit(this);
+    }
+
+    @Override
     public Var copy() {
         return new Var(this);
     }

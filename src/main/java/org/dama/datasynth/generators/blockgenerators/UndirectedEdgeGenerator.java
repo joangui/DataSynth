@@ -2,7 +2,6 @@ package org.dama.datasynth.generators.blockgenerators;
 
 import org.dama.datasynth.generators.Generator;
 import org.dama.datasynth.utils.Tuple;
-import scala.Tuple2;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -15,25 +14,26 @@ public class UndirectedEdgeGenerator extends Generator {
     public void initialize() {
     }
 
-    public Iterable<scala.Tuple2<Long, Tuple>> run(Iterator<Tuple2<Long,Tuple>> tuples) {
+    public Iterable<Tuple> run(Iterable<Tuple> tuples) {
         int blockSize = 10000;
-        ArrayList<Tuple2<Long, Tuple>> retList = new ArrayList<Tuple2<Long, Tuple>>();
-        ArrayList<Tuple2<Long, Tuple>> currentBlock = new ArrayList<Tuple2<Long, Tuple>>();
+        ArrayList<Tuple> retList = new ArrayList<Tuple>();
+        ArrayList<Tuple> currentBlock = new ArrayList<Tuple>();
         ArrayList<Long> neighborCount = new ArrayList<Long>();
-        while (tuples.hasNext()) {
+        Iterator<Tuple> iter = tuples.iterator();
+        while (iter.hasNext()) {
             currentBlock.clear();
             neighborCount.clear();
-            while (currentBlock.size() < blockSize && tuples.hasNext()) {
-                Tuple2<Long,Tuple> tuple = tuples.next();
+            while (currentBlock.size() < blockSize && iter.hasNext()) {
+                Tuple tuple = iter.next();
                 currentBlock.add(tuple);
                 neighborCount.add(0L);
             }
             for (int i = 0; i < currentBlock.size(); ++i) {
                 for (int j = i+1; j < currentBlock.size() && j - i < 1000; ++j) {
-                    if ((Long) currentBlock.get(i)._2().get(2) > neighborCount.get(i) &&
-                            (Long) currentBlock.get(j)._2().get(2) > neighborCount.get(j)
+                    if ((Long) currentBlock.get(i).get(3) > neighborCount.get(i) &&
+                            (Long) currentBlock.get(j).get(3) > neighborCount.get(j)
                             ) {
-                        retList.add(new Tuple2<Long, Tuple>(currentBlock.get(i)._1, new Tuple(currentBlock.get(j)._1)));
+                        retList.add(new Tuple(currentBlock.get(i).get(1),currentBlock.get(j).get(1)));
                         neighborCount.set(i, neighborCount.get(i) + 1);
                         neighborCount.set(j, neighborCount.get(j) + 1);
                     }

@@ -4,7 +4,6 @@ import org.dama.datasynth.common.Types;
 import org.dama.datasynth.generators.Generator;
 
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,13 +13,13 @@ import java.util.List;
  */
 public class MethodSerializable implements Serializable {
 
-    private Generator g;
-    private String                  functionName;
-    private List<Types.DataType>    parameters;
-    private Types.DataType returnType;
-    private Method                  method;
+    private org.dama.datasynth.generators.Generator g;
+    private String                                  functionName;
+    private List<Types.DataType>                    parameters;
+    private Types.DataType                          returnType;
+    private Method                                  method;
 
-    public MethodSerializable(Generator g, String functionName, List<Types.DataType> parameters, Types.DataType returnType) {
+    public MethodSerializable(org.dama.datasynth.generators.Generator g, String functionName, List<Types.DataType> parameters, Types.DataType returnType) {
         this.g              = g;
         this.functionName   = functionName;
         this.parameters     = parameters;
@@ -36,15 +35,8 @@ public class MethodSerializable implements Serializable {
         }
     }
 
-    public Object invoke(Object ... params) {
-        try {
-            return method.invoke(g, params);
-        } catch(InvocationTargetException iTE) {
-            iTE.printStackTrace();
-        } catch(IllegalAccessException iAE) {
-            iAE.printStackTrace();
-        }
-    return null;
+    public Object invoke(List<Object> params) {
+            return Types.invoke(method,g,params.toArray());
     }
 
     private void writeObject(java.io.ObjectOutputStream out) {

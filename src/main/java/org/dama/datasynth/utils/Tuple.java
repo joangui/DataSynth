@@ -38,6 +38,7 @@ public class Tuple implements Serializable {
         this.elems.addAll(t.elems);
     }
     public int size(){ return this.elems.size();}
+    public List<Object> asList() { return this.elems;}
     public Tuple getSubset(List<Integer> indexes){
         Tuple result = new Tuple();
         for(Integer i : indexes) result.add(this.get(i));

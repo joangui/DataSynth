@@ -23,6 +23,11 @@ public class StringLiteral extends Literal {
     }
 
     @Override
+    public <T> T accept(Visitor<T> visitor) {
+        return visitor.visit(this);
+    }
+
+    @Override
     public StringLiteral copy() {
         return new StringLiteral(this);
     }

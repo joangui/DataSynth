@@ -1,22 +1,29 @@
 package org.dama.datasynth.schnappi.ast;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.dama.datasynth.schnappi.solver.Solver;
 
 /**
  * Created by quim on 5/30/16.
  * Schnappi Ast visitor interface
  */
-public interface Visitor {
-    public abstract void visit(Assign n);
-    public abstract void visit(Binding n);
-    public abstract void visit(Expression n);
-    public abstract void visit(Function n);
-    public abstract void visit(Parameters n);
-    public abstract void visit(Signature n);
-    public abstract void visit(Solver n);
-    public abstract void visit(Operation n);
-    public abstract void visit(Atomic n);
-    public abstract void visit(Id n);
-    public abstract void visit(StringLiteral n);
-    public abstract void visit(Number n);
+public abstract class Visitor<T> {
+    public T visit(Assign n) {
+        throw new NotImplementedException();
+    }
+    public T visit(Binding n) {
+        throw new NotImplementedException();
+    }
+
+    public T visit(Expression n){ throw new NotImplementedException();}
+    public T visit(Function n){ throw new NotImplementedException();}
+    public T visit(Parameters n){ throw new NotImplementedException();}
+    public T visit(Signature n){ throw new NotImplementedException();}
+    public T visit(Solver n){ throw new NotImplementedException();}
+    public T visit(Operation n){ throw new NotImplementedException();}
+    public T visit(Atomic n){ throw new NotImplementedException();}
+    public T visit(Var n){ throw new NotImplementedException();}
+    public T visit(Id n){ throw new NotImplementedException();}
+    public T visit(StringLiteral n){ throw new NotImplementedException();}
+    public T visit(Number n){ throw new NotImplementedException();}
 }

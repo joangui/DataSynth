@@ -7,4 +7,9 @@ public abstract class Expression extends Operation {
 
     @Override
     public abstract Expression copy();
+
+    @Override
+    public <T> T accept(Visitor<T> visitor) {
+        return visitor.visit(this);
+    }
 }

@@ -13,7 +13,7 @@ import java.util.logging.Logger;
  * Created by aprat on 19/08/16.
  * Schnappi ast visitor that prints the ast in text format
  */
-public class AstTreePrinter implements Visitor {
+public class AstTreePrinter extends Visitor<Node> {
 
     private static final Logger logger= Logger.getLogger( DataSynth.class.getSimpleName() );
 
@@ -43,89 +43,104 @@ public class AstTreePrinter implements Visitor {
     }
 
     @Override
-    public void visit(Assign n) {
+    public Node visit(Assign n) {
         indents++;
         logger.log(Level.FINE,(indents(true)+n.toString()));
         n.getId().accept(this);
         n.getExpression().accept(this);
         indents--;
+        return null;
     }
 
     @Override
-    public void visit(Binding n) {
+    public Node visit(Binding n) {
         indents++;
         logger.log(Level.FINE,(indents(true)+n.toString()));
         indents--;
+        return null;
     }
 
     @Override
-    public void visit(Expression n) {
-    }
-
-    @Override
-    public void visit(Function n) {
+    public Node visit(Function n) {
         indents++;
         logger.log(Level.FINE,(indents(true)+n.toString()));
         n.getParameters().accept(this);
         indents--;
+        return null;
     }
 
     @Override
-    public void visit(Parameters n) {
+    public Node visit(Parameters n) {
         indents++;
         logger.log(Level.FINE,(indents(true)+n.toString()));
         for(Expression param : n.getParams()) {
             param.accept(this);
         }
         indents--;
+        return null;
     }
 
     @Override
-    public void visit(Signature n) {
+    public Node visit(Signature n) {
         indents++;
         logger.log(Level.FINE,(indents(true)+n.toString()));
         indents--;
+        return null;
     }
 
     @Override
-    public void visit(Solver n) {
+    public Node visit(Solver n) {
         indents++;
         logger.log(Level.FINE,(indents(true)+n.toString()));
         indents--;
+        return null;
     }
 
     @Override
-    public void visit(Operation n) {
+    public Node visit(Operation n) {
         indents++;
         logger.log(Level.FINE,(indents(true)+n.toString()));
         indents--;
+        return null;
     }
 
     @Override
-    public void visit(Atomic n) {
+    public Node visit(Atomic n) {
         indents++;
         logger.log(Level.FINE,(indents(true)+n.toString()));
         indents--;
+        return null;
     }
 
     @Override
-    public void visit(Id n) {
+    public Node visit(Var n) {
         indents++;
         logger.log(Level.FINE,(indents(true)+n.toString()));
         indents--;
+        return null;
     }
 
     @Override
-    public void visit(StringLiteral n) {
+    public Node visit(Id n) {
         indents++;
         logger.log(Level.FINE,(indents(true)+n.toString()));
         indents--;
+        return null;
     }
 
     @Override
-    public void visit(Number n) {
+    public Node visit(StringLiteral n) {
         indents++;
         logger.log(Level.FINE,(indents(true)+n.toString()));
         indents--;
+        return null;
+    }
+
+    @Override
+    public Node visit(Number n) {
+        indents++;
+        logger.log(Level.FINE,(indents(true)+n.toString()));
+        indents--;
+        return null;
     }
 }

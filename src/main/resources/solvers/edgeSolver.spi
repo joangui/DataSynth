@@ -9,6 +9,5 @@ var hdep = union(@A->source.name,@A->correlates.name);
 var hattr = map(hgen,hdep);
 var table = union(@A->source.name,hattr,@A->sourcecardinality.name);
 var sorted = sort(table,1);
-var edgegenerator = init('org.dama.datasynth.generators.edgegenerators.UndirectedEdgeGenerator');
+var edgegenerator = init('org.dama.datasynth.generators.blockgenerators.UndirectedEdgeGenerator');
 @A.name = mappart(edgegenerator,sorted);
-

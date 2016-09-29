@@ -7,7 +7,9 @@ package org.dama.datasynth;
 
 import com.beust.jcommander.Parameter;
 
-public class DataSynthConfig {
+import java.io.Serializable;
+
+public class DataSynthConfig implements Serializable {
 
     @Parameter(names={"--outputDir","-o"}, description = "Output dir")
     public String outputDir = "./";

@@ -23,6 +23,11 @@ public abstract class Literal extends Atomic {
     }
 
     @Override
+    public <T> T accept(Visitor<T> visitor) {
+        return visitor.visit(this);
+    }
+
+    @Override
     public String toString() {
         return "<literal,"+value+">";
     }

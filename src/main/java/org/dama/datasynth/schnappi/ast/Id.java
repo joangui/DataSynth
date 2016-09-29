@@ -30,6 +30,11 @@ public class Id extends Atomic implements Comparable<Id> {
     }
 
     @Override
+    public <T> T accept(Visitor<T> visitor) {
+        return visitor.visit(this);
+    }
+
+    @Override
     public Id copy() {
         return new Id(this);
     }
