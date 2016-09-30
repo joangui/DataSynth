@@ -9,6 +9,7 @@ public class CompilerException extends RuntimeException {
         INVALID_BINDING_ASSIGN("Invalid binding in assign operation"),
         UNEXISITING_VERTEX_PROPERTY("Unexisting vertex property"),
         INVALID_BINDING_EXPRESSION("Invalid binding expression"),
+        INVALID_VARIABLE_NAME("Invalid variable name"),
         UNSOLVABLE_PROGRAM("Unsolvable program");
 
 

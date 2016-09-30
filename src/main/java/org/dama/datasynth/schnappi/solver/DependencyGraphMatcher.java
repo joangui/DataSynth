@@ -25,7 +25,7 @@ public class DependencyGraphMatcher {
      * @param matchChain The binding Chain
      * @return A list of property values resulting from matching the chain
      */
-    public static List<Vertex.PropertyValue> match(DependencyGraph graph, Vertex vertex, List<String> matchChain) {
+    public static List<Object> match(DependencyGraph graph, Vertex vertex, List<String> matchChain) {
         List<Vertex> frontier = new ArrayList<Vertex>();
         frontier.add(vertex);
         for(int i = 1; i < matchChain.size()-1; ++i) {
@@ -37,9 +37,9 @@ public class DependencyGraphMatcher {
             frontier = nextFrontier;
         }
         String propertyName = matchChain.get(matchChain.size()-1);
-        List<Vertex.PropertyValue> retList = new ArrayList<Vertex.PropertyValue>();
+        List<Object> retList = new ArrayList<Object>();
         for(Vertex next : frontier) {
-            Vertex.PropertyValue value = next.getProperties().get(propertyName);
+            Object value = next.getProperties().get(propertyName);
             if (value == null)
                 throw new CompilerException(CompilerException.CompilerExceptionType.UNEXISITING_VERTEX_PROPERTY, propertyName + " in vertex of type " + next.getType());
             retList.add(value);

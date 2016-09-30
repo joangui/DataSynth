@@ -11,7 +11,7 @@ public class Generator extends Vertex {
      * @param name  The name of the generator
      */
     public Generator(String name) {
-        properties.put("name",new PropertyValue(name));
+        properties.put("name",name);
     }
 
     /**
@@ -19,7 +19,7 @@ public class Generator extends Vertex {
      * @return The name of the generator
      */
     public String getName() {
-        return properties.get("name").getValue();
+        return (String)properties.get("name");
     }
 
     @Override

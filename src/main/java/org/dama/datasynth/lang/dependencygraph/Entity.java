@@ -15,8 +15,8 @@ public class Entity extends Vertex  {
      * @param numInstances The number of instances to generate the entity
      */
     public Entity(String name, long numInstances) {
-        properties.put("name",new PropertyValue( new Types.Id(name,false)));
-        properties.put("number", new PropertyValue(numInstances));
+        properties.put("name", new Types.Id(name,false));
+        properties.put("number", numInstances);
     }
 
     /**
@@ -24,7 +24,7 @@ public class Entity extends Vertex  {
      * @return The entity name
      */
     public String getName(){
-        return properties.get("name").getValue();
+        return (String)properties.get("name").toString();
     }
 
     /**
@@ -32,7 +32,7 @@ public class Entity extends Vertex  {
      * @return The number of instances
      */
     public long getNumInstances() {
-        return Long.parseLong(properties.get("number").getValue());
+        return (Long)(properties.get("number"));
     }
 
     @Override

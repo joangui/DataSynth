@@ -16,28 +16,6 @@ import static org.junit.Assert.*;
 public class DependencyGraphTest {
 
     @Test
-    public void testPropertyValue() {
-
-        Vertex.PropertyValue value = new Vertex.PropertyValue(new Boolean(true));
-        assertTrue(value.getValue().compareTo("true") == 0);
-
-        value = new Vertex.PropertyValue(new Integer(1));
-        assertTrue(value.getValue().compareTo("1") == 0);
-
-        value = new Vertex.PropertyValue(new Long(1));
-        assertTrue(value.getValue().compareTo("1") == 0);
-
-        value = new Vertex.PropertyValue(new Float(1.0));
-        assertTrue(value.getValue().compareTo("1.0") == 0);
-
-        value = new Vertex.PropertyValue(new Double(1.0));
-        assertTrue(value.getValue().compareTo("1.0") == 0);
-
-        value = new Vertex.PropertyValue(new String("test"));
-        assertTrue(value.getValue().compareTo("test") == 0);
-
-    }
-    @Test
     public void testMethods() {
 
         Entity entityPerson = new Entity("Person",100);

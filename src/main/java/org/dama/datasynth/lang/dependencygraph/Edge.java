@@ -15,8 +15,8 @@ public class Edge extends Vertex {
      */
     public Edge(String name, Types.Direction direction) {
         super();
-        properties.put("name",new PropertyValue(new Types.Id(name,false)));
-        properties.put("direction",new PropertyValue(direction.getText()));
+        properties.put("name",new Types.Id(name,false));
+        properties.put("direction",direction);
     }
 
     /**
@@ -24,7 +24,7 @@ public class Edge extends Vertex {
      * @return The name of the edge
      */
     public String getName() {
-        return properties.get("name").getValue();
+        return properties.get("name").toString();
     }
 
     /**
@@ -32,7 +32,7 @@ public class Edge extends Vertex {
      * @return The direction of the edge.
      */
     public Types.Direction getDirection() {
-        return Types.Direction.fromString(properties.get("direction").getValue());
+        return (Types.Direction)(properties.get("direction"));
     }
 
     @Override

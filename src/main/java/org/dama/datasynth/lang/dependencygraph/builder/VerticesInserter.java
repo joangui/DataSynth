@@ -100,7 +100,7 @@ public class VerticesInserter extends AstVisitor<Vertex> {
 
     @Override
     public Attribute visit(Ast.Attribute astAttribute) {
-        Attribute attribute = new Attribute(astAttribute.getName(),astAttribute.getType());
+        Attribute attribute = new Attribute(astAttribute.getName(),astAttribute.getType(),true);
         graph.addAttributeVertex(attribute);
         Ast.Generator astGenerator = astAttribute.getGenerator();
         Generator generator = visit(astGenerator);

@@ -102,9 +102,6 @@ public class DataSynth {
 
             if(!config.frontend) {
                 start = System.currentTimeMillis();
-                /*SchnappiInterpreter schInt = new SchnappiInterpreter(config);
-                schInt.execProgram(c.getProgram());
-                schInt.dumpData();*/
                 SparkInterpreter sparkInterpreter = new SparkInterpreter(config);
                 sparkInterpreter.run(c.getProgram());
                 sparkInterpreter.dumpData();

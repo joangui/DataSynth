@@ -28,8 +28,8 @@ public class UndirectedEdgeGenerator extends Generator {
                 currentBlock.add(tuple);
                 neighborCount.add(0L);
             }
-            for (int i = 0; i < currentBlock.size() && ((Long)currentBlock.get(i).get(3) > neighborCount.get(i)); ++i) {
-                for (int j = i+1; j < currentBlock.size() && ((Long)currentBlock.get(j).get(3) > neighborCount.get(j)) && j - i < 1000; ++j) {
+            for (int i = 0; i < currentBlock.size() && ((Long)currentBlock.get(i).get(3) >= neighborCount.get(i)); ++i) {
+                for (int j = i+1; j < currentBlock.size() && ((Long)currentBlock.get(j).get(3) >= neighborCount.get(j)) && j - i < 1000; ++j) {
                     if ((Long) currentBlock.get(i).get(3) > neighborCount.get(i) &&
                             (Long) currentBlock.get(j).get(3) > neighborCount.get(j)
                             ) {

@@ -14,16 +14,16 @@ public class Literal extends Vertex {
      * @param <T> The Type of the literal
      */
     public <T> Literal(T value) {
-        properties.put("value", new PropertyValue(value));
+        properties.put("value",value);
+        properties.put("datatype",Types.DataType.fromObject(value));
     }
-
 
     /**
      * Gets the value of the literal in a string
      * @return The value of the literal in a string
      */
     public String getValue() {
-        return properties.get("value").getValue();
+        return properties.get("value").toString();
     }
 
     /**
@@ -31,9 +31,8 @@ public class Literal extends Vertex {
      * @return The data type of the literal
      */
     public Types.DataType getDataType() {
-        return properties.get("value").getDataType();
+        return (Types.DataType)(properties.get("datatype"));
     }
-
 
     @Override
     public String toString(){
@@ -44,6 +43,5 @@ public class Literal extends Vertex {
     public void accept(DependencyGraphVisitor visitor) {
         visitor.visit(this);
     }
-
 
 }

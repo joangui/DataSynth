@@ -12,19 +12,12 @@ import java.io.Serializable;
 public class Table<T> extends ExpressionValue implements Serializable {
 
     private T data = null;
-    private int cardinality = 0;
 
-    public Table(T data, int cardinality) {
+    public Table(T data) {
         this.data = data;
-        this.cardinality = cardinality;
     }
 
     public T getData() {
         return data;
     }
-
-    public int getCardinality() {
-        return cardinality;
-    }
-
 }

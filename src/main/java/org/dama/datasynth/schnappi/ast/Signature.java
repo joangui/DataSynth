@@ -1,5 +1,6 @@
 package org.dama.datasynth.schnappi.ast;
 
+import org.dama.datasynth.common.Types;
 import org.dama.datasynth.lang.dependencygraph.DependencyGraph;
 import org.dama.datasynth.lang.dependencygraph.Vertex;
 import org.dama.datasynth.schnappi.CompilerException;
@@ -106,16 +107,16 @@ public class Signature extends Node {
      * @param atomic The atomic to decode
      * @return The property value after decoding the atomic
      */
-    private Vertex.PropertyValue decodeAtomic(DependencyGraph graph, Vertex v, Atomic atomic)  {
+    private Object decodeAtomic(DependencyGraph graph, Vertex v, Atomic atomic)  {
        switch(atomic.getType()) {
            case "Binding":
-                List<Vertex.PropertyValue> values = DependencyGraphMatcher.match(graph,v,((Binding)atomic).getBindingChain());
+                List<Object> values = DependencyGraphMatcher.match(graph,v,((Binding)atomic).getBindingChain());
                if(values.size() != 1) throw new CompilerException(CompilerException.CompilerExceptionType.INVALID_BINDING_EXPRESSION,". Only univalued expressions allowed in signature");
                return values.get(0);
            case "Number":
-               return new Vertex.PropertyValue(Long.parseLong((atomic.getValue())));
+               return Long.parseLong(atomic.getValue());
            case "StringLiteral":
-               return new Vertex.PropertyValue(atomic.getValue());
+               return atomic.getValue();
        }
        throw new CompilerException(CompilerException.CompilerExceptionType.INVALID_BINDING_EXPRESSION, ". Unsupported type "+atomic.getType());
 
@@ -128,14 +129,12 @@ public class Signature extends Node {
      * @param operator The operator of the comparison
      * @return The result of the comparison
      */
-    private boolean comparePropertyValues(Vertex.PropertyValue left, Vertex.PropertyValue right, LogicOperator operator) {
+    private boolean comparePropertyValues(Object left, Object right, LogicOperator operator) {
         switch(operator) {
             case EQ:
-                if(left.getDataType() != right.getDataType()) return false;
-                return left.getValue().compareTo(right.getValue()) == 0;
+                return Types.compare(left,right);
             case NEQ:
-                if(left.getDataType() != right.getDataType()) return true;
-                return left.getValue().compareTo(right.getValue()) != 0;
+                return !Types.compare(left,right);
         }
         throw new CompilerException(CompilerException.CompilerExceptionType.INVALID_BINDING_EXPRESSION, ". Unsupported logic operator "+operator.getText());
     }

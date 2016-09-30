@@ -88,6 +88,7 @@ public class Types {
         FLOAT(Float.class),
         DOUBLE(Double.class),
         BOOLEAN(Boolean.class),
+        DIRECTION(Direction.class),
         ID(Id.class);
 
         private Class typeData;
@@ -120,6 +121,38 @@ public class Types {
                 return fromString(object.getClass().getSimpleName());
         }
 
+    }
+
+    public static boolean compare(Object a, Object b) {
+        Types.DataType dataTypeA = Types.DataType.fromObject(a);
+        Types.DataType dataTypeB = Types.DataType.fromObject(b);
+        if( dataTypeA != dataTypeB) {
+            if(dataTypeA == DataType.DIRECTION && dataTypeB == DataType.STRING)  {
+                return ((Direction)a).compareTo(Direction.fromString((String)b)) == 0;
+            }
+
+            if(dataTypeA == DataType.STRING && dataTypeB == DataType.DIRECTION)  {
+                return ((Direction)b).compareTo(Direction.fromString((String)a)) == 0;
+            }
+            return false;
+        }
+        if(dataTypeA == DataType.BOOLEAN)
+                return ((Boolean)a).compareTo((Boolean)b) == 0;
+        if(dataTypeA == DataType.INTEGER)
+            return ((Integer)a).compareTo((Integer)b) == 0;
+        if(dataTypeA == DataType.LONG)
+            return ((Long)a).compareTo((Long)b) == 0;
+        if(dataTypeA == DataType.STRING)
+            return ((String)a).compareTo((String)b) == 0;
+        if(dataTypeA == DataType.FLOAT)
+            return ((Float)a).compareTo((Float)b) == 0;
+        if(dataTypeA == DataType.DOUBLE)
+            return ((Double)a).compareTo((Double)b) == 0;
+        if(dataTypeA == DataType.ID)
+            return ((Id)a).compareTo((Id)b) == 0;
+        if(dataTypeA == DataType.DIRECTION)
+            return ((Direction)a) == ((Direction)b);
+        return false;
     }
 
     /**

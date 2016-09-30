@@ -35,11 +35,14 @@ class SparkInterpreter( configuration : DataSynthConfig) extends Visitor[Express
     for(operation <- ast.getOperations) operation.accept(this)
   }
 
+
+  /** Visitor methods **/
+
   override def visit(n: Assign): ExpressionValue = {
     n.getId  match {
       case id : Id => {
         tables.put(id,n.getExpression.accept[ExpressionValue](this) match { case t: Table[Dataset[Row]] =>
-          new Table[Dataset[Row]](t.getData.withColumnRenamed("",id.getValue.replace(".","_")),1)})
+          new Table[Dataset[Row]](t.getData.withColumnRenamed("",id.getValue.replace(".","_")))})
       }
       case variable : Var => {
         variables.put(variable,n.getExpression.accept[ExpressionValue](this))
@@ -88,13 +91,15 @@ class SparkInterpreter( configuration : DataSynthConfig) extends Visitor[Express
     return new Literal(n);
   }
 
+  /** Function execution functions **/
+
   def execMap( f: Function) : Table[Dataset[Row]] = {
     val generator = getGenerator(f.getParameters.getParams.get(0).accept(this))
     val table = getTable(f.getParameters.getParams.get(1).accept(this))
 
     val function : MapFunction[Row,Row] = getGeneratorRunFunction(generator,table)
     val schema = StructType(Seq(StructField("id",LongType),StructField("",getGeneratorRunReturnType(generator))))
-    return new Table[Dataset[Row]](table.getData.map(function, RowEncoder(schema)),table.getData.columns.length - 1)
+    return new Table[Dataset[Row]](table.getData.map(function, RowEncoder(schema)))
   }
 
   def execMappart( f: Function) : Table[Dataset[Row]] = {
@@ -103,7 +108,7 @@ class SparkInterpreter( configuration : DataSynthConfig) extends Visitor[Express
 
     val function : MapPartitionsFunction[Row,Row] = getBlockGeneratorRunFunction(generator,table)
     val schema = StructType(Seq(StructField("tail",LongType),StructField("head",LongType)))
-    return new Table[Dataset[Row]](table.getData.mapPartitions(function, RowEncoder(schema)),2)
+    return new Table[Dataset[Row]](table.getData.repartition(64).mapPartitions(function, RowEncoder(schema)))
   }
 
   def execInit( f: Function) : Generator = {
@@ -125,7 +130,7 @@ class SparkInterpreter( configuration : DataSynthConfig) extends Visitor[Express
   def execSort( f: Function) : Table[Dataset[Row]] = {
     val table = getTable(f.getParameters.getParam(0).accept(this))
     val index = getIntegerLiteral(f.getParameters.getParam(1).accept(this)) + 1
-    return new Table[Dataset[Row]](table.getData.sort(table.getData.columns(index)),table.getCardinality)
+    return new Table[Dataset[Row]](table.getData.sort(table.getData.columns(index)))
   }
 
   def execGenids( f: Function) : Table[Dataset[Row]] = {
@@ -140,7 +145,7 @@ class SparkInterpreter( configuration : DataSynthConfig) extends Visitor[Express
     numElements.getLiteral match {
       case n : org.dama.datasynth.schnappi.ast.Number => {
         val ids = spark.range(0,n.getValue.toLong)
-        return new Table[Dataset[Row]](ids.withColumn("",ids.col("id")),1)
+        return new Table[Dataset[Row]](ids.withColumn("",ids.col("id")))
       }
       case _ => throw new ExecutionException("Invalid first parameter type in function genids. Must be of type Number")
     }
@@ -162,9 +167,11 @@ class SparkInterpreter( configuration : DataSynthConfig) extends Visitor[Express
     parameterTables.drop(1).map(x => {
       first = first.join(x.getData,"id")
     })
-    return new Table[Dataset[Row]](first,first.columns.length - 1)
+    return new Table[Dataset[Row]](first)
   }
 
+
+  /** Helper functions **/
   def getGenerator( expr : ExpressionValue ) : Generator = {
     expr match {
       case g : Generator => return g

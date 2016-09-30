@@ -15,9 +15,9 @@ public class Attribute extends Vertex {
      */
     public Attribute(String attributeName, Types.DataType dataType) {
         super();
-        properties.put("name",new PropertyValue(new Types.Id(attributeName,false)));
-        properties.put("datatype",new PropertyValue(dataType.getText()));
-        properties.put("isTemporal",new PropertyValue(new Boolean(false)));
+        properties.put("name",new Types.Id(attributeName,false));
+        properties.put("datatype",dataType.getText());
+        properties.put("isTemporal",new Boolean(false));
     }
 
     /**
@@ -28,9 +28,9 @@ public class Attribute extends Vertex {
      */
     public Attribute(String attributeName, Types.DataType dataType, Boolean isTemporal ) {
         super();
-        properties.put("name",new PropertyValue(new Types.Id(attributeName,isTemporal)));
-        properties.put("datatype",new PropertyValue(dataType.getText()));
-        properties.put("isTemporal",new PropertyValue(isTemporal));
+        properties.put("name",(new Types.Id(attributeName,isTemporal)));
+        properties.put("datatype",(dataType.getText()));
+        properties.put("isTemporal",(isTemporal));
     }
 
     /**
@@ -38,15 +38,15 @@ public class Attribute extends Vertex {
      * @return The attribute
      */
     public String getName() {
-        return properties.get("name").getValue();
+        return properties.get("name").toString();
     }
 
     /**
      * Gets if the attribute is temporal
      * @return "true" if the attribute is temporal
      */
-    public String getIsTemporal() {
-        return properties.get("isTemporal").getValue();
+    public Boolean getIsTemporal() {
+        return (Boolean)properties.get("isTemporal");
 
     }
 
@@ -55,7 +55,7 @@ public class Attribute extends Vertex {
      * @return The attribute
      */
     public Types.DataType getDataType() {
-        return Types.DataType.fromString(properties.get("datatype").getValue());
+        return (Types.DataType)(properties.get("datatype"));
     }
 
     @Override

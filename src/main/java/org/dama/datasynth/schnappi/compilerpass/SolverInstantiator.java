@@ -40,23 +40,23 @@ public class SolverInstantiator extends Visitor {
      * @return The list of expressions resulting from this binding
      */
     private List<Expression> processBinding(Binding binding) {
-        List<Vertex.PropertyValue> values = DependencyGraphMatcher.match(graph,vertex,binding.getBindingChain());
+        List<Object> values = DependencyGraphMatcher.match(graph,vertex,binding.getBindingChain());
         List<Expression> retList = new ArrayList<Expression>();
-        for(Vertex.PropertyValue value : values) {
-                if(value.getDataType() == Types.DataType.LONG) {
-                    retList.add(new org.dama.datasynth.schnappi.ast.Number(value.getValue(), Types.DataType.LONG));
-                    continue;
-                }
-                if(value.getDataType() == Types.DataType.DOUBLE) {
-                    retList.add(new org.dama.datasynth.schnappi.ast.Number(value.getValue(), Types.DataType.DOUBLE));
-                    continue;
-                }
-            if(value.getDataType() == Types.DataType.ID) {
-                    retList.add(new Id(value.getValue(),((Types.Id)value.getObject()).isTemporal()));
-                    continue;
-                }
-            if(value.getDataType() == Types.DataType.STRING) {
-                retList.add(new StringLiteral(value.getValue()));
+        for(Object value : values) {
+            if(Types.DataType.fromObject(value) == Types.DataType.LONG) {
+                retList.add(new org.dama.datasynth.schnappi.ast.Number(value.toString(), Types.DataType.LONG));
+                continue;
+            }
+            if(Types.DataType.fromObject(value) == Types.DataType.DOUBLE) {
+                retList.add(new org.dama.datasynth.schnappi.ast.Number(value.toString(), Types.DataType.DOUBLE));
+                continue;
+            }
+            if(Types.DataType.fromObject(value) == Types.DataType.ID) {
+                retList.add(new Id(value.toString(),((Types.Id)value).isTemporal()));
+                continue;
+            }
+            if(Types.DataType.fromObject(value) == Types.DataType.STRING) {
+                retList.add(new StringLiteral(value.toString()));
                 continue;
             }
         }
