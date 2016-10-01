@@ -5,8 +5,13 @@ package org.dama.datasynth.schnappi.ast;
  * This class represents a Variable in the Schnappi Ast.
  */
 public class Var extends Atomic implements Comparable<Var>{
+    private boolean isId = false;
     public Var(String value) {
         super(value);
+    }
+    public Var(String value, boolean _isId) {
+        super(value);
+        this.isId = _isId;
     }
 
     public Var(Var id) {
