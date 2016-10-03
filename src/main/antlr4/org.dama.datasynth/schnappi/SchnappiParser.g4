@@ -27,6 +27,6 @@ params : (atomic (COMA atomic)*);
 atomic :  num | binding | var | STRING ;
 set : LBRA INTEGER (COMA INTEGER)* RBRA;
 binding: ARROBA(ID)(ARROW ID)*(POINT ID);
-var: ID;
+var: ID | SID;
 num: INTEGER | FLOATING;
 

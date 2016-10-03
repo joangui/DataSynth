@@ -88,7 +88,7 @@ public class SchnappiGeneratorVisitor extends org.dama.datasynth.schnappi.Schnap
         if(ctx.num() != null)  return visitNum(ctx.num());
         if(ctx.binding() != null) return visitBinding(ctx.binding());
         if(ctx.STRING() != null)  return new StringLiteral(ctx.getText().replace("\'",""));
-        if(ctx.var() != null)  return new Var(ctx.getText());
+        if(ctx.var() != null)  return new Var(ctx.getText(), ctx.var().SID() != null);
         return null;
     }
 
