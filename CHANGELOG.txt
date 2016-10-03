@@ -1,0 +1,12 @@
+
+
+CHANGELOG pre-alpha 0.2
+
+- Implemented scala/spark interpreter using Dataset API
+- renamed union operator for join
+- changed dependency graph visitor to be an abstract class
+- removed property value class
+- implemented visual dependency graph printer
+- added options to execute front-end
+- Added comments to schnappi syntaxt
+- distinguish ids from variables in schnappi using "#"
