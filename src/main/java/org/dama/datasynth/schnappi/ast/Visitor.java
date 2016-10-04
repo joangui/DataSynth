@@ -17,7 +17,6 @@ public abstract class Visitor<T> {
 
     public T visit(Expression n){ throw new NotImplementedException();}
     public T visit(Function n){ throw new NotImplementedException();}
-    public T visit(Parameters n){ throw new NotImplementedException();}
     public T visit(Signature n){ throw new NotImplementedException();}
     public T visit(Solver n){ throw new NotImplementedException();}
     public T visit(Operation n){ throw new NotImplementedException();}
@@ -26,4 +25,5 @@ public abstract class Visitor<T> {
     public T visit(Id n){ throw new NotImplementedException();}
     public T visit(StringLiteral n){ throw new NotImplementedException();}
     public T visit(Number n){ throw new NotImplementedException();}
+    public T visit(BindingFunction n){ throw new NotImplementedException();}
 }

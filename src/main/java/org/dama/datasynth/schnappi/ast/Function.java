@@ -1,5 +1,8 @@
 package org.dama.datasynth.schnappi.ast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by quim on 5/17/16.
  * Represents a Function call in the Schnappi ast
@@ -7,14 +10,14 @@ package org.dama.datasynth.schnappi.ast;
 public class Function extends Expression {
 
     private String name = null;
-    private Parameters parameters = null;
+    private List<Expression> parameters = null;
 
     /**
      * Constructor
      * @param name The name of the function
      * @param parameters The parameters of the function
      */
-    public Function(String name, Parameters parameters){
+    public Function(String name, List<Expression> parameters){
         this.name = name;
         this.parameters = parameters;
     }
@@ -25,7 +28,7 @@ public class Function extends Expression {
      */
     public Function(Function function) {
         this.name = function.name;
-        this.parameters = new Parameters(function.parameters);
+        this.parameters = new ArrayList<Expression>(function.parameters);
     }
 
     @Override
@@ -42,7 +45,7 @@ public class Function extends Expression {
      * Gets the parameters of the function
      * @return The parameters of the function
      */
-    public Parameters getParameters() {
+    public List<Expression> getParameters() {
         return parameters;
     }
 
@@ -50,10 +53,16 @@ public class Function extends Expression {
      * Adds the parameters to the parameters of the function
      * @param parameters The parameters to add
      */
-    public void addParameters(Parameters parameters) {
-        for(Expression exp : parameters.getParams()) {
-            this.parameters.addParam(exp);
-        }
+    public void addParameters(List<Expression> parameters) {
+        this.parameters.addAll(parameters);
+    }
+
+    /**
+     * Sets a new parameter list for the function
+     * @param parameters The new parameter list for the function
+     */
+    public void setParameters(List<Expression> parameters) {
+        this.parameters = parameters;
     }
 
     /**

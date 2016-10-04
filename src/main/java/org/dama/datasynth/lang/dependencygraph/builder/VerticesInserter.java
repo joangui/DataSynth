@@ -40,9 +40,9 @@ public class VerticesInserter extends AstVisitor<Vertex> {
     public Vertex visit(Ast.Entity astEntity) {
         Entity entity = new Entity(astEntity.getName(), astEntity.getNumInstances());
         graph.addEntityVertex(entity);
-        Attribute oidAttribute = new Attribute(astEntity.getName()+".oid", Types.DataType.LONG,true);
+        Attribute oidAttribute = new Attribute(entity.getName()+".oid", Types.DataType.LONG, true);
         graph.addAttributeVertex(oidAttribute);
-        graph.addDependency(entity,oidAttribute,"attribute");
+        graph.addDependency(entity,oidAttribute,"internalAttribute");
         for(Ast.Attribute astAttribute : astEntity.getAttributes().values()) {
             astAttribute.accept(this);
             Attribute attribute = graph.getAttribute(astAttribute.getName());
@@ -53,7 +53,7 @@ public class VerticesInserter extends AstVisitor<Vertex> {
 
     @Override
     public Vertex visit(Ast.Edge astEdge) {
-        Edge edge = new Edge(astEdge.getName(), astEdge.getDirection());
+        Edge edge = new Edge(astEdge.getName(), astEdge.getEdgeType());
         graph.addEdgeVertex(edge);
         if(astEdge.getSourceCardinalityGenerator() != null) {
             Attribute attribute = new Attribute(astEdge.getName()+".sourcecardinality", Types.DataType.LONG,true);

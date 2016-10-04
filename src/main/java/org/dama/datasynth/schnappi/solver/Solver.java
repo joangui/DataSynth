@@ -14,8 +14,11 @@ import org.dama.datasynth.schnappi.ast.Visitor;
  */
 public class Solver extends Node {
 
-    public      Signature               signature;
-    public      Ast                     ast;
+    static private int                  solverId;
+    private      Signature               signature;
+    private      Ast                     ast;
+    private      int                     id;
+
 
     /**
      * Constructor
@@ -25,6 +28,7 @@ public class Solver extends Node {
     public Solver(Signature signature, Ast ast) {
         this.signature = signature;
         this.ast = ast;
+        this.id = solverId++;
     }
 
     /**
@@ -33,6 +37,14 @@ public class Solver extends Node {
      */
     public Signature getSignature() {
         return signature;
+    }
+
+    /**
+     * Gets the id of the solver
+     * @return The id of the solver
+     */
+    public int getId() {
+        return id;
     }
 
     /**

@@ -8,6 +8,10 @@ public abstract class Expression extends Operation {
     @Override
     public abstract Expression copy();
 
+    public boolean isAssignable() {
+        return false;
+    }
+
     @Override
     public <T> T accept(Visitor<T> visitor) {
         return visitor.visit(this);

@@ -10,3 +10,7 @@ CHANGELOG pre-alpha 0.2
 - added options to execute front-end
 - Added comments to schnappi syntaxt
 - distinguish ids from variables in schnappi using "#"
+- added methods spawn, zip and range
+- added Binding Functions to schnappi, such length
+- added distinction between ingoing and outgoing edges 
+- allow users to ask for .oid identifiers

@@ -49,12 +49,11 @@ public class CorrellationGenerator extends Generator {
 
     /**
      * Given a value, returns the correlated one
-     * @param id Unused.
      * @param prior The prior value.
      * @return A correlated value uniformly distributed
      */
-    public String run(Long id, String prior) {
-        return samplers.get(prior).takeSample(MurmurHash.hash64(id.toString()));
+    public String run(String prior) {
+        return samplers.get(prior).takeSample();
     }
 
 }

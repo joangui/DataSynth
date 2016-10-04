@@ -1,5 +1,7 @@
 package org.dama.datasynth.schnappi.ast;
 
+import org.dama.datasynth.common.Types;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,17 +9,41 @@ import java.util.List;
  * Created by quim on 5/18/16.
  * Represents a Binding in the Schnappi Ast
  */
-public class Binding extends Atomic {
+public class Binding extends BindingExpression {
 
-    private List<String> bindingChain = null;
+    public static class EdgeExpansion {
+        private Types.Direction direction;
+        private String name;
+
+        public EdgeExpansion(Types.Direction direction, String name) {
+            this.direction = direction;
+            this.name = name;
+        }
+
+        public Types.Direction getDirection() {
+            return direction;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        @Override
+        public String toString() {
+            return "<"+direction.toString()+","+name+">";
+        }
+    }
+    private List<EdgeExpansion> expansionChain = null;
+    private String              leaf = null;
+    private String              root = null;
 
     /**
      * Constructor
-     * @param bindingChain The binding chain of the binding
      */
-    public Binding(List<String> bindingChain) {
-        super(bindingChain.toString());
-        this.bindingChain = bindingChain;
+    public Binding(String root, String leaf) {
+        this.root = root;
+        this.leaf = leaf;
+        this.expansionChain = new ArrayList<EdgeExpansion>();
     }
 
     /**
@@ -25,17 +51,46 @@ public class Binding extends Atomic {
      * @param binding The binding to copy from
      */
     public Binding(Binding binding) {
-        super(binding.bindingChain.toString());
-        this.bindingChain = new ArrayList<String>();
-        this.bindingChain.addAll(binding.bindingChain);
+        this.expansionChain = new ArrayList<EdgeExpansion>();
+        this.expansionChain.addAll(binding.expansionChain);
+        this.leaf = binding.leaf;
     }
 
     /**
      * Gets the binding chain of the binding
      * @return The binding chain of the binding
      */
-    public List<String> getBindingChain() {
-        return bindingChain;
+    public List<EdgeExpansion> getExpansionChain() {
+        return expansionChain;
+    }
+
+
+    /**
+     * Gets the leaf of the binding
+     * @return The leaf of the binding
+     */
+    public String getLeaf() {
+        return leaf;
+    }
+
+    /**
+     * Sets the leaf of this binding
+     * @param leaf The leaf to set
+     */
+    public void setLeaf(String leaf) {
+        this.leaf = leaf;
+    }
+
+    public String getRoot() {
+        return root;
+    }
+
+    public void setRoot(String root) {
+        this.root = root;
+    }
+
+    public void addExpansion(String name, Types.Direction direction) {
+        expansionChain.add(new EdgeExpansion(direction,name));
     }
 
     @Override
@@ -50,6 +105,6 @@ public class Binding extends Atomic {
 
     @Override
     public String toString() {
-        return "<Binding,"+bindingChain.toString()+">";
+        return "<Binding,"+expansionChain.toString()+">";
     }
 }

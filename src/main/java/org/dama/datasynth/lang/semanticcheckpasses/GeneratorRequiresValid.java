@@ -64,7 +64,7 @@ public class GeneratorRequiresValid extends AstVisitor<Ast.Node> {
         for(Ast.Atomic parameter : generator.getRunParameters()) {
             if(context instanceof Ast.Entity) {
                 Ast.Entity entity = (Ast.Entity) context;
-                if(entity.getAttributes().get(parameter.getName()) == null) {
+                if(entity.getAttributes().get(parameter.getName()) == null && parameter.getName().compareTo(entity.getName()+".oid")!=0) {
                     throw new SemanticException(SemanticException.SemanticExceptionType.ATTRIBUTE_NAME_UNEXISTING,parameter.getName()+" in "+entity.getName());
                 }
             } else if( context instanceof Ast.Edge) {

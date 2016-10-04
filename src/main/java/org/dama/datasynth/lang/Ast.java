@@ -245,7 +245,7 @@ public class Ast {
 
         private String          source = null;
         private String          target = null;
-        private Types.Direction direction = null;
+        private Types.EdgeType edgeType = null;
         private Generator       sourceCardinalityGenerator = null;
         private Generator       targetCardinalityGenerator = null;
         private Long            sourceCardinalityNumber = null;
@@ -256,11 +256,11 @@ public class Ast {
          * Class Constructor
          * @param name The name of the generator
          */
-        public Edge(String name, String source, String target, Types.Direction direction) {
+        public Edge(String name, String source, String target, Types.EdgeType edgeType) {
             super(name);
             this.source = source;
             this.target = target;
-            this.direction = direction;
+            this.edgeType = edgeType;
             this.correlates = new ArrayList<Atomic>();
         }
 
@@ -281,11 +281,11 @@ public class Ast {
         }
 
         /**
-         * Gets the direction of the edge
-         * @return The direction of the edge
+         * Gets the edgeType of the edge
+         * @return The edgeType of the edge
          */
-        public Types.Direction getDirection() {
-            return direction;
+        public Types.EdgeType getEdgeType() {
+            return edgeType;
         }
 
         /**

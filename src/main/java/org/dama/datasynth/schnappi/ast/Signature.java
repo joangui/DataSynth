@@ -17,7 +17,7 @@ import java.util.Map;
  */
 public class Signature extends Node {
 
-    public static enum LogicOperator {
+    public enum LogicOperator {
         EQ("=="),
         NEQ("!=");
 
@@ -43,11 +43,11 @@ public class Signature extends Node {
     }
 
     private class Operation {
-        private Atomic left;
-        private Atomic right;
+        private Expression left;
+        private Expression right;
         private LogicOperator operator;
 
-        public Operation(Atomic left, Atomic right, LogicOperator operator) {
+        public Operation(Expression left, Expression right, LogicOperator operator) {
             this.left = left;
             this.right = right;
             this.operator = operator;
@@ -78,7 +78,7 @@ public class Signature extends Node {
      * @param right The right part of the comparison operation
      * @param operator The operator
      */
-    public void addOperation(Atomic left, Atomic right, LogicOperator operator) {
+    public void addOperation(Expression left, Expression right, LogicOperator operator) {
         operations.add(new Operation(left, right, operator));
     }
 
@@ -104,21 +104,34 @@ public class Signature extends Node {
      * Decodes an atomic
      * @param graph The graph to use to decode the atomic
      * @param v The vertex the atomic should be matched against in case it is a binding
-     * @param atomic The atomic to decode
+     * @param expression The expression to decode
      * @return The property value after decoding the atomic
      */
-    private Object decodeAtomic(DependencyGraph graph, Vertex v, Atomic atomic)  {
-       switch(atomic.getType()) {
+    private Object decodeExpression(DependencyGraph graph, Vertex v, Expression expression)  {
+       switch(expression.getType()) {
+           case "BindingFunction":
+               return decodeBindingFunction(graph,v,(BindingFunction)expression);
            case "Binding":
-                List<Object> values = DependencyGraphMatcher.match(graph,v,((Binding)atomic).getBindingChain());
+               List<Object> values = DependencyGraphMatcher.match(graph,v,((Binding)expression));
                if(values.size() != 1) throw new CompilerException(CompilerException.CompilerExceptionType.INVALID_BINDING_EXPRESSION,". Only univalued expressions allowed in signature");
                return values.get(0);
            case "Number":
-               return Long.parseLong(atomic.getValue());
+               return Long.parseLong(((Number)expression).getValue());
            case "StringLiteral":
-               return atomic.getValue();
+               return ((StringLiteral)expression).getValue();
        }
-       throw new CompilerException(CompilerException.CompilerExceptionType.INVALID_BINDING_EXPRESSION, ". Unsupported type "+atomic.getType());
+       throw new CompilerException(CompilerException.CompilerExceptionType.INVALID_BINDING_EXPRESSION, ". Unsupported type "+expression.getType());
+    }
+
+    private Object decodeBindingFunction(DependencyGraph graph, Vertex v, BindingFunction function) {
+
+        switch(function.getName()) {
+            case "length":
+                List<Object> values = DependencyGraphMatcher.match(graph,v,((Binding)function.getExpression()));
+                return new Long(values.size());
+            default:
+                throw new CompilerException(CompilerException.CompilerExceptionType.INVALID_BINDING_EXPRESSION, ". Unsupported binding function "+function.getName());
+        }
 
     }
 
@@ -147,11 +160,11 @@ public class Signature extends Node {
      */
     public boolean eval(DependencyGraph graph, Vertex v) {
         for(Operation operation : operations) {
-                if(!comparePropertyValues(decodeAtomic(graph,v,operation.left), decodeAtomic(graph,v,operation.right), operation.operator)){
-                    return false;
-                }
-           }
-       return true;
+            if(!comparePropertyValues(decodeExpression(graph,v,operation.left), decodeExpression(graph,v,operation.right), operation.operator)){
+                return false;
+            }
+        }
+        return true;
     }
 
 

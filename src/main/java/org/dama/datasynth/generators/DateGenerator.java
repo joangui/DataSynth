@@ -16,6 +16,7 @@ public class DateGenerator extends Generator {
     private long dateEnd;
     private String format;
     private String timeZone = "GMT";
+    Random rand = new Random();
 
     /**
      * Initializes the generator
@@ -43,12 +44,9 @@ public class DateGenerator extends Generator {
 
     /**
      * Generates a date uniformly distributed, within the date range.
-     * @param id Unused
      * @return A new date uniformly distributed within the date range.
      */
-    public String run(Long id) {
-        Random rand = new Random();
-        rand.setSeed(MurmurHash.hash64(id.toString()));
+    public String run() {
         Calendar calendar = new GregorianCalendar();
         calendar.setTimeZone(TimeZone.getTimeZone(timeZone));
         SimpleDateFormat formatter = new SimpleDateFormat(format);

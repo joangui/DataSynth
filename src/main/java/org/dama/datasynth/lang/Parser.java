@@ -141,14 +141,14 @@ public class Parser {
                 for (Object obj : edges) {
                     JSONObject jsonedge = (JSONObject) obj;
                     String edgeName = getFieldNoNull(jsonedge, "Edge", "name",String.class);
-                    String edgeDirection = getFieldNoNull(jsonedge, "Edge", "direction",String.class);
+                    String edgeDirection = getFieldNoNull(jsonedge, "Edge", "edgeType",String.class);
                     String edgeSource = getFieldNoNull(jsonedge, "Edge", "source", String.class);
                     String edgeTarget = getFieldNoNull(jsonedge, "Edge", "target", String.class);
 
-                    Types.Direction direction = Types.Direction.fromString(edgeDirection);
-                    if(direction == null) throw new SyntacticException(SyntacticException.SyntacticExceptionType.INVALID_DIRECTION_TYPE, edgeDirection+" .Edge direction must be either \"directed\" or \"undirected\"");
+                    Types.EdgeType edgeType = Types.EdgeType.fromString(edgeDirection);
+                    if(edgeType == null) throw new SyntacticException(SyntacticException.SyntacticExceptionType.INVALID_DIRECTION_TYPE, edgeDirection+" .Edge edgeType must be either \"directed\" or \"undirected\"");
 
-                    Ast.Edge edge = new Ast.Edge(edgeName+"."+edgeSource+"."+edgeTarget, edgeSource, edgeTarget, direction);
+                    Ast.Edge edge = new Ast.Edge(edgeName+"."+edgeSource+"."+edgeTarget, edgeSource, edgeTarget, edgeType);
                     JSONObject sourceCardinality = (JSONObject) jsonedge.get("sourceCardinality");
                     if(sourceCardinality != null) {
                         JSONObject jsonGenerator = (JSONObject)sourceCardinality.get("generator");
@@ -165,12 +165,12 @@ public class Parser {
                         edge.setTargetCardinalityNumber(number);
                     }
 
-                    if(edge.getDirection() == Types.Direction.DIRECTED) {
+                    if(edge.getEdgeType() == Types.EdgeType.DIRECTED) {
                         if(((edge.getSourceCardinalityGenerator() != null) && edge.getSourceCardinalityNumber() != null) ||
                           ((edge.getTargetCardinalityGenerator() != null) && edge.getTargetCardinalityNumber() != null)) {
                             throw new SyntacticException(SyntacticException.SyntacticExceptionType.MISSING_FIELD, ". Either source or target cardinality is missing");
                         }
-                    } else if(edge.getDirection() == Types.Direction.UNDIRECTED) {
+                    } else if(edge.getEdgeType() == Types.EdgeType.UNDIRECTED) {
                         if(!((edge.getSourceCardinalityGenerator() != null) || edge.getSourceCardinalityNumber() != null) &&
                                ! ((edge.getTargetCardinalityGenerator() != null) || edge.getTargetCardinalityNumber() != null)) {
                             throw new SyntacticException(SyntacticException.SyntacticExceptionType.MISSING_FIELD, ". Either source or target cardinality is missing");

@@ -8,7 +8,7 @@
   ],
   "edges" : [
     {
-      "direction" : "undirected",
+      "edgeType" : "undirected",
       "source" : "person",
       "target" : "person",
       "sourceCardinality" : {

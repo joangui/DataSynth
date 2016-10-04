@@ -11,6 +11,7 @@ public class HashCombiner extends Generator {
 
     private Random random = null;
 
+
     /**
      * Initializes the generator
      */
@@ -21,11 +22,10 @@ public class HashCombiner extends Generator {
     /**
      * Generates a new hash by combining the given object's hashCodes. The order in which these are passes to the function
      * is important, as it determines the assigned bits.
-     * @param id Unused
      * @param args The list of objects to create the hash from
      * @return A hash based on the given objects.
      */
-    public Long run(Long id, Object... args) {
+    public Long run(Object... args) {
         int numParameters = args.length;
         if(numParameters == 0) return random.nextLong();
         int bitsPerParameter = 64/numParameters;

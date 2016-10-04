@@ -21,10 +21,10 @@ public class SSAChecker extends Visitor {
 
     @Override
     public Node visit(Assign n) {
-        if(exists.contains(n.getId().getValue())) {
+        /*if(exists.contains(n.getId().getValue())) {
             throw new CompilerException(CompilerException.CompilerExceptionType.INVALID_VARIABLE_NAME, n.getId().getValue()+" already exists. Schnappi must be in SSA form.");
         }
-        exists.add(n.getId().getValue());
+        exists.add(n.getId().getValue());*/
         return null;
     }
 }

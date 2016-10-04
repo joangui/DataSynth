@@ -44,22 +44,31 @@ INIT
     : 'init'
     ;
 
-EQJOIN
-    : 'eqjoin'
+JOIN
+    : 'join'
     ;
 
-UNION
-    : 'union'
+SPAWN
+    : 'spawn'
     ;
 
-GENID
-    : 'gId'
-    ;
 SORT
     : 'sort'
     ;
+
+RANGE
+    : 'range'
+    ;
+
+ZIP
+    : 'zip'
+    ;
+
 FILTER
     : 'filter'
+    ;
+LENGTH
+    : 'length'
     ;
 
 EQQ
@@ -89,8 +98,12 @@ FSLASH
     : '/'
     ;
 
-ARROW
+ARROWOUTGOING
     : '->'
+    ;
+
+ARROWINGOING
+    : '<-'
     ;
 
 ARROBA
@@ -133,7 +146,7 @@ ID
 ;
 
 SID
-: '#'(ALPHA)+
+: '#'(ALPHA)+ (POINT ALPHA+)
 ;
 
 ESC

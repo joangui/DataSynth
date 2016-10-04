@@ -18,10 +18,9 @@ public class ZipfDistribution extends Generator {
 
     /**
      * Returns a value with the Zipf probability distribution
-     * @param id Unused
      * @return A value with the Zipf probability distribution
      */
-    public Long run(Long id) {
+    public Long run() {
         return (long)zipf.sample();
 
     }

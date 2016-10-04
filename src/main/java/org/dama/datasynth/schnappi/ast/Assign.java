@@ -6,10 +6,10 @@ package org.dama.datasynth.schnappi.ast;
  */
 public class Assign extends Operation {
 
-    private Atomic id          = null;
+    private Expression id          = null;
     private Expression  expression  = null;
 
-    public Assign(Atomic id, Expression expression){
+    public Assign(Expression id, Expression expression){
         this.id = id;
         this.expression = expression;
     }
@@ -33,7 +33,7 @@ public class Assign extends Operation {
      * Gets the Atomic of the left part of the assignment
      * @return The left part of the assignment.
      */
-    public Atomic getId() {
+    public Expression getId() {
         return id;
     }
 
@@ -41,7 +41,7 @@ public class Assign extends Operation {
      * Sets the Id of the left part of the assignment
      * @param id The id of the left part of the assignment
      */
-    public void setId(Atomic id) {
+    public void setId(Expression id) {
         this.id = id;
     }
 

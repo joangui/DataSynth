@@ -5,28 +5,38 @@ options{
 }
 solver : signature? program;
 signature : SIGNATURE COLON LBRA (source) (signatureoperation)* RBRA;
-signatureoperation : atomic logicoperation atomic SEMICOLON;
+signatureoperation : signatureendpoint logicoperation signatureendpoint SEMICOLON;
 logicoperation : EQQ | NEQ;
+signatureendpoint : num | bindingexpression | STRING;
 source : ARROBA ID EQ VTYPE SEMICOLON;
 program : op*;
 op : assig SEMICOLON;
-init : INIT LPAR params RPAR;
-funcs : map | reduce | eqjoin | genids | union | init | sort | partition | mappart | filter;
-assig : (VAR var | binding) EQ expr;
-map : MAPKW LPAR atomic COMA atomic RPAR;
-mappart : MAPPART LPAR atomic COMA atomic RPAR;
-reduce : REDUCEKW LPAR atomic COMA atomic RPAR;
-eqjoin : EQJOIN LPAR params RPAR;
-union : UNION LPAR (params)? RPAR;
-genids : GENID LPAR INTEGER RPAR;
-sort : SORT LPAR (ID | binding) COMA params RPAR;
-partition : PART LPAR params RPAR;
-filter : FILTER LPAR atomic COMA set RPAR;
+assig : (VAR var | sid | binding) EQ expr;
+funcs : map | spawn | join | init | sort | mappart | range | zip;
+
+init : INIT LPAR  (literalorbinding (COMA literalorbinding)*)? RPAR;
+map : MAPKW LPAR (var | STRING) COMA table RPAR;
+mappart : MAPPART LPAR (var | STRING) COMA table RPAR;
+join : JOIN LPAR (table (COMA table)*) RPAR;
+spawn : SPAWN LPAR var COMA (INTEGER | bindingexpression) RPAR;
+sort : SORT LPAR table COMA num RPAR;
+range: RANGE LPAR num RPAR;
+zip: ZIP LPAR (table (COMA table)*) RPAR;
+
 expr : atomic | funcs;
-params : (atomic (COMA atomic)*);
-atomic :  num | binding | var | STRING ;
-set : LBRA INTEGER (COMA INTEGER)* RBRA;
-binding: ARROBA(ID)(ARROW ID)*(POINT ID);
-var: ID | SID;
+atomic :  num | var | sid | STRING ;
+atomicorbinding : atomic | bindingexpression;
+literal : num | STRING;
+literalorbinding: literal | bindingexpression;
+table: var | sid | bindingexpression;
+binding: ARROBA(ID)(edgeexpansion)*(POINT leaf);
+bindingfuncs: length;
+bindingexpression: binding | bindingfuncs;
+length: LENGTH LPAR binding RPAR;
+var: ID;
+sid: SID;
 num: INTEGER | FLOATING;
+edgeexpansion: (arrow ID);
+arrow: ARROWOUTGOING | ARROWINGOING;
+leaf: ID;
 

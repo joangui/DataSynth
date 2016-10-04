@@ -18,11 +18,10 @@ public class MailGenerator extends Generator {
 
     /**
      * Generates the email based on the given name
-     * @param id The id
      * @param name
      * @return
      */
-    public String run(Long id, String name) {
-        return name + "@" + g.run(id);
+    public String run(String name) {
+        return name + "@" + g.run();
         }
 }

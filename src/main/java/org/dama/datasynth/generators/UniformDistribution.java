@@ -23,10 +23,9 @@ public class UniformDistribution extends Generator {
 
     /**
      * Generates a uniformly distributed value within the range
-     * @param id Unused
      * @return The value uniformly distributed.
      */
-    public Long run(Long id) {
+    public Long run() {
         return (long)random.nextInt((int)(max-min)) + min;
     }
 

@@ -19,6 +19,7 @@ public class ShnappiParserTest {
         try {
             List<Solver> solvers = Loader.loadSolvers("src/main/resources/solvers");
         } catch(Exception e) {
+            e.printStackTrace();
             assertTrue("Error when parsing solvers.",false);
         }
     }

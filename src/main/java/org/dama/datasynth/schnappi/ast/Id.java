@@ -17,6 +17,7 @@ public class Id extends Atomic implements Comparable<Id> {
         this.isTemporal = isTemporal;
     }
 
+
     /**
      * Copy constructor
      * @param id The id to copy from
@@ -47,5 +48,10 @@ public class Id extends Atomic implements Comparable<Id> {
     @Override
     public int compareTo(Id o) {
         return getValue().compareTo(o.getValue());
+    }
+
+    @Override
+    public boolean isAssignable() {
+        return true;
     }
 }

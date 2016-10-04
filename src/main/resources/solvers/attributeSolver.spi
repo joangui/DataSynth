@@ -1,7 +1,8 @@
 signature : {
     @source = Attribute;
+    length(@source->generator->requires.name) == 0;
 }
 
 var f = init(@source->generator.name,@source->generator->initparam.value);
-var rparams = union(@source->generator->requires.name);
-@source.name = map(f, rparams);
+@source.name = spawn(f, @source<-attribute.number);
+

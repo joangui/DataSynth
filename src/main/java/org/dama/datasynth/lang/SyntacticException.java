@@ -10,7 +10,7 @@ public class SyntacticException extends RuntimeException {
         PARSING_ERROR("Parsing error"),
         MISSING_FIELD("Missing field"),
         INVALID_FIELD_TYPE("Invalid field type"),
-        INVALID_DIRECTION_TYPE("Invalid Direction type"),
+        INVALID_DIRECTION_TYPE("Invalid EdgeType type"),
         ILLFORMED_ATTRIBUTE_NAME("Illformed attribute name. Must be of the form <entity>.<name>"),
         INVALID_VALUE_TYPE("Invalid value type"),
         INVALID_ATTRIBUTE_TYPE("Invalid attribute type");

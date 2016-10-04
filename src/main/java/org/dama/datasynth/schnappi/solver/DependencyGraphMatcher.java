@@ -22,26 +22,28 @@ public class DependencyGraphMatcher {
      * Matches a binding chain agains a dependency graph
      * @param graph The dependency graph
      * @param vertex The vertex used in the binding chain
-     * @param matchChain The binding Chain
+     * @param binding The binding Chain
      * @return A list of property values resulting from matching the chain
      */
-    public static List<Object> match(DependencyGraph graph, Vertex vertex, List<String> matchChain) {
+    public static List<Object> match(DependencyGraph graph, Vertex vertex, Binding binding) {
         List<Vertex> frontier = new ArrayList<Vertex>();
         frontier.add(vertex);
-        for(int i = 1; i < matchChain.size()-1; ++i) {
-            String edgeName = matchChain.get(i);
+        for(Binding.EdgeExpansion expansion : binding.getExpansionChain()) {
             List<Vertex> nextFrontier = new ArrayList<Vertex>();
             for(Vertex next : frontier) {
-                nextFrontier.addAll(graph.getNeighbors(next,edgeName));
+                if(expansion.getDirection() == Types.Direction.OUTGOING) {
+                    nextFrontier.addAll(graph.getNeighbors(next, expansion.getName()));
+                } else {
+                    nextFrontier.addAll(graph.getIncomingNeighbors(next, expansion.getName()));
+                }
             }
             frontier = nextFrontier;
         }
-        String propertyName = matchChain.get(matchChain.size()-1);
         List<Object> retList = new ArrayList<Object>();
         for(Vertex next : frontier) {
-            Object value = next.getProperties().get(propertyName);
+            Object value = next.getProperties().get(binding.getLeaf());
             if (value == null)
-                throw new CompilerException(CompilerException.CompilerExceptionType.UNEXISITING_VERTEX_PROPERTY, propertyName + " in vertex of type " + next.getType());
+                throw new CompilerException(CompilerException.CompilerExceptionType.UNEXISITING_VERTEX_PROPERTY, binding.getLeaf() + " in vertex of type " + next.getType());
             retList.add(value);
         }
         return retList;

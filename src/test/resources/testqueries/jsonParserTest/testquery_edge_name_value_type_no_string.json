@@ -9,7 +9,7 @@
   "edges" : [
     {
       "name" : 10,
-      "direction" : "undirected",
+      "edgeType" : "undirected",
       "source" : "person",
       "target" : "person",
       "sourceCardinality" : {

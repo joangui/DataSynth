@@ -38,7 +38,7 @@
   "edges" : [
     {
       "name" : "friendship",
-      "direction" : "undirected",
+      "edgeType" : "undirected",
       "source" : "person",
       "target" : "person",
       "sourceCardinality" : {
@@ -58,7 +58,7 @@
     },
     {
       "name" : "parent",
-      "direction" : "directed",
+      "edgeType" : "directed",
       "source" : "person",
       "target" : "person",
       "sourceCardinality" : {

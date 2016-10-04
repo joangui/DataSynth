@@ -13,7 +13,6 @@ import org.dama.datasynth.utils.Sampler;
  */
 public class CDFGenerator extends Generator {
         private Sampler s;
-        public CDFGenerator(){}
 
     /**
      * Initializes the generator
@@ -30,10 +29,10 @@ public class CDFGenerator extends Generator {
 
     /**
      * Returns a value of the dictionary based on the given cummulative distribution function
-     * @param id Unused
      * @return The dictionary value.
      */
-    public String run(Long id){
-        return s.takeSample(MurmurHash.hash64(id.toString()));
+    public String run(){
+
+        return s.takeSample();
         }
 }

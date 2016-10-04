@@ -9,7 +9,7 @@
   "edges" : [
     {
       "name" : "friendship",
-      "direction" : "undirected",
+      "edgeType" : "undirected",
       "source" : 10,
       "target" : "person",
       "sourceCardinality" : {

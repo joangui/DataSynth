@@ -42,8 +42,8 @@ public class Types {
      * Used to represent the direction of ane dge
      */
     public enum Direction {
-        UNDIRECTED ("undirected"),
-        DIRECTED ("directed");
+        INGOING ("ingoing"),
+        OUTGOING ("outgoing");
 
         private String text = null;
 
@@ -52,7 +52,7 @@ public class Types {
         }
 
         /**
-         * Gets the text of the Direction
+         * Gets the text of the EdgeType
          * @return The text of the direction
          */
         public String getText() {
@@ -60,13 +60,56 @@ public class Types {
         }
 
         /**
-         * Gets the corresponding Direction value based on a given text
+         * Gets the corresponding EdgeType value based on a given text
          * @param text The text representing the direction
-         * @return The correposnging Direction value;
+         * @return The correposnging EdgeType value;
          */
         public static Direction fromString(String text) {
             if (text != null) {
                 for (Direction b : Direction.values()) {
+                    if (text.equalsIgnoreCase(b.getText())) {
+                        return b;
+                    }
+                }
+            }
+            return null;
+        }
+
+        @Override
+        public String toString() {
+            return this.text;
+        }
+    }
+
+    /**
+     * Used to represent the type of an edge
+     */
+    public enum EdgeType {
+        UNDIRECTED ("undirected"),
+        DIRECTED ("directed");
+
+        private String text = null;
+
+        EdgeType(String text) {
+            this.text = text;
+        }
+
+        /**
+         * Gets the text of the EdgeType
+         * @return The text of the direction
+         */
+        public String getText() {
+            return text;
+        }
+
+        /**
+         * Gets the corresponding EdgeType value based on a given text
+         * @param text The text representing the direction
+         * @return The correposnging EdgeType value;
+         */
+        public static EdgeType fromString(String text) {
+            if (text != null) {
+                for (EdgeType b : EdgeType.values()) {
                     if (text.equalsIgnoreCase(b.getText())) {
                         return b;
                     }
@@ -88,7 +131,7 @@ public class Types {
         FLOAT(Float.class),
         DOUBLE(Double.class),
         BOOLEAN(Boolean.class),
-        DIRECTION(Direction.class),
+        DIRECTION(EdgeType.class),
         ID(Id.class);
 
         private Class typeData;
@@ -128,11 +171,11 @@ public class Types {
         Types.DataType dataTypeB = Types.DataType.fromObject(b);
         if( dataTypeA != dataTypeB) {
             if(dataTypeA == DataType.DIRECTION && dataTypeB == DataType.STRING)  {
-                return ((Direction)a).compareTo(Direction.fromString((String)b)) == 0;
+                return ((EdgeType)a).compareTo(EdgeType.fromString((String)b)) == 0;
             }
 
             if(dataTypeA == DataType.STRING && dataTypeB == DataType.DIRECTION)  {
-                return ((Direction)b).compareTo(Direction.fromString((String)a)) == 0;
+                return ((EdgeType)b).compareTo(EdgeType.fromString((String)a)) == 0;
             }
             return false;
         }
@@ -151,7 +194,7 @@ public class Types {
         if(dataTypeA == DataType.ID)
             return ((Id)a).compareTo((Id)b) == 0;
         if(dataTypeA == DataType.DIRECTION)
-            return ((Direction)a) == ((Direction)b);
+            return ((EdgeType)a) == ((EdgeType)b);
         return false;
     }
 

@@ -64,17 +64,8 @@ public class AstTreePrinter extends Visitor<Node> {
     public Node visit(Function n) {
         indents++;
         logger.log(Level.FINE,(indents(true)+n.toString()));
-        n.getParameters().accept(this);
-        indents--;
-        return null;
-    }
-
-    @Override
-    public Node visit(Parameters n) {
-        indents++;
-        logger.log(Level.FINE,(indents(true)+n.toString()));
-        for(Expression param : n.getParams()) {
-            param.accept(this);
+        for(Expression expr : n.getParameters()) {
+            expr.accept(this);
         }
         indents--;
         return null;

@@ -3,7 +3,7 @@ package org.dama.datasynth.schnappi;
 import org.dama.datasynth.common.Types;
 import org.dama.datasynth.lang.dependencygraph.*;
 import org.dama.datasynth.lang.dependencygraph.Literal;
-import org.dama.datasynth.schnappi.ast.Ast;
+import org.dama.datasynth.schnappi.ast.*;
 import org.dama.datasynth.schnappi.ast.Number;
 import org.dama.datasynth.schnappi.solver.Loader;
 import org.dama.datasynth.schnappi.solver.Solver;
@@ -16,11 +16,7 @@ import java.util.*;
  */
 public class Compiler extends DependencyGraphVisitor {
 
-    private Map<String, Solver>     solversDB           = new TreeMap<String,Solver>( new Comparator<String>() {
-            public int compare( String a, String b) {
-            return a.compareToIgnoreCase(b);
-        }
-        });
+    private Map<String, List<Solver> >     solversDB           = new TreeMap<String,List<Solver>>();
     private Ast program             = new Ast();
     private Set<Long>             generatedVertices   = new HashSet<Long>();
 
@@ -40,7 +36,15 @@ public class Compiler extends DependencyGraphVisitor {
      */
     private void loadSolvers(String dir){
         for(Solver s : Loader.loadSolvers(dir)) {
-            this.solversDB.put(s.getSignature().getBindings().values().iterator().next(),s);
+            String binding = s.getSignature().getBindings().values().iterator().next();
+            if(!this.solversDB.containsKey(binding)) {
+                List<Solver> solvers = new ArrayList<Solver>();
+                solvers.add(s);
+                this.solversDB.put(binding,solvers);
+
+            } else {
+                this.solversDB.get(binding).add(s);
+            }
         }
     }
 
@@ -64,9 +68,18 @@ public class Compiler extends DependencyGraphVisitor {
      * @throws CompilerException
      */
     private void solveVertex(Vertex v) throws CompilerException {
-        Solver s = this.solversDB.get(v.getType());
-        if(s == null || !s.eval(graph,v)) throw new CompilerException(CompilerException.CompilerExceptionType.UNSOLVABLE_PROGRAM, "No solver for type "+v.getType());
-        this.concatenateProgram(s.instantiate(graph,v));
+        List<Solver> solvers = this.solversDB.get(v.getType());
+        boolean found = false;
+        if(solvers != null) {
+            for (Solver solver : solvers) {
+                if (solver.eval(graph, v)) {
+                    this.concatenateProgram(solver.instantiate(graph, v));
+                    found = true;
+                }
+            }
+        }
+        if (!found)
+            throw new CompilerException(CompilerException.CompilerExceptionType.UNSOLVABLE_PROGRAM, "No solver for type " + v.getType());
     }
 
     /**
@@ -106,21 +119,22 @@ public class Compiler extends DependencyGraphVisitor {
     @Override
     public void visit(Attribute attribute) {
         if(!generatedVertices.contains(attribute.getId())) {
-            if (!attribute.getName().contains(".oid")) {
-                for(Vertex neighbor : graph.getNeighbors(attribute)) {
-                    neighbor.accept(this);
-                }
+            for(Vertex neighbor : graph.getNeighbors(attribute)) {
+                neighbor.accept(this);
+            }
+            if(!attribute.getName().contains(".oid")) {
                 try {
                     solveVertex(attribute);
                 } catch (CompilerException e) {
                     e.printStackTrace();
                 }
             } else {
-                String entityName = attribute.getName().substring(0,attribute.getName().indexOf("."));
-                org.dama.datasynth.schnappi.ast.Parameters parameters = new org.dama.datasynth.schnappi.ast.Parameters(new Number(String.valueOf(graph.getEntity(entityName).getNumInstances()), Types.DataType.LONG));
-                org.dama.datasynth.schnappi.ast.Function function = new org.dama.datasynth.schnappi.ast.Function("genids", parameters);
-                org.dama.datasynth.schnappi.ast.Assign assign = new org.dama.datasynth.schnappi.ast.Assign(new org.dama.datasynth.schnappi.ast.Id(attribute.getName(),new Boolean(attribute.getIsTemporal())), function);
-                this.program.addOperation(assign);
+                Expression id = new Id(attribute.getName(), attribute.getIsTemporal());
+                List<Expression> funcParams = new ArrayList<Expression>();
+                funcParams.add(new Number(graph.getIncomingNeighbors(attribute,"internalAttribute").get(0).getProperties().get("number").toString(), Types.DataType.LONG));
+                Expression right = new Function("range",funcParams);
+                Assign assign = new Assign(id,right);
+                program.addOperation(assign);
             }
             generatedVertices.add(attribute.getId());
         }

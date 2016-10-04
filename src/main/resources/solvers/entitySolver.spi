@@ -2,4 +2,4 @@ signature : {
     @source = Entity;
 }
 
-@source.name = union(@source->attribute.name);
+@source.name = zip(@source->attribute.name);

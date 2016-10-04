@@ -97,9 +97,9 @@ public class CommonTest {
             assertNotEquals("Function CDFGenerator.initialize with parameters String, String, String, String does not exist", Types.getMethod(generator, "initialize", parameters, null), null);
             assertNotEquals("Function CDFGenerator.initialize ", Types.getUntypedMethod(generator, "initialize"), null);
             parameters.clear();
-            parameters.add(Types.DataType.LONG);
             assertNotEquals("Function CDFGenerator.run with Long and return type String does not exist", Types.getMethod(generator, "run", parameters, Types.DataType.STRING), null);
         } catch (Exception e) {
+            e.printStackTrace();
             Assert.fail("Test failed due to exception");
             e.printStackTrace();
             System.exit(1);

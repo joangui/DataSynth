@@ -60,15 +60,14 @@ class SparkInterpreter( configuration : DataSynthConfig) extends Visitor[Express
     n.getName match {
       case "map" => return execMap(n)
       case "mappart" => return execMappart(n)
-      case "union" =>  return execUnion(n)
-      case "genids" => return execGenids(n)
+      case "join" =>  return execJoin(n)
+      case "zip" =>  return execZip(n)
+      case "spawn" => return execSpawn(n)
       case "init" => return execInit(n)
       case "sort" => return execSort(n)
+      case "range" => return execRange(n)
+      case _ => throw new ExecutionException("Unsupported method "+n.getName)
     }
-  }
-
-  override def visit(n: Parameters): ExpressionValue = {
-    throw new NotImplementedError()
   }
 
   override def visit(n: Atomic): ExpressionValue = {
@@ -76,35 +75,33 @@ class SparkInterpreter( configuration : DataSynthConfig) extends Visitor[Express
   }
 
   override def visit(n: Var): ExpressionValue = {
-    return variables.get(n).get;
+    variables.get(n).get;
   }
 
   override def visit(n: Id): ExpressionValue = {
-    return tables.get(n).get;
+    tables.get(n).get;
   }
 
   override def visit(n: StringLiteral): ExpressionValue = {
-    return new Literal(n);
+    new Literal(n);
   }
 
-  override def visit(n: Number): ExpressionValue = {
-    return new Literal(n);
-  }
+  override def visit(n: Number): ExpressionValue = new Literal(n)
 
   /** Function execution functions **/
 
   def execMap( f: Function) : Table[Dataset[Row]] = {
-    val generator = getGenerator(f.getParameters.getParams.get(0).accept(this))
-    val table = getTable(f.getParameters.getParams.get(1).accept(this))
+    val generator = getGenerator(f.getParameters.get(0).accept(this))
+    val table = getTable(f.getParameters.get(1).accept(this))
 
-    val function : MapFunction[Row,Row] = getGeneratorRunFunction(generator,table)
-    val schema = StructType(Seq(StructField("id",LongType),StructField("",getGeneratorRunReturnType(generator))))
+    val function : MapFunction[Row,Row] =  getGeneratorRunFunction(generator,table)
+    val schema = StructType(Seq(StructField("id",LongType), StructField("",getGeneratorRunReturnType(generator))))
     return new Table[Dataset[Row]](table.getData.map(function, RowEncoder(schema)))
   }
 
   def execMappart( f: Function) : Table[Dataset[Row]] = {
-    val generator = getGenerator(f.getParameters.getParams.get(0).accept(this))
-    val table = getTable(f.getParameters.getParams.get(1).accept(this))
+    val generator = getGenerator(f.getParameters.get(0).accept(this))
+    val table = getTable(f.getParameters.get(1).accept(this))
 
     val function : MapPartitionsFunction[Row,Row] = getBlockGeneratorRunFunction(generator,table)
     val schema = StructType(Seq(StructField("tail",LongType),StructField("head",LongType)))
@@ -113,9 +110,9 @@ class SparkInterpreter( configuration : DataSynthConfig) extends Visitor[Express
 
   def execInit( f: Function) : Generator = {
     // retrieves the generator name, which should be the first parameter of the parameter list
-    val generatorName = getStringLiteral(f.getParameters.getParams.get(0).accept(this))
+    val generatorName = getStringLiteral(f.getParameters.get(0).accept(this))
     // retrieves the list of parameters of the init function (all but the first one) in their object form.
-    val initParameters = f.getParameters().getParams().toList.drop(1).map( x => x.accept(this) match {
+    val initParameters = f.getParameters().toList.drop(1).map( x => x.accept(this) match {
       case l : Literal => l.getLiteral.getObject
       case _ => throw new ExecutionException("Parameter type in init function must be a literal")
     })
@@ -124,50 +121,57 @@ class SparkInterpreter( configuration : DataSynthConfig) extends Visitor[Express
     // gets the init method.
     val m = new MethodSerializable(generator,"initialize",initParameters.map(x => Types.DataType.fromObject(x)),null)
     m.invoke(initParameters)
-    return new Generator(generator)
+    new Generator(generator)
   }
 
   def execSort( f: Function) : Table[Dataset[Row]] = {
-    val table = getTable(f.getParameters.getParam(0).accept(this))
-    val index = getIntegerLiteral(f.getParameters.getParam(1).accept(this)) + 1
-    return new Table[Dataset[Row]](table.getData.sort(table.getData.columns(index)))
+    val table = getTable(f.getParameters.get(0).accept(this))
+    val index = getIntegerLiteral(f.getParameters.get(1).accept(this)) + 1
+    new Table[Dataset[Row]](table.getData.sort(table.getData.columns(index)))
   }
 
-  def execGenids( f: Function) : Table[Dataset[Row]] = {
+  def execSpawn( f: Function) : Table[Dataset[Row]] = {
 
+    // get the generator
+    val generator = getGenerator(f.getParameters().get(0).accept(this))
     // get the number of elements to generate
-    val numElements = f.getParameters.getParams.get(0).accept(this) match {
-      case l : Literal => l
-      case _ => throw new ExecutionException("Invalid first parameter type in function genids. Must be of type Niteral")
-    };
+    val numElements = getIntegerLiteral(f.getParameters.get(1).accept(this))
 
-    // craete the table
-    numElements.getLiteral match {
-      case n : org.dama.datasynth.schnappi.ast.Number => {
-        val ids = spark.range(0,n.getValue.toLong)
-        return new Table[Dataset[Row]](ids.withColumn("",ids.col("id")))
-      }
-      case _ => throw new ExecutionException("Invalid first parameter type in function genids. Must be of type Number")
-    }
+    val idsTable =  new Table[Dataset[Row]](spark.range(0,numElements).toDF())
+    val function : MapFunction[Row,Row] = getGeneratorRunFunction(generator,idsTable)
+    val schema = StructType(Seq(StructField("id",LongType), StructField("",getGeneratorRunReturnType(generator))))
+    return new Table[Dataset[Row]](idsTable.getData.map(function, RowEncoder(schema)))
   }
 
-  def execUnion( f: Function) : Table[Dataset[Row]] = {
-    val parameterList = f.getParameters.getParams.toList
-    val parameterTables  = parameterList.map( x => x match
-    {
-      case id : Id => tables.get(id).get
-      case variable : Var => variables.get(variable).get match {
-        case t : Table[Dataset[Row]] => t
-        case _ => throw new ExecutionException("Variables in union must contain tables")
+  def execRange( f: Function) : Table[Dataset[Row]] = {
+    // get the number of elements to generate
+    val numElements = getIntegerLiteral(f.getParameters.get(0).accept(this))
+    val ids = spark.range(0,numElements)
+    return new Table[Dataset[Row]](ids.withColumn("",ids("id")).toDF())
+  }
+
+  def execJoin( f: Function) : Table[Dataset[Row]] = {
+    val parameterList = f.getParameters.toList
+    val parameterTables = {
+      parameterList.map {
+        case id: Id => tables(id)
+        case variable: Var => variables(variable) match {
+          case t: Table[Dataset[Row]] => t
+          case _ => throw new ExecutionException("Variables in join must contain tables")
+        }
+        case _ => throw new ExecutionException("Union only accepts parameters of type id or variable")
       }
-      case _ => throw new ExecutionException("Union only accepts parameters of type id or variable")
-    })
+    }
 
     var first = parameterTables.get(0).getData
-    parameterTables.drop(1).map(x => {
+    parameterTables.drop(1).foreach(x => {
       first = first.join(x.getData,"id")
     })
-    return new Table[Dataset[Row]](first)
+    new Table[Dataset[Row]](first)
+  }
+
+  def execZip( f: Function) : Table[Dataset[Row]] = {
+    return execJoin(f)
   }
 
 
@@ -222,7 +226,7 @@ class SparkInterpreter( configuration : DataSynthConfig) extends Visitor[Express
     return new MapFunction[Row,Row]{
       def call(row: Row) : Row = {
         val params : Seq[AnyRef] = row.toSeq.drop(1).map( x => x.asInstanceOf[AnyRef])
-        Row(row.getLong(0), m.invoke(scala.collection.JavaConversions.seqAsJavaList(params)))
+        Row(row.get(0),m.invoke(scala.collection.JavaConversions.seqAsJavaList(params)))
       }
     }
   }
@@ -259,5 +263,4 @@ class SparkInterpreter( configuration : DataSynthConfig) extends Visitor[Express
         p._2.getData.coalesce(1).write.format("com.databricks.spark.csv").option("header",true).save(config.outputDir +"/" + p._1.getValue()+".csv")
     })
   }
-
 }

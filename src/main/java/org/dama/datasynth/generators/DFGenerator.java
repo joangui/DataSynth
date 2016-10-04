@@ -11,7 +11,6 @@ import org.dama.datasynth.utils.Sampler;
 public class DFGenerator extends Generator {
 
     private Sampler s;
-    public DFGenerator(){}
 
     /**
      * Initializes the generator
@@ -27,10 +26,9 @@ public class DFGenerator extends Generator {
 
     /**
      * Returns a value from the dictionary distributed according to the specified probability distribution function
-     * @param id Unused
      * @return A value of the dictionary distrubted according to the specified probability distribution function
      */
-    public String run(Long id){
-        return s.takeSample(MurmurHash.hash64(id.toString()));
+    public String run(){
+        return s.takeSample();
     }
 }

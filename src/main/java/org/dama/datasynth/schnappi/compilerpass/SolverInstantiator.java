@@ -1,27 +1,21 @@
 package org.dama.datasynth.schnappi.compilerpass;
 
-import org.apache.ivy.ant.IvyMakePom;
 import org.dama.datasynth.common.Types;
 import org.dama.datasynth.lang.dependencygraph.DependencyGraph;
 import org.dama.datasynth.lang.dependencygraph.Vertex;
 import org.dama.datasynth.schnappi.CompilerException;
 import org.dama.datasynth.schnappi.ast.*;
-import org.dama.datasynth.schnappi.ast.Number;
 import org.dama.datasynth.schnappi.ast.Visitor;
 import org.dama.datasynth.schnappi.solver.DependencyGraphMatcher;
 import org.dama.datasynth.schnappi.solver.Solver;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by aprat on 22/08/16.
  * Schnappi Ast Visitor that to instantiate a solver
  */
-public class SolverInstantiator extends Visitor {
+public class SolverInstantiator extends Visitor<List<Expression>> {
 
     private Solver solver = null;
     private Vertex vertex = null;
@@ -34,13 +28,52 @@ public class SolverInstantiator extends Visitor {
     }
 
 
-    /**
-     * Processes a binding
-     * @param binding The binding to process
-     * @return The list of expressions resulting from this binding
-     */
-    private List<Expression> processBinding(Binding binding) {
-        List<Object> values = DependencyGraphMatcher.match(graph,vertex,binding.getBindingChain());
+    private List<Expression> createExpressionList(Expression expression) {
+        List<Expression> exprs = new ArrayList<Expression>();
+        exprs.add(expression);
+        return exprs;
+    }
+
+    @Override
+    public List<Expression> visit(Assign n) {
+        List<Expression> exprs = n.getId().accept(this);
+        if(exprs.size() > 1) throw new CompilerException(CompilerException.CompilerExceptionType.INVALID_BINDING_ASSIGN, "Cannot assign more than one expression.");
+        if(exprs.size() == 0) throw new CompilerException(CompilerException.CompilerExceptionType.INVALID_BINDING_ASSIGN, "Binding in assign operation must return one corresponding binging");
+        if(!exprs.get(0).isAssignable())
+                throw new CompilerException(CompilerException.CompilerExceptionType.INVALID_BINDING_ASSIGN, "Binding is not returning an assigneble expression");
+        n.setId(exprs.get(0));
+
+        exprs = n.getExpression().accept(this);
+        if(exprs.size() > 1) throw new CompilerException(CompilerException.CompilerExceptionType.INVALID_BINDING_ASSIGN, "Cannot assign more than one expression.");
+        n.setExpression(exprs.get(0));
+        return null;
+    }
+
+    @Override
+    public List<Expression> visit(Function n) {
+        List<Expression> parameters = new ArrayList<Expression>();
+        for(Expression expr: n.getParameters()) {
+            parameters.addAll(expr.accept(this));
+        }
+        n.setParameters(parameters);
+        List<Expression> retExpr = new ArrayList<Expression>();
+        retExpr.add(n);
+        return retExpr;
+    }
+
+    @Override
+    public List<Expression> visit(Atomic atomic) {
+        return createExpressionList(atomic);
+    }
+
+    @Override
+    public List<Expression> visit(Var var) {
+        return createExpressionList(var);
+    }
+
+    @Override
+    public List<Expression> visit(Binding binding) {
+        List<Object> values = DependencyGraphMatcher.match(graph,vertex,binding);
         List<Expression> retList = new ArrayList<Expression>();
         for(Object value : values) {
             if(Types.DataType.fromObject(value) == Types.DataType.LONG) {
@@ -61,66 +94,6 @@ public class SolverInstantiator extends Visitor {
             }
         }
         return retList;
-    }
-
-
-    @Override
-    public Node visit(Assign n) {
-        if(n.getId().getType().compareTo("Binding") != 0) {
-            n.getId().accept(this);
-        } else {
-            List<Expression> exprs = processBinding((Binding)n.getId());
-            if(exprs.size() > 1) throw new CompilerException(CompilerException.CompilerExceptionType.INVALID_BINDING_ASSIGN, "Cannot assign more than one expression.");
-            if(exprs.size() == 0) throw new CompilerException(CompilerException.CompilerExceptionType.INVALID_BINDING_ASSIGN, "Binding in assign operation must return one corresponding binging");
-            if(exprs.get(0).getType().compareTo("Id") != 0) throw new CompilerException(CompilerException.CompilerExceptionType.INVALID_BINDING_ASSIGN, "Cannot return a variable name out of a binding for the left part in an assignment");
-            n.setId((Id)exprs.get(0));
-        }
-
-        if(n.getExpression().getType().compareTo("Binding") != 0) {
-            n.getExpression().accept(this);
-        } else {
-            List<Expression> exprs = processBinding((Binding)n.getExpression());
-            if(exprs.size() > 1) throw new CompilerException(CompilerException.CompilerExceptionType.INVALID_BINDING_ASSIGN, "Cannot assign more than one expression.");
-            n.setExpression(exprs.get(0));
-        }
-        return null;
-    }
-
-
-    @Override
-    public Node visit(Function n) {
-        n.getParameters().accept(this);
-        return null;
-    }
-
-    @Override
-    public Node visit(Parameters n) {
-        try {
-            ListIterator<Expression> iterator = n.getParams().listIterator();
-            while(iterator.hasNext()) {
-                Expression currentExpr = iterator.next();
-                if(currentExpr.getType().compareTo("Binding") == 0) {
-                    List<Expression> bindings = processBinding((Binding)currentExpr);
-                    iterator.remove();
-                    for(Expression binding : bindings) {
-                        iterator.add(binding);
-                    }
-                }
-            }
-        } catch (NullPointerException npe) {
-            npe.printStackTrace();
-        }
-        return null;
-    }
-
-    @Override
-    public Node visit(Atomic atomic) {
-        return null;
-    }
-
-    @Override
-    public Node visit(Var var) {
-        return null;
     }
 
 }

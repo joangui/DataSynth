@@ -13,8 +13,7 @@ public class Sampler implements Serializable{
         s = new SamplingSpace(str);
         g = new Random();
     }
-    public String takeSample(long seed){
-        this.g.setSeed(seed);
+    public String takeSample(){
         return s.array[g.nextInt(s.size())][0].toString();
     }
 }
