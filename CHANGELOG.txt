@@ -17,3 +17,4 @@ CHANGELOG pre-alpha 0.2
 - fixed bug with parsing string in schnappi, where '' characters where not
   properly removed
 - Added Schnappi text printer
+- Added runtime checks to dependency graph pattern matching

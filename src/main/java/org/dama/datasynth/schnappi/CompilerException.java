@@ -10,6 +10,7 @@ public class CompilerException extends RuntimeException {
         UNEXISITING_VERTEX_PROPERTY("Unexisting vertex property"),
         INVALID_BINDING_EXPRESSION("Invalid binding expression"),
         INVALID_VARIABLE_NAME("Invalid variable name"),
+        GRAPH_PATTERN_MATCHING("Graph pattern matching error."),
         UNSOLVABLE_PROGRAM("Unsolvable program");
 
 
