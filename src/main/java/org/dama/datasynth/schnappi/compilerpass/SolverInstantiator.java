@@ -51,6 +51,7 @@ public class SolverInstantiator extends Visitor<List<Expression>> {
 
         exprs = n.getExpression().accept(this);
         if(exprs.size() > 1) throw new CompilerException(CompilerException.CompilerExceptionType.INVALID_BINDING_ASSIGN, "Cannot assign more than one expression.");
+        if(exprs.size() == 0) throw new CompilerException(CompilerException.CompilerExceptionType.INVALID_BINDING_ASSIGN, "Binding returns zero elements in assignment.");
         n.setExpression(exprs.get(0));
         return null;
     }

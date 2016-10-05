@@ -147,9 +147,6 @@ public class DependencyGraphTest {
         assertTrue(edge != null);
         assertTrue(edge.getEdgeType() == Types.EdgeType.UNDIRECTED);
 
-        Attribute sourceCardinality = (Attribute)dependencyGraph.getNeighbors(edge,"sourcecardinality").get(0);
-        Generator sourceCardinalityGenerator = (Generator)dependencyGraph.getNeighbors(sourceCardinality,"generator").get(0);
-
         assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"initparam").get(0)).getValue().compareTo("/dicLocations.txt") == 0);
         assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"initparam").get(0)).getDataType() == Types.DataType.STRING);
         assertTrue(((Literal)dependencyGraph.getNeighbors(generator,"initparam").get(1)).getValue().compareTo("1") == 0);
@@ -164,20 +161,5 @@ public class DependencyGraphTest {
 
         nameAttribute  = (Attribute)dependencyGraph.getNeighbors(edge,"correlates").get(1);
         assertTrue(nameAttribute.getName().compareTo("person.name") == 0);
-
-
-
-        edge = dependencyGraph.getEdge("parent.person.person");
-        assertTrue(edge != null);
-        assertTrue(edge.getEdgeType() == Types.EdgeType.DIRECTED);
-
-        sourceCardinality = (Attribute)dependencyGraph.getNeighbors(edge,"sourcecardinality").get(0);
-
-        Literal targetCardinality = (Literal)dependencyGraph.getNeighbors(edge,"targetcardinality").get(0);
-        assertTrue(targetCardinality.getValue().compareTo("1") == 0 && (targetCardinality.getDataType() == Types.DataType.LONG));
-
-        countryAttribute  = (Attribute)dependencyGraph.getNeighbors(edge,"correlates").get(0);
-        assertTrue(countryAttribute.getName().compareTo("person.country") == 0);
-
     }
 }

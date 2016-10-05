@@ -40,23 +40,6 @@
           }
       },
       "correlates" :["person.country","person.name"]
-    },
-    {
-      "name" : "parent",
-      "edgeType" : "directed",
-      "source" : "person",
-      "target" : "person",
-      "sourceCardinality" : {
-        "generator" : {
-          "name" : "org.dama.datasynth.generators.UniformDistribution",
-          "init" : [0,3],
-          "requires" : []
-        }
-      },
-      "targetCardinality" : {
-        "number" : 1
-      },
-      "correlates" : ["person.country"]
     }
   ]
 }

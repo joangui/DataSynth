@@ -13,7 +13,7 @@ import java.util.Map;
  * The first contains the prior values while the second contains the correlated ones.
  * Correlated values are returned uniformly distributed. File must be sorted by the first column.
  */
-public class CorrellationGenerator extends Generator {
+public class CorrelationGenerator extends Generator {
 
     Map<String,Sampler> samplers;
 

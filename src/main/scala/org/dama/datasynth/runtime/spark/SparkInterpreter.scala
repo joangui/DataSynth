@@ -259,7 +259,7 @@ class SparkInterpreter( configuration : DataSynthConfig) extends Visitor[Express
 
   def dumpData(): Unit = {
     tables.foreach( p => {
-      if(!p._1.isTemporal || config.debug)
+      if(!p._1.getValue().contains(".") || config.debug)
         p._2.getData.coalesce(1).write.format("com.databricks.spark.csv").option("header",true).save(config.outputDir +"/" + p._1.getValue()+".csv")
     })
   }
