@@ -17,57 +17,8 @@ import java.util.Map;
  */
 public class Signature extends Node {
 
-    public enum LogicOperator {
-        EQ("=="),
-        NEQ("!=");
-
-        String text = null;
-        LogicOperator(String text) {
-            this.text = text;
-        }
-
-        public String getText() {
-            return text;
-        }
-
-        public static LogicOperator fromString(String text)  {
-            if (text != null) {
-                for (LogicOperator b : LogicOperator.values()) {
-                    if (text.equalsIgnoreCase(b.getText())) {
-                        return b;
-                    }
-                }
-            }
-            return null;
-        }
-    }
-
-    public class Operation {
-        private Expression left;
-        private Expression right;
-        private LogicOperator operator;
-
-        public Operation(Expression left, Expression right, LogicOperator operator) {
-            this.left = left;
-            this.right = right;
-            this.operator = operator;
-        }
-
-        public Expression getLeft() {
-            return left;
-        }
-
-        public Expression getRight() {
-            return right;
-        }
-
-        public LogicOperator getOperator() {
-            return operator;
-        }
-    };
-
     private Map<String,String>  bindings = new HashMap<String,String>();
-    private List<Operation>     operations = new ArrayList<Operation>();
+    private List<BinaryExpression>   operations = new ArrayList<BinaryExpression>();
 
     /**
      * Constructor
@@ -81,17 +32,17 @@ public class Signature extends Node {
      */
     public Signature(Signature signature) {
         bindings = new HashMap<String,String>(signature.bindings);
-        operations = new ArrayList<Operation>(signature.operations);
+        for(BinaryExpression expression : signature.operations) {
+            operations.add(new BinaryExpression(expression));
+        }
     }
 
     /**
      * Adds a signature operation to the signature
-     * @param left The left part of the comparison operation
-     * @param right The right part of the comparison operation
-     * @param operator The operator
+     * @param expression The binding binary expression to add.
      */
-    public void addOperation(Expression left, Expression right, LogicOperator operator) {
-        operations.add(new Operation(left, right, operator));
+    public void addOperation(BinaryExpression expression) {
+        operations.add(expression);
     }
 
     /**
@@ -111,7 +62,7 @@ public class Signature extends Node {
         return bindings;
     }
 
-    public List<Operation> getOperations() {
+    public List<BinaryExpression> getOperations() {
         return operations;
     }
 
@@ -157,7 +108,7 @@ public class Signature extends Node {
      * @param operator The operator of the comparison
      * @return The result of the comparison
      */
-    private boolean comparePropertyValues(Object left, Object right, LogicOperator operator) {
+    private boolean comparePropertyValues(Object left, Object right, Types.LogicOperator operator) {
         switch(operator) {
             case EQ:
                 return Types.compare(left,right);
@@ -174,8 +125,8 @@ public class Signature extends Node {
      * @return True if the signature holds for the vertex
      */
     public boolean eval(DependencyGraph graph, Vertex v) {
-        for(Operation operation : operations) {
-            if(!comparePropertyValues(decodeExpression(graph,v,operation.left), decodeExpression(graph,v,operation.right), operation.operator)){
+        for(BinaryExpression operation : operations) {
+            if(!comparePropertyValues(decodeExpression(graph,v,operation.getLeft()), decodeExpression(graph,v,operation.getRight()), operation.getOperator())){
                 return false;
             }
         }

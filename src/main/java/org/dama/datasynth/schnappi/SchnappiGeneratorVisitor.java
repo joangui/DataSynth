@@ -1,7 +1,6 @@
 package org.dama.datasynth.schnappi;
 
 
-import org.antlr.v4.runtime.tree.TerminalNode;
 import org.dama.datasynth.common.Types;
 import org.dama.datasynth.schnappi.ast.Ast;
 import org.dama.datasynth.schnappi.ast.*;
@@ -33,26 +32,22 @@ public class SchnappiGeneratorVisitor extends org.dama.datasynth.schnappi.Schnap
     }
 
     @Override
-    public Signature visitSignature(org.dama.datasynth.schnappi.SchnappiParser.SignatureContext ctx){
-        Signature signature = new Signature();
-        signature.addBinding(ctx.source().ID().getText(), ctx.source().VTYPE().getText());
-        for(org.dama.datasynth.schnappi.SchnappiParser.SignatureoperationContext operationCtx : ctx.signatureoperation()) {
-            signature.addOperation(visitSignatureendpoint(operationCtx.signatureendpoint(0)),
-                                   visitSignatureendpoint(operationCtx.signatureendpoint(1)),
-                                   Signature.LogicOperator.fromString(operationCtx.logicoperation().getText()));
-        }
-        return signature;
+    public BinaryExpression visitBinaryexpression(org.dama.datasynth.schnappi.SchnappiParser.BinaryexpressionContext ctx) {
+        return new BinaryExpression( visitLiteralorbinding(ctx.literalorbinding(0)),
+                                     visitLiteralorbinding(ctx.literalorbinding(1)),
+                Types.LogicOperator.fromString( ctx.logicoperation().EQQ() != null ? ctx.logicoperation().EQQ().getText() : ctx.logicoperation().NEQ().getText())
+        );
     }
 
     @Override
-    public Expression visitSignatureendpoint(org.dama.datasynth.schnappi.SchnappiParser.SignatureendpointContext ctx) {
-        if(ctx.bindingexpression() != null) {
-            return visitBindingexpression(ctx.bindingexpression());
+    public Signature visitSignature(org.dama.datasynth.schnappi.SchnappiParser.SignatureContext ctx){
+        Signature signature = new Signature();
+        signature.addBinding(ctx.source().ID().getText(), ctx.source().VTYPE().getText());
+        for(org.dama.datasynth.schnappi.SchnappiParser.BinaryexpressionContext operationCtx : ctx.binaryexpression()) {
+            signature.addOperation(visitBinaryexpression(operationCtx));
         }
-        if(ctx.num() != null) return visitNum(ctx.num());
-        return visitString(ctx.string());
+        return signature;
     }
-
 
     @Override
     public Operation visitOp(org.dama.datasynth.schnappi.SchnappiParser.OpContext ctx){

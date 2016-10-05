@@ -4,10 +4,7 @@ options{
     tokenVocab = SchnappiLexer;
 }
 solver : signature? program;
-signature : SIGNATURE COLON LBRA (source) (signatureoperation)* RBRA;
-signatureoperation : signatureendpoint logicoperation signatureendpoint SEMICOLON;
-logicoperation : EQQ | NEQ;
-signatureendpoint : num | bindingexpression | string;
+signature : SIGNATURE COLON LBRA (source) (binaryexpression SEMICOLON)* RBRA;
 source : ARROBA ID EQ VTYPE SEMICOLON;
 program : op*;
 op : assig SEMICOLON;
@@ -32,6 +29,8 @@ table: var | sid | bindingexpression;
 binding: ARROBA(ID)(edgeexpansion)*(POINT leaf);
 bindingfuncs: length;
 bindingexpression: binding | bindingfuncs;
+binaryexpression : literalorbinding logicoperation literalorbinding;
+logicoperation : EQQ | NEQ;
 length: LENGTH LPAR binding RPAR;
 var: ID;
 sid: SID;

@@ -5,7 +5,6 @@ import org.dama.datasynth.common.Types;
 import org.dama.datasynth.schnappi.ast.*;
 import org.dama.datasynth.schnappi.ast.Number;
 import org.dama.datasynth.schnappi.ast.Visitor;
-import org.dama.datasynth.schnappi.solver.Solver;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -60,14 +59,19 @@ public class AstTextPrinter extends Visitor<String> {
     }
 
     @Override
+    public String visit(BinaryExpression n) {
+        return n.getLeft().accept(this)+" "+n.getOperator().getText()+" "+n.getRight().accept(this);
+    }
+
+    @Override
     public String visit(Signature n) {
         StringBuffer buffer = new StringBuffer();
         buffer.append("signature : {");
         for(Map.Entry<String,String> entry :  n.getBindings().entrySet()) {
             buffer.append("@"+entry.getKey()+" = "+entry.getValue()+";\n");
         }
-        for(Signature.Operation operation : n.getOperations()) {
-            buffer.append(operation.getLeft().accept(this)+operation.getOperator().getText()+operation.getRight().accept(this)+";\n");
+        for(BinaryExpression operation : n.getOperations()) {
+            buffer.append(operation.accept(this)+";\n");
         }
         buffer.append("}\n");
         return buffer.toString();

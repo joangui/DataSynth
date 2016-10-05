@@ -13,6 +13,31 @@ import java.util.List;
  */
 public class Types {
 
+    public enum LogicOperator {
+        EQ("=="),
+        NEQ("!=");
+
+        String text = null;
+        LogicOperator(String text) {
+            this.text = text;
+        }
+
+        public String getText() {
+            return text;
+        }
+
+        public static LogicOperator fromString(String text)  {
+            if (text != null) {
+                for (LogicOperator b : LogicOperator.values()) {
+                    if (text.equalsIgnoreCase(b.getText())) {
+                        return b;
+                    }
+                }
+            }
+            return null;
+        }
+    }
+
     public static class Id implements Comparable<Id> {
 
         private String name;
