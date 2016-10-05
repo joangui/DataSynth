@@ -28,7 +28,7 @@ public class StringLiteral extends Literal {
     }
 
     @Override
-    public StringLiteral copy() {
+    public StringLiteral clone() {
         return new StringLiteral(this);
     }
 

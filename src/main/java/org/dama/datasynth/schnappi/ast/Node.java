@@ -21,11 +21,4 @@ public abstract class Node implements Serializable {
     public String getType() {
         return this.getClass().getSimpleName();
     }
-
-    /**
-     * Returns a copy of the node
-     * @return A copy of the node.
-     */
-    public abstract Node copy();
-
 }

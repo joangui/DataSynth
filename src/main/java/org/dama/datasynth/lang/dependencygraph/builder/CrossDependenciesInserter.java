@@ -63,12 +63,16 @@ public class CrossDependenciesInserter extends AstVisitor<Ast.Node> {
     @Override
     public Ast.Edge visit(Ast.Edge astEdge) {
         Edge edge = graph.getEdge(astEdge.getName());
+        Entity source = graph.getEntity(astEdge.getSource());
+        graph.addDependency(edge,source,"source");
         if(astEdge.getSourceCardinalityGenerator() != null) {
             Attribute attribute = graph.getAttribute(astEdge.getName()+".sourcecardinality");
             Generator generator = (Generator)graph.getNeighbors(attribute,"generator").get(0);
             solveGeneratorDependencies(attribute,astEdge.getSourceCardinalityGenerator(),"generator");
         }
 
+        Entity target = graph.getEntity(astEdge.getTarget());
+        graph.addDependency(edge,target,"target");
         if(astEdge.getTargetCardinalityGenerator() != null) {
             Attribute attribute = graph.getAttribute(astEdge.getName()+".targetcardinality");
             Generator generator = (Generator)graph.getNeighbors(attribute,"generator").get(0);

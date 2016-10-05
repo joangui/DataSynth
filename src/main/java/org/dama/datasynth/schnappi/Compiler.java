@@ -131,7 +131,7 @@ public class Compiler extends DependencyGraphVisitor {
             } else {
                 Expression id = new Id(attribute.getName(), attribute.getIsTemporal());
                 List<Expression> funcParams = new ArrayList<Expression>();
-                funcParams.add(new Number(graph.getIncomingNeighbors(attribute,"internalAttribute").get(0).getProperties().get("number").toString(), Types.DataType.LONG));
+                funcParams.add(new Number(graph.getIncomingNeighbors(attribute,"oid").get(0).getProperties().get("number").toString(), Types.DataType.LONG));
                 Expression right = new Function("range",funcParams);
                 Assign assign = new Assign(id,right);
                 program.addOperation(assign);
@@ -160,10 +160,5 @@ public class Compiler extends DependencyGraphVisitor {
         for(Vertex vertex : graph.getNeighbors(generator,"requires")) {
             vertex.accept(this);
         }
-    }
-
-    @Override
-    public void visit(Literal literal) {
-        throw new RuntimeException("Method visit Literal in compiler not implemented.");
     }
 }

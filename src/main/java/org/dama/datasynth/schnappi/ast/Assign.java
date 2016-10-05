@@ -15,8 +15,8 @@ public class Assign extends Operation {
     }
 
     public Assign(Assign assign) {
-        this.id = assign.id.copy();
-        this.expression = assign.expression.copy();
+        this.id = assign.id.clone();
+        this.expression = assign.expression.clone();
     }
 
     @Override
@@ -25,7 +25,7 @@ public class Assign extends Operation {
     }
 
     @Override
-    public Operation copy() {
+    public Operation clone() {
         return new Assign(this);
     }
 

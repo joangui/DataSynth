@@ -19,7 +19,7 @@ public class Var extends Atomic implements Comparable<Var>{
     }
 
     @Override
-    public Var copy() {
+    public Var clone() {
         return new Var(this);
     }
 

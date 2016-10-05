@@ -7,7 +7,7 @@ solver : signature? program;
 signature : SIGNATURE COLON LBRA (source) (signatureoperation)* RBRA;
 signatureoperation : signatureendpoint logicoperation signatureendpoint SEMICOLON;
 logicoperation : EQQ | NEQ;
-signatureendpoint : num | bindingexpression | STRING;
+signatureendpoint : num | bindingexpression | string;
 source : ARROBA ID EQ VTYPE SEMICOLON;
 program : op*;
 op : assig SEMICOLON;
@@ -15,8 +15,8 @@ assig : (VAR var | sid | binding) EQ expr;
 funcs : map | spawn | join | init | sort | mappart | range | zip;
 
 init : INIT LPAR  (literalorbinding (COMA literalorbinding)*)? RPAR;
-map : MAPKW LPAR (var | STRING) COMA table RPAR;
-mappart : MAPPART LPAR (var | STRING) COMA table RPAR;
+map : MAPKW LPAR (var | string) COMA table RPAR;
+mappart : MAPPART LPAR (var | string) COMA table RPAR;
 join : JOIN LPAR (table (COMA table)*) RPAR;
 spawn : SPAWN LPAR var COMA (INTEGER | bindingexpression) RPAR;
 sort : SORT LPAR table COMA num RPAR;
@@ -24,9 +24,9 @@ range: RANGE LPAR num RPAR;
 zip: ZIP LPAR (table (COMA table)*) RPAR;
 
 expr : atomic | funcs;
-atomic :  num | var | sid | STRING ;
+atomic :  num | var | sid | string ;
 atomicorbinding : atomic | bindingexpression;
-literal : num | STRING;
+literal : num | string;
 literalorbinding: literal | bindingexpression;
 table: var | sid | bindingexpression;
 binding: ARROBA(ID)(edgeexpansion)*(POINT leaf);
@@ -39,4 +39,4 @@ num: INTEGER | FLOATING;
 edgeexpansion: (arrow ID);
 arrow: ARROWOUTGOING | ARROWINGOING;
 leaf: ID;
-
+string: STRING;

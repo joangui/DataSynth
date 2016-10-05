@@ -5,6 +5,7 @@ import org.dama.datasynth.lang.dependencygraph.DependencyGraph;
 import org.dama.datasynth.lang.dependencygraph.Vertex;
 import org.dama.datasynth.schnappi.CompilerException;
 import org.dama.datasynth.schnappi.ast.*;
+import org.dama.datasynth.schnappi.ast.Number;
 import org.dama.datasynth.schnappi.ast.Visitor;
 import org.dama.datasynth.schnappi.solver.DependencyGraphMatcher;
 import org.dama.datasynth.schnappi.solver.Solver;
@@ -69,6 +70,17 @@ public class SolverInstantiator extends Visitor<List<Expression>> {
     @Override
     public List<Expression> visit(Var var) {
         return createExpressionList(var);
+    }
+
+
+    @Override
+    public List<Expression> visit(StringLiteral literal) {
+        return createExpressionList(literal);
+    }
+
+    @Override
+    public List<Expression> visit(Number number) {
+        return createExpressionList(number);
     }
 
     @Override

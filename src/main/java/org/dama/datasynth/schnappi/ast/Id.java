@@ -36,7 +36,7 @@ public class Id extends Atomic implements Comparable<Id> {
     }
 
     @Override
-    public Id copy() {
+    public Id clone() {
         return new Id(this);
     }
 

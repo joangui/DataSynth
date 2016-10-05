@@ -6,7 +6,7 @@ package org.dama.datasynth.schnappi.ast;
 public abstract class Expression extends Operation {
 
     @Override
-    public abstract Expression copy();
+    public abstract Expression clone();
 
     public boolean isAssignable() {
         return false;

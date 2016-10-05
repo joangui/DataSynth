@@ -1,8 +1,5 @@
 package org.dama.datasynth.schnappi.ast;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by quim on 5/18/16.
  * Represents a Binding in the Schnappi Ast
@@ -28,7 +25,7 @@ public class BindingFunction extends BindingExpression {
      */
     public BindingFunction(BindingFunction binding) {
         this.name = binding.name;
-        this.expression = binding.copy();
+        this.expression = binding.clone();
     }
 
     /**
@@ -58,7 +55,7 @@ public class BindingFunction extends BindingExpression {
     }
 
     @Override
-    public BindingExpression copy() {
+    public BindingExpression clone() {
         return new BindingFunction(this);
     }
 }

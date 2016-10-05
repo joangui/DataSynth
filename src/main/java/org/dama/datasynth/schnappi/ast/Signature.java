@@ -174,7 +174,7 @@ public class Signature extends Node {
     }
 
     @Override
-    public Node copy() {
+    public Node clone() {
         return new Signature(this);
     }
 }

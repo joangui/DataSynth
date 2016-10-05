@@ -23,7 +23,7 @@ public class Ast {
      */
     public Ast(Ast ast) {
         for(Operation operation : ast.operations) {
-            operations.add(operation.copy());
+            operations.add(operation.clone());
         }
     }
 

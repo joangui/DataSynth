@@ -50,7 +50,7 @@ public class SchnappiGeneratorVisitor extends org.dama.datasynth.schnappi.Schnap
             return visitBindingexpression(ctx.bindingexpression());
         }
         if(ctx.num() != null) return visitNum(ctx.num());
-        return new StringLiteral(ctx.STRING().getText());
+        return visitString(ctx.string());
     }
 
 
@@ -78,7 +78,7 @@ public class SchnappiGeneratorVisitor extends org.dama.datasynth.schnappi.Schnap
 
     @Override
     public Literal visitLiteral(org.dama.datasynth.schnappi.SchnappiParser.LiteralContext ctx) {
-        if(ctx.STRING() != null) return new StringLiteral(ctx.STRING().getText());
+        if(ctx.string() != null) return visitString(ctx.string());
         return visitNum(ctx.num());
     }
 
@@ -113,12 +113,17 @@ public class SchnappiGeneratorVisitor extends org.dama.datasynth.schnappi.Schnap
     @Override
     public Atomic visitAtomic(org.dama.datasynth.schnappi.SchnappiParser.AtomicContext ctx) {
         if(ctx.num() != null)  return visitNum(ctx.num());
-        if(ctx.STRING() != null)  return new StringLiteral(ctx.getText().replace("\'",""));
+        if(ctx.string() != null)  return visitString(ctx.string());
         if(ctx.var() != null)  return new Var(ctx.var().ID().getText());
         if(ctx.sid().SID() != null)  return new Id(ctx.sid().SID().getText(),true);
         return null;
     }
 
+
+    @Override
+    public StringLiteral visitString(org.dama.datasynth.schnappi.SchnappiParser.StringContext ctx){
+        return new StringLiteral(ctx.getText().replace("\'",""));
+    }
 
     @Override
     public Expression visitFuncs(org.dama.datasynth.schnappi.SchnappiParser.FuncsContext ctx){
@@ -153,7 +158,7 @@ public class SchnappiGeneratorVisitor extends org.dama.datasynth.schnappi.Schnap
     public Function visitMap(org.dama.datasynth.schnappi.SchnappiParser.MapContext ctx) {
         List<Expression> parameters = new ArrayList<Expression>();
         if(ctx.var() != null) parameters.add(visitVar(ctx.var()));
-        if(ctx.STRING() != null) parameters.add(new StringLiteral(ctx.STRING().getText()));
+        if(ctx.string() != null) parameters.add(visitString(ctx.string()));
         parameters.add(visitTable(ctx.table()));
         return new Function("map",parameters);
     }
@@ -222,8 +227,8 @@ public class SchnappiGeneratorVisitor extends org.dama.datasynth.schnappi.Schnap
         List<Expression> parameters = new ArrayList<Expression>();
         if(ctx.var() != null)
             parameters.add(visitVar(ctx.var()));
-        if(ctx.STRING() != null)
-            parameters.add(new StringLiteral(ctx.STRING().getText()));
+        if(ctx.string() != null)
+            parameters.add(visitString(ctx.string()));
         parameters.add(visitTable(ctx.table()));
         return new Function("mappart",parameters);
     }

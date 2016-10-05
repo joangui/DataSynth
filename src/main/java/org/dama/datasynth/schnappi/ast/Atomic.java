@@ -43,7 +43,7 @@ public class Atomic extends Expression {
     }
 
     @Override
-    public Atomic copy() {
+    public Atomic clone() {
         return new Atomic(this);
     }
 

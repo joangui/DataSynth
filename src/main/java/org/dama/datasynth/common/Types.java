@@ -131,7 +131,7 @@ public class Types {
         FLOAT(Float.class),
         DOUBLE(Double.class),
         BOOLEAN(Boolean.class),
-        DIRECTION(EdgeType.class),
+        EDGETYPE(EdgeType.class),
         ID(Id.class);
 
         private Class typeData;
@@ -170,11 +170,11 @@ public class Types {
         Types.DataType dataTypeA = Types.DataType.fromObject(a);
         Types.DataType dataTypeB = Types.DataType.fromObject(b);
         if( dataTypeA != dataTypeB) {
-            if(dataTypeA == DataType.DIRECTION && dataTypeB == DataType.STRING)  {
+            if(dataTypeA == DataType.EDGETYPE && dataTypeB == DataType.STRING)  {
                 return ((EdgeType)a).compareTo(EdgeType.fromString((String)b)) == 0;
             }
 
-            if(dataTypeA == DataType.STRING && dataTypeB == DataType.DIRECTION)  {
+            if(dataTypeA == DataType.STRING && dataTypeB == DataType.EDGETYPE)  {
                 return ((EdgeType)b).compareTo(EdgeType.fromString((String)a)) == 0;
             }
             return false;
@@ -193,7 +193,7 @@ public class Types {
             return ((Double)a).compareTo((Double)b) == 0;
         if(dataTypeA == DataType.ID)
             return ((Id)a).compareTo((Id)b) == 0;
-        if(dataTypeA == DataType.DIRECTION)
+        if(dataTypeA == DataType.EDGETYPE)
             return ((EdgeType)a) == ((EdgeType)b);
         return false;
     }

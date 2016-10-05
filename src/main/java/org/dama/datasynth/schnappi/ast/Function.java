@@ -37,7 +37,7 @@ public class Function extends Expression {
     }
 
     @Override
-    public Function copy() {
+    public Function clone() {
         return new Function(this);
     }
 

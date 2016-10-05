@@ -99,7 +99,7 @@ public class Binding extends BindingExpression {
     }
 
     @Override
-    public Binding copy() {
+    public Binding clone() {
         return new Binding(this);
     }
 

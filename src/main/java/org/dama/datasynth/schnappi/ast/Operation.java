@@ -12,5 +12,5 @@ public abstract class Operation extends Node {
     }
 
     @Override
-    public abstract Operation copy();
+    public abstract Operation clone();
 }

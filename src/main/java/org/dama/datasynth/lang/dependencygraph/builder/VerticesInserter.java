@@ -13,7 +13,6 @@ public class VerticesInserter extends AstVisitor<Vertex> {
 
     private DependencyGraph graph = null;
 
-
     /**
      * Constructor
      */
@@ -42,7 +41,7 @@ public class VerticesInserter extends AstVisitor<Vertex> {
         graph.addEntityVertex(entity);
         Attribute oidAttribute = new Attribute(entity.getName()+".oid", Types.DataType.LONG, true);
         graph.addAttributeVertex(oidAttribute);
-        graph.addDependency(entity,oidAttribute,"internalAttribute");
+        graph.addDependency(entity,oidAttribute,"oid");
         for(Ast.Attribute astAttribute : astEntity.getAttributes().values()) {
             astAttribute.accept(this);
             Attribute attribute = graph.getAttribute(astAttribute.getName());

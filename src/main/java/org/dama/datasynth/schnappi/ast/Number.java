@@ -57,7 +57,7 @@ public class Number extends Literal {
     }
 
     @Override
-    public Number copy() {
+    public Number clone() {
         return new Number(this);
     }
 

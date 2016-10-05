@@ -16,7 +16,7 @@ public class Edge extends Vertex {
     public Edge(String name, Types.EdgeType edgeType) {
         super();
         properties.put("name",new Types.Id(name,false));
-        properties.put("type", edgeType);
+        properties.put("edgeType", edgeType);
     }
 
     /**
@@ -32,7 +32,7 @@ public class Edge extends Vertex {
      * @return The direction of the edge.
      */
     public Types.EdgeType getEdgeType() {
-        return (Types.EdgeType)(properties.get("type"));
+        return (Types.EdgeType)(properties.get("edgeType"));
     }
 
     @Override
