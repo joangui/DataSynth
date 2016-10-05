@@ -8,6 +8,13 @@ import org.dama.datasynth.schnappi.solver.Solver;
  * Schnappi Ast visitor interface
  */
 public abstract class Visitor<T> {
+
+    public void call(Ast ast) {
+        for(Operation operation : ast.getOperations()) {
+            operation.accept(this);
+        }
+    }
+
     public T visit(Assign n) {
         throw new NotImplementedException();
     }

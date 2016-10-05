@@ -31,7 +31,7 @@ class SparkInterpreter( configuration : DataSynthConfig) extends Visitor[Express
     .master("local[4]")
     .getOrCreate()
 
-  def run ( ast : Ast) {
+  override def call ( ast : Ast) {
     for(operation <- ast.getOperations) operation.accept(this)
   }
 

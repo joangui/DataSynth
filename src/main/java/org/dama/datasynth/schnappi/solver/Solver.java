@@ -56,9 +56,7 @@ public class Solver extends Node {
     public Ast instantiate(DependencyGraph graph, Vertex v){
         Ast bound = new Ast(this.ast);
         SolverInstantiator instantiator = new SolverInstantiator(graph, this,v);
-        for(Operation operation : bound.getOperations()) {
-            operation.accept(instantiator);
-        }
+        instantiator.call(bound);
         return bound;
     }
 

@@ -36,6 +36,11 @@ public class SolverInstantiator extends Visitor<List<Expression>> {
     }
 
     @Override
+    public void call(Ast ast) {
+        super.call(ast);
+    }
+
+    @Override
     public List<Expression> visit(Assign n) {
         List<Expression> exprs = n.getId().accept(this);
         if(exprs.size() > 1) throw new CompilerException(CompilerException.CompilerExceptionType.INVALID_BINDING_ASSIGN, "Cannot assign more than one expression.");

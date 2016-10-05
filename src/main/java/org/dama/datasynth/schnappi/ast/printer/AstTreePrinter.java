@@ -43,6 +43,14 @@ public class AstTreePrinter extends Visitor<Node> {
     }
 
     @Override
+    public void call(Ast ast) {
+        logger.log(Level.FINE, "Ast Tree Printer");
+        logger.log(Level.FINE,"");
+        super.call(ast);
+        logger.log(Level.FINE,"");
+    }
+
+    @Override
     public Node visit(Assign n) {
         indents++;
         logger.log(Level.FINE,(indents(true)+n.toString()));

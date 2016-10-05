@@ -1,5 +1,6 @@
 package org.dama.datasynth.lang.dependencygraph.builder;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.dama.datasynth.common.Types;
 import org.dama.datasynth.lang.Ast;
 import org.dama.datasynth.lang.AstVisitor;
@@ -57,23 +58,29 @@ public class VerticesInserter extends AstVisitor<Vertex> {
         if(astEdge.getSourceCardinalityGenerator() != null) {
             Attribute attribute = new Attribute(astEdge.getName()+".sourcecardinality", Types.DataType.LONG,true);
             graph.addAttributeVertex(attribute);
+            Entity entity = graph.getEntity(astEdge.getSource());
             graph.addDependency(attribute,visit(astEdge.getSourceCardinalityGenerator()),"generator");
-            graph.addDependency(edge,attribute,"sourcecardinality");
+            graph.addDependency(entity,attribute,"attribute");
         } else if(astEdge.getSourceCardinalityNumber() != null) {
-            Literal number = new Literal(astEdge.getSourceCardinalityNumber());
+            /*Literal number = new Literal(astEdge.getSourceCardinalityNumber());
             graph.addLiteralVertex(number);
             graph.addDependency(edge,number,"sourcecardinality");
+            */
+            throw new NotImplementedException();
         }
 
         if(astEdge.getTargetCardinalityGenerator() != null) {
             Attribute attribute = new Attribute(astEdge.getName()+".targetcardinality", Types.DataType.LONG, true);
             graph.addAttributeVertex(attribute);
+            Entity entity = graph.getEntity(astEdge.getTarget());
             graph.addDependency(attribute,visit(astEdge.getTargetCardinalityGenerator()),"generator");
-            graph.addDependency(edge,attribute,"targetcardinality");
+            graph.addDependency(entity,attribute,"attribute");
         } else if(astEdge.getTargetCardinalityNumber() != null) {
-            Literal number = new Literal(astEdge.getTargetCardinalityNumber());
+           /* Literal number = new Literal(astEdge.getTargetCardinalityNumber());
             graph.addLiteralVertex(number);
             graph.addDependency(edge,number,"targetcardinality");
+            */
+           throw new NotImplementedException();
         }
         return edge;
     }

@@ -13,6 +13,7 @@ import org.dama.datasynth.lang.SyntacticException;
 import org.dama.datasynth.lang.dependencygraph.builder.DependencyGraphBuilder;
 import org.dama.datasynth.runtime.spark.SparkInterpreter;
 import org.dama.datasynth.schnappi.ast.Operation;
+import org.dama.datasynth.schnappi.ast.printer.AstTextPrinter;
 import org.dama.datasynth.schnappi.ast.printer.AstTreePrinter;
 import org.dama.datasynth.schnappi.Compiler;
 import org.dama.datasynth.utils.LogFormatter;
@@ -95,15 +96,15 @@ public class DataSynth {
 
             logger.log(Level.FINE,"\nPrinting Schnappi Ast\n");
             AstTreePrinter astTreePrinter = new AstTreePrinter();
-            for(Operation operation : c.getProgram().getOperations()) {
-                operation.accept(astTreePrinter);
-            }
+            astTreePrinter.call(c.getProgram());
 
+            AstTextPrinter astTextPrinter = new AstTextPrinter();
+            astTextPrinter.call(c.getProgram());
 
             if(!config.frontend) {
                 start = System.currentTimeMillis();
                 SparkInterpreter sparkInterpreter = new SparkInterpreter(config);
-                sparkInterpreter.run(c.getProgram());
+                sparkInterpreter.call(c.getProgram());
                 sparkInterpreter.dumpData();
                 end = System.currentTimeMillis();
                 logger.info(" Query executed in  " + (end - start) + " ms");

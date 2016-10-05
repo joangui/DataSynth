@@ -42,7 +42,7 @@ public class Signature extends Node {
         }
     }
 
-    private class Operation {
+    public class Operation {
         private Expression left;
         private Expression right;
         private LogicOperator operator;
@@ -51,6 +51,18 @@ public class Signature extends Node {
             this.left = left;
             this.right = right;
             this.operator = operator;
+        }
+
+        public Expression getLeft() {
+            return left;
+        }
+
+        public Expression getRight() {
+            return right;
+        }
+
+        public LogicOperator getOperator() {
+            return operator;
         }
     };
 
@@ -99,6 +111,9 @@ public class Signature extends Node {
         return bindings;
     }
 
+    public List<Operation> getOperations() {
+        return operations;
+    }
 
     /**
      * Decodes an atomic
