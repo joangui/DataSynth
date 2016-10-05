@@ -14,3 +14,6 @@ CHANGELOG pre-alpha 0.2
 - added Binding Functions to schnappi, such length
 - added distinction between ingoing and outgoing edges 
 - allow users to ask for .oid identifiers
+- fixed bug with parsing string in schnappi, where '' characters where not
+  properly removed
+- Added Schnappi text printer
