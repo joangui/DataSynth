@@ -46,9 +46,6 @@ public class DependencyGraphMatcher {
                 throw new CompilerException(CompilerException.CompilerExceptionType.UNEXISITING_VERTEX_PROPERTY, binding.getLeaf() + " in vertex of type " + next.getType());
             retList.add(value);
         }
-        if(retList.size() == 0) {
-            throw new CompilerException(CompilerException.CompilerExceptionType.GRAPH_PATTERN_MATCHING, "Expression "+binding.toString()+" does not produce any result.");
-        }
         return retList;
     }
 }

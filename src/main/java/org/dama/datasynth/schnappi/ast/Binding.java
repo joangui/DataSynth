@@ -105,6 +105,6 @@ public class Binding extends BindingExpression {
 
     @Override
     public String toString() {
-        return "<Binding,"+getRoot()+","+expansionChain.toString()+","+getLeaf()+">";
+        return "<Binding,"+expansionChain.toString()+">";
     }
 }
