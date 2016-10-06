@@ -52,6 +52,7 @@ public class SchnappiGeneratorVisitor extends org.dama.datasynth.schnappi.Schnap
     @Override
     public Operation visitOp(org.dama.datasynth.schnappi.SchnappiParser.OpContext ctx){
         if(ctx.assig() != null)  return visitAssig(ctx.assig());
+        if(ctx.dump() != null)  return visitDump(ctx.dump());
         return null;
     }
 
@@ -136,6 +137,7 @@ public class SchnappiGeneratorVisitor extends org.dama.datasynth.schnappi.Schnap
         else if(ctx.mappart() != null) return visitMappart(ctx.mappart());
         else if(ctx.range() != null) return visitRange(ctx.range());
         else if(ctx.zip() != null) return visitZip(ctx.zip());
+        else if(ctx.dump() != null) return visitDump(ctx.dump());
         return null;
     }
 
@@ -153,6 +155,13 @@ public class SchnappiGeneratorVisitor extends org.dama.datasynth.schnappi.Schnap
             parameters.add(visitTable(table));
         }
         return new Function("zip",parameters);
+    }
+
+    @Override
+    public Function visitDump(org.dama.datasynth.schnappi.SchnappiParser.DumpContext ctx) {
+        List<Expression> parameters = new ArrayList<Expression>();
+        parameters.add(visitTable(ctx.table()));
+        return new Function("dump",parameters);
     }
 
     @Override

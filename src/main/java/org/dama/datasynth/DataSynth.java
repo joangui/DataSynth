@@ -12,7 +12,6 @@ import org.dama.datasynth.lang.SemanticException;
 import org.dama.datasynth.lang.SyntacticException;
 import org.dama.datasynth.lang.dependencygraph.builder.DependencyGraphBuilder;
 import org.dama.datasynth.runtime.spark.SparkInterpreter;
-import org.dama.datasynth.schnappi.ast.Operation;
 import org.dama.datasynth.schnappi.ast.printer.AstTextPrinter;
 import org.dama.datasynth.schnappi.ast.printer.AstTreePrinter;
 import org.dama.datasynth.schnappi.Compiler;
@@ -105,7 +104,6 @@ public class DataSynth {
                 start = System.currentTimeMillis();
                 SparkInterpreter sparkInterpreter = new SparkInterpreter(config);
                 sparkInterpreter.call(c.getProgram());
-                sparkInterpreter.dumpData();
                 end = System.currentTimeMillis();
                 logger.info(" Query executed in  " + (end - start) + " ms");
                 logger.info("Execution finished");

@@ -5,9 +5,10 @@ signature : {
 }
 
 var hgen = init('org.dama.datasynth.generators.HashCombiner');
-var hdep = zip(@A->source->oid.name,@A->correlates.name);
+var hdep = zip(@A->correlates.name);
 var hattr = map(hgen,hdep);
 var table = zip(@A->source->oid.name,hattr,@A->sourcecardinality.name);
 var sorted = sort(table,1);
 var edgegenerator = init('org.dama.datasynth.generators.blockgenerators.UndirectedEdgeGenerator');
 @A.name = mappart(edgegenerator,sorted);
+dump(@A.name);

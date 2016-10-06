@@ -34,7 +34,7 @@ public class HashCombiner extends Generator {
         for(Object o : args) {
             long objectHash = o.hashCode();
             long mask = 0xffffffff;
-            mask <<= bitsPerParameter;
+            mask =  mask << bitsPerParameter;
             mask = ~(mask);
             objectHash = objectHash & mask;
             objectHash <<= bitsPerParameter*count;

@@ -66,6 +66,7 @@ class SparkInterpreter( configuration : DataSynthConfig) extends Visitor[Express
       case "init" => return execInit(n)
       case "sort" => return execSort(n)
       case "range" => return execRange(n)
+      case "dump"  => return execDump(n)
       case _ => throw new ExecutionException("Unsupported method "+n.getName)
     }
   }
@@ -174,6 +175,12 @@ class SparkInterpreter( configuration : DataSynthConfig) extends Visitor[Express
     return execJoin(f)
   }
 
+  def execDump( f: Function) : Table[Dataset[Row]] = {
+    val table = getTable(f.getParameters.get(0).accept(this))
+    table.getData.coalesce(1).write.format("com.databricks.spark.csv").option("header",true).save(config.outputDir +"/" + (f.getParameters.get(0) match { case id : Id=> id.getValue})+".csv")
+    return null;
+  }
+
 
   /** Helper functions **/
   def getGenerator( expr : ExpressionValue ) : Generator = {
@@ -233,7 +240,7 @@ class SparkInterpreter( configuration : DataSynthConfig) extends Visitor[Express
 
   def rowToTuple( row : Row) : Tuple = {
     val tuple = new Tuple
-    row.toSeq.map( r => tuple.add(r))
+    row.toSeq.drop(1).map( r => tuple.add(r))
     return tuple
   }
 
@@ -257,10 +264,4 @@ class SparkInterpreter( configuration : DataSynthConfig) extends Visitor[Express
     }
   }
 
-  def dumpData(): Unit = {
-    tables.foreach( p => {
-      if(!p._1.getValue().contains(".") || config.debug)
-        p._2.getData.coalesce(1).write.format("com.databricks.spark.csv").option("header",true).save(config.outputDir +"/" + p._1.getValue()+".csv")
-    })
-  }
 }

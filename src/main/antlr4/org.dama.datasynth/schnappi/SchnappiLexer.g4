@@ -88,6 +88,10 @@ LENGTH
     : 'length'
     ;
 
+DUMP
+    : 'dump'
+    ;
+
 EQQ
     : '=='
     ;
