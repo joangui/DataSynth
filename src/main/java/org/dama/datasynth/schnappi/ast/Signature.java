@@ -66,57 +66,7 @@ public class Signature extends Node {
         return operations;
     }
 
-    /**
-     * Decodes an atomic
-     * @param graph The graph to use to decode the atomic
-     * @param v The vertex the atomic should be matched against in case it is a binding
-     * @param expression The expression to decode
-     * @return The property value after decoding the atomic
-     */
-    private Object decodeExpression(DependencyGraph graph, Vertex v, Expression expression)  {
-       switch(expression.getType()) {
-           case "BindingFunction":
-               return decodeBindingFunction(graph,v,(BindingFunction)expression);
-           case "Binding":
-               List<Object> values = DependencyGraphMatcher.match(graph,v,((Binding)expression));
-               if(values.size() != 1) throw new CompilerException(CompilerException.CompilerExceptionType.INVALID_BINDING_EXPRESSION,". Only univalued expressions allowed in signature");
-               return values.get(0);
-           case "Number":
-               return Long.parseLong(((Number)expression).getValue());
-           case "StringLiteral":
-               return ((StringLiteral)expression).getValue();
-       }
-       throw new CompilerException(CompilerException.CompilerExceptionType.INVALID_BINDING_EXPRESSION, ". Unsupported type "+expression.getType());
-    }
 
-    private Object decodeBindingFunction(DependencyGraph graph, Vertex v, BindingFunction function) {
-
-        switch(function.getName()) {
-            case "length":
-                List<Object> values = DependencyGraphMatcher.match(graph,v,((Binding)function.getExpression()));
-                return new Long(values.size());
-            default:
-                throw new CompilerException(CompilerException.CompilerExceptionType.INVALID_BINDING_EXPRESSION, ". Unsupported binding function "+function.getName());
-        }
-
-    }
-
-    /**
-     * Compares two property values
-     * @param left The left property value in the comparison
-     * @param right The right property value in the comparison
-     * @param operator The operator of the comparison
-     * @return The result of the comparison
-     */
-    private boolean comparePropertyValues(Object left, Object right, Types.LogicOperator operator) {
-        switch(operator) {
-            case EQ:
-                return Types.compare(left,right);
-            case NEQ:
-                return !Types.compare(left,right);
-        }
-        throw new CompilerException(CompilerException.CompilerExceptionType.INVALID_BINDING_EXPRESSION, ". Unsupported logic operator "+operator.getText());
-    }
 
     /**
      * Evaluates a vertex against this signature
@@ -126,7 +76,7 @@ public class Signature extends Node {
      */
     public boolean eval(DependencyGraph graph, Vertex v) {
         for(BinaryExpression operation : operations) {
-            if(!comparePropertyValues(decodeExpression(graph,v,operation.getLeft()), decodeExpression(graph,v,operation.getRight()), operation.getOperator())){
+            if(!DependencyGraphMatcher.eval(graph,v,operation)){
                 return false;
             }
         }

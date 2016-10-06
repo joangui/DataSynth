@@ -34,17 +34,22 @@ public class AstTextPrinter extends Visitor<String> {
         StringBuffer buffer = new StringBuffer();
         buffer.append("@");
         buffer.append(n.getRoot());
-        for(Binding.EdgeExpansion expansion : n.getExpansionChain()) {
-            buffer.append(expansion.getDirection() == Types.Direction.OUTGOING ? "->" : "<-");
-            buffer.append(expansion.getName());
+        for(EdgeExpansion expansion : n.getExpansionChain()) {
+            buffer.append(visit(expansion));
         }
         buffer.append("."+n.getLeaf());
         return buffer.toString();
     }
 
     @Override
+    public String visit(EdgeExpansion n) {
+        return (n.getDirection() == Types.Direction.OUTGOING ? "->" : "<-") + n.getName();
+    }
+
+    @Override
     public String visit(Function n) {
         StringBuffer buffer = new StringBuffer();
+        buffer.append(n.getName());
         buffer.append("(");
         if(n.getParameters().size()> 0) {
             Iterator<Expression> iter = n.getParameters().iterator();

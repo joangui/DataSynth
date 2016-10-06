@@ -50,4 +50,5 @@ public class BinaryExpression extends Expression{
     public String toString() {
         return "<BinaryBindingExpression,"+operator.getText()+">";
     }
+
 };

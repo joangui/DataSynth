@@ -37,7 +37,7 @@
           "type" : "Long",
           "generator" : {
             "name" : "org.dama.datasynth.generators.DateBasedIDGenerator",
-            "requires" : ["person.creationDate"],
+            "requires" : ["person.oid","person.creationDate"],
             "init" : ["dd-MM-yyyy"]
           }
         },

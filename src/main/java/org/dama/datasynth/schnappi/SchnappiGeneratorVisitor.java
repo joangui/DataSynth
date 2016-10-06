@@ -74,7 +74,8 @@ public class SchnappiGeneratorVisitor extends org.dama.datasynth.schnappi.Schnap
     @Override
     public Literal visitLiteral(org.dama.datasynth.schnappi.SchnappiParser.LiteralContext ctx) {
         if(ctx.string() != null) return visitString(ctx.string());
-        return visitNum(ctx.num());
+        if(ctx.num() != null ) return visitNum(ctx.num());
+        return visitBool(ctx.bool());
     }
 
     @Override
@@ -118,6 +119,11 @@ public class SchnappiGeneratorVisitor extends org.dama.datasynth.schnappi.Schnap
     @Override
     public StringLiteral visitString(org.dama.datasynth.schnappi.SchnappiParser.StringContext ctx){
         return new StringLiteral(ctx.getText().replace("\'",""));
+    }
+
+    @Override
+    public BooleanLiteral visitBool(org.dama.datasynth.schnappi.SchnappiParser.BoolContext ctx){
+        return new BooleanLiteral(ctx.getText());
     }
 
     @Override
@@ -177,9 +183,18 @@ public class SchnappiGeneratorVisitor extends org.dama.datasynth.schnappi.Schnap
     public Binding visitBinding(org.dama.datasynth.schnappi.SchnappiParser.BindingContext ctx) {
         Binding binding = new Binding(ctx.ID().getText(), ctx.leaf().getText());
         for(org.dama.datasynth.schnappi.SchnappiParser.EdgeexpansionContext node : ctx.edgeexpansion()) {
-            binding.addExpansion(node.ID().getText(),node.arrow().ARROWOUTGOING() != null ? Types.Direction.OUTGOING : Types.Direction.INGOING);
+            binding.addExpansion(visitEdgeexpansion(node));
         }
         return binding;
+    }
+
+    @Override
+    public EdgeExpansion visitEdgeexpansion(org.dama.datasynth.schnappi.SchnappiParser.EdgeexpansionContext ctx) {
+        EdgeExpansion expansion =  new EdgeExpansion(ctx.arrow().ARROWOUTGOING() != null ? Types.Direction.OUTGOING : Types.Direction.INGOING,ctx.ID().getText());
+        for(org.dama.datasynth.schnappi.SchnappiParser.BinaryexpressionContext exprctx : ctx.binaryexpression() ) {
+            expansion.addFilter(visitBinaryexpression(exprctx));
+        }
+        return expansion;
     }
 
     @Override

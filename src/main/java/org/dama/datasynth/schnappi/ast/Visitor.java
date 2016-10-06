@@ -34,4 +34,5 @@ public abstract class Visitor<T> {
     public T visit(Number n){ throw new NotImplementedException();}
     public T visit(BindingFunction n){ throw new NotImplementedException();}
     public T visit(BinaryExpression n){ throw new NotImplementedException();}
+    public T visit(EdgeExpansion n){ throw new NotImplementedException();}
 }

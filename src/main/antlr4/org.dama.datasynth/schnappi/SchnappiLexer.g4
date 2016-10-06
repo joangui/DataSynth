@@ -32,6 +32,23 @@ RBRA
     : '}'
     ;
 
+LCLA
+    : '['
+    ;
+
+RCLA
+    : ']'
+    ;
+
+TRUE
+    : 'true'
+    ;
+
+FALSE
+    : 'false'
+    ;
+
+
 MAPKW
     : 'map'
     ;

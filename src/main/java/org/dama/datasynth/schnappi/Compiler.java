@@ -69,17 +69,15 @@ public class Compiler extends DependencyGraphVisitor {
      */
     private void solveVertex(Vertex v) throws CompilerException {
         List<Solver> solvers = this.solversDB.get(v.getType());
-        boolean found = false;
         if(solvers != null) {
             for (Solver solver : solvers) {
                 if (solver.eval(graph, v)) {
                     this.concatenateProgram(solver.instantiate(graph, v));
-                    found = true;
+                    return;
                 }
             }
         }
-        if (!found)
-            throw new CompilerException(CompilerException.CompilerExceptionType.UNSOLVABLE_PROGRAM, "No solver for type " + v.getType());
+        throw new CompilerException(CompilerException.CompilerExceptionType.UNSOLVABLE_PROGRAM, "No solver for type " + v.getType());
     }
 
     /**

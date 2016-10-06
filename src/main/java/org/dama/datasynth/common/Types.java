@@ -2,6 +2,7 @@ package org.dama.datasynth.common;
 
 import org.dama.datasynth.generators.Generator;
 import org.dama.datasynth.runtime.ExecutionException;
+import org.dama.datasynth.schnappi.CompilerException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -222,6 +223,7 @@ public class Types {
             return ((EdgeType)a) == ((EdgeType)b);
         return false;
     }
+
 
     /**
      * Returns an instance of the generator with the given name

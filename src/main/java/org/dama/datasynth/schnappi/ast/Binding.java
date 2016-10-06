@@ -1,6 +1,7 @@
 package org.dama.datasynth.schnappi.ast;
 
 import org.dama.datasynth.common.Types;
+import org.dama.datasynth.schnappi.solver.DependencyGraphMatcher;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,28 +12,6 @@ import java.util.List;
  */
 public class Binding extends BindingExpression {
 
-    public static class EdgeExpansion {
-        private Types.Direction direction;
-        private String name;
-
-        public EdgeExpansion(Types.Direction direction, String name) {
-            this.direction = direction;
-            this.name = name;
-        }
-
-        public Types.Direction getDirection() {
-            return direction;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        @Override
-        public String toString() {
-            return "<"+direction.toString()+","+name+">";
-        }
-    }
     private List<EdgeExpansion> expansionChain = null;
     private String              leaf = null;
     private String              root = null;
@@ -89,8 +68,8 @@ public class Binding extends BindingExpression {
         this.root = root;
     }
 
-    public void addExpansion(String name, Types.Direction direction) {
-        expansionChain.add(new EdgeExpansion(direction,name));
+    public void addExpansion(EdgeExpansion expansion) {
+        expansionChain.add(expansion);
     }
 
     @Override
