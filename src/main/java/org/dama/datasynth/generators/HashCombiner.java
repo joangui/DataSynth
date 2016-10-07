@@ -28,18 +28,18 @@ public class HashCombiner extends Generator {
     public Long run(Object... args) {
         int numParameters = args.length;
         if(numParameters == 0) return random.nextLong();
-        int bitsPerParameter = 64/numParameters;
+        int bitsPerParameter = (64/numParameters)-1;
         long hashValue = 0;
         int count = 0;
         for(Object o : args) {
             long objectHash = o.hashCode();
-            long mask = 0xffffffff;
+            long mask = 0xfffffffe;
             mask =  mask << bitsPerParameter;
             mask = ~(mask);
             objectHash = objectHash & mask;
             objectHash <<= bitsPerParameter*count;
             hashValue+=objectHash;
-            count++;
+            count+=1;
         }
         return hashValue;
     }

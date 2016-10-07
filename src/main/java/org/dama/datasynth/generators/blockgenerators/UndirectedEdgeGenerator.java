@@ -26,7 +26,7 @@ public class UndirectedEdgeGenerator extends Generator {
             while (currentBlock.size() < blockSize && iter.hasNext()) {
                 Tuple tuple = iter.next();
                 currentBlock.add(tuple);
-                System.out.println(tuple.toString());
+                //System.out.println(tuple.toString());
                 neighborCount.add(0L);
             }
             for (int i = 0; i < currentBlock.size(); ++i) {

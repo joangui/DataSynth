@@ -19,3 +19,4 @@ CHANGELOG pre-alpha 0.2
 - Added Schnappi text printer
 - Added binaryexpressions to schnappi.
 - Added filters to edge expansions
+- Fixed bug with hashcombiner

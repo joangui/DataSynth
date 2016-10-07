@@ -2,6 +2,7 @@ package org.dama.datasynth.generators;
 
 import org.dama.datasynth.utils.MurmurHash;
 
+import java.security.SecureRandom;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -16,7 +17,7 @@ public class DateGenerator extends Generator {
     private long dateEnd;
     private String format;
     private String timeZone = "GMT";
-    Random rand = new Random();
+    final Random rand = new SecureRandom();
 
     /**
      * Initializes the generator
