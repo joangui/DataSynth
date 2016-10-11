@@ -173,49 +173,65 @@ The goal of Schnappi is three-fold:
 * To abstract the backedn from the front-end. Thus, anyone can implement the backend using the desired technology, he just needs to interpres Schnappi or generate executable code out of it.
 * Allow backends to perform additional optimizations. By passing the full program to the backends, these can analyze it and perform additional optimizations based on their characteristics. 
 
-So basically, given a schema specified using the json, DataSynth produces Schnappi code that can then be executed. The following is the generated code for the above example. As you can see, only functions sort, mappart, map and union are used, as well as init which is used to initialize a generator. As we will see in a moment, we allow users to hook into the code generation in order to customize how data is generated, but before let's have a quick look at the Schnappi language.
+So basically, given a schema specified using Json, DataSynth produces Schnappi code that can then be executed. The following is the generated code for the above example. As you can see, only functions sort, mappart, map and zip are used, as well as init which is used to initialize a generator. As we will see in a moment, we allow users to hook into the code generation in order to customize how data is generated, but before let's have a quick look at the Schnappi language.
 
 ```
-person.oid = genids(10000);
-f = init('org.dama.datasynth.generators.CDFGenerator', '/dicLocations.txt', 1, 5,' '); 
-rparams = union(person.oid);
-person.country = map(f,rparams);
-
-f = init('org.dama.datasynth.generators.CorrellationGenerator','/namesByCountry.txt', ' '); 
-rparams = union(person.oid, person.country);
-person.name = map(f,rparams);
-
-f = init('org.dama.datasynth.generators.ZipfDistribution',1.7);
-rparams = union(person.oid);
-friendship.person.person.sourcecardinality = map(f,rparams);
-
-hgen = init('org.dama.datasynth.generators.HashCombiner');
-hdep = union(person.oid,person.country);
-hattr = map(hgen,hdep);
-table = union(person.oid, hattr, friendship.person.person.sourcecardinality);
-sorted = sort(table,1);
-edgegenerator = init('org.dama.datasynth.generators.edgegenerators.UndirectedEdgeGenerator');
-
-friendship.person.person = mappart(edgegenerator,sorted);
+#person.oid = range(10000);
+let f = init('org.dama.datasynth.generators.CDFGenerator','/dicLocations.txt',1,5,' '); 
+#person.country = spawn(f,10000);
+let f = init('org.dama.datasynth.generators.CorrelationGenerator','/namesByCountry.txt',' '); 
+let rparams = zip(#person.country);
+#person.name = map(f,rparams);
+let f = init('org.dama.datasynth.generators.MailGenerator','/email.txt');
+let rparams = zip(#person.name);
+#person.email = map(f,rparams);
+let f = init('org.dama.datasynth.generators.DateGenerator','dd-MM-yyyy','01-01-1980','01-01-1990');
+#person.creationDate = spawn(f,10000);
+let f = init('org.dama.datasynth.generators.DateBasedIDGenerator','dd-MM-yyyy');
+let rparams = zip(#person.oid,#person.creationDate);
+#person.id = map(f,rparams);
+let f = init('org.dama.datasynth.generators.ZipfDistribution',1.7);
+#friendship.person.person.sourcecardinality = spawn(f,10000);
+#person = zip(#person.country,#person.email,#person.creationDate,#person.name,#person.id);
+let hgen = init('org.dama.datasynth.generators.HashCombiner');
+let hdep = zip(#person.country);
+let hattr = map(hgen,hdep);
+let table = zip(#person.oid,hattr,#friendship.person.person.sourcecardinality);
+let sorted = sort(table,1);
+let edgegenerator = init('org.dama.datasynth.generators.blockgenerators.UndirectedEdgeGenerator');
+#friendship.person.person = mappart(edgegenerator,sorted);
 ```
 
-The basic operads in Schnappi are tables of the form <id,attr1,attr2,...> and generator objects. The complex data generation processes must go inside generators, which are then applied to tables in parallel using map and mappart functions. 
+The basic operads in Schnappi are tables of the form <attr1,attr2,...> and generator objects. The complex data generation processes must go inside generators, which are then applied to tables in parallel using map and mappart functions. 
 
 #### init( g : String, args : T ...)
 
-Returns an instance of the generator with name g initialized with args. Note that the type of the arguments is undetermined, and type-checking is evaluated by the frontend at runtime. 
+Returns an instance of the generator with name g initialized with args. Note that the type of the arguments is undetermined, and type-checking is evaluated by the frontend at runtime.
+
+#### range(n : Long)
+
+Produces a Table with a single column containing unique numbers from 0 to (i-1). 
+
+#### spawn( generator : ElementGenerator, n : Long)
+
+Produces a Table with n rows resulting of executing the ElementGenerator generator. ElementGenerator run method must contain no parameters.
+
 
 #### map( generator : ElementGenerator, t : Table)
 
-Returns a Table <id : Long, val : T> resuling of mapping the element generator to each element of t. The frontend checks that the types of the generator run function match those of the columns of t. 
+Returns a new Table resuling of mapping the element generator to each element of t. The frontend checks that the types of the generator run function match those of the columns of t. 
 
 #### mappart( generator : BlockGenerator, t : Table)
 
-Returns a new Table <id : Long, val : T> resuling of mapping the block generator to each partition of t. The frontend checks that the types of the generator run function match those of the columns of t. Currently, the number of partitions of a table is implementation defined. 
+Returns a new Table resuling of mapping the block generator to each partition of t. The frontend checks that the types of the generator run function match those of the columns of t. Currently, the number of partitions of a table is implementation defined. 
 
-#### union( tables : Table ...)
+#### join( tables : Table ... , id : Integer)
 
-Returns a new table <id, val1 : T, val2 : T, ..., valn : T> by zipping the input tables. Input tables must be sorted by id. This is like performing a join between on the id of all the input tables.
+Returns a new table <val1 : T, val2 : T, ..., valn : T> by joining the input tables by column id. 
+
+#### zip( tables : Table ... )
+
+Returns a new Table by zipping the input tables
 
 #### sort( t : Table, i : Long ...) 
 
@@ -226,28 +242,21 @@ Returns a copy of the table t sorted in ascending order on the columns specified
 The way we allow users to hook into the generation of Schnappi code is by using solvers. Solvers are small snippet of Schnappi code with placeholders for data queried in the dependency graph, and a Signature used to communicate the Schnappi compilers which elements of the dependency graph thes Solver can generate. The following is a solver for attributes:
 
 ```
-signature : {
+signature : { 
     @source = Attribute;
+    length(@source->generator->requires.name) == 0;
 }
 
-var f = init(@source->generator.name,@source->generator->initparam.value);
-var rparams = union(@source->generator->requires.name);
-@source.name = map(f, rparams);
+let f = init(@source->generator.name,@source->generator->initparam.value);
+@source.name=spawn(f,@source<-attribute.number);                                                              
 ```
 
-The Signature specifies that this solver is used to solve vertices of type Attribute in the dependency graph. Actually, the signature is a graph pattern matching query that allows multiple statements. For instance, the solver for undirected edges between nodes of the same type is:
-```
-signature : {
-    @A = Edge;
-    @A->source.name == @A->target.name;
-    @A.direction == 'undirected';
-}
-```
-This signature states that given a vertex in the dependency graph of type Edge, and this vertex source name equals vertex target name, and vertex's attribute direction equals 'undirected', then this solver can generate code to generate that vertex. The syntax "->X" specifies navigating an edge of name X (i.e. source, target, whatever) on the dependency graph, and ".Y"  specifies the value of the property with name "Y". For instance, @A->source.name means that given the Edge vertex A, we go to the source attribute (person.oid in this case) and retrieve its name. 
+The Signature specifies that this solver is used to solve vertices of type Attribute in the dependency graph, that do not depend on other attributes. Actually, the signature is a graph pattern matching query that allows multiple statements. 
+More concretely, this signature states that this solver aimes at solving elements of type attribute, where the length of the list of attributes this attribute depends on is 0.
 
-The same syntax is used for the place holders within the snippet. The Solver instantiator just generates code by substitution the proper values obtained from the dependency graph. 
+The same syntax used in signatures is used for the place holders within the snippet. The Solver instantiator just generates code by substitution of the proper values obtained from the dependency graph. 
 
-When loading the tool, the compilers looks at the Solver folder for the available Solvers and loads them. When generating code, it looks for a combination of solvers that can solve all the elements of the dependency graph. So far there is not a mechanism to specify the compiler how to resolve ties between which solver to chose, but this possibility will be added in the future.
+When loading the tool, the compiler looks at the Solvers folder for the available Solvers and loads them. When generating code, it looks for a combination of solvers that can solve all the elements of the dependency graph. So far there is not a mechanism to specify the compiler how to resolve ties between which solver to chose, but this possibility will be added in the future.
 
 ## Contributing
 
