@@ -3,8 +3,17 @@
   "entities" : [
     {
       "name" : "person",
-      "number" : 100,
+      "number" : 10000,
       "attributes" : [
+        {
+          "name" : "country",
+          "type" : "String",
+          "generator" : {
+            "name" : "org.dama.datasynth.generators.CDFGenerator",
+            "requires" : [],
+            "init" : ["/dicLocations.txt",1,5," "]
+          }
+        }
       ]
     }
   ]

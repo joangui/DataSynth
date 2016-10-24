@@ -22,7 +22,7 @@ public class AstTextPrinter extends Visitor<String> {
     public  String visit(Assign n) {
         StringBuffer buffer = new StringBuffer();
         if(n.getId().getType().compareTo("Var") == 0) {
-            buffer.append("var ");
+            buffer.append("let ");
         }
         buffer.append(n.getId().accept(this) +" = "+n.getExpression().accept(this)+";");
         logger.log(Level.FINE,buffer.toString());

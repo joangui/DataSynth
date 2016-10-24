@@ -10,7 +10,7 @@ program : op*;
 op :
     assig SEMICOLON |
     dump SEMICOLON;
-assig : (VAR var | sid | binding) EQ expr;
+assig : (LET var | sid | binding) EQ expr;
 funcs : map | spawn | join | init | sort | mappart | range | zip | dump;
 
 init : INIT LPAR  (literalorbinding (COMA literalorbinding)*)? RPAR;

@@ -134,8 +134,8 @@ HTAG
     : '#'
     ;
 
-VAR
-    : 'var'
+LET
+    : 'let'
     ;
 
 VTYPE

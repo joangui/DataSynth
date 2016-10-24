@@ -4,11 +4,11 @@ signature : {
     @A.edgeType == 'undirected';
 }
 
-var hgen = init('org.dama.datasynth.generators.HashCombiner');
-var hdep = zip(@A->correlates.name);
-var hattr = map(hgen,hdep);
-var table = zip(@A->source->oid.name,hattr,@A->sourcecardinality.name);
-var sorted = sort(table,1);
-var edgegenerator = init('org.dama.datasynth.generators.blockgenerators.UndirectedEdgeGenerator');
+let hgen = init('org.dama.datasynth.generators.HashCombiner');
+let hdep = zip(@A->correlates.name);
+let hattr = map(hgen,hdep);
+let table = zip(@A->source->oid.name,hattr,@A->sourcecardinality.name);
+let sorted = sort(table,1);
+let edgegenerator = init('org.dama.datasynth.generators.blockgenerators.UndirectedEdgeGenerator');
 @A.name = mappart(edgegenerator,sorted);
 dump(@A.name);

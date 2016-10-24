@@ -3,6 +3,6 @@ signature : {
     length(@source->generator->requires.name) == 0;
 }
 
-var f = init(@source->generator.name,@source->generator->initparam.value);
+let f = init(@source->generator.name,@source->generator->initparam.value);
 @source.name = spawn(f, @source<-attribute.number);
 
