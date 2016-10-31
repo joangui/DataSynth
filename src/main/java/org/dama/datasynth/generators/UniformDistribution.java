@@ -17,7 +17,9 @@ public class UniformDistribution extends Generator {
      * @param min The minimum value
      * @param max The maximum value
      */
-    public void initialize(long min, long max ) {
+    public void initialize(Long min, Long max ) {
+        this.min = min;
+        this.max = max;
         random = new Random();
     }
 

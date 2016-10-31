@@ -73,7 +73,7 @@ public class CommonTest {
     public void GeneratorTest() {
         Generator generator = null;
         try {
-            generator = Types.getGenerator("org.dama.datasynth.generators.CDFGenerator");
+            generator = Types.getGenerator("org.dama.datasynth.generators.CumulativeDistributionGenerator");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
             Assert.fail("Test failed due to exception");
@@ -87,17 +87,17 @@ public class CommonTest {
             Assert.fail("Test failed due to exception");
             System.exit(1);
         }
-        assertNotEquals("Generator org.dama.datasynth.generators.CDFGenerator should exist", generator, null);
+        assertNotEquals("Generator org.dama.datasynth.generators.CumulativeDistributionGenerator should exist", generator, null);
         List<Types.DataType> parameters = new ArrayList<Types.DataType>();
         try {
             parameters.add(Types.DataType.STRING);
             parameters.add(Types.DataType.LONG);
             parameters.add(Types.DataType.LONG);
             parameters.add(Types.DataType.STRING);
-            assertNotEquals("Function CDFGenerator.initialize with parameters String, String, String, String does not exist", Types.getMethod(generator, "initialize", parameters, null), null);
-            assertNotEquals("Function CDFGenerator.initialize ", Types.getUntypedMethod(generator, "initialize"), null);
+            assertNotEquals("Function CumulativeDistributionGenerator.initialize with parameters String, String, String, String does not exist", Types.getMethod(generator, "initialize", parameters, null), null);
+            assertNotEquals("Function CumulativeDistributionGenerator.initialize ", Types.getUntypedMethod(generator, "initialize"), null);
             parameters.clear();
-            assertNotEquals("Function CDFGenerator.run with Long and return type String does not exist", Types.getMethod(generator, "run", parameters, Types.DataType.STRING), null);
+            assertNotEquals("Function CumulativeDistributionGenerator.run with Long and return type String does not exist", Types.getMethod(generator, "run", parameters, Types.DataType.STRING), null);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail("Test failed due to exception");

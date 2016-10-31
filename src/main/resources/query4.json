@@ -9,9 +9,27 @@
           "name" : "country",
           "type" : "String",
           "generator" : {
-            "name" : "org.dama.datasynth.generators.CDFGenerator",
+            "name" : "org.dama.datasynth.generators.CumulativeDistributionGenerator",
             "requires" : [],
-            "init" : ["/dicLocations.txt",1,5," "]
+            "init" : ["src/main/resources/dicLocations.txt",1,5," "]
+          }
+        },
+        {
+          "name" : "age",
+          "type" : "Long",
+          "generator" : {
+            "name" : "org.dama.datasynth.generators.UniformDistribution",
+            "requires" : [],
+            "init" : [15,25]
+          }
+        },
+        {
+          "name" : "university",
+          "type" : "String",
+          "generator" : {
+            "name" : "org.dama.datasynth.generators.UniformCorrelationGenerator",
+            "requires" : ["person.country"],
+            "init" : ["src/main/resources/universitiesByCountry.txt"," "]
           }
         }
       ]

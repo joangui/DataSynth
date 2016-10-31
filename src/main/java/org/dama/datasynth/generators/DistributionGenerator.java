@@ -1,14 +1,13 @@
 package org.dama.datasynth.generators;
 import org.dama.datasynth.utils.CSVReader;
-import org.dama.datasynth.utils.DFSampler;
-import org.dama.datasynth.utils.MurmurHash;
+import org.dama.datasynth.utils.DistributionSampler;
 import org.dama.datasynth.utils.Sampler;
 
 /**
  * Created by quim on 4/19/16.
  * This generator samples values from a dictionary containing an associated probability distribution function
  */
-public class DFGenerator extends Generator {
+public class DistributionGenerator extends Generator {
 
     private Sampler s;
 
@@ -21,7 +20,7 @@ public class DFGenerator extends Generator {
      */
     public void initialize(String file, Long x, Long y, String sep ){
         CSVReader csv = new CSVReader(file,sep);
-        this.s = new DFSampler(csv.fetchSubMatrix(x.intValue(),y.intValue()));
+        this.s = new DistributionSampler(csv.getStringColumn(x.intValue()),csv.getDoubleColumn(y.intValue()),12345L);
     }
 
     /**

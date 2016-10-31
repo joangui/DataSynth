@@ -9,7 +9,7 @@
           "name" : "country",
           "type" : "String",
           "generator" : {
-            "name" : "org.dama.datasynth.generators.CDFGenerator",
+            "name" : "org.dama.datasynth.generators.CumulativeDistributionGenerator",
             "init" : ["/dicLocations.txt",1,5," "],
             "requires" : []
           }
@@ -18,7 +18,7 @@
           "name" : "name",
           "type" : "String",
           "generator" : {
-            "name" : "org.dama.datasynth.generators.DFGenerator",
+            "name" : "org.dama.datasynth.generators.DistributionGenerator",
             "init" : ["/email.txt",0,1," "],
             "requires" : ["person.country"]
           }

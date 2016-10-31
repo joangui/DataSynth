@@ -1,8 +1,7 @@
 package org.dama.datasynth.generators;
 
-import org.dama.datasynth.utils.CDFSampler;
+import org.dama.datasynth.utils.CumulativeDistributionSampler;
 import org.dama.datasynth.utils.CSVReader;
-import org.dama.datasynth.utils.MurmurHash;
 import org.dama.datasynth.utils.Sampler;
 
 
@@ -11,7 +10,7 @@ import org.dama.datasynth.utils.Sampler;
  * Cummulative distribution function generator. This generator returns values of a dictionary
  * containing the cumulative distribution function
  */
-public class CDFGenerator extends Generator {
+public class CumulativeDistributionGenerator extends Generator {
         private Sampler s;
 
     /**
@@ -23,7 +22,7 @@ public class CDFGenerator extends Generator {
      */
     public void initialize(String file, Long x, Long y, String sep ){
         CSVReader csv = new CSVReader(file, sep);
-        this.s = new CDFSampler(csv.fetchSubMatrix(x.intValue(), y.intValue()), 12345L);
+        this.s = new CumulativeDistributionSampler(csv.getStringColumn(x.intValue()),csv.getDoubleColumn(y.intValue()), 12345L);
     }
 
 
@@ -32,7 +31,6 @@ public class CDFGenerator extends Generator {
      * @return The dictionary value.
      */
     public String run(){
-
         return s.takeSample();
-        }
+    }
 }

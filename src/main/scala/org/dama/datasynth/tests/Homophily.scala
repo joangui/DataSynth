@@ -13,8 +13,6 @@ import org.apache.spark.sql.SparkSession
 
 object Homophily {
 
-
-
   @SerialVersionUID(100L)
   class VertexData ( degree : Int, country : String, toReplace : Boolean ) extends Serializable{
     var degree_ = degree
@@ -36,7 +34,7 @@ object Homophily {
   }
 
   def computeHomophily( graph : Graph[VertexData,Int] ) : Double = {
-    class HomophilyData( count : Int, dis : Double) extends Serializable {
+    /*class HomophilyData( count : Int, dis : Double) extends Serializable {
       val count_ = count
       val dis_ = dis
     }
@@ -52,6 +50,16 @@ object Homophily {
 
     val sum : Double = messages.reduce( (a,b) => (1,new HomophilyData(1,a._2.dis_ + b._2.dis_)))._2.dis_
     return sum/messages.count()
+    */
+
+    val messages = graph.aggregateMessages[Double]( context => {
+      val dis = distance(context.srcAttr.country_,context.dstAttr.country_)
+      context.sendToDst(dis)
+      context.sendToSrc(dis)
+    }, _ + _)
+
+    val sum : Double = messages.reduce((a,b) => (1,a._2 + b._2))._2/2
+    return sum/graph.edges.count()
   }
 
   def oneStepBullying( graph : Graph[VertexData,Int]) : (Graph[VertexData,Int],Double) = {
@@ -67,29 +75,30 @@ object Homophily {
       }.toMap
     ).map[(VertexId,(String,Int))]( node => {
       (node._1, node._2.toList.reduce[(String,Int)]( (x,y) => {
-        if(x._2 < y._2) x else y
+        if(x._2 > y._2) x else y
       }))
     })
 
     val stepGraph  = graph.mapVertices[(VertexData,String)]( (id,data) => (data,"")).joinVertices[(String,Int)](neighborCountries)( (id, data, country) => {
-      data._1.toReplace_ = (country._2 / data._1.degree_ > 0.5)
-      (data._1,country._1)
+      (new VertexData(data._1.degree_, data._1.country_, data._1.country_.compareTo(country._1) != 0 ), country._1);
     })
 
     // Perform the attribute reassignment
     val toReplace = stepGraph.vertices.filter( x => x._2._1.toReplace_ )
     println("Number of vertices to move: "+toReplace.count)
 
-    val verticespercountry = toReplace.sortBy(key => key._2._1.country_).zipWithIndex.map[(Long, (VertexId, VertexData))](a => (a._2, (a._1._1, a._1._2._1)))
-    val verticesperrequired = toReplace.sortBy(key => key._2._2).zipWithIndex.map[(Long, (VertexId, VertexData))](a => (a._2, (a._1._1, a._1._2._1)))
-    val joined: RDD[(VertexId, VertexData)] = verticespercountry.join(verticesperrequired).map[(VertexId, VertexData)](row => {
+    val verticespercountry = toReplace.sortBy(key => key._2._1.country_).zipWithIndex.map[(Long, (VertexId, String))](a => (a._2, (a._1._1, a._1._2._1.country_)))
+    val verticesperrequired = toReplace.sortBy(key => key._2._2).zipWithIndex.map[(Long, (VertexId, String))](a => (a._2, (a._1._1, a._1._2._2)))
+    verticespercountry.join(verticesperrequired).sortBy[VertexId]( x => x._1).coalesce(1).foreach(println)
+    val joined: RDD[(VertexId, String)] = verticespercountry.join(verticesperrequired).map[(VertexId, String)](row => {
       val first = row._2._1
       val second = row._2._2
-      (first._1, second._2)
+      (second._1, first._2)
     })
 
-    var finalGraph : Graph[VertexData,Int] = graph.joinVertices[VertexData](joined)((id, data, newAttr) =>
-      new VertexData(data.degree_, newAttr.country_,false)
+    var finalGraph : Graph[VertexData,Int] = graph.joinVertices[String](joined)((id, data, newCountry) => {
+      new VertexData(data.degree_, newCountry, false)
+    }
     )
 
     //(finalGraph, computeHomophily(graph))
@@ -163,6 +172,7 @@ object Homophily {
       (first._1, second._2)
     })
 
+
     var finalGraph : Graph[VertexData,Int] = graph.joinVertices[VertexData](joined)((id, data, newAttr) =>
       new VertexData(data.degree_, newAttr.country_,false)
     )
@@ -182,11 +192,11 @@ object Homophily {
     spark.sparkContext.setLogLevel("ERROR");
 
     println("Building graph")
-    val attributes = spark.sparkContext.textFile ("/home/aprat/projects/oracle/datageneration/attributes.csv").map (line => line.split (",") ).map (line => line (0) )
+    val attributes = spark.sparkContext.textFile ("/home/aprat/projects/oracle/datageneration/backup/attributes.csv").map (line => line.split (",") ).map (line => line (0) )
     val vertexIds: Array[Long] = Array.range (1, 10001).map (i => i.toLong)
 
     val vertices = vertexIds zip attributes.collect
-    val edges = spark.sparkContext.textFile ("/home/aprat/projects/oracle/datageneration/network.dat").map (line => line.split ("\t") ).map (line => new Edge (line (0).toInt, line (1).toInt, 0) ).collect ()
+    val edges = spark.sparkContext.textFile ("/home/aprat/projects/oracle/datageneration/backup/network_0_1.dat").map (line => line.split ("\t") ).map (line => new Edge (line (0).toInt, line (1).toInt, 0) ).collect ()
     val verticesRDD: RDD[(Long, String)] = spark.sparkContext.parallelize (vertices)
     val edgesRDD: RDD[Edge[Int]] = spark.sparkContext.parallelize (edges)
 
@@ -194,7 +204,7 @@ object Homophily {
     var graph: Graph[VertexData,Int] = Graph (verticesRDD, edgesRDD).removeSelfEdges.mapVertices[VertexData] ((id, s) => new VertexData(0,s,false) )
     graph = graph.joinVertices[Int](graph.degrees)( (id,data,degree) => new VertexData(degree,data.country_,data.toReplace_))
 
- //   graph.vertices.collect().sortBy[VertexId]( x => x._1 ).foreach(println)
+    //   graph.vertices.collect().sortBy[VertexId]( x => x._1 ).foreach(println)
 
     println("Computing homophily when random assignment")
     val randomHomophily : Double = computeHomophily(graph)
@@ -212,7 +222,7 @@ object Homophily {
       new VertexData(data.degree_, s._2, data.toReplace_)
     })
 
-//    graph.vertices.collect().sortBy[VertexId]( x => x._1 ).foreach(println)
+    //    graph.vertices.collect().sortBy[VertexId]( x => x._1 ).foreach(println)
 
     //Saving initial graph to file
     graph.vertices.coalesce(1).saveAsTextFile("data/vertices_initial.dat")
@@ -220,19 +230,19 @@ object Homophily {
     println("Computing homophily of initial partition")
     val initialHomophily : Double = computeHomophily(graph)
 
-    for( i <- 1 to 40)
+    for( i <- 1 to 1)
     {
       println("Starting OneStepBullying iteration "+i)
       var tuple : (Graph[VertexData, Int], Double) = oneStepBullying(graph)
       graph = tuple._1
     }
 
-    for( i <- 1 to 40)
+    /*for( i <- 1 to 10)
     {
       println("Starting TwoStepBullying iteration "+i)
       var tuple : (Graph[VertexData, Int], Double) = twoStepBullying(graph)
       graph = tuple._1
-    }
+    }*/
 
     graph.vertices.coalesce(1).saveAsTextFile("data/vertices_final.dat")
     val finalHomophily : Double = computeHomophily(graph)

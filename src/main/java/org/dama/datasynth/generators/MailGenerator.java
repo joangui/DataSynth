@@ -5,14 +5,14 @@ package org.dama.datasynth.generators;
  * Generates an email based in a dictionary of domains with a probability distribution function.
  */
 public class MailGenerator extends Generator {
-        private DFGenerator g;
+        private DistributionGenerator g;
 
     /**
      * Initializes the generator
      * @param file The file name with the dictionary of email domains
      */
     public void initialize(String file) {
-        g = new DFGenerator();
+        g = new DistributionGenerator();
         g.initialize(file, 0L, 1L, " ");
     }
 

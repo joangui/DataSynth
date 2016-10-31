@@ -8,7 +8,7 @@
         {
           "name" : "attribute1",
           "generator" : {
-            "name" : "org.dama.datasynth.generators.CDFGenerator",
+            "name" : "org.dama.datasynth.generators.CumulativeDistributionGenerator",
             "requires" : [],
             "init" : []
           }

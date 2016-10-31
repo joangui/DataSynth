@@ -9,7 +9,7 @@
           "name" : "attribute1",
           "type" : "boolean",
           "generator" : {
-            "name" : "org.dama.datasynth.generators.CDFGenerator",
+            "name" : "org.dama.datasynth.generators.CumulativeDistributionGenerator",
             "requires" : [],
             "init" : []
           }

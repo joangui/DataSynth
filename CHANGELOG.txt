@@ -1,5 +1,4 @@
 
-
 CHANGELOG pre-alpha 0.2
 
 - Implemented scala/spark interpreter using Dataset API
@@ -20,3 +19,4 @@ CHANGELOG pre-alpha 0.2
 - Added binaryexpressions to schnappi.
 - Added filters to edge expansions
 - Fixed bug with hashcombiner
+- Reworked samplers and CSV Readers
