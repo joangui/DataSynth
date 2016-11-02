@@ -2,6 +2,7 @@ package org.dama.datasynth.generators;
 
 import org.dama.datasynth.utils.CumulativeDistributionSampler;
 import org.dama.datasynth.utils.CSVReader;
+import org.dama.datasynth.utils.MurmurHash;
 import org.dama.datasynth.utils.Sampler;
 
 
@@ -22,7 +23,7 @@ public class CumulativeDistributionGenerator extends Generator {
      */
     public void initialize(String file, Long x, Long y, String sep ){
         CSVReader csv = new CSVReader(file, sep);
-        this.s = new CumulativeDistributionSampler(csv.getStringColumn(x.intValue()),csv.getDoubleColumn(y.intValue()), 12345L);
+        this.s = new CumulativeDistributionSampler(csv.getStringColumn(x.intValue()),csv.getDoubleColumn(y.intValue()));
     }
 
 
@@ -30,7 +31,7 @@ public class CumulativeDistributionGenerator extends Generator {
      * Returns a value of the dictionary based on the given cummulative distribution function
      * @return The dictionary value.
      */
-    public String run(){
-        return s.takeSample();
+    public String run(Long id){
+        return s.takeSample(MurmurHash.hash64(id.toString()));
     }
 }

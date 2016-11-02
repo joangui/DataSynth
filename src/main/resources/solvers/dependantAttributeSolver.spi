@@ -6,4 +6,3 @@ signature : {
 let f = init(@source->generator.name,@source->generator->initparam.value);
 let rparams = zip(@source->generator->requires.name);
 @source.name = map(f, rparams);
-

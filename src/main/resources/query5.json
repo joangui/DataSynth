@@ -3,7 +3,7 @@
   "entities" : [
     {
       "name" : "person",
-      "number" : 10000,
+      "number" : 10,
       "attributes" : [
         {
           "name" : "country",
@@ -12,15 +12,6 @@
             "name" : "org.dama.datasynth.generators.CumulativeDistributionGenerator",
             "requires" : [],
             "init" : ["src/main/resources/dicLocations.txt",1,5," "]
-          }
-        },
-        {
-          "name" : "name",
-          "type" : "String",
-          "generator" : {
-            "name" : "org.dama.datasynth.generators.UniformCorrelationGenerator",
-            "requires" : ["person.country"],
-            "init" : ["src/main/resources/namesByCountry.txt"," "]
           }
         }
       ]

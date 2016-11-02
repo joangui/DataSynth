@@ -167,7 +167,7 @@ class SparkInterpreter( configuration : DataSynthConfig) extends Visitor[Express
 
     var first = parameterTables.get(0).getData
     parameterTables.drop(1).foreach(x => {
-      first = first.join(x.getData,"id")
+      first = first.join(x.getData,Seq("id"))
     })
     new Table[Dataset[Row]](first)
   }
@@ -178,7 +178,7 @@ class SparkInterpreter( configuration : DataSynthConfig) extends Visitor[Express
 
   def execDump( f: Function) : Table[Dataset[Row]] = {
     val table = getTable(f.getParameters.get(0).accept(this))
-    table.getData.drop("id").coalesce(1).write.format("com.databricks.spark.csv").option("header",true).save(config.outputDir +"/" + (f.getParameters.get(0) match { case id : Id=> id.getValue})+".csv")
+    table.getData.coalesce(1).write.format("com.databricks.spark.csv").option("header",true).save(config.outputDir +"/" + (f.getParameters.get(0) match { case id : Id=> id.getValue})+".csv")
     return null;
   }
 
@@ -233,7 +233,7 @@ class SparkInterpreter( configuration : DataSynthConfig) extends Visitor[Express
     val m = new UntypedMethod(generator.getGenerator, "run")
     return new MapFunction[Row,Row]{
       def call(row: Row) : Row = {
-        val params : Seq[AnyRef] = row.toSeq.drop(1).map( x => x.asInstanceOf[AnyRef])
+        val params : Seq[AnyRef] = row.toSeq.map( x => x.asInstanceOf[AnyRef])
         Row(row.get(0),m.invoke(scala.collection.JavaConversions.seqAsJavaList(params)))
       }
     }

@@ -85,7 +85,6 @@ public class DataSynth {
             }
             */
 
-
             Compiler c = new Compiler(graph,"src/main/resources/solvers");
             start = System.currentTimeMillis();
             c.synthesizeProgram();

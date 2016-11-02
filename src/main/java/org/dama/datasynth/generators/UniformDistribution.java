@@ -1,5 +1,7 @@
 package org.dama.datasynth.generators;
 
+import org.dama.datasynth.utils.MurmurHash;
+
 import java.util.Random;
 
 /**
@@ -10,7 +12,6 @@ public class UniformDistribution extends Generator {
 
     private long min = 0;
     private long max = 1;
-    private Random random = null;
 
     /**
      * Initializes the generator
@@ -20,14 +21,14 @@ public class UniformDistribution extends Generator {
     public void initialize(Long min, Long max ) {
         this.min = min;
         this.max = max;
-        random = new Random();
     }
 
     /**
      * Generates a uniformly distributed value within the range
      * @return The value uniformly distributed.
      */
-    public Long run() {
+    public Long run(Long id) {
+        Random random = new Random(MurmurHash.hash64(id.toString()));
         return (long)random.nextInt((int)(max-min)) + min;
     }
 

@@ -15,21 +15,21 @@
           }
         },
         {
-          "name" : "age",
-          "type" : "Long",
-          "generator" : {
-            "name" : "org.dama.datasynth.generators.UniformDistribution",
-            "requires" : [],
-            "init" : [15,25]
-          }
-        },
-        {
           "name" : "university",
           "type" : "String",
           "generator" : {
             "name" : "org.dama.datasynth.generators.UniformCorrelationGenerator",
             "requires" : ["person.country"],
             "init" : ["src/main/resources/universitiesByCountry.txt"," "]
+          }
+        },
+        {
+          "name" : "age",
+          "type" : "Long",
+          "generator" : {
+            "name" : "org.dama.datasynth.generators.UniformDistribution",
+            "requires" : [],
+            "init" : [15,55]
           }
         }
       ]

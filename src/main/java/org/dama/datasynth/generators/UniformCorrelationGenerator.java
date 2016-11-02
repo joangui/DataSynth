@@ -25,7 +25,10 @@ public class UniformCorrelationGenerator extends Generator {
      * @param sep The separator that separates the columns
      */
     public void initialize(String fileName, String sep) {
-        samplers = new HashMap<String,Sampler>();
+
+        new java.util.Random();
+
+        samplers = new HashMap<>();
         CSVReader reader = new CSVReader(fileName,sep);
         String[] prior = reader.getStringColumn(0);
         String[] posterior = reader.getStringColumn(1);
@@ -41,7 +44,7 @@ public class UniformCorrelationGenerator extends Generator {
             }
             String[] stringArray = new String[currentPosteriorSection.size()];
             currentPosteriorSection.toArray(stringArray);
-            samplers.put(currentPriorSection.get(0),new UniformDistributionSampler(stringArray,12345L));
+            samplers.put(currentPriorSection.get(0),new UniformDistributionSampler(stringArray));
             if(i < prior.length) {
                 currentPriorSection.clear();
                 currentPriorSection.add(prior[i]);
@@ -52,7 +55,7 @@ public class UniformCorrelationGenerator extends Generator {
         if(currentPriorSection.size() > 0) {
             String[] stringArray = new String[currentPosteriorSection.size()];
             currentPosteriorSection.toArray(stringArray);
-            samplers.put(currentPriorSection.get(0),new UniformDistributionSampler(stringArray,12345L));
+            samplers.put(currentPriorSection.get(0),new UniformDistributionSampler(stringArray));
         }
     }
 
@@ -61,8 +64,8 @@ public class UniformCorrelationGenerator extends Generator {
      * @param prior The prior value.
      * @return A correlated value uniformly distributed
      */
-    public String run(String prior) {
-        return samplers.get(prior).takeSample();
+    public String run(Long id, String prior) {
+        return samplers.get(prior).takeSample(MurmurHash.hash64(id.toString()));
     }
 
 }

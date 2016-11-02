@@ -2,7 +2,6 @@ package org.dama.datasynth.generators;
 
 import org.dama.datasynth.utils.MurmurHash;
 
-import java.security.SecureRandom;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -17,7 +16,6 @@ public class DateGenerator extends Generator {
     private long dateEnd;
     private String format;
     private String timeZone = "GMT";
-    final Random rand = new SecureRandom();
 
     /**
      * Initializes the generator
@@ -47,11 +45,12 @@ public class DateGenerator extends Generator {
      * Generates a date uniformly distributed, within the date range.
      * @return A new date uniformly distributed within the date range.
      */
-    public String run() {
+    public String run(Long id) {
+        Random random = new Random(MurmurHash.hash64(id.toString()));
         Calendar calendar = new GregorianCalendar();
         calendar.setTimeZone(TimeZone.getTimeZone(timeZone));
         SimpleDateFormat formatter = new SimpleDateFormat(format);
-        calendar.setTime(new Date((long)((dateEnd - dateStart)*rand.nextDouble() + dateStart)));
+        calendar.setTime(new Date((long)((dateEnd - dateStart)*random.nextDouble() + dateStart)));
         return formatter.format(calendar.getTime());
     }
 

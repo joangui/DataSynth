@@ -21,7 +21,7 @@ public class MailGenerator extends Generator {
      * @param name
      * @return
      */
-    public String run(String name) {
-        return name + "@" + g.run();
+    public String run(Long id, String name) {
+        return name + "@" + g.run(id);
         }
 }

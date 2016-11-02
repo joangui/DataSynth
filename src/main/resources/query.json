@@ -9,9 +9,9 @@
           "name" : "country",
           "type" : "String",
           "generator" : {
-            "name" : "org.dama.datasynth.generators.CDFGenerator",
+            "name" : "org.dama.datasynth.generators.CumulativeDistributionGenerator",
             "requires" : [],
-            "init" : ["/dicLocations.txt",1,5," "]
+            "init" : ["src/main/resources/dicLocations.txt",1,5," "]
           }
         },
         {
@@ -27,9 +27,9 @@
           "name" : "name",
           "type" : "String",
           "generator" : {
-            "name" : "org.dama.datasynth.generators.CorrelationGenerator",
+            "name" : "org.dama.datasynth.generators.UniformCorrelationGenerator",
             "requires" : ["person.country"],
-            "init" : ["/namesByCountry.txt"," "]
+            "init" : ["src/main/resources/namesByCountry.txt"," "]
           }
         },
         {
@@ -37,7 +37,7 @@
           "type" : "Long",
           "generator" : {
             "name" : "org.dama.datasynth.generators.DateBasedIDGenerator",
-            "requires" : ["person.oid","person.creationDate"],
+            "requires" : ["person.creationDate"],
             "init" : ["dd-MM-yyyy"]
           }
         },
@@ -47,7 +47,7 @@
           "generator" : {
             "name" : "org.dama.datasynth.generators.MailGenerator",
             "requires" : ["person.name"],
-            "init" : ["/email.txt"]
+            "init" : ["src/main/resources/email.txt"]
           }
         }
       ]

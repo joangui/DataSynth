@@ -1,6 +1,7 @@
 package org.dama.datasynth.generators;
 import org.dama.datasynth.utils.CSVReader;
 import org.dama.datasynth.utils.DistributionSampler;
+import org.dama.datasynth.utils.MurmurHash;
 import org.dama.datasynth.utils.Sampler;
 
 /**
@@ -20,14 +21,14 @@ public class DistributionGenerator extends Generator {
      */
     public void initialize(String file, Long x, Long y, String sep ){
         CSVReader csv = new CSVReader(file,sep);
-        this.s = new DistributionSampler(csv.getStringColumn(x.intValue()),csv.getDoubleColumn(y.intValue()),12345L);
+        this.s = new DistributionSampler(csv.getStringColumn(x.intValue()),csv.getDoubleColumn(y.intValue()));
     }
 
     /**
      * Returns a value from the dictionary distributed according to the specified probability distribution function
      * @return A value of the dictionary distrubted according to the specified probability distribution function
      */
-    public String run(){
-        return s.takeSample();
+    public String run(Long id){
+        return s.takeSample(MurmurHash.hash64(id.toString()));
     }
 }

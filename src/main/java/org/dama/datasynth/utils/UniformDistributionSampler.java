@@ -9,19 +9,17 @@ import java.util.Random;
 public class UniformDistributionSampler extends Sampler{
 
     private String[] data = null;
-    private Random random = null;
 
-
-    public UniformDistributionSampler(String[] data, Long seed ){
+    public UniformDistributionSampler(String[] data){
         this.data = data;
-        this.random = new Random(seed);
     }
 
     /**
      * Takes a sample of the colelction based on the Cummulative Distribution Function
      * @return
      */
-    public String takeSample(){
+    public String takeSample(long seed){
+        Random random = new Random(seed);
         int position = random.nextInt(data.length);
         return data[position];
     }
