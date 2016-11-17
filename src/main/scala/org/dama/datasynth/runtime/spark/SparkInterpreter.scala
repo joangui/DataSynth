@@ -178,7 +178,7 @@ class SparkInterpreter( configuration : DataSynthConfig) extends Visitor[Express
 
   def execDump( f: Function) : Table[Dataset[Row]] = {
     val table = getTable(f.getParameters.get(0).accept(this))
-    table.getData.coalesce(1).write.format("com.databricks.spark.csv").option("header",true).save(config.outputDir +"/" + (f.getParameters.get(0) match { case id : Id=> id.getValue})+".csv")
+    table.getData.coalesce(1).drop("id").write.format("com.databricks.spark.csv").option("header",true).save(config.outputDir +"/" + (f.getParameters.get(0) match { case id : Id=> id.getValue})+".csv")
     return null;
   }
 

@@ -24,7 +24,7 @@ public class CumulativeDistributionSampler extends Sampler{
         Random random = new Random(seed);
         double u = random.nextDouble();
         int position = java.util.Arrays.binarySearch(probs, u);
-        if(position < 0) position = Math.abs(position);
+        if(position < 0) position = Math.abs(position+1);
         if(position >= data.length) position = data.length-1;
         return data[position];
     }
