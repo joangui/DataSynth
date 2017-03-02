@@ -1,4 +1,4 @@
-package org.dama.datasynth.graphreader.types;
+package org.dama.datasynth.test.graphreader.types;
 
 /**
  * Created by aprat on 27/02/17.

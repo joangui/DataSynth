@@ -1,4 +1,4 @@
-package org.dama.datasynth.streams;
+package org.dama.datasynth.test.streams;
 
 /**
  * Created by aprat on 27/02/17.
