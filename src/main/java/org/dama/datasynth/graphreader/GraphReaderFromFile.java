@@ -60,7 +60,7 @@ public class GraphReaderFromFile implements GraphReaderInterface {
 	@Override
 	public Partition getPartitions(Graph g) throws Exception {
 		FileInputStream fstream = null;
-		fstream = new FileInputStream(pathGraph);
+		fstream = new FileInputStream(pathPartition);
 
 		DataInputStream in = new DataInputStream(fstream);
 		BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -74,6 +74,7 @@ public class GraphReaderFromFile implements GraphReaderInterface {
 			nodeId++;
 		}
 
+		return p;
 	}
 
 }

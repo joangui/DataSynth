@@ -17,9 +17,11 @@ import java.util.Set;
 public class Partition {
 	Map<Long,Set<Long>> partitions = new HashMap<>();
 	private long numPartitions=0L;
+	private long numNodes = 0L;
 
 public void addToPartition(Long nodeId,Long partitionId)
 {
+		numNodes++;
 		Set<Long> partition = partitions.get(partitionId);
 		if(partition==null)
 		{
@@ -32,5 +34,9 @@ public void addToPartition(Long nodeId,Long partitionId)
 public long numPartitions()
 {
 	return numPartitions;
+}
+public long numNodes()
+{
+	return numNodes;
 }
 }

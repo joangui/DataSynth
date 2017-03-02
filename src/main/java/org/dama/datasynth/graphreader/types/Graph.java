@@ -42,4 +42,8 @@ public class Graph {
     public Set<Long> neighbors(Long nodeId) {
         return adjacencies.get(nodeId);
     }
+    public long numNodes()
+    {
+	    return numNodes;
+    }
 }
