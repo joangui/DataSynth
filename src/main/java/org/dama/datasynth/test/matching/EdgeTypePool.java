@@ -5,7 +5,7 @@ import java.util.*;
 /**
  * Created by aprat on 3/03/17.
  */
-public class EdgeTypePool<XType, YType> {
+public class EdgeTypePool<XType extends Comparable<XType>, YType extends Comparable<YType>> {
 
     public class Entry {
 
@@ -37,7 +37,7 @@ public class EdgeTypePool<XType, YType> {
     // fields
     private LinkedList<Entry> entries                   = new LinkedList<Entry>();
 
-    public EdgeTypePool(JointDistribution<XType,YType> distribution, long numEdges, long seed) {
+    public EdgeTypePool(JointDistribution<XType, YType> distribution, long numEdges, long seed) {
         for(JointDistribution.Entry<XType,YType> entry : distribution.getEntries()) {
             long numToInsert = (long)(entry.getProbability()*numEdges);
             for(long i = 0; i < numToInsert; i+=1) {
@@ -57,7 +57,7 @@ public class EdgeTypePool<XType, YType> {
         ListIterator<Entry> iterator = entries.listIterator();
         while(iterator.hasNext()) {
             Entry entry = iterator.next();
-            if(entry.xvalue.equals(xvalue)) {
+            if(entry.xvalue.compareTo(xvalue) == 0) {
                 iterator.remove();
                 return entry;
             }
@@ -69,7 +69,7 @@ public class EdgeTypePool<XType, YType> {
         ListIterator<Entry> iterator = entries.listIterator();
         while(iterator.hasNext()) {
             Entry entry = iterator.next();
-            if(entry.yvalue.equals(yvalue)) {
+            if(entry.yvalue.compareTo(yvalue) == 0) {
                 iterator.remove();
                 return entry;
             }
@@ -81,7 +81,7 @@ public class EdgeTypePool<XType, YType> {
         ListIterator<Entry> iterator = entries.listIterator();
         while(iterator.hasNext()) {
             Entry entry = iterator.next();
-            if(entry.xvalue.equals(xvalue) && entry.yvalue.equals(yvalue)) {
+            if(entry.xvalue.compareTo(xvalue) == 0&& entry.yvalue.compareTo(yvalue) == 0) {
                 iterator.remove();
                 return;
             }

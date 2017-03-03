@@ -15,7 +15,7 @@ import static org.junit.Assert.assertTrue;
 public class JointDistributionTest {
 
     @Test
-    void loadFileTest() {
+    public void loadFileTest() {
         String str = new String( "Male Female 0.7\n" +
                                  "Male Male 0.15\n" +
                                  "Female Female 0.15");

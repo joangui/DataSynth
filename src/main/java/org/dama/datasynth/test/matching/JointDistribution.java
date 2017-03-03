@@ -8,9 +8,9 @@ import java.util.function.Function;
 /**
  * Created by aprat on 2/03/17.
  */
-public class JointDistribution<XType, YType> {
+public class JointDistribution<XType extends Comparable<XType>, YType extends Comparable<YType>> {
 
-    public static class Entry<XType,YType> {
+    public static class Entry<XType extends Comparable<XType>,YType extends Comparable<YType>> {
         private XType    xvalue;
         private YType    yvalue;
         private double   probability;
@@ -43,6 +43,15 @@ public class JointDistribution<XType, YType> {
 
         public void setProbability(double probability) {
             this.probability = probability;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if(obj.getClass() != this.getClass()) return false;
+            Entry<XType,YType> entry = (Entry<XType,YType>)obj;
+            return xvalue.compareTo(entry.getXvalue()) == 0 &&
+                   yvalue.compareTo(entry.getYvalue()) == 0 &&
+                   probability == entry.getProbability();
         }
     }
 
