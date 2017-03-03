@@ -10,10 +10,9 @@ import java.util.Set;
 public class Graph {
     private HashMap<Long,Set<Long>> adjacencies;
     private long numNodes = 0L;
+    private long numEdges = 0L;
     
 
-
-    
     public Graph(  ) {
         this.adjacencies = new HashMap<>();
     }
@@ -37,6 +36,7 @@ public class Graph {
 
 	    numNodes++;
 	    adjacencies.put(tail, neighbors);
+	    numEdges+=neighbors.size();
     }
 
     public Set<Long> neighbors(Long nodeId) {
@@ -46,4 +46,5 @@ public class Graph {
     {
 	    return numNodes;
     }
+    public long numEdges() { return numEdges; }
 }

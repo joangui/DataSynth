@@ -60,7 +60,7 @@ public class JointDistribution< XType extends Comparable<XType>,
     private ArrayList<Entry<XType,YType>> entries = new ArrayList<Entry<XType,YType>>();
 
     /**
-     * Loads the Joing probability distribution from a file.
+     * Loads the Joint probability distribution from a file.
      * The file contains three columns: the x value, the y value and the probability of observing the
      * the x and y values.
      * @param inputStream The stream with the probability distribution

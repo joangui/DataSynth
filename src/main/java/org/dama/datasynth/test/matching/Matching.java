@@ -15,7 +15,10 @@ public class Matching {
                                            ArrayList<YType> tableY,
                                            JointDistribution<XType,YType> distribution ) {
 
-        EdgeTypePool<String,String> edgeTypePool = null;
+        EdgeTypePool<XType,YType> edgeTypePool = new EdgeTypePool(distribution, graph.numEdges(), 1234567890L);
+        Index<XType> indexX = new Index<>(tableX);
+        Index<YType> indexY = new Index<>(tableY);
+
 
     }
 }

@@ -57,7 +57,7 @@ public class EdgeTypePool< XType extends Comparable<XType>,
      * @return A randomly choosen edge. null if no remaining edges.
      */
     public Entry pickRandomEdge() {
-        return entries.removeFirst();
+        return entries.pollFirst();
     };
 
     /**
