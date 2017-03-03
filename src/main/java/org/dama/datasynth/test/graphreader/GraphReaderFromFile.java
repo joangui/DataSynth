@@ -3,21 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.dama.datasynth.graphreader;
+package org.dama.datasynth.test.graphreader;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.dama.datasynth.graphreader.types.Graph;
-import org.dama.datasynth.graphreader.types.Partition;
+
+import org.dama.datasynth.test.graphreader.types.Graph;
+import org.dama.datasynth.test.graphreader.types.Partition;
 
 /**
  *
