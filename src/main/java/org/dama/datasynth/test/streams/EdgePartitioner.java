@@ -1,7 +1,7 @@
 package org.dama.datasynth.test.streams;
 
-import org.dama.datasynth.graphreader.types.Edge;
-import org.dama.datasynth.graphreader.types.EdgePartitions;
+import org.dama.datasynth.test.graphreader.types.Edge;
+import org.dama.datasynth.test.graphreader.types.EdgePartitions;
 
 /**
  * Created by aprat on 27/02/17.

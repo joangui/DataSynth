@@ -1,8 +1,8 @@
 package org.dama.datasynth.test.streams;
 
-import org.dama.datasynth.graphreader.types.Edge;
-import org.dama.datasynth.graphreader.types.EdgePartitions;
-import org.dama.datasynth.graphreader.types.Graph;
+import org.dama.datasynth.test.graphreader.types.Edge;
+import org.dama.datasynth.test.graphreader.types.EdgePartitions;
+import org.dama.datasynth.test.graphreader.types.Graph;
 import java.util.Set;
 
 /**
@@ -27,7 +27,7 @@ public class LinearWeightedGreedyPartitioner implements EdgePartitioner {
 		for (int i = 0; i < numNodes; ++i) {
 			vertexPartition[i] = -1;
 		}
-		this.graph = new Graph(numNodes);
+		this.graph = new Graph();
 		this.partitionCounts = new int[(int) numPartitions];
 		this.partitionSize = new long[(int) numPartitions];
 		for (int i = 0; i < numPartitions; ++i) {

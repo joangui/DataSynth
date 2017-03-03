@@ -5,12 +5,9 @@
  */
 package org.dama.datasynth.graphreader;
 
-import org.dama.datasynth.graphreader.types.Graph;
-import org.dama.datasynth.graphreader.types.Partition;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import org.dama.datasynth.test.graphreader.GraphReaderFromFile;
+import org.dama.datasynth.test.graphreader.types.Graph;
+import org.dama.datasynth.test.graphreader.types.Partition;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
