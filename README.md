@@ -29,7 +29,7 @@ are correlated, and with a Zipf degree distribution.
           "name" : "country",
           "type" : "String",
           "generator" : {
-            "name" : "org.dama.datasynth.generators.CDFGenerator",
+            "name" : "org.dama.datasynth.generators.CumulativeDistributionGenerator",
             "requires" : [],
             "init" : ["/dicLocations.txt",1,5," "]
           }
@@ -38,7 +38,7 @@ are correlated, and with a Zipf degree distribution.
           "name" : "name",
           "type" : "String",
           "generator" : {
-            "name" : "org.dama.datasynth.generators.CorrellationGenerator",
+            "name" : "org.dama.datasynth.generators.UniformCorrelationGenerator",
             "requires" : ["person.country"],
             "init" : ["/namesByCountry.txt"," "]
           }
@@ -49,7 +49,7 @@ are correlated, and with a Zipf degree distribution.
   "edges" : [
   {
     "name" : "friendship",
-    "direction" : "undirected",
+    "edgeType" : "undirected",
     "source" : "person",
     "target" : "person",
     "sourceCardinality" : {
@@ -77,7 +77,7 @@ One of the most important elements in DataSynth are generators. A Generator is a
 class that representing some sort of "functor" (a callable object). This object
 is used to generate the values of a given type, for instance, for a particular attribute. For instance, the
 "country" attribute values for the persons is created using the
-"org.dama.datasynth.generators.CDFGenerator" generator, wich basically generates
+"org.dama.datasynth.generators.CumulativeDistributionGenerator" generator, wich basically generates
 values from a dictionary, containing the values and a cummulative distribution
 function. A Generator implements two methods: "initialize", and "run". The
 method "initialize", is called onece and as its name indicates is used to
@@ -177,11 +177,11 @@ So basically, given a schema specified using the json, DataSynth produces Schnap
 
 ```
 person.oid = genids(10000);
-f = init('org.dama.datasynth.generators.CDFGenerator', '/dicLocations.txt', 1, 5,' '); 
+f = init('org.dama.datasynth.generators.CumulativeDistributionGenerator', '/dicLocations.txt', 1, 5,' ');
 rparams = union(person.oid);
 person.country = map(f,rparams);
 
-f = init('org.dama.datasynth.generators.CorrellationGenerator','/namesByCountry.txt', ' '); 
+f = init('org.dama.datasynth.generators.UniformCorrelationGenerator','/namesByCountry.txt', ' ');
 rparams = union(person.oid, person.country);
 person.name = map(f,rparams);
 
@@ -240,10 +240,10 @@ The Signature specifies that this solver is used to solve vertices of type Attri
 signature : {
     @A = Edge;
     @A->source.name == @A->target.name;
-    @A.direction == 'undirected';
+    @A.edgeType == 'undirected';
 }
 ```
-This signature states that given a vertex in the dependency graph of type Edge, and this vertex source name equals vertex target name, and vertex's attribute direction equals 'undirected', then this solver can generate code to generate that vertex. The syntax "->X" specifies navigating an edge of name X (i.e. source, target, whatever) on the dependency graph, and ".Y"  specifies the value of the property with name "Y". For instance, @A->source.name means that given the Edge vertex A, we go to the source attribute (person.oid in this case) and retrieve its name. 
+This signature states that given a vertex in the dependency graph of type Edge, and this vertex source name equals vertex target name, and vertex's attribute edgeType equals 'undirected', then this solver can generate code to generate that vertex. The syntax "->X" specifies navigating an edge of name X (i.e. source, target, whatever) on the dependency graph, and ".Y"  specifies the value of the property with name "Y". For instance, @A->source.name means that given the Edge vertex A, we go to the source attribute (person.oid in this case) and retrieve its name.
 
 The same syntax is used for the place holders within the snippet. The Solver instantiator just generates code by substitution the proper values obtained from the dependency graph. 
 

@@ -8,9 +8,11 @@ import java.util.function.Function;
 /**
  * Created by aprat on 2/03/17.
  */
-public class JointDistribution<XType extends Comparable<XType>, YType extends Comparable<YType>> {
+public class JointDistribution< XType extends Comparable<XType>,
+                                YType extends Comparable<YType>> {
 
-    public static class Entry<XType extends Comparable<XType>,YType extends Comparable<YType>> {
+    public static class Entry<  XType extends Comparable<XType>,
+                                YType extends Comparable<YType>> {
         private XType    xvalue;
         private YType    yvalue;
         private double   probability;

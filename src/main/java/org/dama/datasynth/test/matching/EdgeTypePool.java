@@ -5,9 +5,11 @@ import java.util.*;
 /**
  * Created by aprat on 3/03/17.
  */
-public class EdgeTypePool<XType extends Comparable<XType>, YType extends Comparable<YType>> {
+public class EdgeTypePool< XType extends Comparable<XType>,
+                           YType extends Comparable<YType>> {
 
-    public class Entry {
+    static public class Entry< XType extends Comparable<XType>,
+                               YType extends Comparable<YType>> {
 
         private XType xvalue;
         private YType yvalue;
@@ -35,9 +37,10 @@ public class EdgeTypePool<XType extends Comparable<XType>, YType extends Compara
     }
 
     // fields
-    private LinkedList<Entry> entries                   = new LinkedList<Entry>();
+    private LinkedList<Entry> entries = new LinkedList<Entry>();
 
     public EdgeTypePool(JointDistribution<XType, YType> distribution, long numEdges, long seed) {
+
         for(JointDistribution.Entry<XType,YType> entry : distribution.getEntries()) {
             long numToInsert = (long)(entry.getProbability()*numEdges);
             for(long i = 0; i < numToInsert; i+=1) {
@@ -49,10 +52,19 @@ public class EdgeTypePool<XType extends Comparable<XType>, YType extends Compara
         Collections.shuffle(entries,random);
     }
 
+    /**
+     * Picks a random edge from the pool
+     * @return A randomly choosen edge. null if no remaining edges.
+     */
     public Entry pickRandomEdge() {
         return entries.removeFirst();
     };
 
+    /**
+     * Picks a random edge from the pool whose x value is the given one
+     * @param xvalue The given x value
+     * @return A random edge whose x value is the given one. null if such edge does not exist.
+     */
     public Entry pickRandomEdgeX(XType xvalue) {
         ListIterator<Entry> iterator = entries.listIterator();
         while(iterator.hasNext()) {
@@ -65,6 +77,11 @@ public class EdgeTypePool<XType extends Comparable<XType>, YType extends Compara
         return null;
     };
 
+    /**
+     * Picks a random edge from the pool whose y value is the given one
+     * @param yvalue The given y value
+     * @return A random edge whose y value is the given one. null if such edge does not exist.
+     */
     public Entry pickRandomEdgeY(YType yvalue) {
         ListIterator<Entry> iterator = entries.listIterator();
         while(iterator.hasNext()) {
@@ -77,6 +94,11 @@ public class EdgeTypePool<XType extends Comparable<XType>, YType extends Compara
         return null;
     };
 
+    /**
+     * Removes a random edge from the pool whose x and y values are the given ones
+     * @param xvalue The given x value
+     * @param yvalue The given y value
+     */
     public void removeEdge(XType xvalue, YType yvalue) {
         ListIterator<Entry> iterator = entries.listIterator();
         while(iterator.hasNext()) {
