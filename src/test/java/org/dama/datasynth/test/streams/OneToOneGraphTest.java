@@ -1,5 +1,6 @@
 package org.dama.datasynth.test.streams;
 
+import org.dama.datasynth.test.graphreader.types.Edge;
 import org.junit.Test;
 
 import java.util.ArrayList;
