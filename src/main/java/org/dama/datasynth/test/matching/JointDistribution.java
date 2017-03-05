@@ -2,7 +2,9 @@ package org.dama.datasynth.test.matching;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.TreeMap;
 import java.util.function.Function;
 
 /**
@@ -79,12 +81,41 @@ public class JointDistribution< XType extends Comparable<XType>,
             throw new RuntimeException(e);
         }
 
+        checkCorrectness();
+    }
+
+    /**
+     * Learns the Joint probability distribution from a collection of tuples.
+     *
+     * @param pairs The collection of pairs to learn from
+     */
+    public void learn(ArrayList<Tuple<XType,YType>> pairs) {
+        TreeMap<Tuple<XType,YType>,Long> counts = new TreeMap<>();
+        long tuplecount = 0L;
+        for(Tuple<XType,YType> tuple : pairs) {
+           Long number = null;
+           if((number = counts.get(tuple)) == null) {
+               number = 0L;
+           }
+           counts.put(tuple,number+1);
+           tuplecount+=1;
+        }
+
+        for(HashMap.Entry<Tuple<XType,YType>,Long> e : counts.entrySet() ) {
+           entries.add(new Entry<XType,YType>(e.getKey().getXvalue(),e.getKey().getYvalue(), e.getValue() / (double)(tuplecount)));
+        }
+
+        checkCorrectness();
+    }
+
+    private void checkCorrectness() {
         double sum = 0.0;
         for( Entry e : entries)  {
             sum+=e.probability;
         }
         if(sum > 1.0 ) throw new RuntimeException("probabilities sum more than 1.0");
     }
+
 
     public List<Entry<XType,YType>> getEntries() {
         return entries;
