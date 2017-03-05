@@ -116,7 +116,6 @@ public class JointDistribution< XType extends Comparable<XType>,
         if(sum > 1.0 ) throw new RuntimeException("probabilities sum more than 1.0");
     }
 
-
     public List<Entry<XType,YType>> getEntries() {
         return entries;
     }

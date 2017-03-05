@@ -39,4 +39,13 @@ public class Index <T extends Comparable<T> > {
         return ret;
     }
 
+    public Integer random() {
+        Random random = new Random(data.size());
+        int next = random.nextInt();
+        ArrayList<T> keys = new ArrayList<>(data.keySet());
+        Collections.shuffle(keys,random);
+        T key = keys.get(next);
+        return data.get(key).pollFirst();
+    }
+
 }

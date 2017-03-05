@@ -65,7 +65,7 @@ public class EdgeTypePool< XType extends Comparable<XType>,
      * @param xvalue The given x value
      * @return A random edge whose x value is the given one. null if such edge does not exist.
      */
-    public Entry pickRandomEdgeX(XType xvalue) {
+    public Entry pickRandomEdgeTail(XType xvalue) {
         ListIterator<Entry> iterator = entries.listIterator();
         while(iterator.hasNext()) {
             Entry entry = iterator.next();
@@ -82,7 +82,7 @@ public class EdgeTypePool< XType extends Comparable<XType>,
      * @param yvalue The given y value
      * @return A random edge whose y value is the given one. null if such edge does not exist.
      */
-    public Entry pickRandomEdgeY(YType yvalue) {
+    public Entry pickRandomEdgeHead(YType yvalue) {
         ListIterator<Entry> iterator = entries.listIterator();
         while(iterator.hasNext()) {
             Entry entry = iterator.next();
@@ -99,14 +99,15 @@ public class EdgeTypePool< XType extends Comparable<XType>,
      * @param xvalue The given x value
      * @param yvalue The given y value
      */
-    public void removeEdge(XType xvalue, YType yvalue) {
+    public boolean removeEdge(XType xvalue, YType yvalue) {
         ListIterator<Entry> iterator = entries.listIterator();
         while(iterator.hasNext()) {
             Entry entry = iterator.next();
             if(entry.xvalue.compareTo(xvalue) == 0&& entry.yvalue.compareTo(yvalue) == 0) {
                 iterator.remove();
-                return;
+                return true;
             }
         }
+        return false;
     };
 }
