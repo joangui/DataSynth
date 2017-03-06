@@ -40,49 +40,52 @@ public class Matching {
                         "free edges: "+freeEdges+"\n"+
                         "half edges: "+halfEdges+"\n"+
                         "nonFreeEdges: "+nonFreeEdges);
+                freeEdges = 0L;
+                halfEdges = 0L;
+                nonFreeEdges = 0L;
             }
             Long tail = mapping.get(edge.getX());
             Long head = mapping.get(edge.getY());
             if(tail == null && head == null) {
-                EdgeTypePool.Entry<XType,XType> type = edgeTypePool.pickRandomEdge();
+                Tuple<XType,XType> type = edgeTypePool.pickRandomEdge();
                 freeEdges+=1L;
                 if(type != null) {
-                    Long candidateX = index.poll(type.getXvalue());
-                    Long candidateY = index.poll(type.getYvalue());
+                    Long candidateX = index.poll(type.getX());
+                    Long candidateY = index.poll(type.getY());
                     if (candidateX != null && candidateY != null) {
                         mapping.put(edge.getX(), candidateX);
                         mapping.put(edge.getY(), candidateY);
                     }
                 }
             } else if(tail != null && head == null) {
-                EdgeTypePool.Entry<XType,XType> type = edgeTypePool.pickRandomEdgeTail(idToAttributes.get(tail));
+                Tuple<XType,XType> type = edgeTypePool.pickRandomEdgeTail(idToAttributes.get(tail));
                 halfEdges+=1L;
                 if(type != null) {
-                    Long candidate = index.poll(type.getYvalue());
+                    Long candidate = index.poll(type.getY());
                     if(candidate != null) {
                         mapping.put(edge.getY(), candidate);
                     }
                 } else {
                     type = edgeTypePool.pickRandomEdgeHead(idToAttributes.get(tail));
                     if( type != null) {
-                        Long candidate = index.poll(type.getXvalue());
+                        Long candidate = index.poll(type.getX());
                         if(candidate != null ) {
                             mapping.put(edge.getY(), candidate);
                         }
                     }
                 }
             } else if(tail == null && head != null) {
-                EdgeTypePool.Entry<XType,XType> type = edgeTypePool.pickRandomEdgeHead(idToAttributes.get(head));
+                Tuple<XType,XType> type = edgeTypePool.pickRandomEdgeHead(idToAttributes.get(head));
                 halfEdges+=1L;
                 if(type != null) {
-                    Long candidate = index.poll(type.getYvalue());
+                    Long candidate = index.poll(type.getY());
                     if(candidate != null) {
                         mapping.put(edge.getX(), candidate);
                     }
                 } else {
                     type = edgeTypePool.pickRandomEdgeTail(idToAttributes.get(tail));
                     if( type != null) {
-                        Long candidate = index.poll(type.getXvalue());
+                        Long candidate = index.poll(type.getX());
                         if(candidate != null) {
                             mapping.put(edge.getX(), candidate);
                         }

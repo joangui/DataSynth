@@ -32,19 +32,19 @@ public class EdgeTypePoolTest {
 
         int numberObserved = 0;
         for(int i = 0; i < 10000; i+=1, numberObserved+=1) {
-            EdgeTypePool.Entry<String,String> entry = edgeTypePool.pickRandomEdge();
+            Tuple<String,String> entry = edgeTypePool.pickRandomEdge();
             if(entry != null) {
-                if (entry.getXvalue().compareTo("Male") == 0 && entry.getYvalue().compareTo("Female") == 0) {
+                if (entry.getX().compareTo("Male") == 0 && entry.getY().compareTo("Female") == 0) {
                     counts.put(0, counts.get(0) + 1);
                     continue;
                 }
 
-                if (entry.getXvalue().compareTo("Male") == 0 && entry.getYvalue().compareTo("Male") == 0) {
+                if (entry.getX().compareTo("Male") == 0 && entry.getY().compareTo("Male") == 0) {
                     counts.put(1, counts.get(1) + 1);
                     continue;
                 }
 
-                if (entry.getXvalue().compareTo("Female") == 0 && entry.getYvalue().compareTo("Female") == 0) {
+                if (entry.getX().compareTo("Female") == 0 && entry.getY().compareTo("Female") == 0) {
                     counts.put(2, counts.get(2) + 1);
                     continue;
                 }
