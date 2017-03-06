@@ -4,9 +4,11 @@ package org.dama.datasynth.test.matching;
  * Created by aprat on 5/03/17.
  */
 public class Tuple<X extends Comparable<X>,Y extends Comparable<Y>> implements Comparable<Tuple<X,Y>>{
+
     private X x = null;
     private Y y = null;
-    Tuple(X x, Y y) {
+
+    public Tuple(X x, Y y) {
         this.x = x;
         this.y = y;
     }

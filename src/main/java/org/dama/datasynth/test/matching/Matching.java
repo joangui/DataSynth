@@ -4,6 +4,7 @@ import org.dama.datasynth.test.graphreader.types.Edge;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by aprat on 2/03/17.
@@ -11,75 +12,89 @@ import java.util.HashMap;
 public class Matching {
 
 
-    public static <XType extends Comparable<XType>> HashMap<Long,Long>  run(  Table<Long,Long> graph,
-                                                                              Table<Long,XType> attributes,
-                                                                              JointDistribution<XType,XType> distribution ) {
+    /**
+     * Computes a matching between entities with attributes and nodes of the graph
+     * @param graph The table containing the edges of the graph
+     * @param attributes The table containing the mapping between entity id and attribute
+     * @param distribution The joint probability distribution of observing pairs of entities with attributes connected
+     * @param <XType> The attribute Type
+     * @return A Map mapping graph nodes to entities
+     */
+    public static <XType extends Comparable<XType>> Map<Long,Long> run(Table<Long,Long> graph,
+                                                                       Table<Long,XType> attributes,
+                                                                       JointDistribution<XType,XType> distribution ) {
 
         EdgeTypePool<XType,XType> edgeTypePool = new EdgeTypePool(distribution, graph.size(), 1234567890L);
         Index<XType> index = new Index<>(attributes);
         HashMap<Long,Long> mapping = new HashMap<>();
-        HashMap<Long,XType> idToAttributes = new HashMap<>();
-        for( Tuple<Long,XType> entry : attributes) {
-            idToAttributes.put(entry.getX(), entry.getY());
-        }
+        Dictionary<Long,XType> idToAttributes = new Dictionary<Long,XType>(attributes);
 
+        long edgesCounter = 0L;
+        long freeEdges = 0L;
+        long halfEdges = 0L;
+        long nonFreeEdges = 0L;
         for( Tuple<Long,Long> edge : graph) {
+            if((edgesCounter % 1000 ) == 0) {
+                System.out.println("Processed "+edgesCounter+" edges.\n" +
+                        ""+mapping.size()+" nodes matched.\n" +
+                        "free edges: "+freeEdges+"\n"+
+                        "half edges: "+halfEdges+"\n"+
+                        "nonFreeEdges: "+nonFreeEdges);
+            }
             Long tail = mapping.get(edge.getX());
             Long head = mapping.get(edge.getY());
             if(tail == null && head == null) {
                 EdgeTypePool.Entry<XType,XType> type = edgeTypePool.pickRandomEdge();
-                Long candidateX = index.poll(type.getXvalue());
-                Long candidateY = index.poll(type.getYvalue());
-                candidateX = candidateX == null ? index.random() : candidateX;
-                candidateY = candidateY == null ? index.random() : candidateY;
-                mapping.put(tail, candidateX);
-                mapping.put(head, candidateY);
-                continue;
-            }
-
-            if(tail != null && head == null) {
+                freeEdges+=1L;
+                if(type != null) {
+                    Long candidateX = index.poll(type.getXvalue());
+                    Long candidateY = index.poll(type.getYvalue());
+                    if (candidateX != null && candidateY != null) {
+                        mapping.put(edge.getX(), candidateX);
+                        mapping.put(edge.getY(), candidateY);
+                    }
+                }
+            } else if(tail != null && head == null) {
                 EdgeTypePool.Entry<XType,XType> type = edgeTypePool.pickRandomEdgeTail(idToAttributes.get(tail));
+                halfEdges+=1L;
                 if(type != null) {
                     Long candidate = index.poll(type.getYvalue());
-                    candidate = candidate == null ? index.random() : candidate;
-                    mapping.put(head, candidate);
+                    if(candidate != null) {
+                        mapping.put(edge.getY(), candidate);
+                    }
                 } else {
                     type = edgeTypePool.pickRandomEdgeHead(idToAttributes.get(tail));
                     if( type != null) {
                         Long candidate = index.poll(type.getXvalue());
-                        candidate = candidate == null ? index.random() : candidate;
-                        mapping.put(head, candidate);
-                    } else {
-                        Long candidate = index.random();
-                        mapping.put(head, candidate);
+                        if(candidate != null ) {
+                            mapping.put(edge.getY(), candidate);
+                        }
                     }
                 }
-                continue;
-            }
-
-            if(tail != null && head == null) {
+            } else if(tail == null && head != null) {
                 EdgeTypePool.Entry<XType,XType> type = edgeTypePool.pickRandomEdgeHead(idToAttributes.get(head));
+                halfEdges+=1L;
                 if(type != null) {
                     Long candidate = index.poll(type.getYvalue());
-                    candidate = candidate == null ? index.random() : candidate;
-                    mapping.put(tail, candidate);
+                    if(candidate != null) {
+                        mapping.put(edge.getX(), candidate);
+                    }
                 } else {
                     type = edgeTypePool.pickRandomEdgeTail(idToAttributes.get(tail));
                     if( type != null) {
                         Long candidate = index.poll(type.getXvalue());
-                        candidate = candidate == null ? index.random() : candidate;
-                        mapping.put(tail, candidate);
-                    } else {
-                        Long candidate = index.random();
-                        mapping.put(tail, candidate);
+                        if(candidate != null) {
+                            mapping.put(edge.getX(), candidate);
+                        }
                     }
                 }
-                continue;
+            } else {
+                nonFreeEdges+=1L;
+                if(!edgeTypePool.removeEdge(idToAttributes.get(tail), idToAttributes.get(head))) {
+                    edgeTypePool.removeEdge(idToAttributes.get(head), idToAttributes.get(tail));
+                }
             }
-
-            if(!edgeTypePool.removeEdge(idToAttributes.get(tail), idToAttributes.get(head))) {
-                edgeTypePool.removeEdge(idToAttributes.get(head), idToAttributes.get(tail));
-            }
+            edgesCounter+=1;
         }
         return mapping;
     }

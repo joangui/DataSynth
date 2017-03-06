@@ -103,7 +103,7 @@ public class EdgeTypePool< XType extends Comparable<XType>,
         ListIterator<Entry> iterator = entries.listIterator();
         while(iterator.hasNext()) {
             Entry entry = iterator.next();
-            if(entry.xvalue.compareTo(xvalue) == 0&& entry.yvalue.compareTo(yvalue) == 0) {
+            if(entry.xvalue.compareTo(xvalue) == 0 && entry.yvalue.compareTo(yvalue) == 0) {
                 iterator.remove();
                 return true;
             }
