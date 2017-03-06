@@ -13,48 +13,47 @@ import static org.junit.Assert.assertTrue;
  */
 public class IndexTest {
 
-    private void helper(Index<String> countryIndex, String country, int begin, int num) {
+    private void helper(Index<String> countryIndex, String country, long begin, long num) {
 
-        Set<Integer> idSet = new HashSet<Integer>();
+        Set<Long> idSet = new HashSet<Long>();
         for(int i = 0; i < num; i+=1) {
-            Integer id = countryIndex.poll(country);
+            Long id = countryIndex.poll(country);
             assertTrue(id != null);
             idSet.add(id);
         }
         assertTrue(idSet.size() == num);
-        for(int i = begin; i < begin+num; i+=1) {
+        for(long i = begin; i < begin+num; i+=1) {
             assertTrue(idSet.contains(i));
         }
-
     }
 
     @Test
     public void behaviorTest() {
-        ArrayList<String> table = new ArrayList<String>();
+        Table<Long,String> table = new Table<>();
         // 5 China
-        table.add("China");
-        table.add("China");
-        table.add("China");
-        table.add("China");
-        table.add("China");
+        table.add(new Tuple<>(0L,"China"));
+        table.add(new Tuple<>(1L,"China"));
+        table.add(new Tuple<>(2L,"China"));
+        table.add(new Tuple<>(3L,"China"));
+        table.add(new Tuple<>(4L,"China"));
 
         // 4 India
-        table.add("India");
-        table.add("India");
-        table.add("India");
-        table.add("India");
+        table.add(new Tuple<>(5L,"India"));
+        table.add(new Tuple<>(6L,"India"));
+        table.add(new Tuple<>(7L,"India"));
+        table.add(new Tuple<>(8L,"India"));
 
         // 3 USA
-        table.add("USA");
-        table.add("USA");
-        table.add("USA");
+        table.add(new Tuple<>(9L,"USA"));
+        table.add(new Tuple<>(10L,"USA"));
+        table.add(new Tuple<>(11L,"USA"));
 
         // 2 Spain
-        table.add("Spain");
-        table.add("Spain");
+        table.add(new Tuple<>(12L,"Spain"));
+        table.add(new Tuple<>(13L,"Spain"));
 
         // 1 Catalonia
-        table.add("Catalonia");
+        table.add(new Tuple<>(14L,"Catalonia"));
 
         Index<String> countryIndex = new Index(table);
         assertTrue(countryIndex.values().size() == 5);

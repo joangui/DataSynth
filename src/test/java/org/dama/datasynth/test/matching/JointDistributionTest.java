@@ -34,7 +34,7 @@ public class JointDistributionTest {
 
     @Test
     public void learnTest() {
-        ArrayList<Tuple<String,String>> pairs = new ArrayList<>();
+        Table<String,String> pairs = new Table<>();
         pairs.add(new Tuple<>("Male","Female"));
         pairs.add(new Tuple<>("Male","Female"));
         pairs.add(new Tuple<>("Male","Female"));

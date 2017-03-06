@@ -1,43 +1,40 @@
 package org.dama.datasynth.test.matching;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.function.Function;
 
 /**
  * Created by aprat on 2/03/17.
  */
-public class JointDistribution< XType extends Comparable<XType>,
-                                YType extends Comparable<YType>> {
+public class JointDistribution< X extends Comparable<X>,
+                                Y extends Comparable<Y>> {
 
-    public static class Entry<  XType extends Comparable<XType>,
-                                YType extends Comparable<YType>> {
-        private XType    xvalue;
-        private YType    yvalue;
+    public static class Entry<  X extends Comparable<X>,
+                                Y extends Comparable<Y>> {
+        private X xvalue;
+        private Y yvalue;
         private double   probability;
 
-        public Entry(XType xvalue, YType yvalue, double probability) {
+        public Entry(X xvalue, Y yvalue, double probability) {
             this.xvalue = xvalue;
             this.yvalue = yvalue;
             this.probability = probability;
         }
 
-        public XType getXvalue() {
+        public X getXvalue() {
             return xvalue;
         }
 
-        public void setXvalue(XType xvalue) {
+        public void setXvalue(X xvalue) {
             this.xvalue = xvalue;
         }
 
-        public YType getYvalue() {
+        public Y getYvalue() {
             return yvalue;
         }
 
-        public void setYvalue(YType yvalue) {
+        public void setYvalue(Y yvalue) {
             this.yvalue = yvalue;
         }
 
@@ -52,14 +49,14 @@ public class JointDistribution< XType extends Comparable<XType>,
         @Override
         public boolean equals(Object obj) {
             if(obj.getClass() != this.getClass()) return false;
-            Entry<XType,YType> entry = (Entry<XType,YType>)obj;
+            Entry<X, Y> entry = (Entry<X, Y>)obj;
             return xvalue.compareTo(entry.getXvalue()) == 0 &&
                    yvalue.compareTo(entry.getYvalue()) == 0 &&
                    probability == entry.getProbability();
         }
     }
 
-    private ArrayList<Entry<XType,YType>> entries = new ArrayList<Entry<XType,YType>>();
+    private ArrayList<Entry<X, Y>> entries = new ArrayList<Entry<X, Y>>();
 
     /**
      * Loads the Joint probability distribution from a file.
@@ -69,7 +66,7 @@ public class JointDistribution< XType extends Comparable<XType>,
      * @param xparser The parser used to parse values of the x type from string to their native type
      * @param yparser The parser used to parse values of the y type from string to their native type
      */
-    public void load( InputStream inputStream, String separator, Function<String, XType> xparser, Function<String, YType> yparser ) {
+    public void load(InputStream inputStream, String separator, Function<String, X> xparser, Function<String, Y> yparser ) {
         try {
             BufferedReader fileReader =  new BufferedReader( new InputStreamReader(inputStream));
             String line = null;
@@ -87,12 +84,12 @@ public class JointDistribution< XType extends Comparable<XType>,
     /**
      * Learns the Joint probability distribution from a collection of tuples.
      *
-     * @param pairs The collection of pairs to learn from
+     * @param table The collection of pairs to learn from
      */
-    public void learn(ArrayList<Tuple<XType,YType>> pairs) {
-        TreeMap<Tuple<XType,YType>,Long> counts = new TreeMap<>();
+    public void learn(Table<X, Y> table) {
+        TreeMap<Tuple<X, Y>,Long> counts = new TreeMap<>();
         long tuplecount = 0L;
-        for(Tuple<XType,YType> tuple : pairs) {
+        for(Tuple<X, Y> tuple : table) {
            Long number = null;
            if((number = counts.get(tuple)) == null) {
                number = 0L;
@@ -101,8 +98,8 @@ public class JointDistribution< XType extends Comparable<XType>,
            tuplecount+=1;
         }
 
-        for(HashMap.Entry<Tuple<XType,YType>,Long> e : counts.entrySet() ) {
-           entries.add(new Entry<XType,YType>(e.getKey().getXvalue(),e.getKey().getYvalue(), e.getValue() / (double)(tuplecount)));
+        for(Map.Entry<Tuple<X, Y>,Long> e : counts.entrySet() ) {
+           entries.add(new Entry<X, Y>(e.getKey().getX(),e.getKey().getY(), e.getValue() / (double)(tuplecount)));
         }
 
         checkCorrectness();
@@ -116,7 +113,7 @@ public class JointDistribution< XType extends Comparable<XType>,
         if(sum > 1.0 ) throw new RuntimeException("probabilities sum more than 1.0");
     }
 
-    public List<Entry<XType,YType>> getEntries() {
+    public List<Entry<X, Y>> getEntries() {
         return entries;
     }
 }
