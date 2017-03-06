@@ -1,5 +1,6 @@
 package org.dama.datasynth.test.matching;
 
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.TreeMultimap;
@@ -15,7 +16,7 @@ public class EdgeTypePool< XType extends Comparable<XType>,
     // fields
     //private LinkedList<Entry> entries = new LinkedList<Entry>();
     private LinkedListMultimap<XType,YType> tails = LinkedListMultimap.create();
-    private TreeMultimap<YType,XType> heads = TreeMultimap.create();
+    private ArrayListMultimap<YType,XType> heads = ArrayListMultimap.create();
 
     public EdgeTypePool(JointDistribution<XType, YType> distribution, long numEdges, long seed) {
 
@@ -72,9 +73,9 @@ public class EdgeTypePool< XType extends Comparable<XType>,
      */
 
     public Tuple<XType,YType> pickRandomEdgeHead(YType head) {
-        NavigableSet<XType> collection = heads.get(head);
+        List<XType> collection = heads.get(head);
         if(collection != null) {
-            XType tail = collection.pollFirst();
+            XType tail = collection.remove(collection.size()-1);
             if(tail != null) {
                 tails.remove(tail,head);
                 return new Tuple<>(tail, head);

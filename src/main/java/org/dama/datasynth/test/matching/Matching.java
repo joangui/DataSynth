@@ -34,7 +34,7 @@ public class Matching {
         long halfEdges = 0L;
         long nonFreeEdges = 0L;
         for( Tuple<Long,Long> edge : graph) {
-            if((edgesCounter % 1000 ) == 0) {
+            if((edgesCounter % 5000 ) == 0) {
                 System.out.println("Processed "+edgesCounter+" edges.\n" +
                         ""+mapping.size()+" nodes matched.\n" +
                         "free edges: "+freeEdges+"\n"+
@@ -93,8 +93,12 @@ public class Matching {
                 }
             } else {
                 nonFreeEdges+=1L;
-                if(!edgeTypePool.removeEdge(idToAttributes.get(tail), idToAttributes.get(head))) {
-                    edgeTypePool.removeEdge(idToAttributes.get(head), idToAttributes.get(tail));
+                XType attrTail = idToAttributes.get(tail);
+                XType attrHead = idToAttributes.get(head);
+                if(attrTail.compareTo(attrHead) < 0) {
+                    edgeTypePool.removeEdge(attrTail, attrHead);
+                } else {
+                    edgeTypePool.removeEdge(attrHead, attrTail);
                 }
             }
             edgesCounter+=1;
