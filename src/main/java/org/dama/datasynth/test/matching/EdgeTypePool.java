@@ -58,7 +58,7 @@ public class EdgeTypePool< XType extends Comparable<XType>,
         List<YType> entry = tails.get(tail);
         if(entry != null) {
             if(entry.size() > 0) {
-                YType head = entry.remove(0);
+                YType head = entry.remove(entry.size()-1);
                 heads.remove(head,tail);
                 return new Tuple<>(tail, head);
             }
