@@ -14,22 +14,21 @@ import java.util.Set;
  *
  * @author joangui
  */
-public class Partition {
-	Map<Long,Set<Long>> partitions = new HashMap<>();
+public class Partition  extends HashMap<Long,Set<Long>> {
 	private long numPartitions=0L;
 	private long numNodes = 0L;
 
 public void addToPartition(Long nodeId,Long partitionId)
 {
 		numNodes++;
-		Set<Long> partition = partitions.get(partitionId);
+		Set<Long> partition = get(partitionId);
 		if(partition==null)
 		{
 			numPartitions++;
 			partition= new HashSet<>();
 		}
 		partition.add(nodeId);
-		partitions.put(partitionId, partition);
+		put(partitionId, partition);
 }
 public long numPartitions()
 {
@@ -39,8 +38,5 @@ public long numNodes()
 {
 	return numNodes;
 }
-public Map<Long,Set<Long>> partitions ()
-{
-	return partitions;
-}
+
 }

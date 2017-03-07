@@ -7,6 +7,7 @@ package org.dama.datasynth.test.matching.test;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import org.dama.datasynth.test.graphreader.GraphReaderFromFile;
 import org.dama.datasynth.test.graphreader.GraphReaderFromNodePairFile;
@@ -21,10 +22,11 @@ import org.dama.datasynth.test.matching.Tuple;
  * @author joangui
  */
 public class SimpleTest {
-
+	static Random r = new Random(1234567890L);
+	static int NUM_ATTRIBUTES=2;
 	static public void main(String[] argv) throws Exception {
 		System.out.println("Simple Test Run");
-		Table<Long, String> attributes = null;
+		Table<Long, Integer> attributes = null;
 		Table<Long, Long> edges = null;
 
 		GraphReaderFromNodePairFile graphReader = new GraphReaderFromNodePairFile(argv[0], argv[1]);
@@ -33,18 +35,19 @@ public class SimpleTest {
 		Partition p = graphReader.getPartitions(g);
 
 		attributes = new Table<>();
-		for (Map.Entry<Long, Set<Long>> entry : p.partitions().entrySet()) {
+		for (Map.Entry<Long, Set<Long>> entry : p.entrySet()) {
 			Long partitionId = entry.getKey();
 			Set<Long> nodes = entry.getValue();
 
-			String attribute = partitionId % 2 == 0 ? "A" : "B";
+			Integer attribute = getAttribute(NUM_ATTRIBUTES);
+//			Integer attribute = partitionId%2==0?1:2;
 
 			for (long nodeId : nodes) {
 				attributes.add(new Tuple<>(nodeId, attribute));
 			}
 		}
 
-		Dictionary<Long, String> dictonariAttributes = new Dictionary<>(attributes);
+		Dictionary<Long, Integer> dictonariAttributes = new Dictionary<>(attributes);
 
 		Table<Long, Long> edgesA = new Table<>();
 		Table<Long, Long> edgesB = new Table<>();
@@ -78,7 +81,14 @@ public class SimpleTest {
 		edges.add(t);
 		}
 
-		Collections.shuffle(edges);
+		//Collections.shuffle(edges);
 		MatchingCommunityTest.run(attributes, edges);
 	}
+
+	private static Integer getAttribute(int max) {
+		return r.nextInt(max);
+
+	}
+
+	
 }
