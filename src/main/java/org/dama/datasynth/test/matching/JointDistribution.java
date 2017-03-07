@@ -110,7 +110,7 @@ public class JointDistribution< X extends Comparable<X>,
         for( Entry e : entries)  {
             sum+=e.probability;
         }
-        if(sum > 1.0 ) throw new RuntimeException("probabilities sum more than 1.0");
+        if(Math.abs(sum - 1.0) > 0.0001 ) throw new RuntimeException("probabilities sum more than 1.0");
     }
 
     public List<Entry<X, Y>> getEntries() {

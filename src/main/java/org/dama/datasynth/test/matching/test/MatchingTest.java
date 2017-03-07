@@ -38,7 +38,7 @@ public class MatchingTest {
             System.exit(1);
         }
         System.out.println("Shuffling Edges table");
-        Collections.shuffle(edges);
+        //Collections.shuffle(edges);
 
 
 
