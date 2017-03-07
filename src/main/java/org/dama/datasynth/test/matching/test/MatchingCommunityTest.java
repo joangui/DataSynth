@@ -76,8 +76,6 @@ public class MatchingCommunityTest {
 		JointDistribution<XType, XType> attributesDistribution = new JointDistribution<>();
 		attributesDistribution.learn(connectedAttributes);
 
-
-
 		System.out.println("Executing matching algorithm");
 		Map<Long, Long> mapping = Matching.run(edges, attributes, attributesDistribution);
 		System.out.println("Size of the mapping: " + mapping.size());
@@ -97,8 +95,8 @@ public class MatchingCommunityTest {
 			}
 		}
 
-		JointDistribution<XType, XType> newAttributesPairsDistribution = new JointDistribution<>();
-		newAttributesPairsDistribution.learn(newConnectedAttributes);
+		JointDistribution<XType, XType> newAttributesDistribution = new JointDistribution<>();
+		newAttributesDistribution.learn(newConnectedAttributes);
 
 		Comparator comparator = new Comparator<JointDistribution.Entry<XType, XType>>() {
 			@Override
@@ -116,14 +114,46 @@ public class MatchingCommunityTest {
 
 		ArrayList<JointDistribution.Entry<XType, XType>> attributesPairsEntries = new ArrayList<>(attributesDistribution.getEntries());
 		Collections.sort(attributesPairsEntries, comparator);
-		ArrayList<JointDistribution.Entry<XType, XType>> newAttributesPairsEntries = new ArrayList<>(newAttributesPairsDistribution.getEntries());
+		ArrayList<JointDistribution.Entry<XType, XType>> newAttributesPairsEntries = new ArrayList<>(newAttributesDistribution.getEntries());
 		Collections.sort(newAttributesPairsEntries, comparator);
 
-		for (int i = 0; i<attributesPairsEntries.size()&&i < 20; i += 1) {
+		for (int i = 0; i < attributesPairsEntries.size() && i < 20; i += 1) {
 			JointDistribution.Entry<XType, XType> originalEntry = attributesPairsEntries.get(i);
 			JointDistribution.Entry<XType, XType> newEntry = newAttributesPairsEntries.get(i);
 			System.out.print(originalEntry.getXvalue() + " " + originalEntry.getYvalue() + " " + originalEntry.getProbability() + " --- ");
 			System.out.println(newEntry.getXvalue() + " " + newEntry.getYvalue() + " " + newEntry.getProbability());
 		}
+
+		System.out.println("\nChi-Square: "+chiSquareTest(attributesDistribution, newAttributesDistribution, edges));
+	}
+
+	static public  double chiSquareTest(JointDistribution observed, JointDistribution calculated,Table<Long, Long> edges) {
+
+		Set<Long> nodes = new HashSet<>();
+		for(Tuple<Long,Long> t:edges)
+		{
+			nodes.add(t.getX());
+			nodes.add(t.getY());
+		}
+
+		double chiSquareTest = 0D;
+		for(int i = 0; i< observed.size();i++)
+		{
+			JointDistribution.Entry observedEntry = observed.get(i);
+			Tuple observedTuple = observedEntry.getTuple();
+			
+			double observedProbability = observedEntry.getProbability();
+			double calculatedProbability = calculated.getProbability(observedTuple);
+
+			double observedOccurrences = observedProbability*nodes.size();
+			double calculatedOccurrences = calculatedProbability*nodes.size();
+
+			chiSquareTest+=Math.pow(calculatedOccurrences-observedOccurrences,2)/observedOccurrences;
+			
+		}
+
+		
+
+		return chiSquareTest;
 	}
 }
