@@ -145,8 +145,8 @@ public class MatchingCommunityTest {
 			double observedProbability = observedEntry.getProbability();
 			double calculatedProbability = calculated.getProbability(observedTuple);
 
-			double observedOccurrences = observedProbability*nodes.size();
-			double calculatedOccurrences = calculatedProbability*nodes.size();
+			double observedOccurrences = observedProbability*edges.size();
+			double calculatedOccurrences = calculatedProbability*edges.size();
 
 			chiSquareTest+=Math.pow(calculatedOccurrences-observedOccurrences,2)/observedOccurrences;
 			
