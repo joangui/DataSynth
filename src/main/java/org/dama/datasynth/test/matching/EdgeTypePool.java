@@ -73,18 +73,16 @@ public class EdgeTypePool< XType extends Comparable<XType>,
            while(collection.size() > 0) {
                YType next = collection.remove(0);
                Tuple<XType,YType> tuple = new Tuple<XType, YType>(tail,next);
-               Long num = 0L;
-               if((num = toRemoveTails.get(tuple)) != null) {
-                   if(num == 0) {
-                       num = toRemoveHeads.get(tuple);
-                       if(num == null) {
-                           num = 0L;
-                       }
-                       toRemoveHeads.put(tuple,num+1);
-                       return tuple;
+               Long num = toRemoveTails.get(tuple);
+               if(num == null || num == 0) {
+                   num = toRemoveHeads.get(tuple);
+                   if(num == null) {
+                       num = 0L;
                    }
-                   toRemoveTails.put(tuple,num-1);
+                   toRemoveHeads.put(tuple,num+1);
+                   return tuple;
                }
+               toRemoveTails.put(tuple,num-1);
            }
         }
         return null;
@@ -102,18 +100,16 @@ public class EdgeTypePool< XType extends Comparable<XType>,
             while(collection.size() > 0) {
                 XType next = collection.remove(0);
                 Tuple<XType,YType> tuple = new Tuple<XType, YType>(next,head);
-                Long num = 0L;
-                if((num = toRemoveHeads.get(tuple)) != null) {
-                    if(num == 0) {
-                        num = toRemoveTails.get(tuple);
-                        if(num == null) {
-                            num = 0L;
-                        }
-                        toRemoveTails.put(tuple,num+1);
-                        return tuple;
+                Long num = toRemoveHeads.get(tuple);
+                if(num == null || num == 0) {
+                    num = toRemoveTails.get(tuple);
+                    if(num == null) {
+                        num = 0L;
                     }
-                    toRemoveHeads.put(tuple,num-1);
+                    toRemoveTails.put(tuple,num+1);
+                    return tuple;
                 }
+                toRemoveHeads.put(tuple,num-1);
             }
         }
         return null;
