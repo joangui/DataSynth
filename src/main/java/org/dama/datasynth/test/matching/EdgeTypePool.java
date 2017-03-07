@@ -17,6 +17,8 @@ public class EdgeTypePool< XType extends Comparable<XType>,
     //private LinkedList<Entry> entries = new LinkedList<Entry>();
     private LinkedListMultimap<XType,YType> tails = LinkedListMultimap.create();
     private ArrayListMultimap<YType,XType> heads = ArrayListMultimap.create();
+    private TreeMap<Tuple<XType,YType>,Long> toRemoveTails = new TreeMap<>();
+    private TreeMap<Tuple<XType,YType>,Long> toRemoveHeads = new TreeMap<>();
 
     public EdgeTypePool(JointDistribution<XType, YType> distribution, long numEdges, long seed) {
 
@@ -41,10 +43,21 @@ public class EdgeTypePool< XType extends Comparable<XType>,
      * @return A randomly choosen edge. null if no remaining edges.
      */
     public Tuple<XType,YType> pickRandomEdge() {
-        Map.Entry<XType,YType> entry = tails.entries().remove(0);
-        if(entry != null) {
-            heads.remove(entry.getValue(),entry.getKey());
-            return new Tuple<>(entry.getKey(),entry.getValue());
+        while(tails.entries().size() > 0) {
+            Map.Entry<XType, YType> entry = tails.entries().remove(0);
+            Tuple<XType, YType> tuple = new Tuple<>(entry.getKey(), entry.getValue());
+            Long num = null;
+            num = toRemoveTails.get(tuple);
+            if(num == null || num == 0L) {
+                num = toRemoveHeads.get(tuple);
+                if(num == null) {
+                    num = 0L;
+                }
+                toRemoveHeads.put(tuple,num+1);
+                return tuple;
+            } else {
+                toRemoveTails.put(tuple,num-1);
+            }
         }
         return null;
     };
@@ -55,13 +68,24 @@ public class EdgeTypePool< XType extends Comparable<XType>,
      * @return A random edge whose x value is the given one. null if such edge does not exist.
      */
     public Tuple<XType,YType> pickRandomEdgeTail(XType tail) {
-        List<YType> entry = tails.get(tail);
-        if(entry != null) {
-            if(entry.size() > 0) {
-                YType head = entry.remove(entry.size()-1);
-                heads.remove(head,tail);
-                return new Tuple<>(tail, head);
-            }
+        List<YType> collection = tails.get(tail);
+        if(collection != null) {
+           while(collection.size() > 0) {
+               YType next = collection.remove(0);
+               Tuple<XType,YType> tuple = new Tuple<XType, YType>(tail,next);
+               Long num = 0L;
+               if((num = toRemoveTails.get(tuple)) != null) {
+                   if(num == 0) {
+                       num = toRemoveHeads.get(tuple);
+                       if(num == null) {
+                           num = 0L;
+                       }
+                       toRemoveHeads.put(tuple,num+1);
+                       return tuple;
+                   }
+                   toRemoveTails.put(tuple,num-1);
+               }
+           }
         }
         return null;
     };
@@ -75,10 +99,21 @@ public class EdgeTypePool< XType extends Comparable<XType>,
     public Tuple<XType,YType> pickRandomEdgeHead(YType head) {
         List<XType> collection = heads.get(head);
         if(collection != null) {
-            XType tail = collection.remove(collection.size()-1);
-            if(tail != null) {
-                tails.remove(tail,head);
-                return new Tuple<>(tail, head);
+            while(collection.size() > 0) {
+                XType next = collection.remove(0);
+                Tuple<XType,YType> tuple = new Tuple<XType, YType>(next,head);
+                Long num = 0L;
+                if((num = toRemoveHeads.get(tuple)) != null) {
+                    if(num == 0) {
+                        num = toRemoveTails.get(tuple);
+                        if(num == null) {
+                            num = 0L;
+                        }
+                        toRemoveTails.put(tuple,num+1);
+                        return tuple;
+                    }
+                    toRemoveHeads.put(tuple,num-1);
+                }
             }
         }
         return null;
@@ -89,7 +124,17 @@ public class EdgeTypePool< XType extends Comparable<XType>,
      * @param tail The given tail value
      * @param head The given head value
      */
-    public boolean removeEdge(XType tail, YType head) {
-        return tails.remove(tail,head) && heads.remove(head,tail);
+    public void removeEdge(XType tail, YType head) {
+        Tuple<XType,YType> tuple = new Tuple<XType, YType>(tail,head);
+        Long num = 0L;
+        if((num = toRemoveTails.get(tuple)) == null) {
+            num = 0L;
+        }
+        toRemoveTails.put(tuple,num+1);
+
+        if((num = toRemoveHeads.get(tuple)) == null) {
+            num = 0L;
+        }
+        toRemoveHeads.put(tuple,num+1);
     };
 }
