@@ -2,8 +2,6 @@ package org.dama.datasynth.test.matching;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.LinkedListMultimap;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.TreeMultimap;
 
 import java.util.*;
 

@@ -2,49 +2,50 @@ package org.dama.datasynth.test.graphreader.types;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
  * Created by aprat on 18/06/15.
  */
-public class Graph {
-    private HashMap<Long,Set<Long>> adjacencies;
-    private long numNodes = 0L;
-    private long numEdges = 0L;
-    
+public class Graph extends HashMap<Long, Set<Long>> {
 
-    public Graph(  ) {
-        this.adjacencies = new HashMap<>();
-    }
+	private long numEdges = 0L;
 
-    public void addEdge(long tail, long head) {
-	    Set<Long> tailAdjacencies = this.adjacencies.get(tail);
-	    if(tailAdjacencies==null)
-	    {
-		    numNodes++;
-		    tailAdjacencies=new HashSet<>();
-	    }
-	    tailAdjacencies.add(head);
-	    
-    }
-    
-    public void adjacencyList(long tail, Set<Long> neighbors) throws Exception
-    {
-	   Set<Long> tailAdjacencies = this.adjacencies.get(tail);
-	    if (tailAdjacencies!= null)
-		    throw new Exception("Node "+tail+" already exists.");
+	public void addEdge(long tail, long head) {
+		Set<Long> tailAdjacencies = get(tail);
+		if (tailAdjacencies == null) {
+			tailAdjacencies = new HashSet<>();
+			put(tail, tailAdjacencies);
+		}
+		tailAdjacencies.add(head);
+		numEdges++;
 
-	    numNodes++;
-	    adjacencies.put(tail, neighbors);
-	    numEdges+=neighbors.size();
-    }
+	}
 
-    public Set<Long> neighbors(Long nodeId) {
-        return adjacencies.get(nodeId);
-    }
-    public long numNodes()
-    {
-	    return numNodes;
-    }
-    public long numEdges() { return numEdges; }
+	/*public Map<Long,Set<Long>> adjacencyList ()
+	 {
+	 return adjacencies;
+	 }*/
+	public void adjacencyList(long tail, Set<Long> neighbors) throws Exception {
+		Set<Long> tailAdjacencies = get(tail);
+		if (tailAdjacencies != null) {
+			throw new Exception("Node " + tail + " already exists.");
+		}
+
+		put(tail, neighbors);
+		numEdges += neighbors.size();
+	}
+
+	public Set<Long> neighbors(Long nodeId) {
+		return get(nodeId);
+	}
+
+	public long numNodes() {
+		return size();
+	}
+
+	public long numEdges() {
+		return numEdges;
+	}
 }

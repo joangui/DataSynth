@@ -39,4 +39,8 @@ public long numNodes()
 {
 	return numNodes;
 }
+public Map<Long,Set<Long>> partitions ()
+{
+	return partitions;
+}
 }

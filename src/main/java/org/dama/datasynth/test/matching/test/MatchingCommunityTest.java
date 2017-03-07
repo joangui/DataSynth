@@ -76,6 +76,8 @@ public class MatchingCommunityTest {
 		JointDistribution<XType, XType> attributesDistribution = new JointDistribution<>();
 		attributesDistribution.learn(connectedAttributes);
 
+
+
 		System.out.println("Executing matching algorithm");
 		Map<Long, Long> mapping = Matching.run(edges, attributes, attributesDistribution);
 		System.out.println("Size of the mapping: " + mapping.size());
@@ -117,7 +119,7 @@ public class MatchingCommunityTest {
 		ArrayList<JointDistribution.Entry<XType, XType>> newAttributesPairsEntries = new ArrayList<>(newAttributesPairsDistribution.getEntries());
 		Collections.sort(newAttributesPairsEntries, comparator);
 
-		for (int i = 0; i < 20; i += 1) {
+		for (int i = 0; i<attributesPairsEntries.size()&&i < 20; i += 1) {
 			JointDistribution.Entry<XType, XType> originalEntry = attributesPairsEntries.get(i);
 			JointDistribution.Entry<XType, XType> newEntry = newAttributesPairsEntries.get(i);
 			System.out.print(originalEntry.getXvalue() + " " + originalEntry.getYvalue() + " " + originalEntry.getProbability() + " --- ");
