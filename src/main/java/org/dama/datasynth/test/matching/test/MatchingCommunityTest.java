@@ -1,5 +1,6 @@
 package org.dama.datasynth.test.matching.test;
 
+import org.apache.commons.math3.stat.inference.ChiSquareTest;
 import org.dama.datasynth.test.matching.*;
 import org.dama.datasynth.test.matching.Dictionary;
 
@@ -127,22 +128,33 @@ public class MatchingCommunityTest {
 		System.out.println("\nChi-Square: "+chiSquareTest(attributesDistribution, newAttributesDistribution, edges.size()));
 	}
 
-	static public  <X extends Comparable<X>, Y extends Comparable<Y>> double chiSquareTest(JointDistribution<X,Y> observed, JointDistribution<X,Y> calculated, long size) {
+	static public  <X extends Comparable<X>, Y extends Comparable<Y>> double chiSquareTest(JointDistribution<X,Y> expected, JointDistribution<X,Y> observed, long size) {
 
-		double chiSquareTest = 0D;
-		for(JointDistribution.Entry<Tuple<X,Y>, Double> observedEntry : observed.getEntries())
-		{
-			Tuple observedTuple = observedEntry.getKey();
-			
-			double observedProbability = observedEntry.getValue();
-			double calculatedProbability = calculated.getProbability(observedTuple);
 
-			double observedOccurrences = observedProbability*size;
-			double calculatedOccurrences = calculatedProbability*size;
+		Comparator comparator = new Comparator<JointDistribution.Entry<Tuple<X, Y>,Double>>() {
+			@Override
+			public int compare(JointDistribution.Entry<Tuple<X, Y>,Double> o1, JointDistribution.Entry<Tuple<X, Y>,Double> o2) {
+			    return o1.getKey().compareTo(o2.getKey());
+			}
+		};
 
-			chiSquareTest+=Math.pow(calculatedOccurrences-observedOccurrences,2)/observedOccurrences;
+		ArrayList<JointDistribution.Entry<Tuple<X, Y>,Double>> expectedEntries = new ArrayList<>(expected.getEntries());
+		Collections.sort(expectedEntries, comparator);
+		ArrayList<JointDistribution.Entry<Tuple<X, Y>,Double>> observedEntries = new ArrayList<>(observed.getEntries());
+		Collections.sort(observedEntries, comparator);
+
+		double [] expectedFrequencies = new double[expectedEntries.size()];
+		for( int i = 0; i < expectedEntries.size(); ++i) {
+			expectedFrequencies[i] = (size*expectedEntries.get(i).getValue());
 		}
 
-		return chiSquareTest;
+		long [] observedFrequencies = new long[observedEntries.size()];
+		for( int i = 0; i < observedEntries.size(); ++i) {
+			observedFrequencies[i] = (long)(size*observedEntries.get(i).getValue());
+		}
+
+		ChiSquareTest chiSquareTest = new ChiSquareTest();
+		return chiSquareTest.chiSquareTest(expectedFrequencies,observedFrequencies);
+
 	}
 }
