@@ -47,7 +47,7 @@ public class GraphReaderFromFile implements GraphReaderInterface {
 				adjacencies.add(new Long(node2Id));
 			}
 
-			g.adjacencyList(nodeId, adjacencies);
+			g.setNeighbors(nodeId, adjacencies);
 			nodeId++;
 		}
 		return g;

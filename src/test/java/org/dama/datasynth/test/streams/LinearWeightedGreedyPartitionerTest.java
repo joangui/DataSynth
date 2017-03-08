@@ -3,7 +3,12 @@ package org.dama.datasynth.test.streams;
 import org.dama.datasynth.test.graphreader.types.Edge;
 import org.dama.datasynth.test.graphreader.types.EdgePartitions;
 import static org.junit.Assert.assertTrue;
+
+import org.dama.datasynth.test.graphreader.types.Partition;
 import org.junit.Test;
+
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by aprat on 27/02/17.
@@ -12,34 +17,21 @@ public class LinearWeightedGreedyPartitionerTest {
 
 	@Test
 	public void testPartitioner() {
-		long numNodes = 1000000;
-		int numPartitions = 16;
+		long numNodes = 12;
 		OneToOneGraph oneToOneGraph = new OneToOneGraph(numNodes);
 		LinearWeightedGreedyPartitioner partitioner = new LinearWeightedGreedyPartitioner();
-		partitioner.initialize(numNodes, numPartitions);
-		int partitions[] = new int[(int) numPartitions];
-		for (int i = 0; i < numPartitions; ++i) {
-			partitions[i] = 0;
-		}
+		double [] partitions = {0.5D, 0.5D};
+		partitioner.initialize(oneToOneGraph, partitions);
 
-		while (oneToOneGraph.hasNext()) {
-			Edge edge = oneToOneGraph.nextEdge();
-			EdgePartitions nodePartitions = partitioner.partition(edge);
-			if (nodePartitions.tailPartition != -1) {
-				partitions[(int) nodePartitions.tailPartition]++;
-			}
-
-			if (nodePartitions.headPartitions != -1) {
-				partitions[(int) nodePartitions.headPartitions]++;
+		Partition partition = partitioner.getPartition();
+		for (Map.Entry<Long,Set<Long>> entry : partition.entrySet()) {
+			assertTrue(entry.getValue().size() == (numNodes / 2));
+			for(Long l : entry.getValue()) {
+				if(l < numNodes/2) {
+					assertTrue(entry.getValue().contains(l+numNodes/2));
+				}
 			}
 		}
 
-		long recountedNodes = 0;
-		for (int i = 0; i < numPartitions; ++i) {
-
-			assertTrue(partitions[i] == (numNodes / numPartitions));
-			recountedNodes += partitions[i];
-		}
-		assertTrue(recountedNodes == numNodes);
 	}
 }

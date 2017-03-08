@@ -153,7 +153,7 @@ public class MatchingCommunityTest {
 			observedFrequencies[i] = (long)(size*observedEntries.get(i).getValue());
 		}
 
-		ChiSquareTest chiSquareTest = new ChiSquareTest();
+        ChiSquareTest chiSquareTest = new ChiSquareTest();
 		return chiSquareTest.chiSquareTest(expectedFrequencies,observedFrequencies);
 
 	}

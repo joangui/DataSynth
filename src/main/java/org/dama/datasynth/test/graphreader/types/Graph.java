@@ -23,11 +23,11 @@ public class Graph extends HashMap<Long, Set<Long>> {
 
 	}
 
-	/*public Map<Long,Set<Long>> adjacencyList ()
+	/*public Map<Long,Set<Long>> setNeighbors ()
 	 {
 	 return adjacencies;
 	 }*/
-	public void adjacencyList(long tail, Set<Long> neighbors) throws Exception {
+	public void setNeighbors(long tail, Set<Long> neighbors) throws Exception {
 		Set<Long> tailAdjacencies = get(tail);
 		if (tailAdjacencies != null) {
 			throw new Exception("Node " + tail + " already exists.");
@@ -37,12 +37,17 @@ public class Graph extends HashMap<Long, Set<Long>> {
 		numEdges += neighbors.size();
 	}
 
-	public Set<Long> neighbors(Long nodeId) {
+	public Set<Long> getNeighbors(Long nodeId) {
 		return get(nodeId);
 	}
 
-	public long numNodes() {
+	public long getNumNodes() {
 		return size();
+	}
+
+
+	public Set<Long> getNodes() {
+		return keySet();
 	}
 
 	public long numEdges() {
