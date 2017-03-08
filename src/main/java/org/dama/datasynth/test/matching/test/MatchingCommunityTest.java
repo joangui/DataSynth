@@ -98,61 +98,50 @@ public class MatchingCommunityTest {
 		JointDistribution<XType, XType> newAttributesDistribution = new JointDistribution<>();
 		newAttributesDistribution.learn(newConnectedAttributes);
 
-		Comparator comparator = new Comparator<JointDistribution.Entry<XType, XType>>() {
+		Comparator comparator = new Comparator<JointDistribution.Entry<Tuple<XType, XType>,Double>>() {
 			@Override
-			public int compare(JointDistribution.Entry<XType, XType> o1, JointDistribution.Entry<XType, XType> o2) {
-				if (o1.getProbability() < o2.getProbability()) {
+			public int compare(JointDistribution.Entry<Tuple<XType, XType>,Double> o1, JointDistribution.Entry<Tuple<XType, XType>,Double> o2) {
+				if (o1.getValue() < o2.getValue()) {
 					return 1;
 				}
 
-				if (o1.getProbability() > o2.getProbability()) {
+				if (o1.getValue() > o2.getValue()) {
 					return -1;
 				}
 				return 0;
 			}
 		};
 
-		ArrayList<JointDistribution.Entry<XType, XType>> attributesPairsEntries = new ArrayList<>(attributesDistribution.getEntries());
+		ArrayList<JointDistribution.Entry<Tuple<XType, XType>,Double>> attributesPairsEntries = new ArrayList<>(attributesDistribution.getEntries());
 		Collections.sort(attributesPairsEntries, comparator);
-		ArrayList<JointDistribution.Entry<XType, XType>> newAttributesPairsEntries = new ArrayList<>(newAttributesDistribution.getEntries());
+		ArrayList<JointDistribution.Entry<Tuple<XType, XType>,Double>> newAttributesPairsEntries = new ArrayList<>(newAttributesDistribution.getEntries());
 		Collections.sort(newAttributesPairsEntries, comparator);
 
 		for (int i = 0; i < attributesPairsEntries.size() && i < 20; i += 1) {
-			JointDistribution.Entry<XType, XType> originalEntry = attributesPairsEntries.get(i);
-			JointDistribution.Entry<XType, XType> newEntry = newAttributesPairsEntries.get(i);
-			System.out.print(originalEntry.getXvalue() + " " + originalEntry.getYvalue() + " " + originalEntry.getProbability() + " --- ");
-			System.out.println(newEntry.getXvalue() + " " + newEntry.getYvalue() + " " + newEntry.getProbability());
+			JointDistribution.Entry<Tuple<XType, XType>,Double> originalEntry = attributesPairsEntries.get(i);
+			JointDistribution.Entry<Tuple<XType, XType>,Double> newEntry = newAttributesPairsEntries.get(i);
+			System.out.print(originalEntry.getKey().getX() + " " + originalEntry.getKey().getY() + " " + originalEntry.getValue() + " --- ");
+			System.out.println(newEntry.getKey().getX() + " " + newEntry.getKey().getY() + " " + newEntry.getValue());
 		}
 
-		System.out.println("\nChi-Square: "+chiSquareTest(attributesDistribution, newAttributesDistribution, edges));
+		System.out.println("\nChi-Square: "+chiSquareTest(attributesDistribution, newAttributesDistribution, edges.size()));
 	}
 
-	static public  double chiSquareTest(JointDistribution observed, JointDistribution calculated,Table<Long, Long> edges) {
-
-		Set<Long> nodes = new HashSet<>();
-		for(Tuple<Long,Long> t:edges)
-		{
-			nodes.add(t.getX());
-			nodes.add(t.getY());
-		}
+	static public  <X extends Comparable<X>, Y extends Comparable<Y>> double chiSquareTest(JointDistribution<X,Y> observed, JointDistribution<X,Y> calculated, long size) {
 
 		double chiSquareTest = 0D;
-		for(int i = 0; i< observed.size();i++)
+		for(JointDistribution.Entry<Tuple<X,Y>, Double> observedEntry : observed.getEntries())
 		{
-			JointDistribution.Entry observedEntry = observed.get(i);
-			Tuple observedTuple = observedEntry.getTuple();
+			Tuple observedTuple = observedEntry.getKey();
 			
-			double observedProbability = observedEntry.getProbability();
+			double observedProbability = observedEntry.getValue();
 			double calculatedProbability = calculated.getProbability(observedTuple);
 
-			double observedOccurrences = observedProbability*edges.size();
-			double calculatedOccurrences = calculatedProbability*edges.size();
+			double observedOccurrences = observedProbability*size;
+			double calculatedOccurrences = calculatedProbability*size;
 
 			chiSquareTest+=Math.pow(calculatedOccurrences-observedOccurrences,2)/observedOccurrences;
-			
 		}
-
-		
 
 		return chiSquareTest;
 	}

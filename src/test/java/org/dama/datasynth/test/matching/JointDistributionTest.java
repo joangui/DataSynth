@@ -23,13 +23,13 @@ public class JointDistributionTest {
         InputStream stream = new ByteArrayInputStream(str.getBytes());
         JointDistribution<String,String> distribution = new JointDistribution<>();
         distribution.load(stream," ", (String s) -> s, (String s) -> s );
-        JointDistribution.Entry<String,String> maleFemale = new JointDistribution.Entry<>("Male","Female",0.7);
-        JointDistribution.Entry<String,String> maleMale = new JointDistribution.Entry<>("Male","Male",0.15);
-        JointDistribution.Entry<String,String> femaleFemale = new JointDistribution.Entry<>("Female","Female",0.15);
-        List<JointDistribution.Entry<String,String>> entries = distribution.getEntries();
-        assertTrue(entries.indexOf(maleMale) != -1);
-        assertTrue(entries.indexOf(maleFemale) != -1);
-        assertTrue(entries.indexOf(femaleFemale) != -1);
+
+        Tuple<String,String> maleFemale = new Tuple<String,String>("Male","Female");
+        Tuple<String,String> maleMale = new Tuple<>("Male","Male");
+        Tuple<String,String> femaleFemale = new Tuple("Female","Female");
+        assertTrue(distribution.getProbability(maleFemale) == 0.7D);
+        assertTrue(distribution.getProbability(maleMale) == 0.15D);
+        assertTrue(distribution.getProbability(femaleFemale) == 0.15D);
     }
 
     @Test
@@ -49,12 +49,11 @@ public class JointDistributionTest {
         JointDistribution<String,String> distribution = new JointDistribution<>();
         distribution.learn(pairs);
 
-        JointDistribution.Entry<String,String> maleFemale = new JointDistribution.Entry<>("Male","Female",0.8);
-        JointDistribution.Entry<String,String> maleMale = new JointDistribution.Entry<>("Male","Male",0.1);
-        JointDistribution.Entry<String,String> femaleFemale = new JointDistribution.Entry<>("Female","Female",0.1);
-        List<JointDistribution.Entry<String,String>> entries = distribution.getEntries();
-        assertTrue(entries.indexOf(maleMale) != -1);
-        assertTrue(entries.indexOf(maleFemale) != -1);
-        assertTrue(entries.indexOf(femaleFemale) != -1);
+        Tuple<String,String> maleFemale = new Tuple<String,String>("Male","Female");
+        Tuple<String,String> maleMale = new Tuple<>("Male","Male");
+        Tuple<String,String> femaleFemale = new Tuple("Female","Female");
+        assertTrue(distribution.getProbability(maleFemale) == 0.8D);
+        assertTrue(distribution.getProbability(maleMale) == 0.1D);
+        assertTrue(distribution.getProbability(femaleFemale) == 0.1D);
     }
 }

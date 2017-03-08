@@ -21,10 +21,10 @@ public class EdgeTypePool< XType extends Comparable<XType>,
     public EdgeTypePool(JointDistribution<XType, YType> distribution, long numEdges, long seed) {
 
         ArrayList<Tuple<XType,YType>> tempCollection = new ArrayList<>();
-        for(JointDistribution.Entry<XType,YType> entry : distribution.getEntries()) {
-            long numToInsert = (long)(entry.getProbability()*numEdges);
+        for(JointDistribution.Entry<Tuple<XType,YType>,Double> entry : distribution.getEntries()) {
+            long numToInsert = (long)(entry.getValue()*numEdges);
             for(long i = 0; i < numToInsert; i+=1) {
-                tempCollection.add(new Tuple<>(entry.getXvalue(), entry.getYvalue()));
+                tempCollection.add(new Tuple<>(entry.getKey().getX(), entry.getKey().getY()));
             }
         }
         Random random = new Random();

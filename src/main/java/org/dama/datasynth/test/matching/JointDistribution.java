@@ -9,61 +9,6 @@ import java.util.function.Function;
  */
 public class JointDistribution<X extends Comparable<X>, Y extends Comparable<Y>> extends HashMap<Tuple<X, Y>, Double> {
 
-	public static class Entry<  X extends Comparable<X>, Y extends Comparable<Y>> {
-
-		private X xvalue;
-		private Y yvalue;
-		private double probability;
-
-		public Entry(X xvalue, Y yvalue, double probability) {
-			this.xvalue = xvalue;
-			this.yvalue = yvalue;
-			this.probability = probability;
-		}
-
-		public X getXvalue() {
-			return xvalue;
-		}
-
-		public void setXvalue(X xvalue) {
-			this.xvalue = xvalue;
-		}
-
-		public Y getYvalue() {
-			return yvalue;
-		}
-
-		public void setYvalue(Y yvalue) {
-			this.yvalue = yvalue;
-		}
-
-		public double getProbability() {
-			return probability;
-		}
-
-		public void setProbability(double probability) {
-			this.probability = probability;
-		}
-
-		public Tuple<X, Y> getTuple() {
-			return new Tuple<>(xvalue, yvalue);
-		}
-
-		
-
-		@Override
-		public boolean equals(Object obj) {
-			if (obj.getClass() != this.getClass()) {
-				return false;
-			}
-			Entry<X, Y> entry = (Entry<X, Y>) obj;
-			return xvalue.compareTo(entry.getXvalue()) == 0
-				&& yvalue.compareTo(entry.getYvalue()) == 0
-				&& probability == entry.getProbability();
-		}
-	}
-
-	private ArrayList<Entry<X, Y>> entries = new ArrayList<Entry<X, Y>>();
 
 	/**
 	 * Loads the Joint probability distribution from a file. The file
@@ -82,7 +27,6 @@ public class JointDistribution<X extends Comparable<X>, Y extends Comparable<Y>>
 			String line = null;
 			while ((line = fileReader.readLine()) != null) {
 				String fields[] = line.split(separator);
-				entries.add(new Entry(xparser.apply(fields[0]), yparser.apply(fields[1]), Double.parseDouble(fields[2])));
 				put(new Tuple<>(xparser.apply(fields[0]), yparser.apply(fields[1])), Double.parseDouble(fields[2]));
 			}
 		} catch (Exception e) {
@@ -112,7 +56,6 @@ public class JointDistribution<X extends Comparable<X>, Y extends Comparable<Y>>
 
 		for (Map.Entry<Tuple<X, Y>, Long> e : counts.entrySet()) {
 			Double probability = e.getValue() / (double) (tuplecount);
-			entries.add(new Entry<X, Y>(e.getKey().getX(), e.getKey().getY(), probability));
 			put(new Tuple<>(e.getKey().getX(), e.getKey().getY()), probability);
 		}
 
@@ -121,20 +64,16 @@ public class JointDistribution<X extends Comparable<X>, Y extends Comparable<Y>>
 
 	private void checkCorrectness() {
 		double sum = 0.0;
-		for (Entry e : entries) {
-			sum += e.probability;
+		for (Map.Entry<Tuple<X,Y>,Double> e : entrySet()) {
+			sum += e.getValue();
 		}
 		if (Math.abs(sum - 1.0) > 0.0001) {
 			throw new RuntimeException("probabilities sum more than 1.0");
 		}
 	}
 
-	public List<Entry<X, Y>> getEntries() {
-		return entries;
-	}
-
-	public Entry<X, Y> get(int i) {
-		return entries.get(i);
+	public List<Map.Entry<Tuple<X,Y>, Double>> getEntries() {
+		return new ArrayList<>(entrySet());
 	}
 
 	public double getProbability(Tuple<X, Y> tuple) {
