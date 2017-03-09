@@ -1,7 +1,9 @@
-package org.dama.datasynth.test.streams;
+package org.dama.datasynth.test.graphs;
 
-import org.dama.datasynth.test.graphreader.types.Graph;
-import org.dama.datasynth.test.graphreader.types.Partition;
+import org.dama.datasynth.test.graphs.types.GraphPartitioner;
+import org.dama.datasynth.test.graphs.types.Graph;
+import org.dama.datasynth.test.graphs.types.Partition;
+import org.dama.datasynth.test.graphs.types.Traversal;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -25,13 +27,24 @@ public class LinearWeightedGreedyPartitioner implements GraphPartitioner {
     }
 
 	@Override
-	public void initialize(Graph graph, double [] partitionCapacities) {
+	public void initialize(Graph graph, Class<? extends Traversal> traversalType, double [] partitionCapacities) {
 		this.graph = graph;
+
 		this.partitionCapacities = new int[partitionCapacities.length];
 		Arrays.setAll(this.partitionCapacities, (int i ) -> (int)(partitionCapacities[i]*graph.getNumNodes()));
 		this.partitionCounts = new int[partitionCapacities.length];
 		Arrays.fill(partitionCounts,0);
-		for( long node : graph.getNodes()) {
+
+		Traversal traversal = null;
+		try {
+			traversal = traversalType.newInstance();
+			traversal.initialize(graph);
+		} catch ( Exception e) {
+			throw new RuntimeException(e);
+		}
+
+		while(traversal.hasNext()) {
+		    long node = traversal.next();
 		    int partition = findBestPartition(node);
 		    vertexToPartition.put(node,partition);
 		    partitionCounts[partition]+=1;

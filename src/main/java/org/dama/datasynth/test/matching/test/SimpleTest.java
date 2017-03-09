@@ -9,9 +9,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import org.dama.datasynth.test.graphreader.GraphReaderFromNodePairFile;
-import org.dama.datasynth.test.graphreader.types.Graph;
-import org.dama.datasynth.test.graphreader.types.Partition;
+import org.dama.datasynth.test.graphs.GraphReaderFromNodePairFile;
+import org.dama.datasynth.test.graphs.types.Graph;
+import org.dama.datasynth.test.graphs.types.Partition;
 import org.dama.datasynth.test.matching.Table;
 import org.dama.datasynth.test.matching.Tuple;
 
@@ -22,7 +22,7 @@ import org.dama.datasynth.test.matching.Tuple;
 public class SimpleTest {
 
 	static Random r = new Random(1234567890L);
-	static int NUM_ATTRIBUTES = 20;
+	static int NUM_ATTRIBUTES = 3;
 
 	static public void main(String[] argv) throws Exception {
 		System.out.println("Simple Test Run");

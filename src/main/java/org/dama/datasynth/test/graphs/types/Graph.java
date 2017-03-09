@@ -1,8 +1,7 @@
-package org.dama.datasynth.test.graphreader.types;
+package org.dama.datasynth.test.graphs.types;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 /**

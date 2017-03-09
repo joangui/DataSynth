@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.dama.datasynth.test.graphreader.types;
+package org.dama.datasynth.test.graphs.types;
 
 import java.util.HashMap;
 import java.util.HashSet;

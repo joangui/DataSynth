@@ -1,7 +1,6 @@
-package org.dama.datasynth.test.streams;
+package org.dama.datasynth.test.graphs;
 
-import org.dama.datasynth.test.graphreader.types.Edge;
-import org.dama.datasynth.test.graphreader.types.Graph;
+import org.dama.datasynth.test.graphs.types.Graph;
 
 /**
  * Created by aprat on 27/02/17.
@@ -10,10 +9,8 @@ public class OneToOneGraph extends Graph {
 
     public OneToOneGraph( long numNodes )  {
         for(int i = 0; i < numNodes/2; i+=1) {
-           addEdge(i,numNodes/2 + i);
+            addEdge(i,numNodes/2 + i);
             addEdge(numNodes/2 + i, i);
         }
     }
-
-
 }
