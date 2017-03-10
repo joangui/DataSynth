@@ -98,4 +98,9 @@ public class StochasticBlockModelMatchingTest {
         Map<Long,Long> result = matching.run(graph, table, distribution);
         assertTrue(result.size() == 20);
     }
+
+    @Test
+    public void qualityTest() {
+
+    }
 }

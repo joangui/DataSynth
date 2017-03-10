@@ -47,6 +47,10 @@ public class StochasticBlockModel <T> {
         return probabilities;
     }
 
+    public long[] getSizes() {
+        return sizes;
+    }
+
     public static <T extends Comparable<T>> StochasticBlockModel<T> extractFrom(long numEdges, Table<Long,T> values,
                                                                                 JointDistribution<T,T> distribution ) {
 

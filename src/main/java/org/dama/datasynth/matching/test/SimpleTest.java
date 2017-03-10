@@ -78,8 +78,6 @@ public class SimpleTest {
 			edges.add(edge);
 		}
 
-
-		
 		MatchingCommunityTest.run(attributes, edges);
 	}
 
