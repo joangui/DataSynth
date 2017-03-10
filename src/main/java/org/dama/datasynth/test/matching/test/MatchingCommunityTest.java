@@ -7,8 +7,6 @@ import org.dama.datasynth.test.matching.Dictionary;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Created by aprat on 5/03/17.
@@ -78,7 +76,7 @@ public class MatchingCommunityTest {
 		attributesDistribution.learn(connectedAttributes);
 
 		System.out.println("Executing matching algorithm");
-		Map<Long, Long> mapping = Matching.run(edges, attributes, attributesDistribution);
+		Map<Long, Long> mapping = MatchingGreedy.run(edges, attributes, attributesDistribution);
 		System.out.println("Size of the mapping: " + mapping.size());
 		System.out.println("Size of the attribute table: " + attributes.size());
 		Table<XType, XType> newConnectedAttributes = new Table<>();
