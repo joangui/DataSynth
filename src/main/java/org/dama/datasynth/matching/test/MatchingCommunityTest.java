@@ -1,6 +1,7 @@
 package org.dama.datasynth.matching.test;
 
 import org.apache.commons.math3.stat.inference.ChiSquareTest;
+import org.dama.datasynth.matching.*;
 import org.dama.datasynth.matching.Dictionary;
 
 import java.io.FileInputStream;
