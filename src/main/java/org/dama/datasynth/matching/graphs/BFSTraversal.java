@@ -3,7 +3,10 @@ package org.dama.datasynth.matching.graphs;
 import org.dama.datasynth.matching.graphs.types.Graph;
 import org.dama.datasynth.matching.graphs.types.Traversal;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Set;
 
 /**
  * Created by aprat on 9/03/17.

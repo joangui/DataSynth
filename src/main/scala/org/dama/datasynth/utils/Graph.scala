@@ -1,7 +1,7 @@
 package org.dama.datasynth.utils
 
 import scala.collection.mutable
-import scala.collection.mutable.{ArrayBuffer, ListBuffer}
+import scala.collection.mutable.ArrayBuffer
 
 /**
   * Created by aprat on 29/11/16.

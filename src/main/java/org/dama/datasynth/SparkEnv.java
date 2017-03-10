@@ -1,7 +1,7 @@
 package org.dama.datasynth;
 
-import org.apache.spark.api.java.*;
 import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaSparkContext;
 
 public final class SparkEnv{
     public static SparkConf conf;

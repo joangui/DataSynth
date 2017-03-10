@@ -3,11 +3,10 @@
   */
 package org.dama.datasynth.homophily
 
-import no.uib.cipr.matrix.{DenseMatrix, Matrix}
+import no.uib.cipr.matrix.DenseMatrix
 import org.dama.datasynth.utils._
 
 import scala.collection.mutable
-import scala.collection.mutable.{ArrayBuffer, ListBuffer}
 import scala.io.Source
 import scala.util.Random
 

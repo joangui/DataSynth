@@ -1,7 +1,6 @@
 package org.dama.datasynth.utils
 
 import no.uib.cipr.matrix._
-import no.uib.cipr.matrix.sparse.{CompDiagMatrix, LinkedSparseMatrix}
 
 import scala.util.Random
 

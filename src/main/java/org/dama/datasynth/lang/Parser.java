@@ -1,14 +1,14 @@
 package org.dama.datasynth.lang;
 
 import org.dama.datasynth.common.Types;
-import java.io.StringReader;
-import java.io.IOException;
-import java.util.HashMap;
-
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.HashMap;
 
 /**
  * Parser for the DataSynth queries

@@ -1,10 +1,7 @@
-package org.dama.datasynth.test.matching;
+package org.dama.datasynth.matching;
 
-import org.dama.datasynth.matching.Distribution;
 import org.junit.Test;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 

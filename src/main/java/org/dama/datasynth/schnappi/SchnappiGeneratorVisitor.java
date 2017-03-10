@@ -2,10 +2,8 @@ package org.dama.datasynth.schnappi;
 
 
 import org.dama.datasynth.common.Types;
-import org.dama.datasynth.schnappi.ast.Ast;
 import org.dama.datasynth.schnappi.ast.*;
 import org.dama.datasynth.schnappi.ast.Number;
-import org.dama.datasynth.schnappi.ast.Operation;
 import org.dama.datasynth.schnappi.solver.Solver;
 
 import java.util.ArrayList;

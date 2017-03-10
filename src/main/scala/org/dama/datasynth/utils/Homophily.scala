@@ -1,6 +1,6 @@
 package org.dama.datasynth.utils
 
-import no.uib.cipr.matrix.{DenseMatrix, DenseVector, EVD, Matrix}
+import no.uib.cipr.matrix.{DenseMatrix, EVD, Matrix}
 import org.dama.datasynth.algorithms.HungarianAlgorithm
 
 import scala.util.Random

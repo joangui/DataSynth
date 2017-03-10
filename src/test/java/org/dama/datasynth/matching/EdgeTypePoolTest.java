@@ -1,8 +1,5 @@
-package org.dama.datasynth.test.matching;
+package org.dama.datasynth.matching;
 
-import org.dama.datasynth.matching.Tuple;
-import org.dama.datasynth.matching.JointDistribution;
-import org.dama.datasynth.matching.EdgeTypePool;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;

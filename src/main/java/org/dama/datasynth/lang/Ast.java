@@ -3,7 +3,10 @@ package org.dama.datasynth.lang;
 import org.dama.datasynth.common.Types;
 import org.dama.datasynth.lang.semanticcheckpasses.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by aprat on 10/04/16.

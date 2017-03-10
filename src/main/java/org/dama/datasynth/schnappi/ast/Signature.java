@@ -1,9 +1,7 @@
 package org.dama.datasynth.schnappi.ast;
 
-import org.dama.datasynth.common.Types;
 import org.dama.datasynth.lang.dependencygraph.DependencyGraph;
 import org.dama.datasynth.lang.dependencygraph.Vertex;
-import org.dama.datasynth.schnappi.CompilerException;
 import org.dama.datasynth.schnappi.solver.DependencyGraphMatcher;
 
 import java.util.ArrayList;

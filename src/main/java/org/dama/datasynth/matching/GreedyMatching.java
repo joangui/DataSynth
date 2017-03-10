@@ -1,15 +1,13 @@
 package org.dama.datasynth.matching;
 
-import org.dama.datasynth.matching.graphs.types.Edge;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Created by aprat on 2/03/17.
  */
-public class MatchingGreedy implements Matching {
+public class GreedyMatching implements Matching {
 
 
     /**

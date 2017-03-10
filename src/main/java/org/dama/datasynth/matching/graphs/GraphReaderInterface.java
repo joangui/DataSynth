@@ -5,8 +5,8 @@
  */
 package org.dama.datasynth.matching.graphs;
 
-import org.dama.datasynth.matching.graphs.types.Partition;
 import org.dama.datasynth.matching.graphs.types.Graph;
+import org.dama.datasynth.matching.graphs.types.Partition;
 
 /**
  *

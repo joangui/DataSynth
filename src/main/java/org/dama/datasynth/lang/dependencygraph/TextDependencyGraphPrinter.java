@@ -2,7 +2,10 @@ package org.dama.datasynth.lang.dependencygraph;
 
 import org.dama.datasynth.DataSynth;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

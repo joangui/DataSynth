@@ -1,6 +1,5 @@
 
-import sys, os
-
+import sys
 
 # 1st arg city to country file
 # 2nd arg person to city file

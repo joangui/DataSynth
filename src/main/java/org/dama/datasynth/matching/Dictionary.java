@@ -1,6 +1,5 @@
 package org.dama.datasynth.matching;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**

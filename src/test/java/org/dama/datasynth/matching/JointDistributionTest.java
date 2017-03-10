@@ -1,14 +1,9 @@
-package org.dama.datasynth.test.matching;
+package org.dama.datasynth.matching;
 
-import org.dama.datasynth.matching.Tuple;
-import org.dama.datasynth.matching.JointDistribution;
-import org.dama.datasynth.matching.Table;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.Assert.assertTrue;
 

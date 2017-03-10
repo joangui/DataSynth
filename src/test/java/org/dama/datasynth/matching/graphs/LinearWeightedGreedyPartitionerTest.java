@@ -1,10 +1,4 @@
-package org.dama.datasynth.test.graphs;
-
-import org.dama.datasynth.matching.graphs.LinearWeightedGreedyPartitioner;
-import org.dama.datasynth.matching.graphs.BFSTraversal;
-import org.dama.datasynth.matching.graphs.OneToOneGraph;
-import org.dama.datasynth.matching.graphs.StochasticBlockModelGraph;
-import static org.junit.Assert.assertTrue;
+package org.dama.datasynth.matching.graphs;
 
 import org.dama.datasynth.matching.graphs.types.Graph;
 import org.dama.datasynth.matching.graphs.types.Partition;
@@ -12,6 +6,8 @@ import org.junit.Test;
 
 import java.util.Map;
 import java.util.Set;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by aprat on 27/02/17.

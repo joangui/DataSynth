@@ -4,7 +4,6 @@ import org.dama.datasynth.DataSynth;
 import org.dama.datasynth.common.Types;
 import org.dama.datasynth.schnappi.ast.*;
 import org.dama.datasynth.schnappi.ast.Number;
-import org.dama.datasynth.schnappi.ast.Visitor;
 
 import java.util.Iterator;
 import java.util.Map;

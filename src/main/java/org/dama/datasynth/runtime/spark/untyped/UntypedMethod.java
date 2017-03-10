@@ -1,13 +1,10 @@
 package org.dama.datasynth.runtime.spark.untyped;
 
 import org.dama.datasynth.common.Types;
-import org.dama.datasynth.runtime.ExecutionException;
 import org.dama.datasynth.generators.Generator;
 
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 import java.util.List;
 
 /**

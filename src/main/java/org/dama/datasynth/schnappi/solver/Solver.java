@@ -3,10 +3,10 @@ package org.dama.datasynth.schnappi.solver;
 import org.dama.datasynth.lang.dependencygraph.DependencyGraph;
 import org.dama.datasynth.lang.dependencygraph.Vertex;
 import org.dama.datasynth.schnappi.ast.Ast;
-import org.dama.datasynth.schnappi.ast.*;
-import org.dama.datasynth.schnappi.ast.Operation;
-import org.dama.datasynth.schnappi.compilerpass.SolverInstantiator;
+import org.dama.datasynth.schnappi.ast.Node;
+import org.dama.datasynth.schnappi.ast.Signature;
 import org.dama.datasynth.schnappi.ast.Visitor;
+import org.dama.datasynth.schnappi.compilerpass.SolverInstantiator;
 
 /**
  * Created by quim on 5/5/16.

@@ -1,9 +1,9 @@
 package org.dama.datasynth.utils
 
-import no.uib.cipr.matrix.{DenseMatrix, EVD, Matrices, Matrix}
-import org.scalatest.junit.AssertionsForJUnit
+import no.uib.cipr.matrix.{DenseMatrix, Matrix}
 import org.junit.Assert._
 import org.junit.Test
+import org.scalatest.junit.AssertionsForJUnit
 
 /**
   * Created by aprat on 15/11/16.

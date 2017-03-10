@@ -1,15 +1,11 @@
 package org.dama.datasynth.schnappi.compilerpass;
 
-import org.dama.datasynth.common.Types;
-import org.dama.datasynth.lang.dependencygraph.DependencyGraph;
-import org.dama.datasynth.lang.dependencygraph.Vertex;
-import org.dama.datasynth.schnappi.CompilerException;
-import org.dama.datasynth.schnappi.ast.*;
-import org.dama.datasynth.schnappi.ast.Number;
-import org.dama.datasynth.schnappi.solver.DependencyGraphMatcher;
-import org.dama.datasynth.schnappi.solver.Solver;
+import org.dama.datasynth.schnappi.ast.Assign;
+import org.dama.datasynth.schnappi.ast.Node;
+import org.dama.datasynth.schnappi.ast.Visitor;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by aprat on 22/08/16.

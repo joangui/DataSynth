@@ -1,15 +1,13 @@
 package org.dama.datasynth.matching.test;
 
-import org.dama.datasynth.matching.Dictionary;
 
+import org.dama.datasynth.matching.*;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.*;
-import org.dama.datasynth.matching.JointDistribution;
-import org.dama.datasynth.matching.Matching;
-import org.dama.datasynth.matching.MatchingGreedy;
-import org.dama.datasynth.matching.Table;
-import org.dama.datasynth.matching.Tuple;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Map;
 import org.dama.datasynth.matching.utils.DistributionStatistics;
 
 /**
@@ -80,7 +78,7 @@ public class MatchingCommunityTest {
 		attributesDistribution.learn(connectedAttributes);
 
 		System.out.println("Executing matching algorithm");
-		Matching matching = new MatchingGreedy();
+		Matching matching = new GreedyMatching();
 		Map<Long, Long> mapping = matching.run(edges, attributes, attributesDistribution);
 		System.out.println("Size of the mapping: " + mapping.size());
 		System.out.println("Size of the attribute table: " + attributes.size());
@@ -128,7 +126,11 @@ public class MatchingCommunityTest {
 			System.out.println(newEntry.getKey().getX() + " " + newEntry.getKey().getY() + " " + newEntry.getValue());
 		}
 		DistributionStatistics ds = new DistributionStatistics(attributesDistribution, newAttributesDistribution, edges.size());
-		double chiSquare = DistributionStatistics.chiSquareTest();
+		double chiSquare = ds.chiSquareTest();
 		System.out.println("\nChi-Square: " + chiSquare);
+
+
+		double dmax = ds.dMaxTest();
+		System.out.println("\nChi-Square: " + dmax);
 	}
 }

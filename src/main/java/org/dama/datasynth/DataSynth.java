@@ -4,24 +4,27 @@ package org.dama.datasynth;
 
 
 import com.beust.jcommander.JCommander;
-import org.dama.datasynth.lang.dependencygraph.DependencyGraph;
-import org.dama.datasynth.lang.dependencygraph.TextDependencyGraphPrinter;
 import org.dama.datasynth.lang.Ast;
 import org.dama.datasynth.lang.Parser;
 import org.dama.datasynth.lang.SemanticException;
 import org.dama.datasynth.lang.SyntacticException;
+import org.dama.datasynth.lang.dependencygraph.DependencyGraph;
+import org.dama.datasynth.lang.dependencygraph.TextDependencyGraphPrinter;
 import org.dama.datasynth.lang.dependencygraph.builder.DependencyGraphBuilder;
-//import org.dama.datasynth.runtime.spark.SparkInterpreter;
+import org.dama.datasynth.schnappi.Compiler;
 import org.dama.datasynth.schnappi.ast.printer.AstTextPrinter;
 import org.dama.datasynth.schnappi.ast.printer.AstTreePrinter;
-import org.dama.datasynth.schnappi.Compiler;
 import org.dama.datasynth.utils.LogFormatter;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import java.util.logging.*;
+//import org.dama.datasynth.runtime.spark.SparkInterpreter;
 
 /**
  * Created by aprat on 10/04/16.

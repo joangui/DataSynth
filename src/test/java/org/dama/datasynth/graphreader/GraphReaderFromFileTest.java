@@ -5,11 +5,12 @@
  */
 package org.dama.datasynth.graphreader;
 
-import org.dama.datasynth.test.graphreader.GraphReaderFromFile;
-import org.dama.datasynth.test.graphreader.types.Graph;
-import org.dama.datasynth.test.graphreader.types.Partition;
+import org.dama.datasynth.matching.graphs.GraphReaderFromFile;
+import org.dama.datasynth.matching.graphs.types.Graph;
+import org.dama.datasynth.matching.graphs.types.Partition;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  *
@@ -22,7 +23,7 @@ public class GraphReaderFromFileTest {
 		String rootPath ="/Users/joangui/DAMA/DataSynth/parmetis-4.0.3/Graphs/";
 		GraphReaderFromFile graphReaderFromFile = new GraphReaderFromFile(rootPath+"rotor.graph", rootPath+"rotor.graph.part");
 		Graph g =graphReaderFromFile.getGraph();
-		long numNodes = g.numNodes();
+		long numNodes = g.getNumNodes();
 		assertTrue(numNodes==99618L);
 		
 		Partition partitions = graphReaderFromFile.getPartitions(g);

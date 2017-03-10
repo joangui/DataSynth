@@ -2,8 +2,8 @@ package org.dama.datasynth.utils
 
 import no.uib.cipr.matrix.DenseMatrix
 import org.dama.datasynth.homophily.HomophilyIsomorphism
-import org.junit.Test
 import org.junit.Assert._
+import org.junit.Test
 import org.scalatest.junit.AssertionsForJUnit
 
 import scala.util.Random

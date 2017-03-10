@@ -1,8 +1,5 @@
 package org.dama.datasynth.schnappi.ast;
 
-import org.dama.datasynth.common.Types;
-import org.dama.datasynth.schnappi.solver.DependencyGraphMatcher;
-
 import java.util.ArrayList;
 import java.util.List;
 
