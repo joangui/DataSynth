@@ -1,6 +1,5 @@
-package org.dama.datasynth.test.matching;
+package org.dama.datasynth.matching;
 
-import org.dama.datasynth.test.graphs.types.Edge;
 
 import java.util.ArrayList;
 import java.util.HashMap;

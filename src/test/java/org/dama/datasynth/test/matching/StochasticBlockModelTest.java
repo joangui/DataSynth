@@ -1,5 +1,9 @@
 package org.dama.datasynth.test.matching;
 
+import org.dama.datasynth.matching.JointDistribution;
+import org.dama.datasynth.matching.StochasticBlockModel;
+import org.dama.datasynth.matching.Table;
+import org.dama.datasynth.matching.Tuple;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;

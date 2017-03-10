@@ -1,4 +1,4 @@
-package org.dama.datasynth.test.graphs.types;
+package org.dama.datasynth.matching.graphs.types;
 
 /**
  * Created by aprat on 9/03/17.

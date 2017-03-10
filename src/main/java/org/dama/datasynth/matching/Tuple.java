@@ -1,4 +1,4 @@
-package org.dama.datasynth.test.matching;
+package org.dama.datasynth.matching;
 
 /**
  * Created by aprat on 5/03/17.

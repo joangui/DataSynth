@@ -1,6 +1,4 @@
-package org.dama.datasynth.test.matching;
-
-import no.uib.cipr.matrix.DenseMatrix;
+package org.dama.datasynth.matching;
 
 import java.util.Arrays;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package org.dama.datasynth.test.matching;
+package org.dama.datasynth.matching;
 
 import java.io.BufferedReader;
 import java.io.InputStream;

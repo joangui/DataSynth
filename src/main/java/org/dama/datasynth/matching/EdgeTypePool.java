@@ -1,4 +1,4 @@
-package org.dama.datasynth.test.matching;
+package org.dama.datasynth.matching;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.LinkedListMultimap;

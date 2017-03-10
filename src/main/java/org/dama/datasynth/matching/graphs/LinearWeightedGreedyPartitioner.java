@@ -1,9 +1,9 @@
-package org.dama.datasynth.test.graphs;
+package org.dama.datasynth.matching.graphs;
 
-import org.dama.datasynth.test.graphs.types.GraphPartitioner;
-import org.dama.datasynth.test.graphs.types.Graph;
-import org.dama.datasynth.test.graphs.types.Partition;
-import org.dama.datasynth.test.graphs.types.Traversal;
+import org.dama.datasynth.matching.graphs.types.GraphPartitioner;
+import org.dama.datasynth.matching.graphs.types.Graph;
+import org.dama.datasynth.matching.graphs.types.Partition;
+import org.dama.datasynth.matching.graphs.types.Traversal;
 
 import java.util.Arrays;
 import java.util.HashMap;

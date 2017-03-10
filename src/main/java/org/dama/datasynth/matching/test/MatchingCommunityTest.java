@@ -1,8 +1,7 @@
-package org.dama.datasynth.test.matching.test;
+package org.dama.datasynth.matching.test;
 
 import org.apache.commons.math3.stat.inference.ChiSquareTest;
-import org.dama.datasynth.test.matching.*;
-import org.dama.datasynth.test.matching.Dictionary;
+import org.dama.datasynth.matching.Dictionary;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -98,9 +97,9 @@ public class MatchingCommunityTest {
 		JointDistribution<XType, XType> newAttributesDistribution = new JointDistribution<>();
 		newAttributesDistribution.learn(newConnectedAttributes);
 
-		Comparator comparator = new Comparator<JointDistribution.Entry<Tuple<XType, XType>,Double>>() {
+		Comparator comparator = new Comparator<JointDistribution.Entry<Tuple<XType, XType>, Double>>() {
 			@Override
-			public int compare(JointDistribution.Entry<Tuple<XType, XType>,Double> o1, JointDistribution.Entry<Tuple<XType, XType>,Double> o2) {
+			public int compare(JointDistribution.Entry<Tuple<XType, XType>, Double> o1, JointDistribution.Entry<Tuple<XType, XType>, Double> o2) {
 				if (o1.getValue() < o2.getValue()) {
 					return 1;
 				}
@@ -112,44 +111,47 @@ public class MatchingCommunityTest {
 			}
 		};
 
-		ArrayList<JointDistribution.Entry<Tuple<XType, XType>,Double>> attributesPairsEntries = new ArrayList<>(attributesDistribution.getEntries());
+		
+		ArrayList<JointDistribution.Entry<Tuple<XType, XType>, Double>> attributesPairsEntries = new ArrayList<>(attributesDistribution.getEntries());
 		Collections.sort(attributesPairsEntries, comparator);
-		ArrayList<JointDistribution.Entry<Tuple<XType, XType>,Double>> newAttributesPairsEntries = new ArrayList<>(newAttributesDistribution.getEntries());
+		ArrayList<JointDistribution.Entry<Tuple<XType, XType>, Double>> newAttributesPairsEntries = new ArrayList<>(newAttributesDistribution.getEntries());
 		Collections.sort(newAttributesPairsEntries, comparator);
 
 		for (int i = 0; i < attributesPairsEntries.size() && i < 20; i += 1) {
-			JointDistribution.Entry<Tuple<XType, XType>,Double> originalEntry = attributesPairsEntries.get(i);
-			JointDistribution.Entry<Tuple<XType, XType>,Double> newEntry = newAttributesPairsEntries.get(i);
+			JointDistribution.Entry<Tuple<XType, XType>, Double> originalEntry = attributesPairsEntries.get(i);
+			JointDistribution.Entry<Tuple<XType, XType>, Double> newEntry = newAttributesPairsEntries.get(i);
 			System.out.print(originalEntry.getKey().getX() + " " + originalEntry.getKey().getY() + " " + originalEntry.getValue() + " --- ");
 			System.out.println(newEntry.getKey().getX() + " " + newEntry.getKey().getY() + " " + newEntry.getValue());
 		}
 
-		System.out.println("\nChi-Square: "+chiSquareTest(attributesDistribution, newAttributesDistribution, edges.size()));
+		System.out.println("\nChi-Square: " + chiSquareTest(attributesDistribution, newAttributesDistribution, edges.size()));
 	}
 
-	static public  <X extends Comparable<X>, Y extends Comparable<Y>> double chiSquareTest(JointDistribution<X,Y> expected, JointDistribution<X,Y> observed, long size) {
+	static public <X extends Comparable<X>, Y extends Comparable<Y>> double chiSquareTest(JointDistribution<X, Y> expected, JointDistribution<X, Y> observed, long size) {
 
-
-		Comparator comparator = new Comparator<JointDistribution.Entry<Tuple<X, Y>,Double>>() {
+		System.out.println("#edges: "+size);
+		System.out.println("sample size 1%:"+(long)(size*.01));
+		size*=.01;
+		Comparator comparator = new Comparator<JointDistribution.Entry<Tuple<X, Y>, Double>>() {
 			@Override
-			public int compare(JointDistribution.Entry<Tuple<X, Y>,Double> o1, JointDistribution.Entry<Tuple<X, Y>,Double> o2) {
-			    return o1.getKey().compareTo(o2.getKey());
+			public int compare(JointDistribution.Entry<Tuple<X, Y>, Double> o1, JointDistribution.Entry<Tuple<X, Y>, Double> o2) {
+				return o1.getKey().compareTo(o2.getKey());
 			}
 		};
 
-		ArrayList<JointDistribution.Entry<Tuple<X, Y>,Double>> expectedEntries = new ArrayList<>(expected.getEntries());
+		ArrayList<JointDistribution.Entry<Tuple<X, Y>, Double>> expectedEntries = new ArrayList<>(expected.getEntries());
 		Collections.sort(expectedEntries, comparator);
-		ArrayList<JointDistribution.Entry<Tuple<X, Y>,Double>> observedEntries = new ArrayList<>(observed.getEntries());
+		ArrayList<JointDistribution.Entry<Tuple<X, Y>, Double>> observedEntries = new ArrayList<>(observed.getEntries());
 		Collections.sort(observedEntries, comparator);
 
-		double [] expectedFrequencies = new double[expectedEntries.size()];
-		for( int i = 0; i < expectedEntries.size(); ++i) {
-			expectedFrequencies[i] = (size*expectedEntries.get(i).getValue());
+		double[] expectedFrequencies = new double[expectedEntries.size()];
+		for (int i = 0; i < expectedEntries.size(); ++i) {
+			expectedFrequencies[i] = (size * expectedEntries.get(i).getValue());
 		}
 
-		long [] observedFrequencies = new long[observedEntries.size()];
-		for( int i = 0; i < observedEntries.size(); ++i) {
-			observedFrequencies[i] = (long)(size*observedEntries.get(i).getValue());
+		long[] observedFrequencies = new long[observedEntries.size()];
+		for (int i = 0; i < observedEntries.size(); ++i) {
+			observedFrequencies[i] = (long) (size * observedEntries.get(i).getValue());
 		}
 
         ChiSquareTest chiSquareTest = new ChiSquareTest();
