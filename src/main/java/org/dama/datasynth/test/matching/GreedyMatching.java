@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * Created by aprat on 2/03/17.
  */
-public class MatchingGreedy implements Matching {
+public class GreedyMatching implements Matching {
 
 
     /**
