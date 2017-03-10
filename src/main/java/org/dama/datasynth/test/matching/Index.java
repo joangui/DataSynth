@@ -8,7 +8,6 @@ import java.util.*;
 public class Index <T extends Comparable<T> > {
 
     private HashMap<T,LinkedList<Long>> data = new HashMap<>();
-    Random random = new Random();
 
     public Index(ArrayList<Tuple<Long,T>> array) {
         for(Tuple<Long,T> entry : array ) {
@@ -35,6 +34,10 @@ public class Index <T extends Comparable<T> > {
             data.remove(value);
         }
         return ret;
+    }
+
+    public List<Long> getIds(T value) {
+        return data.get(value);
     }
 
     /*public Long random() {
