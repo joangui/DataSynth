@@ -1,7 +1,8 @@
 package org.dama.datasynth.test.graphs;
 
-import org.dama.datasynth.test.graphs.types.Edge;
-import org.dama.datasynth.test.graphs.types.Graph;
+import org.dama.datasynth.matching.graphs.OneToOneGraph;
+import org.dama.datasynth.matching.graphs.types.Edge;
+import org.dama.datasynth.matching.graphs.types.Graph;
 import org.junit.Test;
 
 import java.util.Set;

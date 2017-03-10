@@ -1,6 +1,6 @@
-package org.dama.datasynth.test.graphs;
+package org.dama.datasynth.matching.graphs;
 
-import org.dama.datasynth.test.graphs.types.Graph;
+import org.dama.datasynth.matching.graphs.types.Graph;
 
 /**
  * Created by aprat on 27/02/17.

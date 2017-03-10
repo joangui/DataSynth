@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.dama.datasynth.test.graphs;
+package org.dama.datasynth.matching.graphs;
 
-import org.dama.datasynth.test.graphs.types.Partition;
-import org.dama.datasynth.test.graphs.types.Graph;
+import org.dama.datasynth.matching.graphs.types.Partition;
+import org.dama.datasynth.matching.graphs.types.Graph;
 
 /**
  *

@@ -3,17 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.dama.datasynth.test.matching.test;
+package org.dama.datasynth.matching.test;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import org.dama.datasynth.test.graphs.GraphReaderFromNodePairFile;
-import org.dama.datasynth.test.graphs.types.Graph;
-import org.dama.datasynth.test.graphs.types.Partition;
-import org.dama.datasynth.test.matching.Table;
-import org.dama.datasynth.test.matching.Tuple;
+import org.dama.datasynth.matching.graphs.GraphReaderFromNodePairFile;
+import org.dama.datasynth.matching.graphs.types.Graph;
+import org.dama.datasynth.matching.graphs.types.Partition;
+import org.dama.datasynth.matching.Table;
+import org.dama.datasynth.matching.Tuple;
 
 /**
  *

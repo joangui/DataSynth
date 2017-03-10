@@ -1,5 +1,6 @@
 package org.dama.datasynth.test.matching;
 
+import org.dama.datasynth.matching.Distribution;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;

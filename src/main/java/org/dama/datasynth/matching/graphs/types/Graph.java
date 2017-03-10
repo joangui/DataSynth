@@ -1,4 +1,4 @@
-package org.dama.datasynth.test.graphs.types;
+package org.dama.datasynth.matching.graphs.types;
 
 import java.util.HashMap;
 import java.util.HashSet;
