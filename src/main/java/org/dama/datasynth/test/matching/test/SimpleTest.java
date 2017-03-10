@@ -22,7 +22,7 @@ import org.dama.datasynth.test.matching.Tuple;
 public class SimpleTest {
 
 	static Random r = new Random(1234567890L);
-	static int NUM_ATTRIBUTES = 20;
+	static int NUM_ATTRIBUTES = 3;
 
 	static public void main(String[] argv) throws Exception {
 		System.out.println("Simple Test Run");
