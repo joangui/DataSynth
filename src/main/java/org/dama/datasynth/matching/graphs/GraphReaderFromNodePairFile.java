@@ -60,11 +60,11 @@ public class GraphReaderFromNodePairFile implements GraphReaderInterface {
 		String line;
 		Partition p = new Partition();
 		Long nodeId;
-		Long partitionId;
+		Integer partitionId;
 		while ((line = br.readLine()) != null) {
 			String[] lineArray = line.split(" ");
 			nodeId = Long.valueOf(lineArray[0]);
-			partitionId = Long.valueOf(lineArray[1]);
+			partitionId = Integer.valueOf(lineArray[1]);
 			p.addToPartition(nodeId, partitionId);
 			nodeId++;
 		}

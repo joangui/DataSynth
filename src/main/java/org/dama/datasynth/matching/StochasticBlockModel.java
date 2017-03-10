@@ -43,6 +43,10 @@ public class StochasticBlockModel <T> {
         return mapping;
     }
 
+    public double[][] getProbabilities() {
+        return probabilities;
+    }
+
     public static <T extends Comparable<T>> StochasticBlockModel<T> extractFrom(long numEdges, Table<Long,T> values,
                                                                                 JointDistribution<T,T> distribution ) {
 

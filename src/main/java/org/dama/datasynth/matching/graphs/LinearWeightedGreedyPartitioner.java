@@ -6,8 +6,6 @@ import org.dama.datasynth.matching.graphs.types.Partition;
 import org.dama.datasynth.matching.graphs.types.Traversal;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -16,8 +14,8 @@ import java.util.Set;
 public class LinearWeightedGreedyPartitioner extends GraphPartitioner {
 
 	private int partitionCapacities []= null;
-	private int partitionCounts []= null;
-	private HashMap<Long,Integer> vertexToPartition = new HashMap<>();
+	private Partition partition = new Partition();
+	private int numPartitions = 0;
 
     private double score(int partitionNeighbors, long partitionCount, int partitionCapacity) {
         return partitionNeighbors * (1 - (double) partitionCount / (double) partitionCapacity);
@@ -26,35 +24,33 @@ public class LinearWeightedGreedyPartitioner extends GraphPartitioner {
 	public LinearWeightedGreedyPartitioner(Graph graph, Class<? extends Traversal> traversalType, double [] partitionCapacities) {
 		super(graph, traversalType);
 
-		this.partitionCapacities = new int[partitionCapacities.length];
+		this.numPartitions = partitionCapacities.length;
+		this.partitionCapacities = new int[numPartitions];
 		Arrays.setAll(this.partitionCapacities, (int i ) -> (int)(partitionCapacities[i]*graph.getNumNodes()));
-		this.partitionCounts = new int[partitionCapacities.length];
-		Arrays.fill(partitionCounts,0);
 
 		while(traversal.hasNext()) {
 		    long node = traversal.next();
-		    int partition = findBestPartition(node);
-		    vertexToPartition.put(node,partition);
-		    partitionCounts[partition]+=1;
+		    int partitionId = findBestPartition(node);
+		    partition.addToPartition(node,partitionId);
         }
 	}
 
 
 	private int findBestPartition(long node) {
-        int partitionNeighbors[] = new int[partitionCounts.length];
+        int partitionNeighbors[] = new int[numPartitions];
         Arrays.fill(partitionNeighbors,0);
 
 		Set<Long> neighbors = graph.getNeighbors(node);
 		for (Long neighbor : neighbors) {
-			Integer i = vertexToPartition.get(neighbor);
+			Integer i = partition.getNodePartition(neighbor);
 			if (i != null) {
 				partitionNeighbors[i]++;
 			}
 		}
 		int bestPartition = 0;
-		double bestScore = score(partitionNeighbors[0], partitionCounts[0],partitionCapacities[0]);
-		for (int i = 1; i < partitionCounts.length; ++i) {
-			double newScore = score(partitionNeighbors[i], partitionCounts[i], partitionCapacities[i]);
+		double bestScore = score(partitionNeighbors[0], partition.getPartitionSize(0),partitionCapacities[0]);
+		for (int i = 1; i < numPartitions; ++i) {
+			double newScore = score(partitionNeighbors[i], partition.getPartitionSize(0), partitionCapacities[i]);
 			if (newScore > bestScore) {
 				bestPartition = i;
 				bestScore = newScore;
@@ -63,9 +59,9 @@ public class LinearWeightedGreedyPartitioner extends GraphPartitioner {
 
 		if (bestScore == 0) {
 			int leastPopulatedPartition = 0;
-			long minPupulation = partitionCounts[0];
-			for (int i = 1; i < partitionCounts.length; i++) {
-				long population = partitionCounts[i];
+			long minPupulation = partition.getPartitionSize(0);
+			for (int i = 1; i < numPartitions; i++) {
+				long population = partition.getPartitionSize(i);
 				if (population < minPupulation) {
 					minPupulation = population;
 					leastPopulatedPartition = i;
@@ -78,10 +74,6 @@ public class LinearWeightedGreedyPartitioner extends GraphPartitioner {
 
     @Override
     public Partition getPartition() {
-        Partition partition =  new Partition();
-        for(Map.Entry<Long,Integer> entry : vertexToPartition.entrySet()){
-            partition.addToPartition(entry.getKey(),(long)(entry.getValue()));
-        }
         return partition;
     }
 }

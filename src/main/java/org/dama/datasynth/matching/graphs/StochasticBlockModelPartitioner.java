@@ -1,5 +1,6 @@
 package org.dama.datasynth.matching.graphs;
 
+import org.dama.datasynth.matching.StochasticBlockModel;
 import org.dama.datasynth.matching.graphs.types.Graph;
 import org.dama.datasynth.matching.graphs.types.GraphPartitioner;
 import org.dama.datasynth.matching.graphs.types.Partition;
@@ -10,8 +11,18 @@ import org.dama.datasynth.matching.graphs.types.Traversal;
  */
 public class StochasticBlockModelPartitioner extends GraphPartitioner {
 
-    public StochasticBlockModelPartitioner(Graph graph, Class<? extends Traversal> traversalType) {
+    private StochasticBlockModel blockModel = null;
+    private Partition partition = new Partition();
+
+    public StochasticBlockModelPartitioner(Graph graph, Class<? extends Traversal> traversalType, StochasticBlockModel blockModel) {
         super(graph, traversalType);
+        this.blockModel = blockModel;
+
+    }
+
+
+    private int findBestPartition( long node) {
+        return 1;
     }
 
     @Override

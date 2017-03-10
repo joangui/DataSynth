@@ -22,7 +22,7 @@ public class LinearWeightedGreedyPartitionerTest {
 		LinearWeightedGreedyPartitioner partitioner = new LinearWeightedGreedyPartitioner(oneToOneGraph, BFSTraversal.class, partitions);
 
 		Partition partition = partitioner.getPartition();
-		for (Map.Entry<Long,Set<Long>> entry : partition.entrySet()) {
+		for (Map.Entry<Integer,Set<Long>> entry : partition.entrySet()) {
 			assertTrue(entry.getValue().size() == (numNodes / 2));
 			for(Long l : entry.getValue()) {
 				if(l < numNodes/2) {
@@ -40,7 +40,7 @@ public class LinearWeightedGreedyPartitionerTest {
 		LinearWeightedGreedyPartitioner partitioner = new LinearWeightedGreedyPartitioner(stochasticGraph,BFSTraversal.class, partitions);
 
 		Partition partition = partitioner.getPartition();
-        for (Map.Entry<Long,Set<Long>> entry : partition.entrySet()) {
+        for (Map.Entry<Integer,Set<Long>> entry : partition.entrySet()) {
             assertTrue(entry.getValue().size() == (blockSize));
         }
 	}

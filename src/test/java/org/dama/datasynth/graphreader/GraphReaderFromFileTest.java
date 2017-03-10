@@ -27,9 +27,9 @@ public class GraphReaderFromFileTest {
 		assertTrue(numNodes==99618L);
 		
 		Partition partitions = graphReaderFromFile.getPartitions(g);
-		assertTrue(partitions.numPartitions()==25L);
+		assertTrue(partitions.getNumPartitions()==25L);
 
-		assertTrue(partitions.numNodes()==99617L);
+		assertTrue(partitions.getNumNodes()==99617L);
 		
 	}
 }

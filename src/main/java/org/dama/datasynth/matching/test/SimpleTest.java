@@ -34,8 +34,8 @@ public class SimpleTest {
 		Graph g = graphReader.getGraph();
 		Partition p = graphReader.getPartitions(g);
 
-		for (Map.Entry<Long, Set<Long>> entry : p.entrySet()) {
-			Long partitionId = entry.getKey();
+		for (Map.Entry<Integer, Set<Long>> entry : p.entrySet()) {
+			Integer partitionId = entry.getKey();
 			Set<Long> nodes = entry.getValue();
 
 			Integer attribute = getAttribute(NUM_ATTRIBUTES);
@@ -51,9 +51,9 @@ public class SimpleTest {
 
 		for (Map.Entry<Long, Set<Long>> entry : g.entrySet()) {
 			long tailId = entry.getKey();
-			long partitionTail = p.nodeToPartition(tailId);
+			long partitionTail = p.getNodePartition(tailId);
 			for (Long headId : entry.getValue()) {
-				long partitionHead = p.nodeToPartition(headId);
+				long partitionHead = p.getNodePartition(headId);
 				if (partitionTail == partitionHead) {
 					Table<Long, Long> edgeTable = edgesPartition.get(partitionHead);
 					if (edgeTable == null) {

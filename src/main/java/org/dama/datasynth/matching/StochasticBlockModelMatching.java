@@ -38,11 +38,11 @@ public class StochasticBlockModelMatching implements Matching {
         List<Long> idsToPlace = new LinkedList<>();
 
         Partition partition = partitioner.getPartition();
-        for(Map.Entry<Long,Set<Long>> block : partition.entrySet()) {
+        for(Map.Entry<Integer,Set<Long>> block : partition.entrySet()) {
             Map<XType,Integer> mapping = blockModel.getMapping();
             XType blockValue = null;
             for(Map.Entry<XType,Integer> entry : mapping.entrySet()) {
-                if(entry.getValue() == (int)(long)block.getKey()) {
+                if(entry.getValue() == (int)block.getKey()) {
                    blockValue = entry.getKey();
                    break;
                 }
