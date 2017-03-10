@@ -18,9 +18,8 @@ public class LinearWeightedGreedyPartitionerTest {
 	public void oneToOneGraph() {
 		long numNodes = 12;
 		OneToOneGraph oneToOneGraph = new OneToOneGraph(numNodes);
-		LinearWeightedGreedyPartitioner partitioner = new LinearWeightedGreedyPartitioner();
 		double [] partitions = {0.5D, 0.5D};
-		partitioner.initialize(oneToOneGraph, BFSTraversal.class, partitions);
+		LinearWeightedGreedyPartitioner partitioner = new LinearWeightedGreedyPartitioner(oneToOneGraph, BFSTraversal.class, partitions);
 
 		Partition partition = partitioner.getPartition();
 		for (Map.Entry<Long,Set<Long>> entry : partition.entrySet()) {
@@ -37,9 +36,8 @@ public class LinearWeightedGreedyPartitionerTest {
 	public void stochasticGraph() {
 	    long blockSize = 5;
 		Graph stochasticGraph = new StochasticBlockModelGraph (blockSize,1.0,0.1);
-		LinearWeightedGreedyPartitioner partitioner = new LinearWeightedGreedyPartitioner();
 		double [] partitions = {0.5D, 0.5D};
-		partitioner.initialize(stochasticGraph,BFSTraversal.class, partitions);
+		LinearWeightedGreedyPartitioner partitioner = new LinearWeightedGreedyPartitioner(stochasticGraph,BFSTraversal.class, partitions);
 
 		Partition partition = partitioner.getPartition();
         for (Map.Entry<Long,Set<Long>> entry : partition.entrySet()) {

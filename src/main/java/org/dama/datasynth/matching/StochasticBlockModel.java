@@ -25,7 +25,7 @@ public class StochasticBlockModel <T> {
         this.mapping = mapping;
     }
 
-    public long getNumBlocks() {
+    public int getNumBlocks() {
         return sizes.length;
     }
 
@@ -39,8 +39,12 @@ public class StochasticBlockModel <T> {
         return mapi < mapj ? probabilities[mapi][mapj] : probabilities[mapj][mapi];
     }
 
-    public static <T extends Comparable<T>> StochasticBlockModel<T> extractFrom( long numEdges, Table<Long,T> values,
-                                                                                 JointDistribution<T,T> distribution ) {
+    public Map<T, Integer> getMapping() {
+        return mapping;
+    }
+
+    public static <T extends Comparable<T>> StochasticBlockModel<T> extractFrom(long numEdges, Table<Long,T> values,
+                                                                                JointDistribution<T,T> distribution ) {
 
         Index<T> index = new Index(values);
         Map<T,Integer> mapping = new TreeMap<>();

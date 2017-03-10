@@ -13,35 +13,23 @@ import java.util.Set;
 /**
  * Created by aprat on 27/02/17.
  */
-public class LinearWeightedGreedyPartitioner implements GraphPartitioner {
+public class LinearWeightedGreedyPartitioner extends GraphPartitioner {
 
-    private Graph partialGraph = new Graph();
-	private Graph graph = null;
 	private int partitionCapacities []= null;
 	private int partitionCounts []= null;
 	private HashMap<Long,Integer> vertexToPartition = new HashMap<>();
-
 
     private double score(int partitionNeighbors, long partitionCount, int partitionCapacity) {
         return partitionNeighbors * (1 - (double) partitionCount / (double) partitionCapacity);
     }
 
-	@Override
-	public void initialize(Graph graph, Class<? extends Traversal> traversalType, double [] partitionCapacities) {
-		this.graph = graph;
+	public LinearWeightedGreedyPartitioner(Graph graph, Class<? extends Traversal> traversalType, double [] partitionCapacities) {
+		super(graph, traversalType);
 
 		this.partitionCapacities = new int[partitionCapacities.length];
 		Arrays.setAll(this.partitionCapacities, (int i ) -> (int)(partitionCapacities[i]*graph.getNumNodes()));
 		this.partitionCounts = new int[partitionCapacities.length];
 		Arrays.fill(partitionCounts,0);
-
-		Traversal traversal = null;
-		try {
-			traversal = traversalType.newInstance();
-			traversal.initialize(graph);
-		} catch ( Exception e) {
-			throw new RuntimeException(e);
-		}
 
 		while(traversal.hasNext()) {
 		    long node = traversal.next();
