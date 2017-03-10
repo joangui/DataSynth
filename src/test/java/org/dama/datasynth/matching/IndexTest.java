@@ -1,11 +1,7 @@
-package org.dama.datasynth.test.matching;
+package org.dama.datasynth.matching;
 
-import org.dama.datasynth.matching.Index;
-import org.dama.datasynth.matching.Tuple;
-import org.dama.datasynth.matching.Table;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 

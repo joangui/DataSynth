@@ -1,9 +1,5 @@
-package org.dama.datasynth.test.graphs;
+package org.dama.datasynth.matching.graphs;
 
-import org.dama.datasynth.matching.graphs.LinearWeightedGreedyPartitioner;
-import org.dama.datasynth.matching.graphs.BFSTraversal;
-import org.dama.datasynth.matching.graphs.OneToOneGraph;
-import org.dama.datasynth.matching.graphs.StochasticBlockModelGraph;
 import static org.junit.Assert.assertTrue;
 
 import org.dama.datasynth.matching.graphs.types.Graph;

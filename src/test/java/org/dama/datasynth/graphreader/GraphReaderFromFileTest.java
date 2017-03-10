@@ -5,9 +5,9 @@
  */
 package org.dama.datasynth.graphreader;
 
-import org.dama.datasynth.test.graphs.GraphReaderFromFile;
-import org.dama.datasynth.test.graphs.types.Graph;
-import org.dama.datasynth.test.graphs.types.Partition;
+import org.dama.datasynth.matching.graphs.GraphReaderFromFile;
+import org.dama.datasynth.matching.graphs.types.Graph;
+import org.dama.datasynth.matching.graphs.types.Partition;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

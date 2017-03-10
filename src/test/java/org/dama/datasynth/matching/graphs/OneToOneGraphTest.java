@@ -1,7 +1,5 @@
-package org.dama.datasynth.test.graphs;
+package org.dama.datasynth.matching.graphs;
 
-import org.dama.datasynth.matching.graphs.OneToOneGraph;
-import org.dama.datasynth.matching.graphs.types.Edge;
 import org.dama.datasynth.matching.graphs.types.Graph;
 import org.junit.Test;
 
