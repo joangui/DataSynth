@@ -3,28 +3,26 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.dama.datasynth.test.graphreader;
+package org.dama.datasynth.test.graphs;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
-import java.util.HashSet;
-import java.util.Set;
 
-import org.dama.datasynth.test.graphreader.types.Graph;
-import org.dama.datasynth.test.graphreader.types.Partition;
+import org.dama.datasynth.test.graphs.types.Graph;
+import org.dama.datasynth.test.graphs.types.Partition;
 
 /**
  *
  * @author joangui
  */
-public class GraphReaderFromFile implements GraphReaderInterface {
+public class GraphReaderFromNodePairFile implements GraphReaderInterface {
 
 	private final String pathGraph;
 	private final String pathPartition;
 
-	public GraphReaderFromFile(String pathGraph, String pathPartition) {
+	public GraphReaderFromNodePairFile(String pathGraph, String pathPartition) {
 		this.pathGraph = pathGraph;
 		this.pathPartition = pathPartition;
 	}
@@ -39,16 +37,14 @@ public class GraphReaderFromFile implements GraphReaderInterface {
 
 		String line;
 		Graph g = new Graph();
-		long nodeId = 1;
+		Long nodeIdTail = null;
+		Long nodeIdHead = null;
 		while ((line = br.readLine()) != null) {
 			String[] lineArray = line.trim().split(" ");
-			Set adjacencies = new HashSet<>();
-			for (String node2Id : lineArray) {
-				adjacencies.add(new Long(node2Id));
-			}
+			nodeIdTail = Long.valueOf(lineArray[0]);
+			nodeIdHead = Long.valueOf(lineArray[1]);
 
-			g.adjacencyList(nodeId, adjacencies);
-			nodeId++;
+			g.addEdge(nodeIdTail, nodeIdHead);
 		}
 		return g;
 	}
@@ -63,9 +59,12 @@ public class GraphReaderFromFile implements GraphReaderInterface {
 
 		String line;
 		Partition p = new Partition();
-		long nodeId = 1;
+		Long nodeId;
+		Long partitionId;
 		while ((line = br.readLine()) != null) {
-			Long partitionId = Long.valueOf(line);
+			String[] lineArray = line.split(" ");
+			nodeId = Long.valueOf(lineArray[0]);
+			partitionId = Long.valueOf(lineArray[1]);
 			p.addToPartition(nodeId, partitionId);
 			nodeId++;
 		}

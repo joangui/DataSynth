@@ -7,8 +7,6 @@ import org.dama.datasynth.test.matching.Dictionary;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Created by aprat on 5/03/17.
@@ -78,7 +76,8 @@ public class MatchingCommunityTest {
 		attributesDistribution.learn(connectedAttributes);
 
 		System.out.println("Executing matching algorithm");
-		Map<Long, Long> mapping = Matching.run(edges, attributes, attributesDistribution);
+		Matching matching = new MatchingGreedy();
+		Map<Long, Long> mapping = matching.run(edges, attributes, attributesDistribution);
 		System.out.println("Size of the mapping: " + mapping.size());
 		System.out.println("Size of the attribute table: " + attributes.size());
 		Table<XType, XType> newConnectedAttributes = new Table<>();
@@ -113,7 +112,6 @@ public class MatchingCommunityTest {
 			}
 		};
 
-		
 		ArrayList<JointDistribution.Entry<Tuple<XType, XType>, Double>> attributesPairsEntries = new ArrayList<>(attributesDistribution.getEntries());
 		Collections.sort(attributesPairsEntries, comparator);
 		ArrayList<JointDistribution.Entry<Tuple<XType, XType>, Double>> newAttributesPairsEntries = new ArrayList<>(newAttributesDistribution.getEntries());
@@ -131,9 +129,9 @@ public class MatchingCommunityTest {
 
 	static public <X extends Comparable<X>, Y extends Comparable<Y>> double chiSquareTest(JointDistribution<X, Y> expected, JointDistribution<X, Y> observed, long size) {
 
-		System.out.println("#edges: "+size);
-		System.out.println("sample size 1%:"+(long)(size*.01));
-		size*=.01;
+		System.out.println("#edges: " + size);
+		System.out.println("sample size 1%:" + (long) (size * .01));
+		size *= .01;
 		Comparator comparator = new Comparator<JointDistribution.Entry<Tuple<X, Y>, Double>>() {
 			@Override
 			public int compare(JointDistribution.Entry<Tuple<X, Y>, Double> o1, JointDistribution.Entry<Tuple<X, Y>, Double> o2) {
@@ -155,16 +153,8 @@ public class MatchingCommunityTest {
 		for (int i = 0; i < observedEntries.size(); ++i) {
 			observedFrequencies[i] = (long) (size * observedEntries.get(i).getValue());
 		}
-		Map<Integer,Double> chisquares = new HashMap<>();
-		for(int i = 2 ; i < expectedFrequencies.length;i++){
-			double[] copyOfExpectedFreqüencies = Arrays.copyOfRange(expectedFrequencies, 0, i-1);
-			long[] copyOfObservedFreqüencies = Arrays.copyOfRange(observedFrequencies, 0, i-1);
-			ChiSquareTest chiSquareTest = new ChiSquareTest();
-			chisquares.put(i, chiSquareTest.chiSquareTest(expectedFrequencies, observedFrequencies));
-		}
-		System.out.println(chisquares);
+
 		ChiSquareTest chiSquareTest = new ChiSquareTest();
-		
 		return chiSquareTest.chiSquareTest(expectedFrequencies, observedFrequencies);
 
 	}

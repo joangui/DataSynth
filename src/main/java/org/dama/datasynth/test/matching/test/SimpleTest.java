@@ -9,9 +9,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import org.dama.datasynth.test.graphreader.GraphReaderFromNodePairFile;
-import org.dama.datasynth.test.graphreader.types.Graph;
-import org.dama.datasynth.test.graphreader.types.Partition;
+import org.dama.datasynth.test.graphs.GraphReaderFromNodePairFile;
+import org.dama.datasynth.test.graphs.types.Graph;
+import org.dama.datasynth.test.graphs.types.Partition;
 import org.dama.datasynth.test.matching.Table;
 import org.dama.datasynth.test.matching.Tuple;
 

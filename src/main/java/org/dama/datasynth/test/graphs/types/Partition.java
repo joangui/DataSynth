@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.dama.datasynth.test.graphreader.types;
+package org.dama.datasynth.test.graphs.types;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,32 +16,28 @@ import java.util.Set;
  */
 public class Partition extends HashMap<Long, Set<Long>> {
 
-	private long numPartitions = 0L;
-	private long numNodes = 0L;
 	Map<Long, Long> partitionDictionary = new HashMap<>();
 
 	public void addToPartition(Long nodeId, Long partitionId) {
-		numNodes++;
 		Set<Long> partition = get(partitionId);
 		if (partition == null) {
-			numPartitions++;
 			partition = new HashSet<>();
+			put(partitionId, partition);
 		}
 		partition.add(nodeId);
-		put(partitionId, partition);
 		partitionDictionary.put(nodeId, partitionId);
 	}
 
 	public long numPartitions() {
-		return numPartitions;
-	}
-
-	public long numNodes() {
-		return numNodes;
+		return entrySet().size();
 	}
 
 	public long nodeToPartition(long nodeId) {
 		return partitionDictionary.get(nodeId);
+	}
+
+	public int numNodes() {
+		return partitionDictionary.entrySet().size();
 	}
 
 }
