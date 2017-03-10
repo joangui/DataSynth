@@ -9,7 +9,8 @@ import org.dama.datasynth.matching.graphs.GraphReaderFromFile;
 import org.dama.datasynth.matching.graphs.types.Graph;
 import org.dama.datasynth.matching.graphs.types.Partition;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  *

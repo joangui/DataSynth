@@ -6,11 +6,11 @@ import org.dama.datasynth.lang.dependencygraph.Vertex;
 import org.dama.datasynth.schnappi.CompilerException;
 import org.dama.datasynth.schnappi.ast.*;
 import org.dama.datasynth.schnappi.ast.Number;
-import org.dama.datasynth.schnappi.ast.Visitor;
 import org.dama.datasynth.schnappi.solver.DependencyGraphMatcher;
 import org.dama.datasynth.schnappi.solver.Solver;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by aprat on 22/08/16.

@@ -1,7 +1,5 @@
 package org.dama.datasynth.utils;
 
-import java.util.Random;
-
 /**
  * Created by quim on 4/19/16.
  * Distribution Function Sampler

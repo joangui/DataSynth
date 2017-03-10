@@ -1,11 +1,10 @@
 package org.dama.datasynth.utils;
-import java.io.File;
+
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.lang.StringBuilder;
-import java.io.Serializable;
 /**
  * Created by quim on 4/19/16.
  * Class used to read CSV files

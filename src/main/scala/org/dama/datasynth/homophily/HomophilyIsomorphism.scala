@@ -3,8 +3,7 @@
   */
 package org.dama.datasynth.homophily
 
-import no.uib.cipr.matrix.{DenseMatrix, DenseVector, Matrix, Vector}
-import org.dama.datasynth.utils.{Algorithms, Homophily, MatrixBuilder}
+import org.dama.datasynth.utils.Homophily
 
 import scala.io.Source
 import scala.util.Random

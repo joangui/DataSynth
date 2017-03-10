@@ -1,16 +1,15 @@
 package org.dama.datasynth.runtime.spark
 
 
-import org.apache.spark.sql.catalyst.encoders.RowEncoder
 import org.apache.spark.api.java.function.{MapFunction, MapPartitionsFunction}
-import org.apache.spark.sql.expressions.MutableAggregationBuffer
+import org.apache.spark.sql.catalyst.encoders.RowEncoder
 import org.apache.spark.sql.types._
-import org.dama.datasynth.schnappi.ast._
 import org.apache.spark.sql.{Dataset, Row, SparkSession}
 import org.dama.datasynth.DataSynthConfig
 import org.dama.datasynth.common.Types
 import org.dama.datasynth.runtime.ExecutionException
 import org.dama.datasynth.runtime.spark.untyped.UntypedMethod
+import org.dama.datasynth.schnappi.ast._
 import org.dama.datasynth.utils.Tuple
 
 import scala.collection.JavaConversions._

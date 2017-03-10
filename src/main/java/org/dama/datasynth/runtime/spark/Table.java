@@ -1,9 +1,5 @@
 package org.dama.datasynth.runtime.spark;
 
-import org.apache.spark.api.java.JavaPairRDD;
-import org.dama.datasynth.common.Types;
-import org.dama.datasynth.utils.Tuple;
-
 import java.io.Serializable;
 
 /**

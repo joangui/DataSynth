@@ -5,15 +5,16 @@
  */
 package org.dama.datasynth.matching.test;
 
+import org.dama.datasynth.matching.Table;
+import org.dama.datasynth.matching.Tuple;
+import org.dama.datasynth.matching.graphs.GraphReaderFromNodePairFile;
+import org.dama.datasynth.matching.graphs.types.Graph;
+import org.dama.datasynth.matching.graphs.types.Partition;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import org.dama.datasynth.matching.graphs.GraphReaderFromNodePairFile;
-import org.dama.datasynth.matching.graphs.types.Graph;
-import org.dama.datasynth.matching.graphs.types.Partition;
-import org.dama.datasynth.matching.Table;
-import org.dama.datasynth.matching.Tuple;
 
 /**
  *

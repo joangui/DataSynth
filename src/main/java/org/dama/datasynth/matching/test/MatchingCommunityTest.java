@@ -2,11 +2,13 @@ package org.dama.datasynth.matching.test;
 
 import org.apache.commons.math3.stat.inference.ChiSquareTest;
 import org.dama.datasynth.matching.*;
-import org.dama.datasynth.matching.Dictionary;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Map;
 
 /**
  * Created by aprat on 5/03/17.

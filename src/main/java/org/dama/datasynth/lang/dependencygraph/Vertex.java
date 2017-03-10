@@ -1,7 +1,5 @@
 package org.dama.datasynth.lang.dependencygraph;
 
-import org.dama.datasynth.common.Types;
-
 import java.util.HashMap;
 import java.util.Map;
 

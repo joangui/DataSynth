@@ -1,7 +1,6 @@
 package org.dama.datasynth.generators;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * Created by aprat on 17/04/16.

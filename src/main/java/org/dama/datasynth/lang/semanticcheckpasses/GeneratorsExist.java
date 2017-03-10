@@ -6,9 +6,6 @@ import org.dama.datasynth.lang.Ast;
 import org.dama.datasynth.lang.AstVisitor;
 import org.dama.datasynth.lang.SemanticException;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by aprat on 6/09/16.
  * Visitor that performs a semantic check over the ast.

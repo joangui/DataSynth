@@ -4,7 +4,6 @@ import org.dama.datasynth.schnappi.solver.Loader;
 import org.dama.datasynth.schnappi.solver.Solver;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertTrue;

@@ -1,6 +1,5 @@
 package org.dama.datasynth.schnappi.solver;
 
-import org.apache.parquet.io.api.Binary;
 import org.dama.datasynth.common.Types;
 import org.dama.datasynth.lang.dependencygraph.DependencyGraph;
 import org.dama.datasynth.lang.dependencygraph.Vertex;

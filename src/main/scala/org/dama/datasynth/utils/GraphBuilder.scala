@@ -1,10 +1,5 @@
 package org.dama.datasynth.utils
 
-import no.uib.cipr.matrix._
-
-import scala.collection.mutable.{ArrayBuffer, ListBuffer}
-import scala.util.Random
-
 /**
   * Created by aprat on 14/11/16.
   */

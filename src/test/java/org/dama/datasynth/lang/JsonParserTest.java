@@ -2,11 +2,7 @@ package org.dama.datasynth.lang;
 
 import org.junit.Test;
 
-import static junit.framework.TestCase.assertFalse;
-import static org.dama.datasynth.TestHelpers.testQuery;
-import static org.dama.datasynth.TestHelpers.testSemanticError;
-import static org.dama.datasynth.TestHelpers.testSyntacticError;
-import static org.junit.Assert.assertTrue;
+import static org.dama.datasynth.TestHelpers.*;
 
 /**
  * Created by aprat on 5/09/16.

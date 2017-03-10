@@ -1,7 +1,7 @@
 package org.dama.datasynth.generators;
 
-import org.dama.datasynth.utils.CumulativeDistributionSampler;
 import org.dama.datasynth.utils.CSVReader;
+import org.dama.datasynth.utils.CumulativeDistributionSampler;
 import org.dama.datasynth.utils.MurmurHash;
 import org.dama.datasynth.utils.Sampler;
 

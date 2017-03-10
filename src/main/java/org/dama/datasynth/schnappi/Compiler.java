@@ -2,7 +2,6 @@ package org.dama.datasynth.schnappi;
 
 import org.dama.datasynth.common.Types;
 import org.dama.datasynth.lang.dependencygraph.*;
-import org.dama.datasynth.lang.dependencygraph.Literal;
 import org.dama.datasynth.schnappi.ast.*;
 import org.dama.datasynth.schnappi.ast.Number;
 import org.dama.datasynth.schnappi.solver.Loader;

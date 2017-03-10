@@ -1,19 +1,12 @@
 package org.dama.datasynth.lang.dependencygraph;
 
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
-import com.mxgraph.layout.mxCircleLayout;
-import com.mxgraph.layout.mxFastOrganicLayout;
-import com.mxgraph.layout.mxIGraphLayout;
 import com.mxgraph.swing.mxGraphComponent;
-import org.jgraph.JGraph;
-import org.jgrapht.ext.JGraphModelAdapter;
 import org.jgrapht.ext.JGraphXAdapter;
 import org.jgrapht.graph.DirectedMultigraph;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.*;
-import java.util.List;
 
 /**
  * Created by quim on 5/12/16.

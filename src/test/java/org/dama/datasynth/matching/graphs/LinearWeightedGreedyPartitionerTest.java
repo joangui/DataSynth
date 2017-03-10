@@ -1,13 +1,13 @@
 package org.dama.datasynth.matching.graphs;
 
-import static org.junit.Assert.assertTrue;
-
 import org.dama.datasynth.matching.graphs.types.Graph;
 import org.dama.datasynth.matching.graphs.types.Partition;
 import org.junit.Test;
 
 import java.util.Map;
 import java.util.Set;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by aprat on 27/02/17.

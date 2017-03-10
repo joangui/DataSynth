@@ -1,6 +1,5 @@
 package org.dama.datasynth.lang.semanticcheckpasses;
 
-import org.dama.datasynth.common.Types;
 import org.dama.datasynth.lang.Ast;
 import org.dama.datasynth.lang.AstVisitor;
 import org.dama.datasynth.lang.SemanticException;

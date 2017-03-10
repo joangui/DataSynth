@@ -5,15 +5,15 @@
  */
 package org.dama.datasynth.matching.graphs;
 
+import org.dama.datasynth.matching.graphs.types.Graph;
+import org.dama.datasynth.matching.graphs.types.Partition;
+
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.dama.datasynth.matching.graphs.types.Graph;
-import org.dama.datasynth.matching.graphs.types.Partition;
 
 /**
  *

@@ -3,11 +3,8 @@
   */
 package org.dama.datasynth.homophily
 
-import java.util.logging.{Level, LogManager, Logger}
-
-import org.apache.spark.{Partitioner, SparkContext}
+import org.apache.spark.SparkContext
 import org.apache.spark.graphx._
-import org.apache.spark.graphx.lib.LabelPropagation
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
 

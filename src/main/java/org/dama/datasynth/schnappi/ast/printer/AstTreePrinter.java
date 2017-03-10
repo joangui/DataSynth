@@ -3,7 +3,6 @@ package org.dama.datasynth.schnappi.ast.printer;
 import org.dama.datasynth.DataSynth;
 import org.dama.datasynth.schnappi.ast.*;
 import org.dama.datasynth.schnappi.ast.Number;
-import org.dama.datasynth.schnappi.ast.Visitor;
 import org.dama.datasynth.schnappi.solver.Solver;
 
 import java.util.logging.Level;
