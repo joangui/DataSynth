@@ -76,7 +76,8 @@ public class MatchingCommunityTest {
 		attributesDistribution.learn(connectedAttributes);
 
 		System.out.println("Executing matching algorithm");
-		Map<Long, Long> mapping = MatchingGreedy.run(edges, attributes, attributesDistribution);
+		Matching matching = new MatchingGreedy();
+		Map<Long, Long> mapping = matching.run(edges, attributes, attributesDistribution);
 		System.out.println("Size of the mapping: " + mapping.size());
 		System.out.println("Size of the attribute table: " + attributes.size());
 		Table<XType, XType> newConnectedAttributes = new Table<>();

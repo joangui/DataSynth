@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * Created by aprat on 2/03/17.
  */
-public class MatchingGreedy {
+public class MatchingGreedy implements Matching {
 
 
     /**
@@ -20,9 +20,9 @@ public class MatchingGreedy {
      * @param <XType> The attribute Type
      * @return A Map mapping graph nodes to entities
      */
-    public static <XType extends Comparable<XType>> Map<Long,Long> run(Table<Long,Long> graph,
-                                                                       Table<Long,XType> attributes,
-                                                                       JointDistribution<XType,XType> distribution ) {
+    public <XType extends Comparable<XType>> Map<Long,Long> run( Table<Long,Long> graph,
+                                                                 Table<Long,XType> attributes,
+                                                                 JointDistribution<XType,XType> distribution ) {
 
         EdgeTypePool<XType,XType> edgeTypePool = new EdgeTypePool(distribution, graph.size(), 1234567890L);
         Index<XType> index = new Index<>(attributes);
@@ -106,13 +106,13 @@ public class MatchingGreedy {
         return mapping;
     }
 
-    public static <XType extends Comparable<XType>,
+    /*public static <XType extends Comparable<XType>,
                    YType extends Comparable<YType>> void  run( ArrayList<Edge> graph,
                                                                ArrayList<XType> tableX,
                                                                ArrayList<YType> tableY,
                                                                JointDistribution<XType,YType> distribution ) {
 
-        /*EdgeTypePool<XType,YType> edgeTypePool = new EdgeTypePool(distribution, graph.size(), 1234567890L);
+        EdgeTypePool<XType,YType> edgeTypePool = new EdgeTypePool(distribution, graph.size(), 1234567890L);
         Index<XType> indexX = new Index<>(tableX);
         Index<YType> indexY = new Index<>(tableY);
 
@@ -151,6 +151,6 @@ public class MatchingGreedy {
             }
             edgeTypePool.removeEdge(tableX.get(tail), tableY.get(head));
         }
-        */
     }
+    */
 }
