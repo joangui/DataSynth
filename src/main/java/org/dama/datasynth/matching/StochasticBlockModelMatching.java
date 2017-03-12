@@ -2,6 +2,7 @@ package org.dama.datasynth.matching;
 
 import org.dama.datasynth.matching.graphs.BFSTraversal;
 import org.dama.datasynth.matching.graphs.LinearWeightedGreedyPartitioner;
+import org.dama.datasynth.matching.graphs.RandomTraversal;
 import org.dama.datasynth.matching.graphs.StochasticBlockModelPartitioner;
 import org.dama.datasynth.matching.graphs.types.Graph;
 import org.dama.datasynth.matching.graphs.types.GraphPartitioner;
@@ -22,13 +23,11 @@ public class StochasticBlockModelMatching implements Matching {
         StochasticBlockModel<XType> blockModel = StochasticBlockModel.extractFrom(edges.size()/2, attributes, distribution);
         Graph graph = Graph.fromTable(edges);
         long [] sizes = new long[blockModel.getNumBlocks()];
-        long numNodes = 0L;
         for(Map.Entry<XType,Integer> entry : blockModel.getMapping().entrySet()) {
             long size = blockModel.getSize(entry.getKey());
             sizes[entry.getValue()] = size;
-            numNodes += size;
         }
-        GraphPartitioner partitioner = new StochasticBlockModelPartitioner(graph, BFSTraversal.class, blockModel);
+        GraphPartitioner partitioner = new StochasticBlockModelPartitioner(graph, RandomTraversal.class, blockModel);
 
         Index<XType> index = new Index(attributes);
 

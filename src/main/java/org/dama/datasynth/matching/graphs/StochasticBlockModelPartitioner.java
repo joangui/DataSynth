@@ -54,13 +54,15 @@ public class StochasticBlockModelPartitioner extends GraphPartitioner {
                 long offset = 0L;
                 if( i < j && j==partitionId) {
                     offset = partitionNeighbors[i];
-                } else if( i == partitionId) {
+                } else if (i == j && j == partitionId) {
+                    offset = partitionNeighbors[j];
+                } else if( i == partitionId && j != partitionId) {
                     offset = partitionNeighbors[j];
                 }
                 score+=Math.pow(Math.abs(edgesOriginal[i][j] - (edgesCurrent[i][j]+offset)),2);
             }
         }
-       return (long)((worstScore - score)*(1.0D-(partitionCounts/(double)partitionCapacity)));
+       return (long)((worstScore - score)*(1.0D-(partitionCounts/(double)partitionCapacity))); //substracting from worstScore to have a score in the form of "the greater the better"
     }
 
     private int findBestPartition( long node) {
@@ -86,12 +88,25 @@ public class StochasticBlockModelPartitioner extends GraphPartitioner {
             }
         }
 
+        if (bestScore == 0.0) {
+            long minPupulation = partition.getPartitionSize(0);
+            for (int i = 1; i < blockModel.getNumBlocks(); i++) {
+                long population = partition.getPartitionSize(i);
+                if (population < minPupulation) {
+                    minPupulation = population;
+                    bestPartition = i;
+                }
+            }
+        }
+
         for(int i = 0; i < blockModel.getNumBlocks(); i+=1) {
                 for(int j = i; j < blockModel.getNumBlocks(); j+=1) {
                     long offset = 0L;
                     if( i < j && j==bestPartition) {
                         offset = partitionNeighbors[i];
-                    } else if( i == bestPartition) {
+                    } else if (i == j && j == bestPartition) {
+                        offset = partitionNeighbors[j];
+                    } else if( i == bestPartition && j != bestPartition) {
                         offset = partitionNeighbors[j];
                     }
                     edgesCurrent[i][j] += offset;

@@ -65,12 +65,14 @@ public class MatchingCommunityTest {
 		// Extract connected attributes joint distribution
 		Table<XType, XType> connectedAttributes = new Table<>();
 		for (Tuple<Long, Long> edge : edges) {
-			XType attributeX = attributesDictionary.get(edge.getX());
-			XType attributeY = attributesDictionary.get(edge.getY());
-			if (attributeX.compareTo(attributeY) < 0) {
-				connectedAttributes.add(new Tuple<>(attributeX, attributeY));
-			} else {
-				connectedAttributes.add(new Tuple<>(attributeY, attributeX));
+			if(edge.getX() < edge.getY()) {
+				XType attributeX = attributesDictionary.get(edge.getX());
+				XType attributeY = attributesDictionary.get(edge.getY());
+				if (attributeX.compareTo(attributeY) < 0) {
+					connectedAttributes.add(new Tuple<>(attributeX, attributeY));
+				} else {
+					connectedAttributes.add(new Tuple<>(attributeY, attributeX));
+				}
 			}
 		}
 

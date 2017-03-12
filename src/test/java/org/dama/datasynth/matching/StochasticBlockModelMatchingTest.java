@@ -1,10 +1,13 @@
 package org.dama.datasynth.matching;
 
+import org.dama.datasynth.matching.graphs.StochasticBlockModelGraph;
+import org.dama.datasynth.matching.graphs.types.Graph;
+import org.dama.datasynth.matching.test.MatchingCommunityTest;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.Assert.assertTrue;
 
@@ -102,5 +105,25 @@ public class StochasticBlockModelMatchingTest {
     @Test
     public void qualityTest() {
 
+        Map<String, Integer>  mapping = new HashMap<>();
+        mapping.put("A",0);
+        mapping.put("B",1);
+        long size = 50;
+        long sizes[] = {size,size};
+        double probabilities[][] = new double[2][2];
+        double pin= 0.7;
+        double pout= 0.0;
+        probabilities[0][0] = pin;
+        probabilities[0][1] = pout;
+        probabilities[1][0] = pout;
+        probabilities[1][1] = pin;
+        StochasticBlockModel<String> blockModel = new StochasticBlockModel(mapping,sizes,probabilities);
+        Graph graph = new StochasticBlockModelGraph(blockModel);
+        Table<Long,String> attributes = new Table<>();
+        for(int i = 0; i < size; ++i) {
+            attributes.add(new Tuple<>((long)i,"A"));
+            attributes.add(new Tuple<>((long)(i+size),"B"));
+        }
+        MatchingCommunityTest.run(attributes,Table.extractEdges(graph));
     }
 }
