@@ -108,7 +108,7 @@ public class StochasticBlockModelMatchingTest {
         Map<String, Integer>  mapping = new HashMap<>();
         mapping.put("A",0);
         mapping.put("B",1);
-        long size = 50;
+        long size = 10;
         long sizes[] = {size,size};
         double probabilities[][] = new double[2][2];
         double pin= 0.7;
