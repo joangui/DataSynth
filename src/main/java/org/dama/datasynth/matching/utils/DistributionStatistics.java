@@ -65,7 +65,7 @@ public class DistributionStatistics<X extends Comparable<X>, Y extends Comparabl
 		Comparator comparator = new Comparator<JointDistribution.Entry<Tuple<X, Y>, Double>>() {
 			@Override
 			public int compare(JointDistribution.Entry<Tuple<X, Y>, Double> o1, JointDistribution.Entry<Tuple<X, Y>, Double> o2) {
-				return o1.getValue().compareTo(o2.getValue());
+				return -1*(o1.getKey().compareTo(o2.getKey()));
 			}
 		};
 

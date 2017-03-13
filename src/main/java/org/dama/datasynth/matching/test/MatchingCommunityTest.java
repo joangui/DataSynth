@@ -125,12 +125,12 @@ public class MatchingCommunityTest {
 			System.out.print(originalEntry.getKey().getX() + " " + originalEntry.getKey().getY() + " " + originalEntry.getValue() + " --- ");
 			System.out.println(newEntry.getKey().getX() + " " + newEntry.getKey().getY() + " " + newEntry.getValue());
 		}
-		DistributionStatistics ds = new DistributionStatistics(attributesDistribution, newAttributesDistribution, edges.size());
+		DistributionStatistics ds = new DistributionStatistics(attributesDistribution, newAttributesDistribution,650);
 		double chiSquare = ds.chiSquareTest();
 		System.out.println("\nChi-Square: " + chiSquare);
 
 
 		double dmax = ds.dMaxTest();
-		System.out.println("\nChi-Square: " + dmax);
+		System.out.println("\nDmax: " + dmax);
 	}
 }

@@ -22,7 +22,7 @@ import java.util.Set;
 public class SimpleTest {
 
 	static Random r = new Random(1234567890L);
-	static int NUM_ATTRIBUTES = 3;
+	static int NUM_ATTRIBUTES = 10;
 
 	static public void main(String[] argv) throws Exception {
 		System.out.println("Simple Test Run");
