@@ -1,5 +1,8 @@
 package org.dama.datasynth.matching.graphs.types;
 
+import org.dama.datasynth.matching.Table;
+import org.dama.datasynth.matching.Tuple;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -52,4 +55,13 @@ public class Graph extends HashMap<Long, Set<Long>> {
 	public long numEdges() {
 		return numEdges;
 	}
+
+	static public Graph fromTable(Table<Long,Long> table) {
+		Graph graph = new Graph();
+		for(Tuple<Long,Long> edge : table) {
+			graph.addEdge(edge.getX(),edge.getY());
+		}
+		return graph;
+	}
+
 }

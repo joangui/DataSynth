@@ -65,7 +65,7 @@ public class GraphReaderFromFile implements GraphReaderInterface {
 		Partition p = new Partition();
 		long nodeId = 1;
 		while ((line = br.readLine()) != null) {
-			Long partitionId = Long.valueOf(line);
+			Integer partitionId = Integer.valueOf(line);
 			p.addToPartition(nodeId, partitionId);
 			nodeId++;
 		}

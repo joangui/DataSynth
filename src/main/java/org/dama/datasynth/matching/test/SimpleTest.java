@@ -10,6 +10,9 @@ import org.dama.datasynth.matching.Tuple;
 import org.dama.datasynth.matching.graphs.types.Graph;
 import org.dama.datasynth.matching.graphs.types.Partition;
 import org.dama.datasynth.matching.graphs.GraphReaderFromNodePairFile;
+
+import java.io.File;
+import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -22,20 +25,23 @@ import java.util.Set;
 public class SimpleTest {
 
 	static Random r = new Random(1234567890L);
+<<<<<<< HEAD
 	static int NUM_ATTRIBUTES = 10;
+=======
+	static int NUM_ATTRIBUTES = 4;
+>>>>>>> 3ce9c086395d97990ccef4c9c0cc84b88c7e7542
 
 	static public void main(String[] argv) throws Exception {
 		System.out.println("Simple Test Run");
 		Table<Long, Integer> attributes = new Table<>();
-		Table<Long, Long> edges = new Table<>();
 
 		GraphReaderFromNodePairFile graphReader = new GraphReaderFromNodePairFile(argv[0], argv[1]);
 
 		Graph g = graphReader.getGraph();
 		Partition p = graphReader.getPartitions(g);
 
-		for (Map.Entry<Long, Set<Long>> entry : p.entrySet()) {
-			Long partitionId = entry.getKey();
+		for (Map.Entry<Integer, Set<Long>> entry : p.entrySet()) {
+			Integer partitionId = entry.getKey();
 			Set<Long> nodes = entry.getValue();
 
 			Integer attribute = getAttribute(NUM_ATTRIBUTES);
@@ -51,35 +57,49 @@ public class SimpleTest {
 
 		for (Map.Entry<Long, Set<Long>> entry : g.entrySet()) {
 			long tailId = entry.getKey();
-			long partitionTail = p.nodeToPartition(tailId);
+			long partitionTail = p.getNodePartition(tailId);
 			for (Long headId : entry.getValue()) {
-				long partitionHead = p.nodeToPartition(headId);
+				long partitionHead = p.getNodePartition(headId);
 				if (partitionTail == partitionHead) {
 					Table<Long, Long> edgeTable = edgesPartition.get(partitionHead);
 					if (edgeTable == null) {
 						edgeTable = new Table<>();
 						edgesPartition.put(partitionHead, edgeTable);
 					}
-					edgeTable.add(new Tuple<>(headId, tailId));
+					edgeTable.add(new Tuple<>(tailId, headId));
 				} else {
-					edgesMixed.add(new Tuple<>(headId, tailId));
+					edgesMixed.add(new Tuple<>(tailId, headId));
 				}
 
 			}
 		}
 
+        Table<Long, Long> edges = new Table<>();
 		for (Map.Entry<Long, Table> entry : edgesPartition.entrySet()) {
 			Table<Long, Long> edgesTable = entry.getValue();
 			for (Tuple<Long, Long> edge : edgesTable) {
 				edges.add(edge);
 			}
 		}
+
 		for (Tuple<Long, Long> edge : edgesMixed) {
 			edges.add(edge);
 		}
 
+		File originalGraph = new File("./originalGraph.csv");
+		FileWriter writer = new FileWriter(originalGraph);
+		for(Tuple<Long,Long> edge : edges) {
+			writer.write(edge.getX()+" "+edge.getY()+"\n");
+		}
+		writer.close();
+		File originalAttributes = new File("./originalAttributes.csv");
+		writer = new FileWriter(originalAttributes);
+        writer.write("Id Value\n");
+		for(Tuple<Long,Integer> pair : attributes) {
+			writer.write(pair.getX()+" "+pair.getY()+"\n");
+		}
+		writer.close();
 
-		
 		MatchingCommunityTest.run(attributes, edges);
 	}
 

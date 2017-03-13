@@ -79,6 +79,8 @@ public class JointDistribution<X extends Comparable<X>, Y extends Comparable<Y>>
 	}
 
 	public double getProbability(Tuple<X, Y> tuple) {
-			return get(tuple);
-		}
+		Double prob = get(tuple);
+		if(prob == null) return 0.0D;
+		return prob;
+	}
 }

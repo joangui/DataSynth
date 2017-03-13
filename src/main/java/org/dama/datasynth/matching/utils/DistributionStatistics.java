@@ -5,11 +5,8 @@
  */
 package org.dama.datasynth.matching.utils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 import org.apache.commons.math3.stat.inference.ChiSquareTest;
 import org.dama.datasynth.matching.JointDistribution;
 import org.dama.datasynth.matching.Tuple;
@@ -34,26 +31,31 @@ public class DistributionStatistics<X extends Comparable<X>, Y extends Comparabl
 	public double chiSquareTest() {
 
 		Comparator comparator = new Comparator<JointDistribution.Entry<Tuple<X, Y>, Double>>() {
+			private JointDistribution<X,Y> distribution = null;
 			@Override
 			public int compare(JointDistribution.Entry<Tuple<X, Y>, Double> o1, JointDistribution.Entry<Tuple<X, Y>, Double> o2) {
 				return o1.getKey().compareTo(o2.getKey());
 			}
+
+			public void setDistribution(JointDistribution<X,Y> distribution) { this.distribution = distribution;}
 		};
 
-		ArrayList<JointDistribution.Entry<Tuple<X, Y>, Double>> expectedEntries = new ArrayList<>(expected.getEntries());
-		Collections.sort(expectedEntries, comparator);
+		Set<Tuple<X,Y>> entries = new TreeSet<>();
+		entries.addAll(expected.keySet());
+		entries.addAll(observed.keySet());
 
-		ArrayList<JointDistribution.Entry<Tuple<X, Y>, Double>> observedEntries = new ArrayList<>(observed.getEntries());
-		Collections.sort(observedEntries, comparator);
-
-		double[] expectedFrequencies = new double[expectedEntries.size()];
-		for (int i = 0; i < expectedEntries.size(); ++i) {
-			expectedFrequencies[i] = (sampleSize * expectedEntries.get(i).getValue());
+		double[] expectedFrequencies = new double[entries.size()];
+		int i = 0;
+		for (Tuple<X,Y> tuple : entries) {
+			expectedFrequencies[i] = (sampleSize * expected.getProbability(tuple));
+			i+=1;
 		}
 
-		long[] observedFrequencies = new long[observedEntries.size()];
-		for (int i = 0; i < observedEntries.size(); ++i) {
-			observedFrequencies[i] = (long) (sampleSize * observedEntries.get(i).getValue());
+		i = 0;
+		long[] observedFrequencies = new long[entries.size()];
+		for (Tuple<X,Y> tuple : entries) {
+			observedFrequencies[i] = (long)(sampleSize * observed.getProbability(tuple));
+			i+=1;
 		}
 
 		ChiSquareTest chiSquareTest = new ChiSquareTest();
@@ -65,7 +67,11 @@ public class DistributionStatistics<X extends Comparable<X>, Y extends Comparabl
 		Comparator comparator = new Comparator<JointDistribution.Entry<Tuple<X, Y>, Double>>() {
 			@Override
 			public int compare(JointDistribution.Entry<Tuple<X, Y>, Double> o1, JointDistribution.Entry<Tuple<X, Y>, Double> o2) {
+<<<<<<< HEAD
 				return -1*(o1.getKey().compareTo(o2.getKey()));
+=======
+				return -1*o1.getValue().compareTo(o2.getValue());
+>>>>>>> 3ce9c086395d97990ccef4c9c0cc84b88c7e7542
 			}
 		};
 
