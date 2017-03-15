@@ -25,11 +25,7 @@ import java.util.Set;
 public class SimpleTest {
 
 	static Random r = new Random(1234567890L);
-<<<<<<< HEAD
-	static int NUM_ATTRIBUTES = 10;
-=======
-	static int NUM_ATTRIBUTES = 4;
->>>>>>> 3ce9c086395d97990ccef4c9c0cc84b88c7e7542
+	static int NUM_ATTRIBUTES = 2;
 
 	static public void main(String[] argv) throws Exception {
 		System.out.println("Simple Test Run");
