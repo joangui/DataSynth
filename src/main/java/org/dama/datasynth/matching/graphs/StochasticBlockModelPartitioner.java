@@ -18,7 +18,7 @@ public class StochasticBlockModelPartitioner extends GraphPartitioner {
     private Partition partition = new Partition();
     private long[][] edgesOriginal =  null;
     private long[][] edgesCurrent = null;
-    private long worstScore = 0L;
+    private long currentScore = 0L;
 
     public StochasticBlockModelPartitioner(Graph graph, Class<? extends Traversal> traversalType, StochasticBlockModel blockModel) {
         super(graph, traversalType);
@@ -35,7 +35,7 @@ public class StochasticBlockModelPartitioner extends GraphPartitioner {
                     long sizej = blockModel.getSizes()[j];
                     edgesOriginal[i][j] = (long)(blockModel.getProbabilities()[i][j] * (sizei * sizej));
                 }
-                worstScore+=Math.pow(edgesOriginal[i][j],2);
+                currentScore+=Math.pow(edgesOriginal[i][j],2);
             }
             Arrays.fill(edgesCurrent[i],0L);
         }
@@ -47,8 +47,8 @@ public class StochasticBlockModelPartitioner extends GraphPartitioner {
         }
     }
 
-    private long score(int partitionId, long [] partitionNeighbors, long partitionCounts, long partitionCapacity) {
-        long score = 0L;
+    private double score(int partitionId, long [] partitionNeighbors, long partitionCounts, long partitionCapacity) {
+        double score = 0.0D;
         for(int i = 0; i < blockModel.getNumBlocks(); i+=1) {
             for(int j = i; j < blockModel.getNumBlocks(); j+=1) {
                 long offset = 0L;
@@ -62,7 +62,7 @@ public class StochasticBlockModelPartitioner extends GraphPartitioner {
                 score+=Math.pow(Math.abs(edgesOriginal[i][j] - (edgesCurrent[i][j]+offset)),2);
             }
         }
-       return (long)((worstScore - score)*(1.0D-(partitionCounts/(double)partitionCapacity))); //substracting from worstScore to have a score in the form of "the greater the better"
+        return Math.abs(currentScore - score)*(1.0D - partitionCounts / (double) partitionCapacity);
     }
 
     private int findBestPartition( long node) {
@@ -81,7 +81,7 @@ public class StochasticBlockModelPartitioner extends GraphPartitioner {
         double bestScore = score(0,partitionNeighbors,partition.getPartitionSize(0),blockModel.getSizes()[0]);
         int  bestPartition = 0;
         for(int i = 1; i < blockModel.getNumBlocks(); i+=1) {
-            long newScore = score(i,partitionNeighbors,partition.getPartitionSize(i),blockModel.getSizes()[i]);
+            double newScore = score(i,partitionNeighbors,partition.getPartitionSize(i),blockModel.getSizes()[i]);
             if(newScore > bestScore) {
                bestScore = newScore;
                bestPartition = i;
@@ -89,16 +89,17 @@ public class StochasticBlockModelPartitioner extends GraphPartitioner {
         }
 
         if (bestScore == 0.0) {
-            long minPupulation = partition.getPartitionSize(0);
+            long minPopulation = partition.getPartitionSize(0);
             for (int i = 1; i < blockModel.getNumBlocks(); i++) {
                 long population = partition.getPartitionSize(i);
-                if (population < minPupulation) {
-                    minPupulation = population;
+                if (population < minPopulation) {
+                    minPopulation = population;
                     bestPartition = i;
                 }
             }
         }
 
+        currentScore = 0L;
         for(int i = 0; i < blockModel.getNumBlocks(); i+=1) {
                 for(int j = i; j < blockModel.getNumBlocks(); j+=1) {
                     long offset = 0L;
@@ -110,6 +111,7 @@ public class StochasticBlockModelPartitioner extends GraphPartitioner {
                         offset = partitionNeighbors[j];
                     }
                     edgesCurrent[i][j] += offset;
+                    currentScore+=Math.pow(Math.abs(edgesOriginal[i][j] - (edgesCurrent[i][j])),2);
                 }
 
         }

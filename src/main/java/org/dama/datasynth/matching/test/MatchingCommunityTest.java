@@ -79,9 +79,11 @@ public class MatchingCommunityTest {
 		attributesDistribution.learn(connectedAttributes);
 
 		System.out.println("Executing matching algorithm");
-		Matching matching = new GreedyMatching();
-//		Matching matching = new StochasticBlockModelMatching();
+//		Matching matching = new GreedyMatching();
+		Matching matching = new StochasticBlockModelMatching();
+		long start = System.currentTimeMillis();
 		Map<Long, Long> mapping = matching.run(edges, attributes, attributesDistribution);
+		long executionTime = System.currentTimeMillis() - start;
 		System.out.println("Size of the mapping: " + mapping.size());
 		System.out.println("Size of the attribute table: " + attributes.size());
 		Table<XType, XType> newConnectedAttributes = new Table<>();
@@ -127,9 +129,10 @@ public class MatchingCommunityTest {
 			System.out.print(originalEntry.getKey().getX() + " " + originalEntry.getKey().getY() + " " + originalEntry.getValue() + " --- ");
 			System.out.println(newEntry.getKey().getX() + " " + newEntry.getKey().getY() + " " + newEntry.getValue());
 		}
-		DistributionStatistics ds = new DistributionStatistics(attributesDistribution, newAttributesDistribution, 650);
-		
-		
+		DistributionStatistics ds = new DistributionStatistics(attributesDistribution, newAttributesDistribution);
+
+
+		System.out.println("\nEXECUTION TIME: "+executionTime+" milliseconds");
 		return ds;
 	}
 }

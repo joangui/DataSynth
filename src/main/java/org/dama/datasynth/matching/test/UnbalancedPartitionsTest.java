@@ -10,6 +10,7 @@ import org.dama.datasynth.matching.Tuple;
 import org.dama.datasynth.matching.graphs.BFSTraversal;
 import org.dama.datasynth.matching.graphs.GraphReaderFromNodePairFile;
 import org.dama.datasynth.matching.graphs.LinearWeightedGreedyPartitioner;
+import org.dama.datasynth.matching.graphs.RandomTraversal;
 import org.dama.datasynth.matching.graphs.types.Graph;
 import org.dama.datasynth.matching.graphs.types.GraphPartitioner;
 import org.dama.datasynth.matching.graphs.types.Partition;
@@ -25,8 +26,8 @@ import java.util.*;
 public class UnbalancedPartitionsTest {
 
 	static Random r = new Random(1234567890L);
-	static int NUM_ATTRIBUTES = 16;
-	static double k = 0.3;
+	static int NUM_ATTRIBUTES = 4;
+	static double k = 0.4;
 
 	static public void main(String[] argv) throws Exception {
 		System.out.println("Unbalanced Partition Test");
@@ -46,7 +47,6 @@ public class UnbalancedPartitionsTest {
 		double sum = 0.0;
 		for(int i = 1; i <= NUM_ATTRIBUTES; ++i) {
 			double prob = Math.max(Math.pow(1-k,i-1)*k,1/(double)NUM_ATTRIBUTES);
-
 			sum+=prob;
 			proportions[i-1] = prob;
 		}
@@ -56,7 +56,7 @@ public class UnbalancedPartitionsTest {
 		}
 
 		Graph graph = Graph.fromTable(edges);
-		GraphPartitioner partitioner = new LinearWeightedGreedyPartitioner(graph, BFSTraversal.class, proportions );
+		GraphPartitioner partitioner = new LinearWeightedGreedyPartitioner(graph, RandomTraversal.class, proportions );
 		Partition p = partitioner.getPartition();
 		for (Map.Entry<Integer, Set<Long>> entry : p.entrySet()) {
 			Integer partitionId = entry.getKey();
@@ -86,8 +86,9 @@ public class UnbalancedPartitionsTest {
 
 		DistributionStatistics ds = MatchingCommunityTest.run(attributes, edges);
 		try{
-			double chiSquare = ds.chiSquareTest();
-		System.out.println("\nChi-Square: " + chiSquare);
+		    long numsamples = 10000;
+			double chiSquare = ds.chiSquareTest(numsamples);
+		System.out.println("\np-value of chi-square test with "+numsamples+" samples: " + chiSquare);
 
 		DistributionStatistics.DMaxStatistics dMaxStatistics = ds.dMaxTest();
 		System.out.println("\nDmax: " + dMaxStatistics.dMaxValue);

@@ -18,6 +18,7 @@ public class StochasticBlockModelMatching implements Matching {
     @Override
     public <XType extends Comparable<XType>> Map<Long, Long> run(Table<Long, Long> edges, Table<Long, XType> attributes, JointDistribution<XType, XType> distribution) {
 
+        System.out.println("Running Stochastic Block Model based Matching");
         Map<Long,Long> toReturn = new HashMap<>();
 
         StochasticBlockModel<XType> blockModel = StochasticBlockModel.extractFrom(edges.size()/2, attributes, distribution);
@@ -27,6 +28,8 @@ public class StochasticBlockModelMatching implements Matching {
             long size = blockModel.getSize(entry.getKey());
             sizes[entry.getValue()] = size;
         }
+
+        System.out.println("Running partitioner");
         GraphPartitioner partitioner = new StochasticBlockModelPartitioner(graph, RandomTraversal.class, blockModel);
 
         Index<XType> index = new Index(attributes);
