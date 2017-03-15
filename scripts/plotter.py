@@ -50,14 +50,14 @@ def plot(inputfile,outputfile):
         size=len(expected)
         index = range(1,size+1)
 
-	plt.plot(index, expected, linewidth=2.0, label="Expected")
-	plt.plot(index, observed, linewidth=2.0, label="Observed")
+	plt.plot(index, expected,'*-', linewidth=2.0, label="Expected")
+	plt.plot(index, observed,'+-', linewidth=2.0, label="Observed")
                     
         # print expected
         # print observed
         plt.legend(loc='lower right')
 	plt.gca().axes.get_xaxis().set_visible(False)
-        plt.savefig(outputfile',format='eps')
+        plt.savefig(outputfile,format='eps')
         # plt.show()
 
 

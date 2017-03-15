@@ -1,6 +1,5 @@
 package org.dama.datasynth.matching.test;
 
-
 import org.dama.datasynth.matching.*;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -57,7 +56,7 @@ public class MatchingCommunityTest {
 
 	}
 
-	static public <XType extends Comparable<XType>> void run(Table<Long, XType> attributes, Table<Long, Long> edges) {
+	static public <XType extends Comparable<XType>> DistributionStatistics run(Table<Long, XType> attributes, Table<Long, Long> edges) {
 
 		Dictionary<Long, XType> attributesDictionary = new Dictionary<>(attributes);
 
@@ -65,7 +64,7 @@ public class MatchingCommunityTest {
 		// Extract connected attributes joint distribution
 		Table<XType, XType> connectedAttributes = new Table<>();
 		for (Tuple<Long, Long> edge : edges) {
-			if(edge.getX() < edge.getY()) {
+			if (edge.getX() < edge.getY()) {
 				XType attributeX = attributesDictionary.get(edge.getX());
 				XType attributeY = attributesDictionary.get(edge.getY());
 				if (attributeX.compareTo(attributeY) < 0) {
@@ -81,7 +80,7 @@ public class MatchingCommunityTest {
 
 		System.out.println("Executing matching algorithm");
 		Matching matching = new GreedyMatching();
-		//Matching matching = new StochasticBlockModelMatching();
+//		Matching matching = new StochasticBlockModelMatching();
 		Map<Long, Long> mapping = matching.run(edges, attributes, attributesDistribution);
 		System.out.println("Size of the mapping: " + mapping.size());
 		System.out.println("Size of the attribute table: " + attributes.size());
@@ -128,12 +127,9 @@ public class MatchingCommunityTest {
 			System.out.print(originalEntry.getKey().getX() + " " + originalEntry.getKey().getY() + " " + originalEntry.getValue() + " --- ");
 			System.out.println(newEntry.getKey().getX() + " " + newEntry.getKey().getY() + " " + newEntry.getValue());
 		}
-		DistributionStatistics ds = new DistributionStatistics(attributesDistribution, newAttributesDistribution,650);
-		double chiSquare = ds.chiSquareTest();
-		System.out.println("\nChi-Square: " + chiSquare);
-
-
-		double dmax = ds.dMaxTest();
-		System.out.println("\nDmax: " + dmax);
+		DistributionStatistics ds = new DistributionStatistics(attributesDistribution, newAttributesDistribution, 650);
+		
+		
+		return ds;
 	}
 }

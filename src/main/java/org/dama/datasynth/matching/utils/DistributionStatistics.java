@@ -31,31 +31,34 @@ public class DistributionStatistics<X extends Comparable<X>, Y extends Comparabl
 	public double chiSquareTest() {
 
 		Comparator comparator = new Comparator<JointDistribution.Entry<Tuple<X, Y>, Double>>() {
-			private JointDistribution<X,Y> distribution = null;
+			private JointDistribution<X, Y> distribution = null;
+
 			@Override
 			public int compare(JointDistribution.Entry<Tuple<X, Y>, Double> o1, JointDistribution.Entry<Tuple<X, Y>, Double> o2) {
 				return o1.getKey().compareTo(o2.getKey());
 			}
 
-			public void setDistribution(JointDistribution<X,Y> distribution) { this.distribution = distribution;}
+			public void setDistribution(JointDistribution<X, Y> distribution) {
+				this.distribution = distribution;
+			}
 		};
 
-		Set<Tuple<X,Y>> entries = new TreeSet<>();
+		Set<Tuple<X, Y>> entries = new TreeSet<>();
 		entries.addAll(expected.keySet());
 		entries.addAll(observed.keySet());
 
 		double[] expectedFrequencies = new double[entries.size()];
 		int i = 0;
-		for (Tuple<X,Y> tuple : entries) {
+		for (Tuple<X, Y> tuple : entries) {
 			expectedFrequencies[i] = (sampleSize * expected.getProbability(tuple));
-			i+=1;
+			i += 1;
 		}
 
 		i = 0;
 		long[] observedFrequencies = new long[entries.size()];
-		for (Tuple<X,Y> tuple : entries) {
-			observedFrequencies[i] = (long)(sampleSize * observed.getProbability(tuple));
-			i+=1;
+		for (Tuple<X, Y> tuple : entries) {
+			observedFrequencies[i] = (long) (sampleSize * observed.getProbability(tuple));
+			i += 1;
 		}
 
 		ChiSquareTest chiSquareTest = new ChiSquareTest();
@@ -63,15 +66,11 @@ public class DistributionStatistics<X extends Comparable<X>, Y extends Comparabl
 
 	}
 
-	public double dMaxTest() {
+	public DMaxStatistics dMaxTest() {
 		Comparator comparator = new Comparator<JointDistribution.Entry<Tuple<X, Y>, Double>>() {
 			@Override
 			public int compare(JointDistribution.Entry<Tuple<X, Y>, Double> o1, JointDistribution.Entry<Tuple<X, Y>, Double> o2) {
-<<<<<<< HEAD
-				return -1*(o1.getKey().compareTo(o2.getKey()));
-=======
-				return -1*o1.getValue().compareTo(o2.getValue());
->>>>>>> 3ce9c086395d97990ccef4c9c0cc84b88c7e7542
+				return -1 * o1.getValue().compareTo(o2.getValue());
 			}
 		};
 
@@ -81,10 +80,10 @@ public class DistributionStatistics<X extends Comparable<X>, Y extends Comparabl
 		double accumulativeExpectedProb = 0;
 		double accumulativeObservedProb = 0;
 
-		List<Double> accumulativeExpectedProbValues = new ArrayList<>();
-		List<Double> accumulativeObservedProbValues = new ArrayList<>();
+		ArrayList<Double> accumulativeExpectedProbValues = new ArrayList<>();
+		ArrayList<Double> accumulativeObservedProbValues = new ArrayList<>();
 
-		double dMax=0;
+		double dMax = 0;
 		for (int i = 0; i < expectedEntries.size(); i++) {
 			JointDistribution.Entry<Tuple<X, Y>, Double> expectedEntry = expectedEntries.get(i);
 			double expectedProb = expectedEntry.getValue();
@@ -95,11 +94,26 @@ public class DistributionStatistics<X extends Comparable<X>, Y extends Comparabl
 			accumulativeObservedProb += observedProb;
 			accumulativeObservedProbValues.add(accumulativeObservedProb);
 
-			dMax = Math.abs(accumulativeExpectedProb-accumulativeObservedProb) > dMax?Math.abs(accumulativeExpectedProb-accumulativeObservedProb):dMax;
+			dMax = Math.abs(accumulativeExpectedProb - accumulativeObservedProb) > dMax ? Math.abs(accumulativeExpectedProb - accumulativeObservedProb) : dMax;
 		}
 
-		System.out.println("Expected: "+accumulativeExpectedProbValues);
-		System.out.println("Observed: "+accumulativeObservedProbValues);
-		return dMax;
+//		System.out.println();
+//		System.out.println(accumulativeObservedProbValues.toString().replace("[", "").replaceAll("]", "").replaceAll(", ", ","));
+
+		return new DMaxStatistics(dMax, accumulativeExpectedProbValues, accumulativeObservedProbValues);
 	}
+
+	public static class DMaxStatistics {
+
+		public double dMaxValue;
+		public ArrayList<Double> accumulativeExpectedProbValues;
+		public ArrayList<Double> accumulativeObservedProbValues;
+
+		public DMaxStatistics(double dMaxValue, ArrayList<Double> accumulativeExpectedProbValues, ArrayList<Double> accumulativeObservedProbValues) {
+			this.dMaxValue = dMaxValue;
+			this.accumulativeExpectedProbValues = accumulativeExpectedProbValues;
+			this.accumulativeObservedProbValues = accumulativeObservedProbValues;
+		}
+	}
+
 }
