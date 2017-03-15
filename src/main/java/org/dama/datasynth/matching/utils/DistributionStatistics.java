@@ -19,16 +19,14 @@ public class DistributionStatistics<X extends Comparable<X>, Y extends Comparabl
 
 	private final JointDistribution<X, Y> expected;
 	private final JointDistribution<X, Y> observed;
-	private final long sampleSize;
 
-	public DistributionStatistics(JointDistribution<X, Y> expected, JointDistribution<X, Y> observed, long size) {
+	public DistributionStatistics(JointDistribution<X, Y> expected, JointDistribution<X, Y> observed) {
 
 		this.expected = expected;
 		this.observed = observed;
-		this.sampleSize = size;
 	}
 
-	public double chiSquareTest() {
+	public double chiSquareTest(long sampleSize) {
 
 		Comparator comparator = new Comparator<JointDistribution.Entry<Tuple<X, Y>, Double>>() {
 			private JointDistribution<X, Y> distribution = null;
@@ -103,6 +101,39 @@ public class DistributionStatistics<X extends Comparable<X>, Y extends Comparabl
 		return new DMaxStatistics(dMax, accumulativeExpectedProbValues, accumulativeObservedProbValues);
 	}
 
+	public RsquareStatistics rSquareTest() {
+		Comparator comparator = new Comparator<JointDistribution.Entry<Tuple<X, Y>, Double>>() {
+			@Override
+			public int compare(JointDistribution.Entry<Tuple<X, Y>, Double> o1, JointDistribution.Entry<Tuple<X, Y>, Double> o2) {
+				return -1 * o1.getValue().compareTo(o2.getValue());
+			}
+		};
+
+		ArrayList<JointDistribution.Entry<Tuple<X, Y>, Double>> expectedEntries = new ArrayList<>(expected.getEntries());
+		Collections.sort(expectedEntries, comparator);
+
+		ArrayList<Double> expectedProbValues = new ArrayList<>();
+		ArrayList<Double> observedProbValues = new ArrayList<>();
+
+		double rSquare = 0;
+		for (int i = 0; i < expectedEntries.size(); i++) {
+			JointDistribution.Entry<Tuple<X, Y>, Double> expectedEntry = expectedEntries.get(i);
+			double expectedProb = expectedEntry.getValue();
+			expectedProbValues.add(expectedProb);
+
+			double observedProb = observed.get(expectedEntry.getKey());
+			observedProbValues.add(observedProb);
+
+			rSquare += Math.pow((expectedProb - observedProb),2);
+		}
+		rSquare/=expectedProbValues.size();
+
+		return new RsquareStatistics(rSquare, expectedProbValues, observedProbValues);
+	
+	}
+
+	
+
 	public static class DMaxStatistics {
 
 		public double dMaxValue;
@@ -113,6 +144,18 @@ public class DistributionStatistics<X extends Comparable<X>, Y extends Comparabl
 			this.dMaxValue = dMaxValue;
 			this.accumulativeExpectedProbValues = accumulativeExpectedProbValues;
 			this.accumulativeObservedProbValues = accumulativeObservedProbValues;
+		}
+	}
+	public static class RsquareStatistics {
+
+		public double rSquare;
+		public ArrayList<Double> expectedProbValues;
+		public ArrayList<Double> observedProbValues;
+
+		public RsquareStatistics(double rSquare, ArrayList<Double> expectedProbValues, ArrayList<Double> observedProbValues) {
+			this.rSquare = rSquare;
+			this.expectedProbValues = expectedProbValues;
+			this.observedProbValues = observedProbValues;
 		}
 	}
 

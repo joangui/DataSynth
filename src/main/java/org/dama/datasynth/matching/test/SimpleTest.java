@@ -41,83 +41,90 @@ public class SimpleTest {
 		Graph g = graphReader.getGraph();
 		Partition p = graphReader.getPartitions(g);
 //for(NUM_ATTRIBUTES=2;NUM_ATTRIBUTES<100;NUM_ATTRIBUTES+=5)
-{
-		for (Map.Entry<Integer, Set<Long>> entry : p.entrySet()) {
-			Integer partitionId = entry.getKey();
-			Set<Long> nodes = entry.getValue();
+		{
+			for (Map.Entry<Integer, Set<Long>> entry : p.entrySet()) {
+				Integer partitionId = entry.getKey();
+				Set<Long> nodes = entry.getValue();
 
-			Integer attribute = getAttribute(NUM_ATTRIBUTES);
+				Integer attribute = getAttribute(NUM_ATTRIBUTES);
 //			Integer attribute = partitionId%2==0?1:2;
 
-			for (long nodeId : nodes) {
-				attributes.add(new Tuple<>(nodeId, attribute));
-			}
-		}
-
-		Map<Long, Table> edgesPartition = new HashMap<>();
-		Table<Long, Long> edgesMixed = new Table<>();
-
-		for (Map.Entry<Long, Set<Long>> entry : g.entrySet()) {
-			long tailId = entry.getKey();
-			long partitionTail = p.getNodePartition(tailId);
-			for (Long headId : entry.getValue()) {
-				long partitionHead = p.getNodePartition(headId);
-				if (partitionTail == partitionHead) {
-					Table<Long, Long> edgeTable = edgesPartition.get(partitionHead);
-					if (edgeTable == null) {
-						edgeTable = new Table<>();
-						edgesPartition.put(partitionHead, edgeTable);
-					}
-					edgeTable.add(new Tuple<>(tailId, headId));
-				} else {
-					edgesMixed.add(new Tuple<>(tailId, headId));
+				for (long nodeId : nodes) {
+					attributes.add(new Tuple<>(nodeId, attribute));
 				}
-
 			}
-		}
 
-		Table<Long, Long> edges = new Table<>();
-		for (Map.Entry<Long, Table> entry : edgesPartition.entrySet()) {
-			Table<Long, Long> edgesTable = entry.getValue();
-			for (Tuple<Long, Long> edge : edgesTable) {
+			Map<Long, Table> edgesPartition = new HashMap<>();
+			Table<Long, Long> edgesMixed = new Table<>();
+
+			for (Map.Entry<Long, Set<Long>> entry : g.entrySet()) {
+				long tailId = entry.getKey();
+				long partitionTail = p.getNodePartition(tailId);
+				for (Long headId : entry.getValue()) {
+					long partitionHead = p.getNodePartition(headId);
+					if (partitionTail == partitionHead) {
+						Table<Long, Long> edgeTable = edgesPartition.get(partitionHead);
+						if (edgeTable == null) {
+							edgeTable = new Table<>();
+							edgesPartition.put(partitionHead, edgeTable);
+						}
+						edgeTable.add(new Tuple<>(tailId, headId));
+					} else {
+						edgesMixed.add(new Tuple<>(tailId, headId));
+					}
+
+				}
+			}
+
+			Table<Long, Long> edges = new Table<>();
+			for (Map.Entry<Long, Table> entry : edgesPartition.entrySet()) {
+				Table<Long, Long> edgesTable = entry.getValue();
+				for (Tuple<Long, Long> edge : edgesTable) {
+					edges.add(edge);
+				}
+			}
+
+			for (Tuple<Long, Long> edge : edgesMixed) {
 				edges.add(edge);
 			}
-		}
 
-		for (Tuple<Long, Long> edge : edgesMixed) {
-			edges.add(edge);
-		}
+			File originalGraph = new File("./originalGraph.csv");
+			FileWriter writer = new FileWriter(originalGraph);
+			for (Tuple<Long, Long> edge : edges) {
+				writer.write(edge.getX() + " " + edge.getY() + "\n");
+			}
+			writer.close();
+			File originalAttributes = new File("./originalAttributes.csv");
+			writer = new FileWriter(originalAttributes);
+			writer.write("Id Value\n");
+			for (Tuple<Long, Integer> pair : attributes) {
+				writer.write(pair.getX() + " " + pair.getY() + "\n");
+			}
+			writer.close();
 
-		File originalGraph = new File("./originalGraph.csv");
-		FileWriter writer = new FileWriter(originalGraph);
-		for (Tuple<Long, Long> edge : edges) {
-			writer.write(edge.getX() + " " + edge.getY() + "\n");
-		}
-		writer.close();
-		File originalAttributes = new File("./originalAttributes.csv");
-		writer = new FileWriter(originalAttributes);
-		writer.write("Id Value\n");
-		for (Tuple<Long, Integer> pair : attributes) {
-			writer.write(pair.getX() + " " + pair.getY() + "\n");
-		}
-		writer.close();
+			DistributionStatistics ds = MatchingCommunityTest.run(attributes, edges);
+			try {
+				double chiSquare = ds.chiSquareTest(650);
+				System.out.println("\nChi-Square: " + chiSquare);
 
-		DistributionStatistics ds = MatchingCommunityTest.run(attributes, edges);
-		try{
-			double chiSquare = ds.chiSquareTest();
-		System.out.println("\nChi-Square: " + chiSquare);
+				DistributionStatistics.DMaxStatistics dMaxStatistics = ds.dMaxTest();
+				System.out.println("\nDmax: " + dMaxStatistics.dMaxValue);
 
-		DistributionStatistics.DMaxStatistics dMaxStatistics = ds.dMaxTest();
-		System.out.println("\nDmax: " + dMaxStatistics.dMaxValue);
+				String fileDmaxPath = "plots/dMax100K-" + NUM_ATTRIBUTES + ".txt";
+				printFile(fileDmaxPath, dMaxStatistics.accumulativeExpectedProbValues, dMaxStatistics.accumulativeObservedProbValues);
 
-		String fileDmaxPath = "plots/100K-"+NUM_ATTRIBUTES+".txt";
-		printFile(fileDmaxPath,dMaxStatistics.accumulativeExpectedProbValues,dMaxStatistics.accumulativeObservedProbValues);
-		}catch(Exception e)
-		{
-			System.out.println("Configuration no possible.");
+				DistributionStatistics.RsquareStatistics rSquareTest = ds.rSquareTest();
+				System.out.println("\nRsquare: " + rSquareTest.rSquare);
+								
+				
+				String fileRSquarePath = "plots/rSquare100K-" + NUM_ATTRIBUTES + ".txt";
+				printFile(fileRSquarePath, rSquareTest.expectedProbValues, rSquareTest.observedProbValues);
+				
+			} catch (Exception e) {
+				System.out.println("Configuration no possible.");
+			}
+
 		}
-		
-	}
 	}
 
 	private static Integer getAttribute(int max) {
@@ -130,7 +137,7 @@ public class SimpleTest {
 		printWriter.println(accumulativeExpectedProbValues.toString().replace("[", "").replaceAll("]", "").replaceAll(", ", ","));
 		printWriter.println(accumulativeObservedProbValues.toString().replace("[", "").replaceAll("]", "").replaceAll(", ", ","));
 		printWriter.close();
-		System.out.println(fileDmaxPath+" created.");
+		System.out.println(fileDmaxPath + " created.");
 	}
 
 }

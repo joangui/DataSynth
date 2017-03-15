@@ -127,7 +127,7 @@ public class MatchingCommunityTest {
 			System.out.print(originalEntry.getKey().getX() + " " + originalEntry.getKey().getY() + " " + originalEntry.getValue() + " --- ");
 			System.out.println(newEntry.getKey().getX() + " " + newEntry.getKey().getY() + " " + newEntry.getValue());
 		}
-		DistributionStatistics ds = new DistributionStatistics(attributesDistribution, newAttributesDistribution, 650);
+		DistributionStatistics ds = new DistributionStatistics(attributesDistribution, newAttributesDistribution);
 		
 		
 		return ds;
