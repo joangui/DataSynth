@@ -5,88 +5,70 @@
  */
 package org.dama.datasynth.matching.test;
 
-import org.dama.datasynth.matching.Tuple;
-import org.dama.datasynth.matching.graphs.types.Graph;
-import org.dama.datasynth.matching.graphs.types.Partition;
-import org.dama.datasynth.matching.graphs.GraphReaderFromNodePairFile;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
 import org.dama.datasynth.matching.Table;
+import org.dama.datasynth.matching.Tuple;
+import org.dama.datasynth.matching.graphs.BFSTraversal;
+import org.dama.datasynth.matching.graphs.GraphReaderFromNodePairFile;
+import org.dama.datasynth.matching.graphs.LinearWeightedGreedyPartitioner;
+import org.dama.datasynth.matching.graphs.types.Graph;
+import org.dama.datasynth.matching.graphs.types.GraphPartitioner;
+import org.dama.datasynth.matching.graphs.types.Partition;
 import org.dama.datasynth.matching.utils.DistributionStatistics;
+
+import java.io.*;
+import java.util.*;
 
 /**
  *
  * @author joangui
  */
-public class SimpleTest {
+public class UnbalancedPartitionsTest {
 
 	static Random r = new Random(1234567890L);
-	static int NUM_ATTRIBUTES = 32;
+	static int NUM_ATTRIBUTES = 16;
+	static double k = 0.3;
 
 	static public void main(String[] argv) throws Exception {
-		System.out.println("Simple Test Run");
+		System.out.println("Unbalanced Partition Test");
 		Table<Long, Integer> attributes = new Table<>();
 
-		GraphReaderFromNodePairFile graphReader = new GraphReaderFromNodePairFile(argv[0], argv[1]);
+		Table<Long, Long> edges = new Table<>();
+		// Load edges table
+		try {
+			FileInputStream	fileInputStream = new FileInputStream(argv[0]);
+			edges.load(fileInputStream, " ", (String s) -> Long.parseLong(s), (String s) -> Long.parseLong(s));
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
 
-		Graph g = graphReader.getGraph();
-		Partition p = graphReader.getPartitions(g);
-//for(NUM_ATTRIBUTES=2;NUM_ATTRIBUTES<100;NUM_ATTRIBUTES+=5)
-{
+		double proportions[] = new double[NUM_ATTRIBUTES];
+		double sum = 0.0;
+		for(int i = 1; i <= NUM_ATTRIBUTES; ++i) {
+			double prob = Math.max(Math.pow(1-k,i-1)*k,1/(double)NUM_ATTRIBUTES);
+
+			sum+=prob;
+			proportions[i-1] = prob;
+		}
+
+		for(int i = 0; i < NUM_ATTRIBUTES; ++i) {
+			proportions[i] = proportions[i] / sum;
+		}
+
+		Graph graph = Graph.fromTable(edges);
+		GraphPartitioner partitioner = new LinearWeightedGreedyPartitioner(graph, BFSTraversal.class, proportions );
+		Partition p = partitioner.getPartition();
 		for (Map.Entry<Integer, Set<Long>> entry : p.entrySet()) {
 			Integer partitionId = entry.getKey();
 			Set<Long> nodes = entry.getValue();
 
-			Integer attribute = getAttribute(NUM_ATTRIBUTES);
-//			Integer attribute = partitionId%2==0?1:2;
+			Integer attribute = partitionId % NUM_ATTRIBUTES;
 
 			for (long nodeId : nodes) {
 				attributes.add(new Tuple<>(nodeId, attribute));
 			}
 		}
 
-		Map<Long, Table> edgesPartition = new HashMap<>();
-		Table<Long, Long> edgesMixed = new Table<>();
-
-		for (Map.Entry<Long, Set<Long>> entry : g.entrySet()) {
-			long tailId = entry.getKey();
-			long partitionTail = p.getNodePartition(tailId);
-			for (Long headId : entry.getValue()) {
-				long partitionHead = p.getNodePartition(headId);
-				if (partitionTail == partitionHead) {
-					Table<Long, Long> edgeTable = edgesPartition.get(partitionHead);
-					if (edgeTable == null) {
-						edgeTable = new Table<>();
-						edgesPartition.put(partitionHead, edgeTable);
-					}
-					edgeTable.add(new Tuple<>(tailId, headId));
-				} else {
-					edgesMixed.add(new Tuple<>(tailId, headId));
-				}
-
-			}
-		}
-
-		Table<Long, Long> edges = new Table<>();
-		for (Map.Entry<Long, Table> entry : edgesPartition.entrySet()) {
-			Table<Long, Long> edgesTable = entry.getValue();
-			for (Tuple<Long, Long> edge : edgesTable) {
-				edges.add(edge);
-			}
-		}
-
-		for (Tuple<Long, Long> edge : edgesMixed) {
-			edges.add(edge);
-		}
 
 		File originalGraph = new File("./originalGraph.csv");
 		FileWriter writer = new FileWriter(originalGraph);
@@ -117,14 +99,12 @@ public class SimpleTest {
 			e.printStackTrace();
 			System.out.println("Configuration no possible.");
 		}
-		
-	}
 	}
 
-	private static Integer getAttribute(int max) {
+	/*private static Integer getAttribute(int max) {
 		return r.nextInt(max);
 
-	}
+	}*/
 
 	private static void printFile(String fileDmaxPath, ArrayList<Double> accumulativeExpectedProbValues, ArrayList<Double> accumulativeObservedProbValues) throws FileNotFoundException, UnsupportedEncodingException {
 		PrintWriter printWriter = new PrintWriter(fileDmaxPath, "UTF-8");
