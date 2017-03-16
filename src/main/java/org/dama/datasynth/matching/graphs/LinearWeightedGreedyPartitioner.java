@@ -59,11 +59,11 @@ public class LinearWeightedGreedyPartitioner extends GraphPartitioner {
 
 		if (bestScore == 0) {
 			int leastPopulatedPartition = 0;
-			long minPupulation = partition.getPartitionSize(0);
+			long minPopulation = partitionCapacities[0] - partition.getPartitionSize(0);
 			for (int i = 1; i < numPartitions; i++) {
-				long population = partition.getPartitionSize(i);
-				if (population < minPupulation) {
-					minPupulation = population;
+				long population = partitionCapacities[i] - partition.getPartitionSize(i);
+				if (population > minPopulation) {
+					minPopulation = population;
 					leastPopulatedPartition = i;
 				}
 			}
