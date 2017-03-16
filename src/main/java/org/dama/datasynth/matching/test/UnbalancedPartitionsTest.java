@@ -108,20 +108,27 @@ public class UnbalancedPartitionsTest {
 		writer.close();
 
 		DistributionStatistics ds = MatchingCommunityTest.run(attributes, edges);
-		try{
-		    long numsamples = 10000;
-			double chiSquare = ds.chiSquareTest(numsamples);
-		System.out.println("\np-value of chi-square test with "+numsamples+" samples: " + chiSquare);
-
-		DistributionStatistics.DMaxStatistics dMaxStatistics = ds.dMaxTest();
-		System.out.println("\nDmax: " + dMaxStatistics.dMaxValue);
-
-		printFile(options.outputFile,dMaxStatistics.accumulativeExpectedProbValues,dMaxStatistics.accumulativeObservedProbValues);
-		}catch(Exception e)
+		try {
+            long numsamples = 10000;
+            double chiSquare = ds.chiSquareTest(numsamples);
+            System.out.println("\np-value of chi-square test with " + numsamples + " samples: " + chiSquare);
+        }
+        catch(Exception e)
 		{
 			e.printStackTrace();
 			System.out.println("Configuration no possible.");
 		}
+
+        try{
+            DistributionStatistics.DMaxStatistics dMaxStatistics = ds.dMaxTest();
+            System.out.println("\nDmax: " + dMaxStatistics.dMaxValue);
+
+            printFile(options.outputFile,dMaxStatistics.accumulativeExpectedProbValues,dMaxStatistics.accumulativeObservedProbValues);
+        }catch(Exception e)
+        {
+            e.printStackTrace();
+            System.out.println("Configuration no possible.");
+        }
 	}
 
 	/*private static Integer getAttribute(int max) {
