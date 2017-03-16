@@ -55,6 +55,7 @@ def plot(inputfile,outputfile):
                     
         # print expected
         # print observed
+        plt.ylim([0.0,1.0])
         plt.legend(loc='lower right')
 	plt.gca().axes.get_xaxis().set_visible(False)
         plt.savefig(outputfile,format='eps')
