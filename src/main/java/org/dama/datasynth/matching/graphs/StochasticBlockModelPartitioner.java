@@ -89,11 +89,11 @@ public class StochasticBlockModelPartitioner extends GraphPartitioner {
         }
 
         if (bestScore == 0.0) {
-            long minPopulation = partition.getPartitionSize(0);
+            long maxRemaining = blockModel.getSizes()[0] - partition.getPartitionSize(0);
             for (int i = 1; i < blockModel.getNumBlocks(); i++) {
-                long population = partition.getPartitionSize(i);
-                if (population < minPopulation) {
-                    minPopulation = population;
+                long remaining = blockModel.getSizes()[i] - partition.getPartitionSize(i);
+                if (remaining > maxRemaining) {
+                    maxRemaining = remaining;
                     bestPartition = i;
                 }
             }

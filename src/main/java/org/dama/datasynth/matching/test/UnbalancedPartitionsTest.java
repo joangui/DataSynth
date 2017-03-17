@@ -109,7 +109,7 @@ public class UnbalancedPartitionsTest {
 
 		DistributionStatistics ds = MatchingCommunityTest.run(attributes, edges);
 		try {
-            long numsamples = 10000;
+            long numsamples = edges.size();
             double chiSquare = ds.chiSquareTest(numsamples);
             System.out.println("\np-value of chi-square test with " + numsamples + " samples: " + chiSquare);
         }
