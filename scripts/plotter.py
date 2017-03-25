@@ -7,8 +7,9 @@ import matplotlib.pyplot as plt
 def main(argv):
 	inputfile = ''
 	outputfile = ''
+        title = ''
 	try: 
-            opts, args = getopt.getopt(argv,"hi:o:",["help","ifile=","ofile="]) 
+            opts, args = getopt.getopt(argv,"hi:o:t:",["help","ifile=","ofile=","title"]) 
 	except getopt.GetoptError: 
 		print 'test.py -i <inputfile> -o <outputfile>' 
 		sys.exit(2)
@@ -20,6 +21,8 @@ def main(argv):
 			inputfile = arg 
 		elif opt in ("-o", "--ofile"): 
 			outputfile = arg 
+                elif opt in ("-t", "--title"):
+                        title = arg
 
         if not outputfile: 
             path=inputfile.split('/')
@@ -29,11 +32,11 @@ def main(argv):
         
 	print 'Input file is ', inputfile 
         print 'Output file is ', outputfile 
-        plot(inputfile,outputfile)
+        plot(inputfile,outputfile,title)
 
 
 
-def plot(inputfile,outputfile):
+def plot(inputfile,outputfile, title):
 
         expected=[]
         observed=[]
@@ -50,13 +53,22 @@ def plot(inputfile,outputfile):
         size=len(expected)
         index = range(1,size+1)
 
-	plt.plot(index, expected,'*-', linewidth=2.0, label="Expected")
-	plt.plot(index, observed,'+-', linewidth=2.0, label="Observed")
+        color = "black"
+        markersize = 10
+        fillstyle="none"
+
+	plt.plot(index, expected,'^--', linewidth=0.5, label="Expected CDF",
+                color=color, fillstyle=fillstyle, markersize=markersize)
+	plt.plot(index, observed,'+--', linewidth=0.5, label="Observed CDF",
+                color=color, fillstyle=fillstyle, markersize=markersize)
                     
         # print expected
         # print observed
+        #plt.figure().suptitle(title)
+        plt.title(title, fontsize=32)
         plt.ylim([0.0,1.0])
-        plt.legend(loc='lower right')
+        plt.tick_params(axis='both', which='major', labelsize=23)
+        plt.legend(loc='lower right', prop={'size':23})
 	plt.gca().axes.get_xaxis().set_visible(False)
         plt.savefig(outputfile,format='eps')
         # plt.show()
