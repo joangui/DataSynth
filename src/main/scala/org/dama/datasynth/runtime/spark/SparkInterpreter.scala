@@ -1,6 +1,5 @@
 package org.dama.datasynth.runtime.spark
 
-
 import org.apache.spark.api.java.function.{MapFunction, MapPartitionsFunction}
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
 import org.apache.spark.sql.types._
