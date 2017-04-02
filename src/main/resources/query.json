@@ -4,13 +4,13 @@
     {
       "name" : "person",
       "number" : 1000,
-      "attributes" : [
+      "properties" : [
         {
           "name" : "country",
           "type" : "String",
           "generator" : {
             "name" : "org.dama.datasynth.generators.CumulativeDistributionGenerator",
-            "requires" : [],
+            "depends" : [],
             "init" : ["src/main/resources/dicLocations.txt",1,5," "]
           }
         },
@@ -19,7 +19,7 @@
           "type" : "String",
           "generator" : {
             "name" : "org.dama.datasynth.generators.DateGenerator",
-            "requires" : [],
+            "depends" : [],
             "init" : ["dd-MM-yyyy","01-01-1980","01-01-1990"]
           }
         },
@@ -28,26 +28,8 @@
           "type" : "String",
           "generator" : {
             "name" : "org.dama.datasynth.generators.UniformCorrelationGenerator",
-            "requires" : ["person.country"],
+            "depends" : ["country"],
             "init" : ["src/main/resources/namesByCountry.txt"," "]
-          }
-        },
-        {
-          "name" : "id",
-          "type" : "Long",
-          "generator" : {
-            "name" : "org.dama.datasynth.generators.DateBasedIDGenerator",
-            "requires" : ["person.creationDate"],
-            "init" : ["dd-MM-yyyy"]
-          }
-        },
-        {
-          "name" : "email",
-          "type" : "String",
-          "generator" : {
-            "name" : "org.dama.datasynth.generators.MailGenerator",
-            "requires" : ["person.name"],
-            "init" : ["src/main/resources/email.txt"]
           }
         }
       ]
@@ -56,17 +38,17 @@
   "edges" : [
     {
       "name" : "friendship",
-      "edgeType" : "undirected",
       "source" : "person",
       "target" : "person",
-      "sourceCardinality" : {
-        "generator" : {
-            "name" : "org.dama.datasynth.generators.ZipfDistribution",
-            "requires" : [],
-            "init" : [1.7]
-          }
+      "structure" : {
+        "name" : "BTER",
+        "init" : []
       },
-      "correlates" : ["person.country"]
+      "correlation" : {
+        "source" : ["country"],
+        "target" : ["country"],
+        "filename" : "/path/to/file"
+      }
     }
   ]
 }

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.dama.datasynth.graphreader;
+package org.dama.datasynth.matching.graphs;
 
 import org.dama.datasynth.matching.graphs.GraphReaderFromFile;
 import org.dama.datasynth.matching.graphs.types.Graph;
@@ -31,6 +31,5 @@ public class GraphReaderFromFileTest {
 
 		assertTrue(partitions.getNumNodes()==99617L);
 		*/
-		
 	}
 }
