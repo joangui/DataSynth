@@ -1,5 +1,0 @@
-ensupatio = filter(what,{01,02,03});
-test = union(s,t,u,f,f);
-hallo = sort(something);
-sup = partition(superpartitioner);
-pony = mapPartition(funcs, thisone);

@@ -1,6 +1,0 @@
-signature : {
-    @source = Entity;
-}
-
-@source.name = zip(@source->attribute[@x.isTemporal == false].name);
-dump(@source.name);
