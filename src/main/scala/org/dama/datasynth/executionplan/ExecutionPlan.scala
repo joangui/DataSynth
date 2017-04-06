@@ -21,14 +21,10 @@ object ExecutionPlan {
   /** Traits used to represent what each task produces **/
   /******************************************************/
 
-  /** Produces a Long **/
-  trait LongProducer
-
-  /** Produces a String **/
-  trait StringProducer
+  trait Parameter extends ExecutionPlanNode
 
   /** Produces a Table **/
-  trait TableProducer;
+  trait TableProducer extends ExecutionPlanNode
 
   /** Produces a Property Table **/
   trait PropertyTableProducer extends TableProducer
@@ -40,18 +36,14 @@ object ExecutionPlan {
   /** Parameters provided by users                     **/
   /******************************************************/
 
-  sealed abstract class Parameter extends ExecutionPlanNode {
-    override def accept(visitor: ExecutionPlanVisitor) = visitor.visit(this)
-  }
-
   /**
     * Represents a parameter provided by the user of type Long
     * @param value The value of the parameter
     */
   case class LongParameter( value : Long )
-    extends Parameter
-    with LongProducer {
+    extends Parameter {
     override def toString: String = s"[LongParameter,$value]"
+    override def accept(visitor: ExecutionPlanVisitor) { visitor.visit(this) }
   }
 
   /**
@@ -59,10 +51,12 @@ object ExecutionPlan {
     * @param value The value of the parameter
     */
   case class StringParameter( value : String )
-    extends Parameter
-    with StringProducer {
-
+    extends Parameter {
     override def toString: String = s"[StringParameter,$value]"
+    override def accept(visitor: ExecutionPlanVisitor) {
+      visitor.visit(this)
+    }
+
   }
 
   /******************************************************/
@@ -77,10 +71,6 @@ object ExecutionPlan {
   case class PropertyGenerator( className : String,
                                 initParameters : Seq[Parameter],
                                 dependentGenerators : Seq[PropertyGenerator]) extends ExecutionPlanNode {
-
-    def this(className : String ) = this(className, Seq[Parameter](), Seq[PropertyGenerator]())
-    //def this(className : String, initParameters : Seq[Parameter] ) = this(className, initParameters, Seq[PropertyGenerator]())
-    def this(className : String, dependentGenerators : Seq[PropertyGenerator] ) = this(className, Seq[Parameter](), dependentGenerators )
 
     override def toString: String = s"[PropertyGenerator,$className]"
     override def accept(visitor: ExecutionPlanVisitor) = visitor.visit(this)
@@ -101,18 +91,12 @@ object ExecutionPlan {
   /******************************************************/
 
   /**
-    * Represents a task in the execution plan
-    */
-  sealed abstract class Task extends ExecutionPlanNode
-
-  /**
     * Represents a create property table operation
     * @param generator The property generator to create the table
     * @param size  The LongProducer to obtain the size of the table from
     */
-  case class CreatePropertyTable( tableName : String, generator : PropertyGenerator, size : LongProducer )
-    extends Task
-    with PropertyTableProducer {
+  case class CreatePropertyTable( tableName : String, generator : PropertyGenerator, size : LongParameter )
+    extends PropertyTableProducer {
     override def toString: String = s"[CreatePropertyTable,$tableName]"
     override def accept( visitor : ExecutionPlanVisitor ) = visitor.visit(this)
   }
@@ -122,9 +106,8 @@ object ExecutionPlan {
     * @param generator The edge generator to create the table
     * @param size  The LongProducer to obtain the size of the table from
     */
-  case class CreateEdgeTable( tableName : String, generator : GraphGenerator, size : LongProducer )
-    extends  Task
-    with EdgeTableProducer {
+  case class CreateEdgeTable( tableName : String, generator : GraphGenerator, size : LongParameter )
+    extends EdgeTableProducer {
     override def toString: String = s"[CreateEdgeTable,$tableName]"
     override def accept( visitor : ExecutionPlanVisitor ) = visitor.visit(this)
   }
@@ -134,7 +117,7 @@ object ExecutionPlan {
     * @param table The table to compute the size from
     */
   case class TableSize( table : TableProducer )
-    extends Task {
+    extends ExecutionPlanNode {
     override def toString: String = s"[TableSize]"
     override def accept( visitor : ExecutionPlanVisitor ) = visitor.visit(this)
   }
