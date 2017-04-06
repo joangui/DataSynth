@@ -5,7 +5,7 @@ import org.dama.datasynth.executionplan.ExecutionPlan._
 /**
   * Created by aprat on 4/04/17.
   *
-  * Prints an execution plan to the screen
+  * Returns an execution plan in its string form
   */
 class ExecutionPlanPrinter extends ExecutionPlanVisitor {
 
@@ -70,6 +70,14 @@ class ExecutionPlanPrinter extends ExecutionPlanVisitor {
     numIndents+=1
     printstring(node.toString)
     node.table.accept(this)
+    numIndents-=1
+  }
+
+  override def visit(node: Match) = {
+    numIndents+=1
+    printstring(node.toString)
+    node.propertyTable.accept(this)
+    node.graph.accept(this)
     numIndents-=1
   }
 }

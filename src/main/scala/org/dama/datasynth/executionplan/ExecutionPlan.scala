@@ -118,8 +118,14 @@ object ExecutionPlan {
     */
   case class TableSize( table : TableProducer )
     extends ExecutionPlanNode {
-    override def toString: String = s"[TableSize]"
+    override def toString: String = "[TableSize]"
     override def accept( visitor : ExecutionPlanVisitor ) = visitor.visit(this)
   }
 
+  case class Match( propertyTable : PropertyTableProducer, graph : EdgeTableProducer )
+  extends EdgeTableProducer {
+    override def toString: String = "[Match]"
+    override def accept(visitor: ExecutionPlanVisitor) =  visitor.visit(this)
+  }
 }
+

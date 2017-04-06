@@ -14,4 +14,5 @@ abstract class ExecutionPlanVisitor {
   def visit( node : CreatePropertyTable )
   def visit( node : CreateEdgeTable )
   def visit( node : TableSize )
+  def visit( node : Match )
 }
