@@ -11,8 +11,10 @@ import org.scalatest.{FlatSpec, Matchers}
 @RunWith(classOf[JUnitRunner])
 class ExecutionPlanTest extends FlatSpec with Matchers{
 
+  /** Generator tests **/
+
   "A PropertyGenerator toString" should "output like [PropertyGenerator,propertyGeneratorName]" in {
-    val generator = PropertyGenerator("path.to.class", Seq(), Seq())
+    val generator = new PropertyGenerator("path.to.class")
     generator.toString should be ("[PropertyGenerator,path.to.class]")
   }
 
@@ -21,6 +23,7 @@ class ExecutionPlanTest extends FlatSpec with Matchers{
     generator.toString should be ("[GraphGenerator,path.to.class]")
   }
 
+  /** Parameter tests **/
   "A LongParameter toString" should "output like [LongParameter,value]" in {
     val parameter = LongParameter(10)
     parameter.toString should be ("[LongParameter,10]")
@@ -31,6 +34,7 @@ class ExecutionPlanTest extends FlatSpec with Matchers{
     parameter.toString should be ("[StringParameter,test]")
   }
 
+  /** Tasks tests **/
   "A CreatePropertyTable toString" should "output like [CreatePropertyTable,tableName]" in {
     val generator = PropertyGenerator("path.to.generator",Seq(),Seq())
     val size = LongParameter(10)
