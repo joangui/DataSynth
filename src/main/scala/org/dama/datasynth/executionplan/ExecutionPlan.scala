@@ -122,9 +122,9 @@ object ExecutionPlan {
     override def accept( visitor : ExecutionPlanVisitor ) = visitor.visit(this)
   }
 
-  case class Match( propertyTable : PropertyTableProducer, graph : EdgeTableProducer )
+  case class Match( tableName : String, propertyTable : PropertyTableProducer, graph : EdgeTableProducer )
   extends EdgeTableProducer {
-    override def toString: String = "[Match]"
+    override def toString: String = s"[Match,$tableName]"
     override def accept(visitor: ExecutionPlanVisitor) =  visitor.visit(this)
   }
 }
