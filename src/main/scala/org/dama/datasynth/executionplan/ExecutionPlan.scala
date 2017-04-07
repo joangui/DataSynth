@@ -99,9 +99,9 @@ object ExecutionPlan {
     * @param generator The property generator to create the table
     * @param size  The LongProducer to obtain the size of the table from
     */
-  case class CreatePropertyTable[T]( tableName : String, generator : PropertyGenerator[_], size : LongParameter )
+  case class CreatePropertyTable[T]( typeName : String, propertyName : String, generator : PropertyGenerator[_], size : LongParameter )
     extends PropertyTableProducer[T] {
-    override def toString: String = s"[CreatePropertyTable,$tableName]"
+    override def toString: String = s"[CreatePropertyTable,$typeName.$propertyName]"
     override def accept( visitor : ExecutionPlanVisitor ) = visitor.visit(this)
   }
 

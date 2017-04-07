@@ -12,17 +12,16 @@ import org.scalatest.junit.JUnitRunner
 class ExecutionPlanPrinterTest extends FlatSpec with Matchers {
 
   "An ExecutionPlanPrinter printExecutionPlan" should "output like " +
-    "[CreatePropertyTable,tableName]\n" +
+    "[CreatePropertyTable,typeName.propertyName]\n" +
     "    [LongParameter,1000]\n" +
     "    [PropertyGenerator,propertyGeneratorName]\n" +
     "        [LongParameter,10000]\n" in {
-
     val executionPlanPrinter = new ExecutionPlanPrinter()
     val longParameter10000 = LongParameter(10000)
     val longParameter1000 = LongParameter(1000)
     val propertyGenerator = PropertyGenerator("propertyGeneratorName",List(longParameter10000), Seq())
-    val createPropertyTable = CreatePropertyTable("tableName",propertyGenerator,longParameter1000)
-    executionPlanPrinter.printExecutionPlan(createPropertyTable) should be ("[CreatePropertyTable,tableName]\n" +
+    val createPropertyTable = CreatePropertyTable("typeName","propertyName",propertyGenerator,longParameter1000)
+    executionPlanPrinter.printExecutionPlan(createPropertyTable) should be ("[CreatePropertyTable,typeName.propertyName]\n" +
     "    [LongParameter,1000]\n" +
     "    [PropertyGenerator,propertyGeneratorName]\n" +
     "        [LongParameter,10000]\n")
