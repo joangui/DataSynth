@@ -18,7 +18,6 @@ class ExecutionPlanPrinter extends ExecutionPlanVisitor {
     stringBuilder.mkString
   }
 
-
   private def spaces( numIndents : Int ) : String = {
     numIndents match {
       case 1 => ""
@@ -30,13 +29,13 @@ class ExecutionPlanPrinter extends ExecutionPlanVisitor {
     stringBuilder.append(spaces(numIndents)+str+"\n")
   }
 
-  override def visit(node: Parameter) = {
+  override def visit(node: Parameter[_]) = {
     numIndents+=1
     printstring(node.toString)
     numIndents-=1
   }
 
-  override def visit(node: PropertyGenerator) = {
+  override def visit(node: PropertyGenerator[_]) = {
     numIndents+=1
     printstring(node.toString)
     node.initParameters.foreach( p => p.accept(this))
@@ -50,7 +49,7 @@ class ExecutionPlanPrinter extends ExecutionPlanVisitor {
     numIndents-=1
   }
 
-  override def visit(node: CreatePropertyTable) = {
+  override def visit(node: CreatePropertyTable[_]) = {
     numIndents+=1
     printstring(node.toString)
     node.size.accept(this)

@@ -18,16 +18,21 @@ object ExecutionPlan {
   };
 
   /******************************************************/
-  /** Traits used to represent what each task produces **/
+  /** Traits used to represent what nodes produce      **/
   /******************************************************/
 
-  trait Parameter extends ExecutionPlanNode
+  trait Parameter[T] extends ExecutionPlanNode {
+    type parameterType = T
+    def value() : T
+  }
 
   /** Produces a Table **/
   trait TableProducer extends ExecutionPlanNode
 
   /** Produces a Property Table **/
-  trait PropertyTableProducer extends TableProducer
+  trait PropertyTableProducer[T] extends TableProducer {
+    type propertyType = T
+  }
 
   /** Produces an Edge Tables **/
   trait EdgeTableProducer extends TableProducer
@@ -40,8 +45,8 @@ object ExecutionPlan {
     * Represents a parameter provided by the user of type Long
     * @param value The value of the parameter
     */
-  case class LongParameter( value : Long )
-    extends Parameter {
+  case class LongParameter(value : Long)
+    extends Parameter[Long] {
     override def toString: String = s"[LongParameter,$value]"
     override def accept(visitor: ExecutionPlanVisitor) { visitor.visit(this) }
   }
@@ -51,12 +56,11 @@ object ExecutionPlan {
     * @param value The value of the parameter
     */
   case class StringParameter( value : String )
-    extends Parameter {
+    extends Parameter[String] {
     override def toString: String = s"[StringParameter,$value]"
     override def accept(visitor: ExecutionPlanVisitor) {
       visitor.visit(this)
     }
-
   }
 
   /******************************************************/
@@ -68,10 +72,10 @@ object ExecutionPlan {
     * @param className The name of the generator
     * @param initParameters The sequence of init parameters of the generator
     */
-  case class PropertyGenerator( className : String,
-                                initParameters : Seq[Parameter],
-                                dependentGenerators : Seq[PropertyGenerator]) extends ExecutionPlanNode {
-
+  case class PropertyGenerator[T]( className : String,
+                                initParameters : Seq[Parameter[_]],
+                                dependentGenerators : Seq[PropertyGenerator[_]]) extends ExecutionPlanNode {
+    type propertyType = T
     override def toString: String = s"[PropertyGenerator,$className]"
     override def accept(visitor: ExecutionPlanVisitor) = visitor.visit(this)
   }
@@ -81,7 +85,7 @@ object ExecutionPlan {
     * @param className The name of the generator
     * @param initParameters The sequence of init parameters of the generator
     */
-  case class GraphGenerator( className : String, initParameters : Seq[Parameter]) extends ExecutionPlanNode {
+  case class GraphGenerator( className : String, initParameters : Seq[Parameter[_]]) extends ExecutionPlanNode {
     override def toString: String = s"[GraphGenerator,$className]"
     override def accept(visitor: ExecutionPlanVisitor) = visitor.visit(this)
   }
@@ -95,8 +99,8 @@ object ExecutionPlan {
     * @param generator The property generator to create the table
     * @param size  The LongProducer to obtain the size of the table from
     */
-  case class CreatePropertyTable( tableName : String, generator : PropertyGenerator, size : LongParameter )
-    extends PropertyTableProducer {
+  case class CreatePropertyTable[T]( tableName : String, generator : PropertyGenerator[_], size : LongParameter )
+    extends PropertyTableProducer[T] {
     override def toString: String = s"[CreatePropertyTable,$tableName]"
     override def accept( visitor : ExecutionPlanVisitor ) = visitor.visit(this)
   }
@@ -122,7 +126,14 @@ object ExecutionPlan {
     override def accept( visitor : ExecutionPlanVisitor ) = visitor.visit(this)
   }
 
-  case class Match( tableName : String, propertyTable : PropertyTableProducer, graph : EdgeTableProducer )
+  /**
+    * Represents a match operation between a property table and a graph
+    *
+    * @param tableName The name of the produced table
+    * @param propertyTable The property table to match
+    * @param graph The graph to match
+    */
+  case class Match( tableName : String, propertyTable : PropertyTableProducer[_], graph : EdgeTableProducer )
   extends EdgeTableProducer {
     override def toString: String = s"[Match,$tableName]"
     override def accept(visitor: ExecutionPlanVisitor) =  visitor.visit(this)
