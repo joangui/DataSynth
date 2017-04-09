@@ -29,7 +29,7 @@ class ExecutionPlanPrinter extends ExecutionPlanVisitor {
     stringBuilder.append(spaces(numIndents)+str+"\n")
   }
 
-  override def visit(node: Parameter[_]) = {
+  override def visit(node: StaticValue[_]) = {
     numIndents+=1
     printstring(node.toString)
     numIndents-=1

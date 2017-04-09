@@ -12,7 +12,7 @@ object SparkRuntime extends ExecutionPlanVisitor {
     executionPlan.foreach( x => x.accept(this))
   }
 
-  override def visit(node: ExecutionPlan.Parameter[_]): Unit =  {
+  override def visit(node: ExecutionPlan.StaticValue[_]): Unit =  {
 
   }
 

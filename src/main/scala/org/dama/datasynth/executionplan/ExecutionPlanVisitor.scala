@@ -8,7 +8,7 @@ import org.dama.datasynth.executionplan.ExecutionPlan._
   * Visitor abstract class for Execution Plans, used to implement printers, semantic analyses or optimization passes
   */
 abstract class ExecutionPlanVisitor {
-  def visit( node : Parameter[_] )
+  def visit( node : StaticValue[_] )
   def visit( node : PropertyGenerator[_] )
   def visit( node : GraphGenerator )
   def visit( node : CreatePropertyTable[_] )
