@@ -5,23 +5,15 @@
  */
 package org.dama.datasynth.matching.test;
 
+import org.dama.datasynth.matching.Table;
 import org.dama.datasynth.matching.Tuple;
+import org.dama.datasynth.matching.graphs.GraphReaderFromNodePairFile;
 import org.dama.datasynth.matching.graphs.types.Graph;
 import org.dama.datasynth.matching.graphs.types.Partition;
-import org.dama.datasynth.matching.graphs.GraphReaderFromNodePairFile;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
-import org.dama.datasynth.matching.Table;
 import org.dama.datasynth.matching.utils.DistributionStatistics;
+
+import java.io.*;
+import java.util.*;
 
 /**
  *

@@ -5,11 +5,11 @@
  */
 package org.dama.datasynth.matching.utils;
 
-import java.util.*;
-
 import org.apache.commons.math3.stat.inference.ChiSquareTest;
 import org.dama.datasynth.matching.JointDistribution;
 import org.dama.datasynth.matching.Tuple;
+
+import java.util.*;
 
 /**
  *

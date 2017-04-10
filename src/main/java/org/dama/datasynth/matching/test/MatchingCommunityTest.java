@@ -1,13 +1,14 @@
 package org.dama.datasynth.matching.test;
 
 import org.dama.datasynth.matching.*;
+import org.dama.datasynth.matching.utils.DistributionStatistics;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map;
-import org.dama.datasynth.matching.utils.DistributionStatistics;
 
 /**
  * Created by aprat on 5/03/17.

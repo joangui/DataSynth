@@ -1,7 +1,5 @@
 package org.dama.datasynth.matching;
 
-import org.dama.datasynth.matching.graphs.BFSTraversal;
-import org.dama.datasynth.matching.graphs.LinearWeightedGreedyPartitioner;
 import org.dama.datasynth.matching.graphs.RandomTraversal;
 import org.dama.datasynth.matching.graphs.StochasticBlockModelPartitioner;
 import org.dama.datasynth.matching.graphs.types.Graph;

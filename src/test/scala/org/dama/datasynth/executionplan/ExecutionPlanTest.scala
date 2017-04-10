@@ -2,8 +2,8 @@ package org.dama.datasynth.executionplan
 
 import org.dama.datasynth.executionplan.ExecutionPlan._
 import org.junit.runner.RunWith
-import org.scalatest.junit.JUnitRunner
 import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.junit.JUnitRunner
 
 /**
   * Created by aprat on 31/03/17.

@@ -1,6 +1,6 @@
 package org.dama.datasynth.runtime
 
-import org.dama.datasynth.executionplan.ExecutionPlan.TableProducer
+import org.dama.datasynth.executionplan.ExecutionPlan.Table
 import org.dama.datasynth.executionplan.{ExecutionPlan, ExecutionPlanVisitor}
 
 /**
@@ -8,7 +8,7 @@ import org.dama.datasynth.executionplan.{ExecutionPlan, ExecutionPlanVisitor}
   */
 object SparkRuntime extends ExecutionPlanVisitor {
 
-  def run( executionPlan : List[TableProducer] ) = {
+  def run( executionPlan : List[Table] ) = {
     executionPlan.foreach( x => x.accept(this))
   }
 

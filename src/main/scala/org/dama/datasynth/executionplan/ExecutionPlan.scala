@@ -33,15 +33,15 @@ object ExecutionPlan {
   }
 
   /** Produces a Table **/
-  abstract class TableProducer extends ExecutionPlanNode
+  abstract class Table extends ExecutionPlanNode
 
   /** Produces a Property Table **/
-  abstract class PropertyTableProducer[T] extends TableProducer {
+  abstract class PropertyTable[T] extends Table {
     type propertyType = T
   }
 
   /** Produces an Edge Tables **/
-  abstract class EdgeTableProducer extends TableProducer
+  abstract class EdgeTable extends Table
 
   /******************************************************/
   /** Generators                                       **/
@@ -80,7 +80,7 @@ object ExecutionPlan {
     * @param size  The LongProducer to obtain the size of the table from
     */
   case class CreatePropertyTable[T]( typeName : String, propertyName : String, generator : PropertyGenerator[_], size : Value[Long] )
-    extends PropertyTableProducer[T] {
+    extends PropertyTable[T] {
     override def toString: String = s"[CreatePropertyTable,$typeName.$propertyName]"
     override def accept( visitor : ExecutionPlanVisitor ) = visitor.visit(this)
   }
@@ -91,7 +91,7 @@ object ExecutionPlan {
     * @param size  The LongProducer to obtain the size of the table from
     */
   case class CreateEdgeTable( tableName : String, generator : GraphGenerator, size : Value[Long] )
-    extends EdgeTableProducer {
+    extends EdgeTable {
     override def toString: String = s"[CreateEdgeTable,$tableName]"
     override def accept( visitor : ExecutionPlanVisitor ) = visitor.visit(this)
   }
@@ -100,7 +100,7 @@ object ExecutionPlan {
     * Represents a size of table operation
     * @param table The table to compute the size from
     */
-  case class TableSize( table : TableProducer )
+  case class TableSize( table : Table )
     extends Value[Long] {
     override def toString: String = "[TableSize]"
     override def accept( visitor : ExecutionPlanVisitor ) = visitor.visit(this)
@@ -113,8 +113,8 @@ object ExecutionPlan {
     * @param propertyTable The property table to match
     * @param graph The graph to match
     */
-  case class Match( tableName : String, propertyTable : PropertyTableProducer[_], graph : EdgeTableProducer )
-  extends EdgeTableProducer {
+  case class Match( tableName : String, propertyTable : PropertyTable[_], graph : EdgeTable )
+  extends EdgeTable {
     override def toString: String = s"[Match,$tableName]"
     override def accept(visitor: ExecutionPlanVisitor) =  visitor.visit(this)
   }

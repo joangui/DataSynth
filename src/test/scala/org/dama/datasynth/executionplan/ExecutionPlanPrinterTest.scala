@@ -1,6 +1,6 @@
 package org.dama.datasynth.executionplan
 
-import org.dama.datasynth.executionplan.ExecutionPlan.{CreatePropertyTable, PropertyGenerator, StaticValue}
+import org.dama.datasynth.executionplan.ExecutionPlan._
 import org.junit.runner.RunWith
 import org.scalatest.{FlatSpec, Matchers}
 import org.scalatest.junit.JUnitRunner

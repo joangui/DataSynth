@@ -9,8 +9,6 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import org.dama.datasynth.matching.Table;
 import org.dama.datasynth.matching.Tuple;
-import org.dama.datasynth.matching.graphs.BFSTraversal;
-import org.dama.datasynth.matching.graphs.GraphReaderFromNodePairFile;
 import org.dama.datasynth.matching.graphs.LinearWeightedGreedyPartitioner;
 import org.dama.datasynth.matching.graphs.RandomTraversal;
 import org.dama.datasynth.matching.graphs.types.Graph;
@@ -19,7 +17,10 @@ import org.dama.datasynth.matching.graphs.types.Partition;
 import org.dama.datasynth.matching.utils.DistributionStatistics;
 
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 
 /**
  *

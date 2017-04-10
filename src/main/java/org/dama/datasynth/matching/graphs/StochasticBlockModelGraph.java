@@ -5,8 +5,6 @@ import org.dama.datasynth.matching.graphs.types.Graph;
 
 import java.util.Random;
 
-import static org.apache.commons.lang.math.RandomUtils.nextDouble;
-
 /**
  * Created by aprat on 9/03/17.
  */
