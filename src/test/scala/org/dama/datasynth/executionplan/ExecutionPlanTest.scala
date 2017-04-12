@@ -34,24 +34,24 @@ class ExecutionPlanTest extends FlatSpec with Matchers{
   }
 
   /** Tasks tests **/
-  "A CreatePropertyTable toString" should "output like [CreatePropertyTable,typeName.PropertyName]" in {
+  "A PropertyTable toString" should "output like [PropertyTable,typeName.PropertyName]" in {
     val generator = PropertyGenerator("path.to.generator",Seq(),Seq())
     val size = StaticValue[Long](10)
-    val task = CreatePropertyTable("typeName","propertyName", generator,size)
-    task.toString should be ("[CreatePropertyTable,typeName.propertyName]")
+    val task = PropertyTable("typeName","propertyName", generator,size)
+    task.toString should be ("[PropertyTable,typeName.propertyName]")
   }
 
-  "A CreateEdgeTable toString" should "output like [CreateEdgeTable,tableName]" in {
+  "A EdgeTable toString" should "output like [EdgeTable,tableName]" in {
     val generator = GraphGenerator("path.to.generator",Seq())
     val size = StaticValue[Long](10)
-    val task = CreateEdgeTable("tableName",generator,size)
-    task.toString should be ("[CreateEdgeTable,tableName]")
+    val task = EdgeTable("tableName",generator,size)
+    task.toString should be ("[EdgeTable,tableName]")
   }
 
   "A TableSize toString" should "output like [TableSize]" in {
     val generator = PropertyGenerator("path.to.generator",Seq(),Seq())
     val size = StaticValue[Long](10)
-    val createTable = CreatePropertyTable("typeName","propertyName", generator,size)
+    val createTable = PropertyTable("typeName","propertyName", generator,size)
     val task = TableSize(createTable)
     task.toString should be ("[TableSize]")
   }
@@ -59,9 +59,9 @@ class ExecutionPlanTest extends FlatSpec with Matchers{
   "A Match toString" should "output like [Match,tableNaem]" in {
     val propertyGenerator = PropertyGenerator("path.to.generator",Seq(),Seq())
     val size = StaticValue[Long](10)
-    val createPropertyTable = CreatePropertyTable("typeName","propertyName",propertyGenerator,size)
+    val createPropertyTable = PropertyTable("typeName","propertyName",propertyGenerator,size)
     val graphGenerator = GraphGenerator("path.to.generator",Seq())
-    val createEdgeTable = CreateEdgeTable("tableName",graphGenerator,size)
+    val createEdgeTable = EdgeTable("tableName",graphGenerator,size)
     val match_ = Match("tableName",createPropertyTable,createEdgeTable)
     match_.toString should be ("[Match,tableName]")
   }

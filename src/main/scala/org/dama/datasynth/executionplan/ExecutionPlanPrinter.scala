@@ -7,7 +7,7 @@ import org.dama.datasynth.executionplan.ExecutionPlan._
   *
   * Returns an execution plan in its string form
   */
-class ExecutionPlanPrinter extends ExecutionPlanVisitor {
+class ExecutionPlanPrinter extends  ExecutionPlanVisitor{
 
   var numIndents : Int = 0
   var indentString : String = "    "
@@ -49,7 +49,7 @@ class ExecutionPlanPrinter extends ExecutionPlanVisitor {
     numIndents-=1
   }
 
-  override def visit(node: CreatePropertyTable[_]) = {
+  override def visit(node: PropertyTable[_]) = {
     numIndents+=1
     printstring(node.toString)
     node.size.accept(this)
@@ -57,7 +57,7 @@ class ExecutionPlanPrinter extends ExecutionPlanVisitor {
     numIndents-=1
   }
 
-  override def visit(node: CreateEdgeTable) = {
+  override def visit(node: EdgeTable) = {
     numIndents+=1
     printstring(node.toString)
     node.size.accept(this)

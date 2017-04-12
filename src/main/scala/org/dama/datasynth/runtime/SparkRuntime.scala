@@ -23,11 +23,11 @@ object SparkRuntime extends ExecutionPlanVisitor {
 
   }
 
-  override def visit(node: ExecutionPlan.CreatePropertyTable[_]) = {
+  override def visit(node: ExecutionPlan.PropertyTable[_]) = {
 
   }
 
-  override def visit(node: ExecutionPlan.CreateEdgeTable) = {
+  override def visit(node: ExecutionPlan.EdgeTable) = {
 
   }
 
