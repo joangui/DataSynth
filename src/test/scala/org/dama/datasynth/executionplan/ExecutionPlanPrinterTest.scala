@@ -19,8 +19,8 @@ class ExecutionPlanPrinterTest extends FlatSpec with Matchers {
     val executionPlanPrinter = new ExecutionPlanPrinter()
     val longParameter10000 = StaticValue[Long](10000)
     val longParameter1000 = StaticValue[Long](1000)
-    val propertyGenerator = PropertyGenerator("propertyGeneratorName",List(longParameter10000), Seq())
-    val propertyTable = PropertyTable("typeName","propertyName",propertyGenerator,longParameter1000)
+    val propertyGenerator = PropertyGenerator[Long]("propertyGeneratorName",List(longParameter10000), Seq())
+    val propertyTable = PropertyTable[Long]("typeName","propertyName",propertyGenerator,longParameter1000)
     executionPlanPrinter.printExecutionPlan(propertyTable) should be ("[PropertyTable,typeName.propertyName]\n" +
     "    [StaticValue[Long],1000]\n" +
     "    [PropertyGenerator,propertyGeneratorName]\n" +

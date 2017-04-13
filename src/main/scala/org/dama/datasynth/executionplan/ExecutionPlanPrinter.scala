@@ -7,7 +7,7 @@ import org.dama.datasynth.executionplan.ExecutionPlan._
   *
   * Returns an execution plan in its string form
   */
-class ExecutionPlanPrinter extends  ExecutionPlanVisitor{
+class ExecutionPlanPrinter extends ExecutionPlanVoidVisitor {
 
   var numIndents : Int = 0
   var indentString : String = "    "

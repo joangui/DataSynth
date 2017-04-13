@@ -1,42 +1,36 @@
 package org.dama.datasynth.runtime
 
+import org.apache.spark.sql.{Dataset, SparkSession}
+import org.dama.datasynth.executionplan.ExecutionPlan._
+import org.dama.datasynth.runtime.operators.{PropertyTableOperator, FetchTableOperator}
 import org.dama.datasynth.executionplan.ExecutionPlan.Table
-import org.dama.datasynth.executionplan.{ExecutionPlan, ExecutionPlanVisitor}
+import org.dama.datasynth.executionplan.{ExecutionPlan, ExecutionPlanVoidVisitor}
+
+import scala.collection.mutable
 
 /**
   * Created by aprat on 6/04/17.
   */
-object SparkRuntime extends ExecutionPlanVisitor {
+object SparkRuntime {
 
-  def run( executionPlan : List[Table] ) = {
-    executionPlan.foreach( x => x.accept(this))
-  }
+  var booleanTables = new mutable.HashMap[String, Dataset[(Long,Boolean)]]
+  var intTables     = new mutable.HashMap[String, Dataset[(Long,Int)]]
+  var longTables    = new mutable.HashMap[String, Dataset[(Long,Long)]]
+  var floatTables   = new mutable.HashMap[String, Dataset[(Long,Float)]]
+  var doubleTables  = new mutable.HashMap[String, Dataset[(Long,Double)]]
+  var stringTables  = new mutable.HashMap[String, Dataset[(Long,String )]]
 
-  override def visit(node: ExecutionPlan.StaticValue[_]): Unit =  {
+  var edgeTables = new mutable.HashMap[String,Dataset[(Long,Long)]]
 
-  }
+  val spark = SparkSession
+    .builder()
+    .appName("Spark SQL basic example")
+    .master("local")
+    .config("spark.some.config.option", "some-value")
+    .getOrCreate()
 
-  override def visit(node: ExecutionPlan.PropertyGenerator[_]) = {
-  }
-
-  override def visit(node: ExecutionPlan.GraphGenerator) = {
-
-  }
-
-  override def visit(node: ExecutionPlan.PropertyTable[_]) = {
-
-  }
-
-  override def visit(node: ExecutionPlan.EdgeTable) = {
-
-  }
-
-  override def visit(node: ExecutionPlan.TableSize) = {
-
-  }
-
-  override def visit(node: ExecutionPlan.Match) = {
-
+  def run( executionPlan : Seq[ExecutionPlan.Table] ) = {
+    executionPlan.foreach(x => FetchTableOperator.apply(x).collect())
   }
 
 }

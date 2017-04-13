@@ -13,7 +13,7 @@ class ExecutionPlanTest extends FlatSpec with Matchers{
 
   /** Generator tests **/
   "A PropertyGenerator toString" should "output like [PropertyGenerator,propertyGeneratorName]" in {
-    val generator = new PropertyGenerator("path.to.class", List[Value[_]](), List[PropertyGenerator[_]]() )
+    val generator = new PropertyGenerator[Long]("path.to.class", List[Value[_]](), List[PropertyGenerator[_]]() )
     generator.toString should be ("[PropertyGenerator,path.to.class]")
   }
 
@@ -29,15 +29,15 @@ class ExecutionPlanTest extends FlatSpec with Matchers{
   }
 
   "A StaticValue[String] toString" should "output like [StaticValue,String,value]" in {
-    val parameter = StaticValue("test")
+    val parameter = StaticValue[String]("test")
     parameter.toString should be ("[StaticValue[String],test]")
   }
 
   /** Tasks tests **/
   "A PropertyTable toString" should "output like [PropertyTable,typeName.PropertyName]" in {
-    val generator = PropertyGenerator("path.to.generator",Seq(),Seq())
+    val generator = PropertyGenerator[Long]("path.to.generator",Seq(),Seq())
     val size = StaticValue[Long](10)
-    val task = PropertyTable("typeName","propertyName", generator,size)
+    val task = PropertyTable[Long]("typeName","propertyName", generator,size)
     task.toString should be ("[PropertyTable,typeName.propertyName]")
   }
 
@@ -49,7 +49,7 @@ class ExecutionPlanTest extends FlatSpec with Matchers{
   }
 
   "A TableSize toString" should "output like [TableSize]" in {
-    val generator = PropertyGenerator("path.to.generator",Seq(),Seq())
+    val generator = PropertyGenerator[Long]("path.to.generator",Seq(),Seq())
     val size = StaticValue[Long](10)
     val createTable = PropertyTable("typeName","propertyName", generator,size)
     val task = TableSize(createTable)
@@ -57,7 +57,7 @@ class ExecutionPlanTest extends FlatSpec with Matchers{
   }
 
   "A Match toString" should "output like [Match,tableNaem]" in {
-    val propertyGenerator = PropertyGenerator("path.to.generator",Seq(),Seq())
+    val propertyGenerator = PropertyGenerator[Long]("path.to.generator",Seq(),Seq())
     val size = StaticValue[Long](10)
     val createPropertyTable = PropertyTable("typeName","propertyName",propertyGenerator,size)
     val graphGenerator = GraphGenerator("path.to.generator",Seq())

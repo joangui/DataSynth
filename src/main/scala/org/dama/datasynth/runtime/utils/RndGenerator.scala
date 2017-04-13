@@ -9,7 +9,7 @@ import scala.util.hashing.MurmurHash3
   * This is a temporal implementation that uses a murmurhash. The goal is to provide
   * uniformly distributed values
   */
-class RndGenerator( seed : Long ) {
+case class RndGenerator( seed : Long ) {
 
   /**
     * Generates the ith random number in a sequence
