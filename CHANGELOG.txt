@@ -1,0 +1,22 @@
+
+CHANGELOG pre-alpha 0.2
+
+- Implemented scala/spark interpreter using Dataset API
+- renamed union operator for join
+- changed dependency graph visitor to be an abstract class
+- removed property value class
+- implemented visual dependency graph printer
+- added options to execute front-end
+- Added comments to schnappi syntaxt
+- distinguish ids from variables in schnappi using "#"
+- added methods spawn, zip and range
+- added Binding Functions to schnappi, such length
+- added distinction between ingoing and outgoing edges 
+- allow users to ask for .oid identifiers
+- fixed bug with parsing string in schnappi, where '' characters where not
+  properly removed
+- Added Schnappi text printer
+- Added binaryexpressions to schnappi.
+- Added filters to edge expansions
+- Fixed bug with hashcombiner
+- Reworked samplers and CSV Readers
