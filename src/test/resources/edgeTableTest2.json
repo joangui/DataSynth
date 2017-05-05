@@ -1,0 +1,51 @@
+{
+  "nodeTypes":[
+    {
+      "name": "person",
+      "instances": 5,
+      "properties":[
+        {
+          "name": "country",
+          "dataType": "String",
+          "generator": {
+            "name":"A",
+            "initParameters" : ["C:String","2:Long"]
+          }
+        },
+        {
+          "name": "sex",
+          "dataType": "string",
+          "generator": {
+            "name":"A",
+            "dependencies":["country"]
+          }
+        },
+        {
+          "name": "name",
+          "dataType": "string",
+          "generator": {
+            "name":"A",
+            "dependencies":["sex","country"]
+          }
+        }
+      ]
+
+    }
+  ],
+  "edgeTypes":[
+    {
+      "name":"writes",
+      "source":"person",
+      "target":"person",
+      "structure": {
+        "name": "BTER",
+        "initParameters": ["E:String","25:Long"]
+      },
+      "correlation":{
+        "source":"country",
+        "target":"country",
+        "filename":"/path/"
+      }
+    }
+  ]
+}

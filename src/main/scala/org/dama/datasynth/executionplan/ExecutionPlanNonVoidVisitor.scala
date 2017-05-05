@@ -13,7 +13,7 @@ abstract class ExecutionPlanNonVoidVisitor[T] {
 
   def visit( node : StaticValue[_] ) : T
   def visit( node : PropertyGenerator[_] ) : T
-  def visit( node : GraphGenerator ) : T
+  def visit( node : StructureGenerator ) : T
   def visit( node : PropertyTable[_] ) : T
   def visit( node : EdgeTable ) : T
   def visit( node : TableSize ) : T
@@ -22,7 +22,7 @@ abstract class ExecutionPlanNonVoidVisitor[T] {
 
 abstract class TableNonVoidVisitor[T] extends ExecutionPlanNonVoidVisitor[T]{
   def visit( node : PropertyGenerator[_] ) = throw new RuntimeException(msg);//Generator
-  def visit( node : GraphGenerator )  = throw new RuntimeException(msg);//Generator
+  def visit( node : StructureGenerator )  = throw new RuntimeException(msg);//Generator
   def visit( node : StaticValue[_] )  = throw new RuntimeException(msg);//Value
   def visit( node : TableSize)  = throw new RuntimeException(msg);//Table
 }
@@ -32,7 +32,7 @@ abstract class PropertyGeneratorNonVoidVisitor extends ExecutionPlanNonVoidVisit
   def visit(node: PropertyTable[_])  = throw new RuntimeException(msg);//Table
   def visit(node: EdgeTable)  = throw new RuntimeException(msg);//Table
   def visit(node: Match)  = throw new RuntimeException(msg);//Table
-  def visit( node : GraphGenerator )  = throw new RuntimeException(msg);//Generator
+  def visit( node : StructureGenerator )  = throw new RuntimeException(msg);//Generator
   def visit( node : StaticValue[_] )  = throw new RuntimeException(msg);//Value
   def visit( node : TableSize)  = throw new RuntimeException(msg);//Table
 }
@@ -51,6 +51,6 @@ abstract class ValueNonVoidVisitor  extends ExecutionPlanNonVoidVisitor {
   def visit(node: EdgeTable)  = throw new RuntimeException(msg);//Table
   def visit(node: Match)  = throw new RuntimeException(msg);//Table
   def visit( node : PropertyGenerator[_] )  = throw new RuntimeException(msg);//Generator
-  def visit( node : GraphGenerator )  = throw new RuntimeException(msg);//Generator
+  def visit( node : StructureGenerator )  = throw new RuntimeException(msg);//Generator
   def visit( node : TableSize)  = throw new RuntimeException(msg);//Table
 }
