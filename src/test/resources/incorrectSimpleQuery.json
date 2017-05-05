@@ -1,0 +1,30 @@
+{
+"nodeTypes":[
+{
+  "name": "person",
+  "instances": 5,
+  "properties":[
+    {
+      "name": "country",
+      "dataType": "String",
+      "generator": {
+        "name":"A",
+        "dependencies":["name"],
+        "initParameters" : ["C:String","D:Long"]
+      }
+
+    },
+    {
+      "name": "sex",
+      "dataType": "string",
+      "generator": {
+        "name":"A"
+      }
+    }
+  ]
+},
+{
+"name": "message",
+"instances": 59
+}]
+}

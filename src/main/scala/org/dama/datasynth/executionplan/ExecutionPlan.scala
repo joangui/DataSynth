@@ -58,10 +58,11 @@ object ExecutionPlan {
     * Case class representing a property generator
     * @param className The name of the generator
     * @param initParameters The sequence of init parameters of the generator
+    * @param dependentPropertyTables The property tables this generator depends on
     */
   case class PropertyGenerator[T]( className : String,
                                 initParameters : Seq[Value[_]],
-                                dependentGenerators : Seq[PropertyGenerator[_]]) extends ExecutionPlanNode {
+                                dependentPropertyTables : Seq[PropertyTable[_]]) extends ExecutionPlanNode {
 
     override def toString: String = s"[PropertyGenerator,$className]"
 
@@ -75,7 +76,7 @@ object ExecutionPlan {
     * @param className The name of the generator
     * @param initParameters The sequence of init parameters of the generator
     */
-  case class GraphGenerator( className : String, initParameters : Seq[Value[_]]) extends ExecutionPlanNode {
+  case class StructureGenerator(className : String, initParameters : Seq[Value[_]]) extends ExecutionPlanNode {
 
     override def toString: String = s"[GraphGenerator,$className]"
 
@@ -107,10 +108,10 @@ object ExecutionPlan {
 
   /**
     * Represents a create edge table operation
-    * @param generator The edge generator to create the table
+    * @param structure The edge generator to create the table
     * @param size  The LongProducer to obtain the size of the table from
     */
-  case class EdgeTable(tableName : String, generator : GraphGenerator, size : Value[Long] )
+  case class EdgeTable(tableName : String, structure : StructureGenerator, size : Value[Long] )
     extends AbstractEdgeTable(tableName) {
     override def toString: String = s"[EdgeTable,$tableName]"
 
@@ -138,10 +139,10 @@ object ExecutionPlan {
     * Represents a match operation between a property table and a graph
     *
     * @param tableName The name of the produced table
-    * @param propertyTable The property table to match
-    * @param graph The graph to match
+    * @param sourcePropertyTable The property table to match
+    * @param edgeTable The graph to match
     */
-  case class Match(tableName : String, propertyTable : AbstractPropertyTable[_], graph : AbstractEdgeTable )
+  case class Match(tableName : String, sourcePropertyTable : PropertyTable[_], targetPropertyTable : PropertyTable[_], edgeTable : EdgeTable, distribution:String)
     extends AbstractEdgeTable(tableName) {
     override def toString: String = s"[Match,$tableName]"
 

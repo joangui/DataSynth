@@ -13,12 +13,12 @@ class ExecutionPlanTest extends FlatSpec with Matchers{
 
   /** Generator tests **/
   "A PropertyGenerator toString" should "output like [PropertyGenerator,propertyGeneratorName]" in {
-    val generator = new PropertyGenerator[Long]("path.to.class", List[Value[_]](), List[PropertyGenerator[_]]() )
+    val generator = new PropertyGenerator[Long]("path.to.class", List[Value[_]](), List[PropertyTable[_]]() )
     generator.toString should be ("[PropertyGenerator,path.to.class]")
   }
 
   "A GraphGenerator toString" should "output like [GraphGenerator,graphGeneratorName]" in {
-    val generator = GraphGenerator("path.to.class", Seq())
+    val generator = StructureGenerator("path.to.class", Seq())
     generator.toString should be ("[GraphGenerator,path.to.class]")
   }
 
@@ -42,7 +42,7 @@ class ExecutionPlanTest extends FlatSpec with Matchers{
   }
 
   "A EdgeTable toString" should "output like [EdgeTable,tableName]" in {
-    val generator = GraphGenerator("path.to.generator",Seq())
+    val generator = StructureGenerator("path.to.generator",Seq())
     val size = StaticValue[Long](10)
     val task = EdgeTable("tableName",generator,size)
     task.toString should be ("[EdgeTable,tableName]")
@@ -60,9 +60,9 @@ class ExecutionPlanTest extends FlatSpec with Matchers{
     val propertyGenerator = PropertyGenerator[Long]("path.to.generator",Seq(),Seq())
     val size = StaticValue[Long](10)
     val createPropertyTable = PropertyTable("typeName","propertyName",propertyGenerator,size)
-    val graphGenerator = GraphGenerator("path.to.generator",Seq())
+    val graphGenerator = StructureGenerator("path.to.generator",Seq())
     val createEdgeTable = EdgeTable("tableName",graphGenerator,size)
-    val match_ = Match("tableName",createPropertyTable,createEdgeTable)
+    val match_ = Match("tableName",createPropertyTable,createPropertyTable,createEdgeTable,"filename")
     match_.toString should be ("[Match,tableName]")
   }
 }
