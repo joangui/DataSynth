@@ -39,11 +39,11 @@ class ExecutionPlanPrinter extends ExecutionPlanVoidVisitor {
     numIndents+=1
     printstring(node.toString)
     node.initParameters.foreach( p => p.accept(this))
-    node.dependentGenerators.foreach( g => g.accept(this))
+    node.dependentPropertyTables.foreach( g => g.accept(this))
     numIndents-=1
   }
 
-  override def visit(node: GraphGenerator) = {
+  override def visit(node: StructureGenerator) = {
     numIndents+=1
     printstring(node.toString)
     numIndents-=1
@@ -61,7 +61,7 @@ class ExecutionPlanPrinter extends ExecutionPlanVoidVisitor {
     numIndents+=1
     printstring(node.toString)
     node.size.accept(this)
-    node.generator.accept(this)
+    node.structure.accept(this)
     numIndents-=1
   }
 
@@ -75,8 +75,8 @@ class ExecutionPlanPrinter extends ExecutionPlanVoidVisitor {
   override def visit(node: Match) = {
     numIndents+=1
     printstring(node.toString)
-    node.propertyTable.accept(this)
-    node.graph.accept(this)
+    node.sourcePropertyTable.accept(this)
+    node.edgeTable.accept(this)
     numIndents-=1
   }
 }
