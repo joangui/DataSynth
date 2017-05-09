@@ -1,6 +1,6 @@
 package org.dama.datasynth.runtime.spark.utils
 
-import org.dama.datasynth.common.PropertyGenerator
+import org.dama.datasynth.common.generators.property.PropertyGenerator
 
 /**
   * Created by aprat on 19/04/17.

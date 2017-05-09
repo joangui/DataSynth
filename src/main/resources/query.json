@@ -1,52 +1,28 @@
 {
-  "entities" : [
+  "nodeTypes" : [
     {
       "name" : "person",
-      "number" : 1000,
+      "instances" : 1000,
       "properties" : [
         {
-          "name" : "country",
-          "type" : "String",
-          "generator" : {
-            "name" : "org.dama.datasynth.generators.CumulativeDistributionGenerator",
-            "depends" : [],
-            "init" : ["src/main/resources/dicLocations.txt",1,5," "]
-          }
-        },
-        {
-          "name" : "creationDate",
-          "type" : "String",
-          "generator" : {
-            "name" : "org.dama.datasynth.generators.DateGenerator",
-            "depends" : [],
-            "init" : ["dd-MM-yyyy","01-01-1980","01-01-1990"]
-          }
-        },
-        {
-          "name" : "name",
-          "type" : "String",
-          "generator" : {
-            "name" : "org.dama.datasynth.generators.UniformCorrelationGenerator",
-            "depends" : ["country"],
-            "init" : ["src/main/resources/namesByCountry.txt"," "]
-          }
+          "name": "country",
+          "dataType": "String",
+          "generator": {
+          "name":"org.dama.datasynth.common.generators.property.dummy.DummyStringPropertyGenerator",
+          "dependencies":[],
+          "initParameters" : ["Catalunya:String"]}
         }
       ]
     }
   ],
-  "edges" : [
+  "edgeTypes" : [
     {
-      "name" : "friendship",
+      "name" : "knows",
       "source" : "person",
       "target" : "person",
       "structure" : {
-        "name" : "BTER",
-        "init" : []
-      },
-      "correlation" : {
-        "source" : ["country"],
-        "target" : ["country"],
-        "filename" : "/path/to/file"
+        "name" : "org.dama.datasynth.common.generators.structure.BTERGenerator",
+        "initParameters" : ["/data/degrees/dblp:String","/data/ccs/dblp:String"]
       }
     }
   ]

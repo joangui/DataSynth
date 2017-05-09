@@ -7,8 +7,10 @@ import scala.collection.mutable
 
 /**
   * Created by aprat on 18/04/17.
+  *
+  * Operator that fetches the Random Number Generator associated with a given property table
   */
-object FetchRndGenerator {
+object FetchRndGeneratorOperator {
 
   // Map used to store the random number generators used by each property table
   var rndGenerators = new mutable.HashMap[String, RndGenerator]
@@ -16,13 +18,19 @@ object FetchRndGenerator {
   // Next random number generator seed
   var nextRndGeneratorSeed = 0L;
 
-  def execute( tableName : String ) : RndGenerator = {
-    rndGenerators.get(tableName) match {
+  /**
+    * Gets the random number generator which is associated with a given property table
+    *
+    * @param propertyTableName The name of the property table
+    * @return The random number generator
+    */
+  def apply( propertyTableName : String ) : RndGenerator = {
+    rndGenerators.get(propertyTableName) match {
       case Some(r) => r
       case None => {
         val rndGenerator = new RndGenerator(nextRndGeneratorSeed)
         nextRndGeneratorSeed+=1
-        rndGenerators.put(tableName,rndGenerator)
+        rndGenerators.put(propertyTableName,rndGenerator)
         rndGenerator
       }
     }

@@ -1,6 +1,6 @@
-package org.dama.datasynth.runtime.generators
+package org.dama.datasynth.common.generators.property.dummy
 
-import org.dama.datasynth.common.PropertyGenerator
+import org.dama.datasynth.common.generators.property.PropertyGenerator
 
 /**
   * Created by aprat on 11/04/17.
@@ -8,7 +8,7 @@ import org.dama.datasynth.common.PropertyGenerator
   * Dummy property generator that produces a String
   */
 
-class dummyStringPropertyGenerator
+class DummyStringPropertyGenerator
   extends PropertyGenerator[String] {
 
   var value : String = ""

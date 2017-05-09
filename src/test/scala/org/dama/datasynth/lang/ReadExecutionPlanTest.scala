@@ -120,7 +120,4 @@ class ReadExecutionPlanTest extends FlatSpec with Matchers {
 
   }
 
-
-
-
 }
