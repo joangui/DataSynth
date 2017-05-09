@@ -4,6 +4,8 @@ import org.dama.datasynth.executionplan.ExecutionPlan.{StaticValue, TableSize, V
 
 /**
   * Created by aprat on 9/04/17.
+  *
+  * Operator that evaluates the value of a Value execution plan node
   */
 object EvalValueOperator {
 

@@ -6,6 +6,8 @@ import org.dama.datasynth.runtime.spark.SparkRuntime
 
 /**
   * Created by aprat on 9/04/17.
+  *
+  * Oeprator that evaluates the size of a table
   */
 object TableSizeOperator {
 

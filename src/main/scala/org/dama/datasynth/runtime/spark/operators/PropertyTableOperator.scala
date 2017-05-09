@@ -1,17 +1,17 @@
 package org.dama.datasynth.runtime.spark.operators
 
 import org.apache.spark.sql.{Dataset, Encoder, SparkSession}
-import org.dama.datasynth.common.PropertyGenerator
+import org.dama.datasynth.common.generators.property.PropertyGenerator
 import org.dama.datasynth.executionplan.ExecutionPlan.PropertyTable
 import org.dama.datasynth.runtime.spark.SparkRuntime
 import org.dama.datasynth.runtime.spark.utils.{PropertyGeneratorWrapper, RndGenerator}
+import SparkRuntime.spark.implicits._
 
 /**
   * Created by aprat on 9/04/17.
   */
 object PropertyTableOperator {
 
-  import SparkRuntime.spark.implicits._
 
   /**
     * Creates an Spark Dataset representing a boolean property table
@@ -21,7 +21,6 @@ object PropertyTableOperator {
   def boolean(node : PropertyTable[Boolean] ) : Dataset[(Long,Boolean)] = {
     val generator: PropertyGeneratorWrapper[Boolean] = InstantiatePropertyGeneratorOperator[Boolean](node.name, node.generator)
     val size : Long = EvalValueOperator(node.size).asInstanceOf[Long]
-    val rnd = FetchRndGenerator.execute(node.name);
     SparkRuntime.spark.range (0, size).map (i => Tuple2[Long,Boolean](i.toLong, generator.run (i) ) )
   }
 

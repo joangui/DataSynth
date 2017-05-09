@@ -3,9 +3,14 @@ package org.dama.datasynth.runtime.spark.operators
 import org.dama.datasynth.executionplan.ExecutionPlan.PropertyGenerator
 import org.dama.datasynth.runtime.spark.utils._
 import org.dama.datasynth._
+import org.dama.datasynth.common.generators.property
+
+import scala.util.{Failure, Success}
 
 /**
   * Created by aprat on 9/04/17.
+  *
+  * Operator to instantiate property generators
   */
 object InstantiatePropertyGeneratorOperator {
 
@@ -16,11 +21,15 @@ object InstantiatePropertyGeneratorOperator {
     * @return The instantiated property generator
     */
   def apply[T](propertyTableName : String, info : PropertyGenerator[T]) : PropertyGeneratorWrapper[T] = {
-    var generator = common.PropertyGenerator.getInstance[T](info.className)
-    val initParameters : Seq[Any] = info.initParameters.map( x => EvalValueOperator(x))
-    generator.initialize(initParameters : _*)
-    val rndGen = FetchRndGenerator.execute(propertyTableName)
-    val dependentPGs = info.dependentPropertyTables.map( pt => InstantiatePropertyGeneratorOperator(pt.name, pt.generator))
-    PropertyGeneratorWrapper[T](generator,rndGen,dependentPGs)
+    property.PropertyGenerator.getInstance[T](info.className) match {
+      case Success(generator) => {
+        val initParameters : Seq[Any] = info.initParameters.map( x => EvalValueOperator(x))
+        generator.initialize(initParameters : _*)
+        val rndGen = FetchRndGeneratorOperator(propertyTableName)
+        val dependentPGs = info.dependentPropertyTables.map( pt => InstantiatePropertyGeneratorOperator(pt.name, pt.generator))
+        PropertyGeneratorWrapper[T](generator,rndGen,dependentPGs)
+      }
+      case Failure(e) => throw e
+      }
   }
 }
