@@ -1,5 +1,0 @@
-signature : {
-    @source = Entity;
-}
-
-@source.name = union(@source->attribute.name);

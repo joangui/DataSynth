@@ -1,72 +1,29 @@
-
 {
-  "entities" : [
+  "nodeTypes" : [
     {
       "name" : "person",
-      "number" : 1000,
-      "attributes" : [
+      "instances" : 1000,
+      "properties" : [
         {
-          "name" : "country",
-          "type" : "String",
-          "generator" : {
-            "name" : "org.dama.datasynth.generators.CDFGenerator",
-            "requires" : [],
-            "init" : ["/dicLocations.txt",1,5," "]
-          }
-        },
-        {
-          "name" : "creationDate",
-          "type" : "String",
-          "generator" : {
-            "name" : "org.dama.datasynth.generators.DateGenerator",
-            "requires" : [],
-            "init" : ["dd-MM-yyyy","01-01-1980","01-01-1990"]
-          }
-        },
-        {
-          "name" : "name",
-          "type" : "String",
-          "generator" : {
-            "name" : "org.dama.datasynth.generators.CorrellationGenerator",
-            "requires" : ["person.country"],
-            "init" : ["/namesByCountry.txt"," "]
-          }
-        },
-        {
-          "name" : "id",
-          "type" : "Long",
-          "generator" : {
-            "name" : "org.dama.datasynth.generators.DateBasedIDGenerator",
-            "requires" : ["person.creationDate"],
-            "init" : ["dd-MM-yyyy"]
-          }
-        },
-        {
-          "name" : "email",
-          "type" : "String",
-          "generator" : {
-            "name" : "org.dama.datasynth.generators.MailGenerator",
-            "requires" : ["person.name"],
-            "init" : ["/email.txt"]
-          }
+          "name": "country",
+          "dataType": "String",
+          "generator": {
+          "name":"org.dama.datasynth.common.generators.property.dummy.DummyStringPropertyGenerator",
+          "dependencies":[],
+          "initParameters" : ["Catalunya:String"]}
         }
       ]
     }
   ],
-  "edges" : [
+  "edgeTypes" : [
     {
-      "name" : "friendship",
-      "direction" : "undirected",
+      "name" : "knows",
       "source" : "person",
       "target" : "person",
-      "sourceCardinality" : {
-        "generator" : {
-            "name" : "org.dama.datasynth.generators.ZipfDistribution",
-            "requires" : [],
-            "init" : [1.7]
-          }
-      },
-      "correlates" : ["person.country"]
+      "structure" : {
+        "name" : "org.dama.datasynth.common.generators.structure.BTERGenerator",
+        "initParameters" : ["/data/degrees/dblp:String","/data/ccs/dblp:String"]
+      }
     }
   ]
 }

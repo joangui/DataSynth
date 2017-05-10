@@ -1,0 +1,48 @@
+{
+"nodeTypes":[
+{
+  "name": "person",
+  "instances": 5,
+  "properties":[
+    {
+      "name": "country",
+      "dataType": "String",
+      "generator": {
+        "name":"A",
+        "dependencies":["country"],
+        "initParameters" : ["C:String","D:Long"]
+      }
+
+    },
+    {
+      "name": "sex",
+      "dataType": "string",
+      "generator": {
+        "name":"A"
+      }
+    }
+  ]
+},
+{
+"name": "message",
+"instances": 59
+}],
+"edgeTypes":[
+  {
+    "name": "likes",
+    "source": "person",
+    "target": "person",
+    "structure": {
+      "name": "BTER",
+      "initParameters": ["E:String","F:Long"]
+    },
+    "correlation":
+    {
+      "source":"country",
+      "target":"name",
+      "filename":"/path/"
+    }
+
+  }
+]
+}
