@@ -11,6 +11,7 @@ DataSynth is a tool for the generation of user-driven datasets with arbitrary an
 The core idea of DataSynth, was first described in detail in the paper:
 
 [Towards a property graph generator for benchmarking](https://arxiv.org/abs/1704.00630)
+
 Arnau Prat-Pérez, Joan Guisado-Gámez, Xavier Fernández Salas, Petr Koupy, Siegfried Depner, Davide Basilio Bartolini
 
 ## Contributing
@@ -22,10 +23,12 @@ https://trello.com/b/AEZ99vTz/datasynth
 
 ## Citing this Work
 
+```
 @article{prat2017towards,
   title={Towards a property graph generator for benchmarking},
   author={Prat-P{\'e}rez, Arnau and Guisado-G{\'a}mez, Joan and Salas, Xavier Fern{\'a}ndez and Koupy, Petr and Depner, Siegfried and Bartolini, Davide Basilio},
   journal={arXiv preprint arXiv:1704.00630},
   year={2017}
 }
+```
 
