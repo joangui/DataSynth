@@ -1,4 +1,5 @@
 # DataSynth
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/13e27d1053af4b2ab53414618b858fdc)](https://www.codacy.com/app/ArnauPrat/DataSynth?utm_source=github.com&utm_medium=referral&utm_content=DAMA-UPC/DataSynth&utm_campaign=badger)
 [![Build Status](https://travis-ci.org/DAMA-UPC/DataSynth.svg?branch=dev)](https://travis-ci.org/DAMA-UPC/DataSynth)
 
 DataSynth is a tool for the generation of user-driven datasets with arbitrary and complex schemas. Schemas are defined using the property graph model, where data is modeled as a graph with nodes representing the different entity types and edges represent the relations among them. In this model, both nodes and edges can have attached properties, in the form of key value pairs. Among many novel features, DataSynth has the following characteristics:
