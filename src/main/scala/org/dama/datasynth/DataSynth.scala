@@ -20,6 +20,7 @@ object DataSynth {
     val schema = ReadExecutionPlan.loadSchema(json)
     val executionPlan = ReadExecutionPlan.createExecutionPlan(schema)
 
+    SparkSession.builder().master("local[*]").getOrCreate()
     SparkRuntime.run(dataSynthConfig, executionPlan)
   }
 

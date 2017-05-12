@@ -9,6 +9,14 @@ import scala.util.hashing.MurmurHash3
   * This is a temporal implementation that uses a murmurhash. The goal is to provide
   * uniformly distributed values
   */
+
+object RndGenerator {
+  def toDouble( value : Long) : Double = {
+    Math.abs(value.toInt / Int.MaxValue.toDouble)
+  }
+}
+
+
 case class RndGenerator( seed : Long ) {
 
   /**
@@ -17,5 +25,5 @@ case class RndGenerator( seed : Long ) {
     * @param i The ith random number we are interested in
     * @return The ith random number in the sequence
     */
-  def random( i : Long ) : Long =  MurmurHash3.stringHash( (i+seed).toString)
+  def random( i : Long ) : Long =  MurmurHash3.stringHash((i+seed).toString)
 }

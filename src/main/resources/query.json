@@ -2,15 +2,15 @@
   "nodeTypes" : [
     {
       "name" : "person",
-      "instances" : 1000,
+      "instances" : 1000000,
       "properties" : [
         {
-          "name": "country",
-          "dataType": "String",
+          "name": "attribute1",
+          "dataType": "Int",
           "generator": {
-          "name":"org.dama.datasynth.common.generators.property.dummy.DummyStringPropertyGenerator",
+          "name":"org.dama.datasynth.common.generators.property.empirical.IntGenerator",
           "dependencies":[],
-          "initParameters" : ["Catalunya:String"]}
+          "initParameters" : ["src/main/resources/distributions/intDistribution.txt:String"," :String"]}
         }
       ]
     }
@@ -22,7 +22,7 @@
       "target" : "person",
       "structure" : {
         "name" : "org.dama.datasynth.common.generators.structure.BTERGenerator",
-        "initParameters" : ["/data/degrees/dblp:String","/data/ccs/dblp:String"]
+        "initParameters" : ["src/main/resources/degrees/dblp:String","src/main/resources/ccs/dblp:String"]
       }
     }
   ]
