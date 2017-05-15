@@ -14,6 +14,7 @@ class ExecutionPlanPrinter extends ExecutionPlanVoidVisitor {
   var stringBuilder : StringBuilder = new StringBuilder();
 
   def printExecutionPlan( node : ExecutionPlanNode ): String = {
+    stringBuilder.clear
     node.accept(this);
     stringBuilder.mkString
   }
