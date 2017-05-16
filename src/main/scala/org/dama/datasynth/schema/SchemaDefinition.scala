@@ -23,9 +23,8 @@ import scala.reflect.runtime.universe._
   * @param initParameters any initial parameter in the format value:type.
   */
   case class Generator(name: String, dependencies: Option[Seq[String]], initParameters: Option[Seq[String]]) {
-    var de = if (dependencies.isDefined) dependencies.get else ""
-    var in = if (initParameters.isDefined) initParameters.get else ""
-
+    val de = dependencies.getOrElse("")
+    val in = initParameters.getOrElse("")
     override def toString: String = s"G[$name,$de,$in]"
   }
 
@@ -47,7 +46,7 @@ import scala.reflect.runtime.universe._
   */
   case class NodeType(name: String, instances: Long, properties: Option[Seq[Property]]) {
     override def toString: String = {
-      val po = if (properties.isDefined) properties.get else ""
+      val po = properties.getOrElse("")
       s"NT[$name,$instances,$po]"
     }
   }
@@ -59,7 +58,7 @@ import scala.reflect.runtime.universe._
   */
   case class Structure(name: String, initParameters: Option[Seq[String]]) {
     override def toString: String = {
-      val iP = if (initParameters.isDefined) initParameters.get else ""
+      val iP = initParameters.getOrElse("")
       s"S[$name,$iP]"
     }
   }
@@ -84,7 +83,7 @@ import scala.reflect.runtime.universe._
   */
   case class EdgeType(name: String, source: String, target: String, structure: Structure, correlation: Option[Correlation]) {
     override def toString: String = {
-      val co = if (correlation.isDefined) correlation.get else ""
+      val co = correlation.getOrElse("")
       s"ET[$name,$source,$target,$structure,$co]"
     }
   }
