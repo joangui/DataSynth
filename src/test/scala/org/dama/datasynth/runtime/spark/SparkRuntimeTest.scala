@@ -30,7 +30,10 @@ class SparkRuntimeTest extends FlatSpec with Matchers with BeforeAndAfterAll {
     val size = ExecutionPlan.StaticValue[Long](1000)
     val createPropertyTable = PropertyTable[Boolean]("boolean","property",generator,size)
     SparkRuntime.run( config, Seq(createPropertyTable))
-    FetchTableOperator.booleanTables.get("boolean.property").get.collect.foreach(t => t._2 should be (value.value))
+    FetchTableOperator.booleanTables.get("boolean.property") match {
+      case Some(table) => table.collect.foreach( { case (id,pvalue) => pvalue should be (value.value)})
+      case None => throw new RuntimeException("Boolean Table does not exist")
+    }
   }
 
   " A float table " should " contain all 1.0 " in {
@@ -38,8 +41,11 @@ class SparkRuntimeTest extends FlatSpec with Matchers with BeforeAndAfterAll {
     val generator = ExecutionPlan.PropertyGenerator[Float]("org.dama.datasynth.common.generators.property.dummy.DummyFloatPropertyGenerator",Seq(value),Seq())
     val size = ExecutionPlan.StaticValue[Long](1000)
     val createPropertyTable = PropertyTable[Float]("float","property",generator,size)
-    SparkRuntime.run( config, Seq(createPropertyTable))
-    FetchTableOperator.floatTables.get("float.property").get.collect.foreach( t => t._2 should be (value.value))
+    SparkRuntime.run(config, Seq(createPropertyTable))
+    FetchTableOperator.floatTables.get("float.property") match {
+      case Some(table) => table.collect.foreach( { case (id,pvalue) => pvalue should be (value.value)})
+      case None => throw new RuntimeException("Float Table does not exist")
+    }
   }
 
   " A double table " should " contain all 1.0 " in {
@@ -48,7 +54,10 @@ class SparkRuntimeTest extends FlatSpec with Matchers with BeforeAndAfterAll {
     val size = ExecutionPlan.StaticValue[Long](1000)
     val createPropertyTable = PropertyTable[Double]("double","property",generator,size)
     SparkRuntime.run( config, Seq(createPropertyTable))
-    FetchTableOperator.doubleTables.get("double.property").get.collect.foreach( t => t._2 should be (value.value))
+    FetchTableOperator.doubleTables.get("double.property") match {
+      case Some(table) => table.collect.foreach( {case (id,pvalue) => pvalue should be (value.value)})
+      case None => throw new RuntimeException("Double Table does not exist")
+    }
   }
 
   " A long table " should " contain all 1s " in {
@@ -57,7 +66,10 @@ class SparkRuntimeTest extends FlatSpec with Matchers with BeforeAndAfterAll {
     val size = ExecutionPlan.StaticValue[Long](1000)
     val createPropertyTable = PropertyTable[Long]("long","property",generator,size)
     SparkRuntime.run( config, Seq(createPropertyTable))
-    FetchTableOperator.longTables.get("long.property").get.collect.foreach( t => t._2 should be (num.value))
+    FetchTableOperator.longTables.get("long.property") match {
+      case Some(table) => table.collect.foreach( { case (id,pvalue) => pvalue should be (num.value)})
+      case None => throw new RuntimeException("Long Table does not exist")
+    }
   }
 
   " An int table " should " contain all 1s " in {
@@ -66,7 +78,10 @@ class SparkRuntimeTest extends FlatSpec with Matchers with BeforeAndAfterAll {
     val size = ExecutionPlan.StaticValue[Long](1000)
     val createPropertyTable = PropertyTable[Int]("int","property",generator,size)
     SparkRuntime.run( config, Seq(createPropertyTable))
-    FetchTableOperator.intTables.get("int.property").get.collect.foreach( t => t._2 should be (num.value))
+    FetchTableOperator.intTables.get("int.property") match {
+      case Some(table) => table.collect.foreach( {case (id,pvalue) => pvalue should be (num.value)})
+      case None => throw new RuntimeException("Int Table does not exist")
+    }
   }
 
   " A property table created with a dummyLongMultPropertyGenerator" should "contain the result of multiplying two long tables" in {
@@ -82,7 +97,10 @@ class SparkRuntimeTest extends FlatSpec with Matchers with BeforeAndAfterAll {
     val generator3 = ExecutionPlan.PropertyGenerator[Long]("org.dama.datasynth.common.generators.property.dummy.DummyLongMultPropertyGenerator",Seq(),Seq(propertyTable1, propertyTable2))
     val propertyTable3 = ExecutionPlan.PropertyTable[Long]("long","property3", generator3, size)
     SparkRuntime.run( config, Seq(propertyTable1, propertyTable2, propertyTable3))
-    FetchTableOperator.longTables.get("long.property3").get.collect.foreach( t => t._2 should be (6))
+    FetchTableOperator.longTables.get("long.property3") match {
+      case Some(table) => table.collect.foreach( { case (id,value) => value should be (6)})
+      case None => throw new RuntimeException("Long Table does not exist")
+    }
   }
 
   override def afterAll(): Unit = {
