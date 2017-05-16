@@ -52,7 +52,9 @@ object FetchTableOperator {
       }
     }
 
-    override def visit(node: ExecutionPlan.Match): Dataset[_] = ???
+    override def visit(node: ExecutionPlan.Match): Dataset[_] = {
+      throw new RuntimeException("visit over ExecutionPlan.Match not implemented")
+    }
 
     /**
       * Fetches a property table from a given map or creates it
