@@ -16,7 +16,7 @@ import scala.collection.mutable
 
 object ReadExecutionPlan {
 
-  var schema:Schema = null
+  //var schema:Schema = null
   /**
   * Load a schema
   * @param json String containin the definition of the schema in JSON format.
@@ -27,7 +27,7 @@ object ReadExecutionPlan {
 
 
    val jsonT = parse(json)
-   schema = jsonT.extract[Schema]
+   val schema:Schema = jsonT.extract[Schema]
    schema
  }
 
