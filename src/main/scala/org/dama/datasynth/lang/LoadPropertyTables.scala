@@ -3,7 +3,6 @@ package org.dama.datasynth
 import org.dama.datasynth.executionplan.ExecutionPlan._
 import org.dama.datasynth.lang.ReadExecutionPlan
 import org.dama.datasynth.schema._
-
 import scala.reflect.runtime.universe._
 import scala.collection.mutable
 
