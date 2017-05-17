@@ -15,7 +15,6 @@ import scala.reflect.runtime.universe._
   *
   */
 
-
 /**
   * It builds a property generator
   * @param name Generator name.
