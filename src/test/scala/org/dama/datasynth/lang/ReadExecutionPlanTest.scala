@@ -6,9 +6,10 @@ import org.dama.datasynth.lang.ReadExecutionPlan.loadSchema
 import org.junit.runner.RunWith
 import org.scalatest.{FlatSpec, Matchers}
 import org.scalatest.junit.JUnitRunner
-import org.dama.datasynth.schema.{Schema}
+import org.dama.datasynth.schema.Schema
 
 import scala.io.Source
+import scala.util.control.NonFatal
 /**
   * Created by joangui on 13/04/2017.
   */
@@ -26,6 +27,9 @@ class ReadExecutionPlanTest extends FlatSpec with Matchers {
       case e:Exception =>
         e.printStackTrace()
         true should be(true)
+      case NonFatal(e) =>
+        e.printStackTrace()
+        false should be (true)
     }
   }
   "A ReadExecutionPlan size" should "output like [numNodeTypes]" in {
@@ -38,7 +42,7 @@ class ReadExecutionPlanTest extends FlatSpec with Matchers {
     val json : String = Source.fromFile("./src/test/resources/simpleQuery.json").getLines.mkString
     val schema: Schema = ReadExecutionPlan.loadSchema(json)
     val names = schema.nodeTypes.map(entityNode => entityNode.name)
-                                .sortWith((A,B)=>A.compareTo(B)<0)
+                                .sortWith((nameA,nameB)=>nameA.compareTo(nameB)<0)
     val gtNames = List("message","person")
     for ( (m, a) <- (names zip gtNames)) m should be (a)
   }
@@ -46,26 +50,25 @@ class ReadExecutionPlanTest extends FlatSpec with Matchers {
   "A ReadExecutionPlan properties for person," should "output like [amount]" in {
     val json : String = Source.fromFile("./src/test/resources/simpleQuery.json").getLines.mkString
     val schema: Schema = ReadExecutionPlan.loadSchema(json)
-    val node =  schema.nodeTypes.find(nodeType => nodeType.name.equals("person")).get
-    node.properties.get.size should be (2)
+    val node =  schema.nodeTypes.find(nodeType => nodeType.name.equals("person")).foreach(node =>
+    node.properties.foreach(properties=> properties.size should be (2)))
   }
   "A ReadExecutionPlan properties for person," should "output like [nodeType1.property1,nodeType1.property1]" in {
     val json : String = Source.fromFile("./src/test/resources/simpleQuery.json").getLines.mkString
     val schema: Schema = ReadExecutionPlan.loadSchema(json)
-    val node =  schema.nodeTypes.find(nodeType => nodeType.name.equals("person")).get
-    val names = node.properties.get.map(entityNode => entityNode.name)
-      .sortWith((A,B)=>A.compareTo(B)<0)
-    val gtNames = List("country","sex")
-    for ( (m, a) <- (names zip gtNames)) m should be (a)
+    schema.nodeTypes.find(nodeType => nodeType.name.equals("person")).foreach(node=>{
+      node.properties.foreach(properties=>{
+        val names= properties.map(entityNode => entityNode.name).sortWith((nameA,nameB)=>nameA.compareTo(nameB)<0)
+        val gtNames = List("country","sex")
+        for ( (m, a) <- (names zip gtNames)) m should be (a)})})
   }
 
   "A ReadExecutionPlan properties detail for person," should "output like P[country,String,G[A,List(sex),List(C,D)]]"  in {
     val json : String = Source.fromFile("./src/test/resources/simpleQuery.json").getLines.mkString
     val schema: Schema = ReadExecutionPlan.loadSchema(json)
-    val node =  schema.nodeTypes.find(nodeType => nodeType.name.equals("person")).get
-    val s =    node.properties.get.find(x => x.name=="country").get.toString
-
-    s should be ("P[country,String,G[A,List(sex),List(C:String, D:Long)]]")
+      schema.nodeTypes.find(nodeType => nodeType.name.equals("person")).foreach(node=> {
+          node.properties.foreach(propeties=>propeties.find(x => x.name=="country").foreach(property =>
+          property.toString should be ("P[country,String,G[A,List(sex),List(C:String, D:Long)]]")))})
   }
   "A ReadExecutionPlan edgeType" should "output like [numEdgeType]" in {
     val json : String = Source.fromFile("./src/test/resources/simpleQuery.json").getLines.mkString
