@@ -21,20 +21,18 @@ class CreateExecutionPlanTest extends FlatSpec with Matchers {
     val executionPlanNodes:Seq[Table]=ReadExecutionPlan.createExecutionPlan(schema)
 
     executionPlanNodes.size should be (3)
-
   }
+
   "A ReadExecutionPlan createExectuionPlan voidList.isEmpty  " should "output like true" in{
     val json : String = Source.fromFile("./src/test/resources/propertyTableTest.json").getLines.mkString
     val schema: Schema = ReadExecutionPlan.loadSchema(json)
     val executionPlanNodes:Seq[Table]=ReadExecutionPlan.createExecutionPlan(schema)
 
-    val PropertyTables:Seq[String] = Seq("[PropertyTable,person.sex]","[PropertyTable,person.country]","[PropertyTable,person.name]")
+    val propertyTables:Seq[String] = Seq("[PropertyTable,person.sex]","[PropertyTable,person.country]","[PropertyTable,person.name]")
 
-    val voidList = executionPlanNodes.filter(node=>{!PropertyTables.contains(node.toString)})
-
+    val voidList = executionPlanNodes.filter(node=>{!propertyTables.contains(node.toString)})
 
     voidList.isEmpty should be (true)
-
   }
 
 
@@ -44,7 +42,6 @@ class CreateExecutionPlanTest extends FlatSpec with Matchers {
     val executionPlanNodes:Seq[Table]=ReadExecutionPlan.createExecutionPlan(schema)
 
     executionPlanNodes.size should be (5)
-
   }
 
 
@@ -54,17 +51,14 @@ class CreateExecutionPlanTest extends FlatSpec with Matchers {
     val executionPlanNodes:Seq[Table]=ReadExecutionPlan.createExecutionPlan(schema)
 
     executionPlanNodes.size should be (4)
-
   }
+
   "A ReadExecutionPlan createExectuionPlan with edges and correlation propertyTablesNodes.size " should "output like 5" in{
     val json : String = Source.fromFile("./src/test/resources/edgeTableTest2.json").getLines.mkString
     val schema: Schema = ReadExecutionPlan.loadSchema(json)
     val executionPlanNodes:Seq[Table]=ReadExecutionPlan.createExecutionPlan(schema)
 
     executionPlanNodes.size should be (5)
-
   }
-
-
 
 }

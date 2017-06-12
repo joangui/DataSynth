@@ -26,12 +26,12 @@ object ExecutionPlan {
   /********************************************************************/
 
   /** Represents a value **/
-  abstract class Value[T] extends ExecutionPlanNode {
-    type parameterType = T
+  abstract class Value[T : TypeTag] extends ExecutionPlanNode {
+    val tag  = typeTag[T]
   }
 
   /** Represents a value whose value is known at compile time */
-  case class StaticValue[T]( value : T) extends Value[T] {
+  case class StaticValue[T : TypeTag]( value : T) extends Value[T] {
     override def toString() : String = s"[StaticValue[${value.getClass.getSimpleName}],${value}]"
 
     override def accept(visitor: ExecutionPlanVoidVisitor) = visitor.visit(this)
@@ -60,9 +60,10 @@ object ExecutionPlan {
     * @param initParameters The sequence of init parameters of the generator
     * @param dependentPropertyTables The property tables this generator depends on
     */
-  case class PropertyGenerator[T]( className : String,
+  case class PropertyGenerator[T : TypeTag]( className : String,
                                 initParameters : Seq[Value[_]],
                                 dependentPropertyTables : Seq[PropertyTable[_]]) extends ExecutionPlanNode {
+    val tag  = typeTag[T]
 
     override def toString: String = s"[PropertyGenerator,$className]"
 

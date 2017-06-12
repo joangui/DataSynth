@@ -8,12 +8,14 @@ import org.dama.datasynth.common.generators.property.PropertyGenerator
   * This class wraps a PropertyGenerator and a random number generator. The class provides
   * a run method to generate a property given a node id.
   */
-case class PropertyGeneratorWrapper[T]( pg : PropertyGenerator[T],
+class PropertyGeneratorWrapper[T]( pg : PropertyGenerator[T],
                                         rndGen : RndGenerator,
-                                        dependentPGs : Seq[PropertyGeneratorWrapper[_]]) {
+                                        dependentPGs : Seq[PropertyGeneratorWrapper[_]]) extends Serializable{
   def run( id: Long ): T = {
     val params : Seq[Any] = dependentPGs.map( pg => pg.run(id))
     pg.run(id,rndGen.random(id),params : _*)
   }
+
+  def apply(id : Long) : T = run(id)
 
 }

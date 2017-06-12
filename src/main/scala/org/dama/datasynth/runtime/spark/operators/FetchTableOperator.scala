@@ -1,6 +1,6 @@
 package org.dama.datasynth.runtime.spark.operators
 
-import org.apache.spark.sql.Dataset
+import org.apache.spark.sql.{Dataset, SparkSession}
 import org.dama.datasynth.executionplan.ExecutionPlan.Table
 import org.dama.datasynth.executionplan.{ExecutionPlan, ExecutionPlanNonVoidVisitor, ExecutionPlanVoidVisitor, TableNonVoidVisitor}
 import org.dama.datasynth.runtime.spark.SparkRuntime
@@ -28,16 +28,16 @@ object FetchTableOperator {
   // Map used to store the edge tables
   val edgeTables = new mutable.HashMap[String,Dataset[(Long,Long,Long)]]
 
-  private object FetchTableVisitor extends TableNonVoidVisitor[Dataset[_]] {
+  private class FetchTableVisitor( sparkSession : SparkSession) extends TableNonVoidVisitor[Dataset[_]] {
 
     override def visit(node: ExecutionPlan.PropertyTable[_]): Dataset[_] = {
       node match {
-        case t: ExecutionPlan.PropertyTable[Boolean@unchecked] if typeOf[Boolean] =:= node.tag.tpe => fetchPropertyTableHelper(booleanTables, t, PropertyTableOperator.boolean)
-        case t: ExecutionPlan.PropertyTable[Int@unchecked] if typeOf[Int] =:= node.tag.tpe => fetchPropertyTableHelper(intTables, t, PropertyTableOperator.int)
-        case t: ExecutionPlan.PropertyTable[Long@unchecked] if typeOf[Long] =:= node.tag.tpe => fetchPropertyTableHelper(longTables, t, PropertyTableOperator.long)
-        case t: ExecutionPlan.PropertyTable[Float@unchecked] if typeOf[Float] =:= node.tag.tpe => fetchPropertyTableHelper(floatTables, t, PropertyTableOperator.float)
-        case t: ExecutionPlan.PropertyTable[Double@unchecked] if typeOf[Double] =:= node.tag.tpe => fetchPropertyTableHelper(doubleTables, t, PropertyTableOperator.double)
-        case t: ExecutionPlan.PropertyTable[String@unchecked] if typeOf[String] =:= node.tag.tpe => fetchPropertyTableHelper(stringTables, t, PropertyTableOperator.string)
+        case t: ExecutionPlan.PropertyTable[Boolean@unchecked] if typeOf[Boolean] =:= node.tag.tpe => fetchPropertyTableHelper(booleanTables, t, PropertyTableOperator.boolean(sparkSession))
+        case t: ExecutionPlan.PropertyTable[Int@unchecked] if typeOf[Int] =:= node.tag.tpe => fetchPropertyTableHelper(intTables, t, PropertyTableOperator.int(sparkSession))
+        case t: ExecutionPlan.PropertyTable[Long@unchecked] if typeOf[Long] =:= node.tag.tpe => fetchPropertyTableHelper(longTables, t, PropertyTableOperator.long(sparkSession))
+        case t: ExecutionPlan.PropertyTable[Float@unchecked] if typeOf[Float] =:= node.tag.tpe => fetchPropertyTableHelper(floatTables, t, PropertyTableOperator.float(sparkSession))
+        case t: ExecutionPlan.PropertyTable[Double@unchecked] if typeOf[Double] =:= node.tag.tpe => fetchPropertyTableHelper(doubleTables, t, PropertyTableOperator.double(sparkSession))
+        case t: ExecutionPlan.PropertyTable[String@unchecked] if typeOf[String] =:= node.tag.tpe => fetchPropertyTableHelper(stringTables, t, PropertyTableOperator.string(sparkSession))
       }
     }
 
@@ -45,7 +45,7 @@ object FetchTableOperator {
       edgeTables.get(node.name) match {
         case Some(t) => t
         case None => {
-          val table = EdgeTableOperator(node)
+          val table = EdgeTableOperator(sparkSession,node)
           edgeTables.put(node.name, table)
           table
         }
@@ -82,8 +82,21 @@ object FetchTableOperator {
   /**
     * Fetches a the table represented by the Table execution plan node
     *
+    * @param sparkSession The session this operator works for
     * @param table The execution plan node representing the table
     * @return The spark Dataset representing the fetched table
     */
-  def apply(table : Table ): Dataset[_] =  table.accept[Dataset[_]](FetchTableVisitor)
+  def apply(sparkSession : SparkSession, table : Table ): Dataset[_] =  table.accept[Dataset[_]](new FetchTableVisitor(sparkSession))
+
+  def clear(): Unit = {
+
+    booleanTables.clear()
+    intTables.clear()
+    longTables.clear()
+    floatTables.clear()
+    doubleTables.clear()
+    stringTables.clear()
+    edgeTables.clear()
+
+  }
 }

@@ -7,14 +7,12 @@ import scala.util.Try
   */
 
 object PropertyGenerator {
-
   def getInstance[T]( name : String ) : Try[PropertyGenerator[T]] = {
     Try(Class.forName(name).newInstance().asInstanceOf[PropertyGenerator[T]])
   }
 }
 
 abstract class PropertyGenerator[T] extends Serializable {
-  def initialize( parameters : Any* )
   def run( id : Long , random : Long, dependencies : Any* ) : T
 }
 

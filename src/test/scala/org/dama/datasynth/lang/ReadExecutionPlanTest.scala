@@ -24,7 +24,7 @@ class ReadExecutionPlanTest extends FlatSpec with Matchers {
       false should be(true)
     }
     catch {
-      case e:Exception =>
+      case NonFatal(e:Exception) =>
         e.printStackTrace()
         true should be(true)
       case NonFatal(e) =>
@@ -120,7 +120,6 @@ class ReadExecutionPlanTest extends FlatSpec with Matchers {
   "A ReadExecutionPlan validSchema valid cyclic dependencies" should "output like false" in{
     val json : String = Source.fromFile("./src/test/resources/cyclicDependencies.json").getLines.mkString
     tryCatch(json)
-
   }
 
 }

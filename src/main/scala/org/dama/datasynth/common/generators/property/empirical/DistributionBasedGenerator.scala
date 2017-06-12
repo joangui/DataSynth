@@ -12,9 +12,23 @@ import scala.io.Source
   * where probability is the marginal probability of observing the given value
   * Probabilities of the second column must add 1 or be very close.
   */
-class DistributionBasedGenerator[T]( parser : (String) => T)  extends PropertyGenerator[T] {
+class DistributionBasedGenerator[T]( parser : (String) => T, fileName : String, separator : String)  extends PropertyGenerator[T] {
 
-  var data : Array[(T,Double)] = Array[(T,Double)]()
+  private val inputFileLines : List[String] = Source.fromFile(fileName).
+    getLines().toList
+
+  private val values : List[(T,Double)]  = inputFileLines.map( line => line.split(separator))
+    .map( { case Array(value,prob) => (parser(value),prob.toDouble)})
+
+  private val probabilitiesSum = values.foldLeft(0.0)( { case (acc, (_,prob)) => acc + prob} )
+
+  if( (1.0-probabilitiesSum) > 0.001 || probabilitiesSum > 1.0) {
+    throw new RuntimeException(s"Invalid input file. Probabilities do not add 1 but $probabilitiesSum")
+  }
+
+  val data = values.drop(1)
+    .scanLeft(values(0))({ case ((prevValue,accProb),(value,prob)) => (value,accProb+prob)})
+    .toArray
 
   /**
     * Performs a binary search over the given array containing pairs value-probability, where probability is the
@@ -41,33 +55,6 @@ class DistributionBasedGenerator[T]( parser : (String) => T)  extends PropertyGe
       }
     }
     doSearch(data)
-  }
-
-
-  /**
-    * Loads the distribution from the provided file
-    * @param parameters The first element must be the path to the file, The second element must be the separator
-    */
-  override def initialize(parameters: Any*): Unit = {
-    val fileName = parameters(0) match { case path : String => path }
-    val separator = parameters(1) match { case separator : String => separator }
-
-    val inputFileLines : List[String] = Source.fromFile(fileName).
-                                            getLines().toList
-
-    val values : List[(T,Double)]  = inputFileLines.map( line => line.split(separator))
-                                                   .map( { case Array(value,prob) => (parser(value),prob.toDouble)})
-
-    val probabilitiesSum = values.foldLeft(0.0)( { case (acc, (_,prob)) => acc + prob} )
-
-    if( (1.0-probabilitiesSum) > 0.001 || probabilitiesSum > 1.0) {
-      throw new RuntimeException(s"Invalid input file. Probabilities do not add 1 but $probabilitiesSum")
-    }
-
-    data = values.drop(1)
-                 .scanLeft(values(0))({ case ((prevValue,accProb),(value,prob)) => (value,accProb+prob)})
-                 .toArray
-
   }
 
   override def run(id: Long, random: Long, dependencies: Any*) : T = {

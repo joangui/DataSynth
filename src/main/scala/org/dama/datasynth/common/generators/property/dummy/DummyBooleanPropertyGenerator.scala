@@ -11,14 +11,8 @@ import org.dama.datasynth.common.generators.property.PropertyGenerator
   *
   */
 
-class DummyBooleanPropertyGenerator
+class DummyBooleanPropertyGenerator( value : Boolean )
   extends PropertyGenerator[Boolean] {
-
-  var value : Boolean = false
-
-  override def initialize(parameters: Any*): Unit  = {
-    value = parameters.apply(0) match {case x : Boolean => x}
-  }
 
   override def run(id: Long, random: Long, dependencies: Any*) : Boolean = value
 }

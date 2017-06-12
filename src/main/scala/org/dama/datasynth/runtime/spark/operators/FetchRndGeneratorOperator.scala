@@ -13,7 +13,7 @@ import scala.collection.mutable
 object FetchRndGeneratorOperator {
 
   // Map used to store the random number generators used by each property table
-  var rndGenerators = new mutable.HashMap[String, RndGenerator]
+  val rndGenerators = new mutable.HashMap[String, RndGenerator]
 
   // Next random number generator seed
   var nextRndGeneratorSeed = 0L;
@@ -34,6 +34,10 @@ object FetchRndGeneratorOperator {
         rndGenerator
       }
     }
+  }
+
+  def clear(): Unit = {
+    rndGenerators.clear()
   }
 
 }

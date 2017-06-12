@@ -62,7 +62,7 @@ class ExecutionPlanTest extends FlatSpec with Matchers{
     val createPropertyTable = PropertyTable("typeName","propertyName",propertyGenerator,size)
     val graphGenerator = StructureGenerator("path.to.generator",Seq())
     val createEdgeTable = EdgeTable("tableName",graphGenerator,size)
-    val match_ = Match("tableName",createPropertyTable,createPropertyTable,createEdgeTable,"filename")
-    match_.toString should be ("[Match,tableName]")
+    val matchNode = Match("tableName",createPropertyTable,createPropertyTable,createEdgeTable,"filename")
+    matchNode.toString should be ("[Match,tableName]")
   }
 }
