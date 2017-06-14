@@ -18,28 +18,22 @@ import scala.reflect.runtime.universe.typeOf
   */
 class RuntimePropertyGeneratorBuilder(config : DataSynthConfig) extends ExecutionPlanNonVoidVisitor[Map[String,(String,String)]] {
 
-  /**
-    * Processes an execution plan and generates a jar with property generators generated at runtime,
-    * that implement the PropertyGenerator interface
-    * @param jarFileName The name of the jar file to create
-    * @param executionPlan The execution plan to process
-    * @return A the map between origina property generators classnames and
-    *         the new ones
-    */
-  def buildJar( jarFileName : String, executionPlan : Seq[ExecutionPlan.Table]) : Map[String,String] = {
 
+  def codePropertyTableClasses(executionPlan:Seq[ExecutionPlan.Table]): Map[String,(String,String)]={
     /** Writing .scala files **/
-    val classes = executionPlan.foldLeft(Map[String,(String,String)]())( (currentDeclarations, nextNode) => currentDeclarations ++ nextNode.accept(this))
-    val sourceFileNames : List[String] = classes.toList.map( {case (tableName,(className,classDecl)) => {
-      val fileName = s"${config.driverWorkspaceDir}/$className.scala"
-      val writer = new PrintWriter(new java.io.File(fileName))
-      writer.write(classDecl)
-      writer.close()
-      fileName
-    }})
-    classes.foreach({case (_,(_,decl)) => println(decl)})
+    val classes:Map[String,(String,String)] = executionPlan.foldLeft(
+      Map[String,(String,String)]())( (currentDeclarations, nextNode) => currentDeclarations ++ nextNode.accept(this))
+    classes
+  }
 
-    /** Compiling .scala files **/
+  /**
+    *
+    * @param jarFileName Name of the jar file to be generated
+    * @param classes A map with the filename and its code.
+    */
+  def buildJar(jarFileName:String, classes:Map[String,String]):Unit={
+
+    //Prepare system to be capable of compiling classes
     val settings = new GenericRunnerSettings(println _)
     settings.nc.value = true
     settings.usejavacp.value = true
@@ -49,22 +43,36 @@ class RuntimePropertyGeneratorBuilder(config : DataSynthConfig) extends Executio
     settings.classpath.append(currentJarPath)
     val g = new Global(settings)
     val run = new g.Run
+
+
+
+
+    val sourceFileNames : List[String] = classes.toList.map({case (className,classCode)=>{
+    val fileName:String = s"${config.driverWorkspaceDir}/$className.scala"
+    val writer = new PrintWriter(new java.io.File(fileName))
+    writer.write(classCode)
+    writer.close()
+
+    fileName
+    }})
+
     run.compile(sourceFileNames)
 
     /** Building JAR **/
     val jar : JarWriter = new JarWriter(new scala.reflect.io.File(new java.io.File(jarFileName)), new JManifest())
     sourceFileNames.map( file => file.replace(".scala",".class")).foreach( file => jar.addFile(new scala.reflect.io.File( new java.io.File(file)),""))
     jar.close()
-
-    classes.map( { case (propertyTable,(className,_)) => (propertyTable -> className) })
   }
+
+
+
 
   /**
     * Generates the name of a generated proeprty generator given an original generator name
     * @param name The name of the original property generator
     * @return The new name for the generated property generator
     */
-  private def mkGeneratedClassName( name : String ): String = {
+  private def generateClassName( name : String ): String = {
     name.replace(".","").toUpperCase()
   }
 
@@ -81,16 +89,16 @@ class RuntimePropertyGeneratorBuilder(config : DataSynthConfig) extends Executio
 
   /**
     * Generates a class declaration given a property generator execution plan node
-    * @param info The execution plan node representing the property generated to generate the new generator from
+    * @param propertyGenerator The execution plan node representing the property generated to generate the new generator from
     * @tparam T The data type returned by the given property generator
     * @return  The class declaration
     */
-  private[passes] def generatePGClassDefinition[T](className : String, info : PropertyGenerator[T]) : String = {
-    val returnTypeName = info.tag.tpe.toString
-    val initParameters : String = if(info.initParameters.length == 0) {
+  private[passes] def generatePGClassDefinition[T](className : String, propertyGenerator : PropertyGenerator[T]) : String = {
+    val returnTypeName = propertyGenerator.tag.tpe.toString
+    val initParameters : String = if(propertyGenerator.initParameters.length == 0) {
       " "
     } else {
-      info.initParameters.map({
+      propertyGenerator.initParameters.map({
         case parameter: StaticValue[String@unchecked] if parameter.tag.tpe =:= typeOf[String] => s"""\"${parameter.value.toString}\""""
         case parameter: StaticValue[Float@unchecked] if parameter.tag.tpe =:= typeOf[Float] => s"${parameter.value.toString}f"
         case parameter: StaticValue[_] => s"${parameter.value.toString}"
@@ -98,16 +106,17 @@ class RuntimePropertyGeneratorBuilder(config : DataSynthConfig) extends Executio
       })
       .reduceLeft((current,next) => current+","+next )
     }
-    val propertyGeneratorName = info.className
-    val sufix = mkGeneratedClassName(className)
-    val dependentGenerators = info.dependentPropertyTables.map( table => mkGeneratedClassName(table.name))
-    val dependentGeneratorsCallList : String = info.dependentPropertyTables.zipWithIndex.foldLeft("")( {case (current,(table,index)) => s"$current,${mkMatch(table,index)}"})
+    val propertyGeneratorName:String = propertyGenerator.className
+    val generatedClassName:String = generateClassName(className)
+   // val dependentGenerators = propertyGenerator.dependentPropertyTables.map(table => generateClassName(table.name))
+    val dependentGeneratorsCallList : String = propertyGenerator.dependentPropertyTables.zipWithIndex.foldLeft("")(
+      {case (current,(table,index)) => s"$current,${mkMatch(table,index)}"})
 
     s"import org.dama.datasynth.runtime.spark.utils._\n" +
     s"import org.dama.datasynth.common.generators.property._\n" +
-    s"class $sufix extends PropertyGenerator[$returnTypeName] {\n" +
-    s"val generator$sufix = new $propertyGeneratorName($initParameters)\n"+
-    s" def run(id : Long, random : Long, dependencies : Any*) : $returnTypeName = generator$sufix.run(id,random$dependentGeneratorsCallList)\n" +
+    s"class $generatedClassName extends PropertyGenerator[$returnTypeName] {\n" +
+    s"val generator$generatedClassName = new $propertyGeneratorName($initParameters)\n"+
+    s" def run(id : Long, random : Long, dependencies : Any*) : $returnTypeName = generator$generatedClassName.run(id,random$dependentGeneratorsCallList)\n" +
     s"}\n"
   }
 
@@ -124,11 +133,12 @@ class RuntimePropertyGeneratorBuilder(config : DataSynthConfig) extends Executio
   }
 
   override def visit(node: ExecutionPlan.PropertyTable[_]): Map[String, (String,String)] =  {
-    val classTypeName = mkGeneratedClassName(node.name)
+    val classTypeName = generateClassName(node.name)
     val classDeclaration = generatePGClassDefinition(classTypeName,node.generator)
     val dependants = node.generator.dependentPropertyTables.map( table => table.accept[Map[String,(String,String)]](this) ).
-      foldLeft(Map[String,(String,String)]())( {case (acc, next) => acc ++ next} )
+      foldLeft(Map[String,(String,String)]())( {case (accumulated, next) => accumulated ++ next} )
     dependants + (node.name -> (classTypeName,classDeclaration))
+
   }
 
   override def visit(node: ExecutionPlan.EdgeTable): Map[String, (String,String)] = {

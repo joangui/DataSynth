@@ -25,17 +25,16 @@ object DataSynthConfig {
   def nextOption(currentConfig : DataSynthConfig, list: List[String]) : DataSynthConfig = {
     def isSwitch(s : String) = (s(0) == '-')
     list match {
-      case "--output-dir" :: value :: tail if !isSwitch(value) => {
-        val config = new DataSynthConfig(value,currentConfig.schemaFile,currentConfig.driverWorkspaceDir)
+      case "--output-dir" :: outputdir :: tail if !isSwitch(outputdir) => {
+        val config = currentConfig.setOutputDir(outputdir)
         nextOption(config, tail)
       }
-      case "--schema-file" :: value :: tail if !isSwitch(value) => {
-        val config = new DataSynthConfig(currentConfig.outputDir,value,currentConfig.driverWorkspaceDir)
+      case "--schema-file" :: schema :: tail if !isSwitch(schema) => {
+        val config = currentConfig.schemaFile(schema)
         nextOption(config, tail)
       }
-      case "--driver-workspace-dir" :: value :: tail if !isSwitch(value) => {
-        //val config = new DataSynthConfig(currentConfig.outputDir,currentConfig.schemaFile,value)
-        val config = new DataSynthConfig(currentConfig.outputDir,currentConfig.schemaFile,currentConfig.driverWorkspaceDir)
+      case "--driver-workspace-dir" :: workspace :: tail if !isSwitch(workspace) => {
+        val config = currentConfig.driverWorkspaceDir(workspace)
         nextOption(config, tail)
       }
       case option :: tail => {
@@ -54,28 +53,28 @@ class DataSynthConfig (
 
   /**
     * Sets the outputDir
-    * @param value The value of the output dir
+    * @param newOutputDir The value of the output dir
     * @return this
     */
-  def outputDir( value : String ) : DataSynthConfig = {
-    new DataSynthConfig(value,schemaFile,driverWorkspaceDir)
+  def setOutputDir(newOutputDir : String ) : DataSynthConfig = {
+    new DataSynthConfig(newOutputDir,schemaFile,driverWorkspaceDir)
   }
 
   /**
     * Sets the schema file path
-    * @param value The value of the schema file path
+    * @param newSchemaFile The value of the schema file path
     * @return this
     */
-  def schemaFile( value : String ) : DataSynthConfig = {
-    new DataSynthConfig(outputDir,value,driverWorkspaceDir)
+  def schemaFile(newSchemaFile : String ) : DataSynthConfig = {
+    new DataSynthConfig(outputDir,newSchemaFile,driverWorkspaceDir)
   }
 
   /**
     * Sets the driver workspace dir
-    * @param value The value of the driver workspace dir
+    * @param newWorkspace The value of the driver workspace dir
     * @return this
     */
-  def driverWorkspaceDir( value : String ) : DataSynthConfig = {
-    new DataSynthConfig(outputDir,schemaFile,driverWorkspaceDir)
+  def driverWorkspaceDir(newWorkspace : String ) : DataSynthConfig = {
+    new DataSynthConfig(outputDir,schemaFile,newWorkspace)
   }
 }

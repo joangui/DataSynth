@@ -44,8 +44,8 @@ class DistributionBasedGenerator[T]( parser : (String) => T, fileName : String, 
       if (data.size == 1) {
         data(0) match { case (value,prob) => value }
       } else {
-        val middleIndex = data.size / 2
-        val (left,right) = data.splitAt(middleIndex)
+        val middleIndex:Int = data.size / 2
+        val (left,right):(Array[(T,Double)],Array[(T,Double)]) = data.splitAt(middleIndex)
         (data(middleIndex-1), data(middleIndex)) match {
           case ((_,_),(value, valProb)) if valProb == prob => value
           case ((_,_),(value, valProb)) if valProb < prob => doSearch(right)
@@ -58,7 +58,7 @@ class DistributionBasedGenerator[T]( parser : (String) => T, fileName : String, 
   }
 
   override def run(id: Long, random: Long, dependencies: Any*) : T = {
-    val prob = RndGenerator.toDouble(random)
+    val prob:Double = RndGenerator.toDouble(random)
     binarySearchForValue(data,prob)
   }
 }

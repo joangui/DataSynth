@@ -12,8 +12,8 @@ class DummyLongMultPropertyGenerator
   extends PropertyGenerator[Long] {
 
   override def run(id: Long, random: Long, dependencies: Any*) : Long = {
-    val mult1 = dependencies(0) match { case x : Long => x}
-    val mult2 = dependencies(1) match { case x : Long => x}
+    val mult1:Long = dependencies(0) match { case x : Long => x}
+    val mult2:Long = dependencies(1) match { case x : Long => x}
     mult1 * mult2
   }
 }
