@@ -5,6 +5,7 @@ import java.io.{File, PrintWriter}
 import org.dama.datasynth.DataSynthConfig
 import org.dama.datasynth.executionplan.ExecutionPlan.{PropertyGenerator, PropertyTable, StaticValue, Value}
 import org.dama.datasynth.executionplan.{ExecutionPlan, ExecutionPlanNonVoidVisitor, ExecutionPlanVoidVisitor}
+import org.dama.datasynth.runtime.spark.{RuntimeClass, RuntimeClasses}
 import org.dama.datasynth.runtime.spark.operators.{EvalValueOperator, FetchRndGeneratorOperator}
 
 import scala.tools.nsc.io.{JManifest, Jar, JarWriter}
@@ -16,14 +17,18 @@ import scala.reflect.runtime.universe.typeOf
   * This Visitor processes an execution plan and for each property generator, it generates its PropertyGenerator
   * Interface coutnerpart, compiles it and packages all of them into a jar
   */
-class RuntimePropertyGeneratorBuilder(config : DataSynthConfig) extends ExecutionPlanNonVoidVisitor[Map[String,(String,String)]] {
+class RuntimePropertyGeneratorBuilder(config : DataSynthConfig) extends ExecutionPlanNonVoidVisitor[RuntimeClasses] {
 
 
-  def codePropertyTableClasses(executionPlan:Seq[ExecutionPlan.Table]): Map[String,(String,String)]={
+  def codePropertyTableClasses(executionPlan:Seq[ExecutionPlan.Table]): RuntimeClasses={
     /** Writing .scala files **/
-    val classes:Map[String,(String,String)] = executionPlan.foldLeft(
+  /*  val classes:Map[String,(String,String)] = executionPlan.foldLeft(
       Map[String,(String,String)]())( (currentDeclarations, nextNode) => currentDeclarations ++ nextNode.accept(this))
     classes
+*/
+    val classes2:RuntimeClasses=executionPlan.foldLeft(new RuntimeClasses)((codeClassses, nextNode)=>codeClassses++nextNode.accept(this))
+    classes2
+
   }
 
   /**
@@ -120,36 +125,55 @@ class RuntimePropertyGeneratorBuilder(config : DataSynthConfig) extends Executio
     s"}\n"
   }
 
-  override def visit(node: ExecutionPlan.StaticValue[_]): Map[String, (String,String)] = {
-    Map.empty
+  override def visit(node: ExecutionPlan.StaticValue[_]): RuntimeClasses =  {
+//    Map.empty
+    throw new RuntimeException("No code should be generated for StaticValue[_]")
   }
 
-  override def visit(node: ExecutionPlan.PropertyGenerator[_]): Map[String, (String,String)] = {
-    Map.empty
+  override def visit(node: ExecutionPlan.PropertyGenerator[_]): RuntimeClasses =  {
+    //    Map.empty
+    throw new RuntimeException("No code should be generated for PropertyGenerator[_]")
   }
 
-  override def visit(node: ExecutionPlan.StructureGenerator): Map[String, (String,String)] = {
-    Map.empty
+  override def visit(node: ExecutionPlan.StructureGenerator): RuntimeClasses =  {
+    //    Map.empty
+    throw new RuntimeException("No code should be generated for StructureGenerator")
   }
 
-  override def visit(node: ExecutionPlan.PropertyTable[_]): Map[String, (String,String)] =  {
+  /*override def visit(node: ExecutionPlan.PropertyTable[_]): Map[String, (String,String)] =  {
     val classTypeName = generateClassName(node.name)
     val classDeclaration = generatePGClassDefinition(classTypeName,node.generator)
     val dependants = node.generator.dependentPropertyTables.map( table => table.accept[Map[String,(String,String)]](this) ).
       foldLeft(Map[String,(String,String)]())( {case (accumulated, next) => accumulated ++ next} )
     dependants + (node.name -> (classTypeName,classDeclaration))
 
+  }*/
+
+  override def visit(node: ExecutionPlan.PropertyTable[_]): RuntimeClasses =  {
+    val classTypeName = generateClassName(node.name)
+    val classDeclaration = generatePGClassDefinition(classTypeName,node.generator)
+
+
+    val dependants:RuntimeClasses = node.generator.dependentPropertyTables.map(table => table.accept[RuntimeClasses](this) ).
+      foldLeft(new RuntimeClasses())( {case (accumulated, next) => accumulated ++ next} )
+    val codeClass : RuntimeClass = new RuntimeClass(node.name,classTypeName,classDeclaration)
+    dependants + codeClass
+dependants
   }
 
-  override def visit(node: ExecutionPlan.EdgeTable): Map[String, (String,String)] = {
-    Map.empty
+
+  override def visit(node: ExecutionPlan.EdgeTable): RuntimeClasses =  {
+    //    Map.empty
+    throw new RuntimeException("No code should be generated for EdgeTable")
   }
 
-  override def visit(node: ExecutionPlan.TableSize): Map[String, (String,String)] =  {
-    Map.empty
+  override def visit(node: ExecutionPlan.TableSize): RuntimeClasses =  {
+    //    Map.empty
+    throw new RuntimeException("No code should be generated for TableSize")
   }
 
-  override def visit(node: ExecutionPlan.Match): Map[String, (String,String)] =  {
-    Map.empty
+  override def visit(node: ExecutionPlan.Match): RuntimeClasses =  {
+    //    Map.empty
+    throw new RuntimeException("No code should be generated for Match")
   }
 }

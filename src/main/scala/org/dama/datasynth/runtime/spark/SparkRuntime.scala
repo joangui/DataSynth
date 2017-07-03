@@ -1,6 +1,7 @@
 package org.dama.datasynth.runtime.spark
 
 import java.net.{URL, URLClassLoader}
+import java.util
 
 import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.spark.sql.{Dataset, SparkSession}
@@ -8,6 +9,8 @@ import org.dama.datasynth.DataSynthConfig
 import org.dama.datasynth.executionplan.ExecutionPlan
 import org.dama.datasynth.runtime.spark.operators.{FetchRndGeneratorOperator, FetchTableOperator}
 import org.dama.datasynth.runtime.spark.passes.{InjectRuntimeGenerators, RuntimePropertyGeneratorBuilder}
+
+import scala.collection.mutable
 
 
 /**
@@ -24,10 +27,13 @@ class SparkRuntime(config : DataSynthConfig) {
     val jarFileName:String = config.driverWorkspaceDir+"/temp.jar"
     //val classes = generatorBuilder.buildJar(jarFileName, executionPlan)
 
-    val classes:Map[String,(String,String)] = generatorBuilder.codePropertyTableClasses(executionPlan)
+   // val classes:CodeClasses =  new CodeClasses()
+   // classes.add(generatorBuilder.codePropertyTableClasses(executionPlan))
 
+    val classes : RuntimeClasses = generatorBuilder.codePropertyTableClasses(executionPlan)
 
-    val classCode:Map[String,String] = classes.foldLeft(Map[String,String]())({case (classesCode,(_,(filename,filecode)))=>classesCode + (filename->filecode)})
+    val classCode:Map[String,String] = classes.classNameToClassCode
+
     generatorBuilder.buildJar(jarFileName,classCode)
 
 
@@ -42,8 +48,8 @@ class SparkRuntime(config : DataSynthConfig) {
     }
 
     // Patch execution plan to replace old generators with new existing ones
-    val classesNames:Map[String,String] = classes.map( { case (propertyTable,(className,_)) => (propertyTable -> className) })
-    val injectRuntimeGenerators = new InjectRuntimeGenerators(classesNames)
+    val classesNames:mutable.Map[String,String] = classes.propertyTableNameToClassName
+    val injectRuntimeGenerators = new InjectRuntimeGenerators(classesNames.toMap)
     val modifiedExecutionPlan:Seq[ExecutionPlan.Table] = injectRuntimeGenerators.run(executionPlan)
 
     // Execute execution plan
@@ -58,4 +64,33 @@ class SparkRuntime(config : DataSynthConfig) {
     SparkSession.builder().getOrCreate().stop()
   }
 }
+
+class RuntimeClass(val propertyTableName:String, val className:String, val code:String)
+
+class RuntimeClasses()
+{
+  val runtimeClasses =  scala.collection.mutable.Map[String,(String,String)]()
+
+  def add(newClasses: Map[String,(String,String)]): Unit = {
+    newClasses.foreach({case (entry)=>runtimeClasses+entry})
+  }
+
+  def  classNameToClassCode  : Map[String,String]= runtimeClasses.foldLeft(Map[String,String]())({case (classesCode,(_,(filename,filecode)))=>classesCode + (filename->filecode)})
+  def propertyTableNameToClassName : mutable.Map[String, String]= runtimeClasses.map( { case (propertyTable,(className,_)) => (propertyTable -> className) })
+
+  def addClass(codeClass:RuntimeClass)={runtimeClasses += codeClass.propertyTableName->(codeClass.className,codeClass.code)}
+  def addClass(propertyTableName:String,className:String,codeClass:String):Unit={runtimeClasses+=propertyTableName->(className,codeClass)}
+
+  def +(codeClass:RuntimeClass):RuntimeClasses={
+    addClass(codeClass)
+    this
+  }
+
+  def ++(codeClasses:RuntimeClasses):RuntimeClasses={
+    runtimeClasses++=codeClasses.runtimeClasses
+    this}
+
+}
+
+
 
