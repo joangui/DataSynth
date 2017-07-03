@@ -8,14 +8,7 @@ import org.dama.datasynth.common.generators.property.PropertyGenerator
   * Dummy property generator that produces a Long
   */
 
-class DummyLongPropertyGenerator
+class DummyLongPropertyGenerator( num : Long )
   extends PropertyGenerator[Long] {
-
-  var num : Long = 0L
-
-  override def initialize(parameters: Any*): Unit  = {
-    num = parameters.apply(0) match {case x : Long => x}
-  }
-
   override def run(id: Long, random: Long, dependencies: Any*) : Long = num
 }

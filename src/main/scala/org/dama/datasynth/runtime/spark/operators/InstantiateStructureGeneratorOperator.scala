@@ -1,5 +1,6 @@
 package org.dama.datasynth.runtime.spark.operators
 
+import org.apache.spark.sql.SparkSession
 import org.dama.datasynth.executionplan._
 import org.dama.datasynth.common.generators._
 
@@ -17,10 +18,10 @@ object InstantiateStructureGeneratorOperator {
     * @param info The execution plan node representing the structure generator
     * @return The instantiated structure generator
     */
-  def apply(info : ExecutionPlan.StructureGenerator) : structure.StructureGenerator = {
+  def apply(sparkSession : SparkSession, info : ExecutionPlan.StructureGenerator) : structure.StructureGenerator = {
     structure.StructureGenerator.getInstance(info.className) match {
       case Success(generator) => {
-        val initParameters: Seq[Any] = info.initParameters.map(x => EvalValueOperator(x))
+        val initParameters: Seq[Any] = info.initParameters.map(x => EvalValueOperator(sparkSession, x))
         generator.initialize(initParameters: _*)
         generator
       }

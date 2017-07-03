@@ -6,11 +6,27 @@
       "properties" : [
         {
           "name": "attribute1",
-          "dataType": "Int",
+          "dataType": "Long",
           "generator": {
-          "name":"org.dama.datasynth.common.generators.property.empirical.IntGenerator",
+          "name":"org.dama.datasynth.common.generators.property.empirical.LongGenerator",
           "dependencies":[],
-          "initParameters" : ["src/main/resources/distributions/intDistribution.txt:String"," :String"]}
+          "initParameters" : ["intDistribution.txt:String"," :String"]}
+        },
+        {
+          "name": "attribute2",
+          "dataType": "Long",
+          "generator": {
+          "name":"org.dama.datasynth.common.generators.property.empirical.LongGenerator",
+          "dependencies":[],
+          "initParameters" : ["intDistribution.txt:String"," :String"]}
+        },
+        {
+          "name": "attribute3",
+          "dataType": "Long",
+          "generator": {
+            "name":"org.dama.datasynth.common.generators.property.dummy.DummyLongMultPropertyGenerator",
+            "dependencies":["attribute1","attribute2"],
+            "initParameters" : []}
         }
       ]
     }
@@ -22,7 +38,7 @@
       "target" : "person",
       "structure" : {
         "name" : "org.dama.datasynth.common.generators.structure.BTERGenerator",
-        "initParameters" : ["src/main/resources/degrees/dblp:String","src/main/resources/ccs/dblp:String"]
+        "initParameters" : ["/data/degrees/dblp:String","/data/ccs/dblp:String"]
       }
     }
   ]

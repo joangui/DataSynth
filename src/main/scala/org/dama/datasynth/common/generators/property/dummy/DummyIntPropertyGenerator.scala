@@ -10,14 +10,8 @@ import org.dama.datasynth.common.generators.property.PropertyGenerator
   *
   */
 
-class DummyIntPropertyGenerator
+class DummyIntPropertyGenerator( num : Int )
   extends PropertyGenerator[Int] {
-
-  var num : Int = 0
-
-  override def initialize(parameters: Any*): Unit  = {
-    num = parameters.apply(0) match {case x : Int => x}
-  }
 
   override def run(id: Long, random: Long, dependencies: Any*) : Int = num
 }

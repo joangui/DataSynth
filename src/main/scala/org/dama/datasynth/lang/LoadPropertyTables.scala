@@ -125,7 +125,7 @@ object LoadPropertyTables{
     * @param generator defines the generator's characteristics
     * @return the PropertyGenerator
     */
-  def getPropertyGenerator[T](generator:Generator):PropertyGenerator[T]=
+  def getPropertyGenerator[T : TypeTag](generator:Generator):PropertyGenerator[T]=
   {
     val generatorName = generator.name
 
@@ -140,6 +140,6 @@ object LoadPropertyTables{
       }
 
     val values :  Seq[Value[_]] = ReadExecutionPlan.readInitParameters(generator.initParameters.getOrElse(Seq()))
-    PropertyGenerator(generatorName,values,propertyTables)
+    PropertyGenerator[T](generatorName,values,propertyTables)
   }
 }

@@ -10,14 +10,8 @@ import org.dama.datasynth.common.generators.property.PropertyGenerator
   *
   */
 
-class DummyFloatPropertyGenerator
+class DummyFloatPropertyGenerator( num : Float )
   extends PropertyGenerator[Float] {
-
-  var num : Float = 0.0f
-
-  override def initialize(parameters: Any*): Unit  = {
-    num = parameters.apply(0) match {case x : Float => x}
-  }
 
   override def run(id: Long, random: Long, dependencies: Any*) : Float = num
 }
