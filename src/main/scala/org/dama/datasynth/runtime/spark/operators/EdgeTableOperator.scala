@@ -11,19 +11,19 @@ import scala.util.Random
   *
   * Operator that generates an EdgeTable
   */
-object EdgeTableOperator {
+class EdgeTableOperator {
 
 
   /**
     * Generates a spark Dataset that corresponds to a given edge table
-    * @param sparkSession The session this operator works for
     * @param node The execution plan node representing the edge table
     * @return The generated spark Dataset
     */
-  def apply(sparkSession : SparkSession, node : EdgeTable) : Dataset[(Long,Long,Long)]= {
+  def apply( node : EdgeTable) : Dataset[(Long,Long,Long)]= {
+    val sparkSession = SparkRuntime.getSparkSession()
     import sparkSession.implicits._
-    val generator = InstantiateStructureGeneratorOperator(sparkSession, node.structure )
-    val size = EvalValueOperator(sparkSession,node.size).asInstanceOf[Long]
+    val generator = SparkRuntime.instantiateStructureGeneratorOperator( node.structure )
+    val size = SparkRuntime.evalValueOperator(node.size).asInstanceOf[Long]
     val random : Random = new Random()
     val id : Int = random.nextInt()
     val path : String = s"/tmp/${id}"

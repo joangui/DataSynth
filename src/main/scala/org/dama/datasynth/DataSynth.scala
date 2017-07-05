@@ -21,8 +21,9 @@ object DataSynth {
     val executionPlan:Seq[Table] = ReadExecutionPlan.createExecutionPlan(schema)
 
     //SparkSession.builder().master("local[*]").getOrCreate()
-    val sparkRuntime = new SparkRuntime(dataSynthConfig)
-    sparkRuntime.run(executionPlan)
+    SparkRuntime.start(dataSynthConfig)
+    SparkRuntime.run(executionPlan)
+    SparkRuntime.stop()
   }
 
 }

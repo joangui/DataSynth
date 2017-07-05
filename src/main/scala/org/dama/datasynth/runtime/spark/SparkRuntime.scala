@@ -1,13 +1,12 @@
 package org.dama.datasynth.runtime.spark
 
 import java.net.{URL, URLClassLoader}
-import java.util
 
 import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.spark.sql.{Dataset, SparkSession}
 import org.dama.datasynth.DataSynthConfig
 import org.dama.datasynth.executionplan.ExecutionPlan
-import org.dama.datasynth.runtime.spark.operators.{FetchRndGeneratorOperator, FetchTableOperator}
+import org.dama.datasynth.runtime.spark.operators._
 import org.dama.datasynth.runtime.spark.passes.{InjectRuntimeGenerators, RuntimePropertyGeneratorBuilder}
 
 import scala.collection.mutable
@@ -16,81 +15,90 @@ import scala.collection.mutable
 /**
   * Created by aprat on 6/04/17.
   */
-class SparkRuntime(config : DataSynthConfig) {
+object SparkRuntime{
+
+  private[spark] val edgeTableOperator = new EdgeTableOperator()
+  private[spark] val fetchTableOperator = new FetchTableOperator()
+  private[spark] val evalValueOperator = new EvalValueOperator()
+  private[spark] val fetchRndGeneratorOperator = new FetchRndGeneratorOperator()
+  private[spark] val instantiatePropertyGeneratorOperator  = new InstantiatePropertyGeneratorOperator()
+  private[spark] val instantiateStructureGeneratorOperator = new InstantiateStructureGeneratorOperator()
+  private[spark] val propertyTableOperator = new PropertyTableOperator()
+  private[spark] val tableSizeOperator = new TableSizeOperator()
+
+  var config : Option[DataSynthConfig]= None
+  private[spark] var sparkSession : Option[SparkSession] = None
+
+  def start(config:DataSynthConfig):Unit={
+    this.config = Some(config)
+    this.sparkSession = Some(SparkSession.builder().getOrCreate())
+  }
+
+
+  private[spark] def getSparkSession():SparkSession = {
+    this.sparkSession match {
+      case Some(s) => s
+      case None => throw  new RuntimeException("SparkRuntime must be started.")
+    }
+  }
+
+  private[spark] def getConfig(): DataSynthConfig = {
+    this.config match {
+      case Some(c) => c
+      case None => throw  new RuntimeException("SparkRuntime must be started.")
+    }
+  }
 
   def run(executionPlan : Seq[ExecutionPlan.Table] ) = {
 
-    val spark:SparkSession = SparkSession.builder().getOrCreate()
+    val config:DataSynthConfig = getConfig()
+    val sparkSession = getSparkSession()
 
     // Generate temporal jar with runtime generators
     val generatorBuilder = new RuntimePropertyGeneratorBuilder(config)
     val jarFileName:String = config.driverWorkspaceDir+"/temp.jar"
     //val classes = generatorBuilder.buildJar(jarFileName, executionPlan)
 
-   // val classes:CodeClasses =  new CodeClasses()
-   // classes.add(generatorBuilder.codePropertyTableClasses(executionPlan))
 
-    val classes : RuntimeClasses = generatorBuilder.codePropertyTableClasses(executionPlan)
+    val runtimeClasses : RuntimeClasses = generatorBuilder.codePropertyTableClasses(executionPlan)
+    val runtimeCode:Map[String,String] = runtimeClasses.classNameToClassCode
 
-    val classCode:Map[String,String] = classes.classNameToClassCode
-
-    generatorBuilder.buildJar(jarFileName,classCode)
+    generatorBuilder.buildJar(jarFileName,runtimeCode)
 
 
     // Add jar to classpath
     val urlCl = new URLClassLoader( Array[URL](new URL("file://"+jarFileName)), getClass.getClassLoader());
-    val fs:FileSystem = FileSystem.get(spark.sparkContext.hadoopConfiguration)
-    if(spark.sparkContext.master == "yarn") {
+    val fs:FileSystem = FileSystem.get(sparkSession.sparkContext.hadoopConfiguration)
+    if(sparkSession.sparkContext.master == "yarn") {
       fs.copyFromLocalFile(false, true, new Path("file://" + jarFileName), new Path("hdfs://" + jarFileName))
-      spark.sparkContext.addJar("hdfs://"+jarFileName)
+      sparkSession.sparkContext.addJar("hdfs://"+jarFileName)
     } else {
-      spark.sparkContext.addJar("file://"+jarFileName)
+      sparkSession.sparkContext.addJar("file://"+jarFileName)
     }
 
     // Patch execution plan to replace old generators with new existing ones
-    val classesNames:mutable.Map[String,String] = classes.propertyTableNameToClassName
+    val classesNames:mutable.Map[String,String] = runtimeClasses.propertyTableNameToClassName
     val injectRuntimeGenerators = new InjectRuntimeGenerators(classesNames.toMap)
     val modifiedExecutionPlan:Seq[ExecutionPlan.Table] = injectRuntimeGenerators.run(executionPlan)
 
     // Execute execution plan
     modifiedExecutionPlan.foreach(table =>
-          FetchTableOperator(spark,table).write.csv(config.outputDir+"/"+table.name)
+      fetchTableOperator(table).write.csv(config.outputDir+"/"+table.name)
     )
   }
 
   def stop(): Unit = {
-    FetchTableOperator.clear()
-    FetchRndGeneratorOperator.clear()
-    SparkSession.builder().getOrCreate().stop()
+    fetchTableOperator.clear()
+    fetchRndGeneratorOperator.clear()
+
+    sparkSession match {
+      case Some(s) => s.stop()
+      case None => throw  new RuntimeException("SparkRuntime must be started.")
+    }
   }
 }
 
-class RuntimeClass(val propertyTableName:String, val className:String, val code:String)
 
-class RuntimeClasses()
-{
-  val runtimeClasses =  scala.collection.mutable.Map[String,(String,String)]()
-
-  def add(newClasses: Map[String,(String,String)]): Unit = {
-    newClasses.foreach({case (entry)=>runtimeClasses+entry})
-  }
-
-  def  classNameToClassCode  : Map[String,String]= runtimeClasses.foldLeft(Map[String,String]())({case (classesCode,(_,(filename,filecode)))=>classesCode + (filename->filecode)})
-  def propertyTableNameToClassName : mutable.Map[String, String]= runtimeClasses.map( { case (propertyTable,(className,_)) => (propertyTable -> className) })
-
-  def addClass(codeClass:RuntimeClass)={runtimeClasses += codeClass.propertyTableName->(codeClass.className,codeClass.code)}
-  def addClass(propertyTableName:String,className:String,codeClass:String):Unit={runtimeClasses+=propertyTableName->(className,codeClass)}
-
-  def +(codeClass:RuntimeClass):RuntimeClasses={
-    addClass(codeClass)
-    this
-  }
-
-  def ++(codeClasses:RuntimeClasses):RuntimeClasses={
-    runtimeClasses++=codeClasses.runtimeClasses
-    this}
-
-}
 
 
 
