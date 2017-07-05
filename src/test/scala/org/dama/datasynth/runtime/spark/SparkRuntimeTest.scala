@@ -25,13 +25,13 @@ class SparkRuntimeTest extends FlatSpec with Matchers with BeforeAndAfterAll {
     val generator = ExecutionPlan.PropertyGenerator[Boolean]("org.dama.datasynth.common.generators.property.dummy.DummyBooleanPropertyGenerator",Seq(value),Seq())
     val size = ExecutionPlan.StaticValue[Long](1000)
     val createPropertyTable = PropertyTable[Boolean]("boolean","property",generator,size)
-    val sparkRuntime = new SparkRuntime(config)
-    sparkRuntime.run(Seq(createPropertyTable))
-    FetchTableOperator.booleanTables.get("boolean.property") match {
+    SparkRuntime.start(config)
+    SparkRuntime.run(Seq(createPropertyTable))
+    SparkRuntime.fetchTableOperator.booleanTables.get("boolean.property") match {
       case Some(table) => table.collect.foreach( { case (id,pvalue) => pvalue should be (value.value)})
       case None => throw new RuntimeException("Boolean Table does not exist")
     }
-    sparkRuntime.stop()
+    SparkRuntime.stop()
   }
 
   " A float table " should " contain all 1.0 " in {
@@ -40,13 +40,13 @@ class SparkRuntimeTest extends FlatSpec with Matchers with BeforeAndAfterAll {
     val generator = ExecutionPlan.PropertyGenerator[Float]("org.dama.datasynth.common.generators.property.dummy.DummyFloatPropertyGenerator",Seq(value),Seq())
     val size = ExecutionPlan.StaticValue[Long](1000)
     val createPropertyTable = PropertyTable[Float]("float","property",generator,size)
-    val sparkRuntime = new SparkRuntime(config)
-    sparkRuntime.run(Seq(createPropertyTable))
-    FetchTableOperator.floatTables.get("float.property") match {
+    SparkRuntime.start(config)
+    SparkRuntime.run(Seq(createPropertyTable))
+    SparkRuntime.fetchTableOperator.floatTables.get("float.property") match {
       case Some(table) => table.collect.foreach( { case (id,pvalue) => pvalue should be (value.value)})
       case None => throw new RuntimeException("Float Table does not exist")
     }
-    sparkRuntime.stop()
+    SparkRuntime.stop()
   }
 
   " A double table " should " contain all 1.0 " in {
@@ -55,13 +55,13 @@ class SparkRuntimeTest extends FlatSpec with Matchers with BeforeAndAfterAll {
     val generator = ExecutionPlan.PropertyGenerator[Double]("org.dama.datasynth.common.generators.property.dummy.DummyDoublePropertyGenerator",Seq(value),Seq())
     val size = ExecutionPlan.StaticValue[Long](1000)
     val createPropertyTable = PropertyTable[Double]("double","property",generator,size)
-    val sparkRuntime = new SparkRuntime(config)
-    sparkRuntime.run(Seq(createPropertyTable))
-    FetchTableOperator.doubleTables.get("double.property") match {
+    SparkRuntime.start(config)
+    SparkRuntime.run(Seq(createPropertyTable))
+    SparkRuntime.fetchTableOperator.doubleTables.get("double.property") match {
       case Some(table) => table.collect.foreach( {case (id,pvalue) => pvalue should be (value.value)})
       case None => throw new RuntimeException("Double Table does not exist")
     }
-    sparkRuntime.stop()
+    SparkRuntime.stop()
   }
 
   " A long table " should " contain all 1s " in {
@@ -70,13 +70,13 @@ class SparkRuntimeTest extends FlatSpec with Matchers with BeforeAndAfterAll {
     val generator = ExecutionPlan.PropertyGenerator[Long]("org.dama.datasynth.common.generators.property.dummy.DummyLongPropertyGenerator",Seq(num),Seq())
     val size = ExecutionPlan.StaticValue[Long](1000)
     val createPropertyTable = PropertyTable[Long]("long","property",generator,size)
-    val sparkRuntime = new SparkRuntime(config)
-    sparkRuntime.run(Seq(createPropertyTable))
-    FetchTableOperator.longTables.get("long.property") match {
+    SparkRuntime.start(config)
+    SparkRuntime.run(Seq(createPropertyTable))
+    SparkRuntime.fetchTableOperator.longTables.get("long.property") match {
       case Some(table) => table.collect.foreach( { case (id,pvalue) => pvalue should be (num.value)})
       case None => throw new RuntimeException("Long Table does not exist")
     }
-    sparkRuntime.stop()
+    SparkRuntime.stop()
   }
 
   " An int table " should " contain all 1s " in {
@@ -85,13 +85,13 @@ class SparkRuntimeTest extends FlatSpec with Matchers with BeforeAndAfterAll {
     val generator = ExecutionPlan.PropertyGenerator[Int]("org.dama.datasynth.common.generators.property.dummy.DummyIntPropertyGenerator",Seq(num),Seq())
     val size = ExecutionPlan.StaticValue[Long](1000)
     val createPropertyTable = PropertyTable[Int]("int","property",generator,size)
-    val sparkRuntime = new SparkRuntime(config)
-    sparkRuntime.run(Seq(createPropertyTable))
-    FetchTableOperator.intTables.get("int.property") match {
+    SparkRuntime.start(config)
+    SparkRuntime.run(Seq(createPropertyTable))
+    SparkRuntime.fetchTableOperator.intTables.get("int.property") match {
       case Some(table) => table.collect.foreach( {case (id,pvalue) => pvalue should be (num.value)})
       case None => throw new RuntimeException("Int Table does not exist")
     }
-    sparkRuntime.stop()
+    SparkRuntime.stop()
   }
 
   " A property table created with a dummyLongMultPropertyGenerator" should "contain the result of multiplying two long tables" in {
@@ -107,13 +107,13 @@ class SparkRuntimeTest extends FlatSpec with Matchers with BeforeAndAfterAll {
 
     val generator3 = ExecutionPlan.PropertyGenerator[Long]("org.dama.datasynth.common.generators.property.dummy.DummyLongMultPropertyGenerator",Seq(),Seq(propertyTable1, propertyTable2))
     val propertyTable3 = ExecutionPlan.PropertyTable[Long]("long","property3", generator3, size)
-    val sparkRuntime = new SparkRuntime(config)
-    sparkRuntime.run(Seq(propertyTable1,propertyTable2,propertyTable3))
-    FetchTableOperator.longTables.get("long.property3") match {
+    SparkRuntime.start(config)
+    SparkRuntime.run(Seq(propertyTable1,propertyTable2,propertyTable3))
+    SparkRuntime.fetchTableOperator.longTables.get("long.property3") match {
       case Some(table) => table.collect.foreach( { case (id,value) => value should be (6)})
       case None => throw new RuntimeException("Long Table does not exist")
     }
-    sparkRuntime.stop()
+    SparkRuntime.stop()
   }
 
   override def afterAll(): Unit = {

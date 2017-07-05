@@ -10,7 +10,7 @@ import scala.collection.mutable
   *
   * Operator that fetches the Random Number Generator associated with a given property table
   */
-object FetchRndGeneratorOperator {
+class FetchRndGeneratorOperator {
 
   // Map used to store the random number generators used by each property table
   val rndGenerators = new mutable.HashMap[String, RndGenerator]

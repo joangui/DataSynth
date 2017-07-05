@@ -9,16 +9,16 @@ import org.dama.datasynth.runtime.spark.SparkRuntime
   *
   * Oeprator that evaluates the size of a table
   */
-object TableSizeOperator {
+ class TableSizeOperator {
 
   /**
     * Operator that execute the TableSize operation
-    * @param sparkSession The session this operator works for
     * @param node The execution plan node representing the table size operation
     * @return The size of the table
     */
-  def apply( sparkSession : SparkSession, node : TableSize ) : Long = {
-    FetchTableOperator(sparkSession, node.table).count
+  def apply( node : TableSize ) : Long = {
+
+    SparkRuntime.fetchTableOperator(node.table).count
   }
 
 }
