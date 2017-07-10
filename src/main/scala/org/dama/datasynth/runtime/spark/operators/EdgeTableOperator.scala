@@ -22,7 +22,7 @@ class EdgeTableOperator {
   def apply( node : EdgeTable) : Dataset[(Long,Long,Long)]= {
     val sparkSession = SparkRuntime.getSparkSession()
     import sparkSession.implicits._
-    val generator = SparkRuntime.instantiateStructureGeneratorOperator( node.structure )
+    val generator = SparkRuntime.instantiateStructureGeneratorOperator(node.structure)
     val size = SparkRuntime.evalValueOperator(node.size).asInstanceOf[Long]
     val random : Random = new Random()
     val id : Int = random.nextInt()

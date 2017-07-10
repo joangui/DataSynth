@@ -79,8 +79,8 @@ public class MatchingCommunityTest {
 		JointDistribution<XType, XType> attributesDistribution = new JointDistribution<>();
 		attributesDistribution.learn(connectedAttributes);
 
-		System.out.println("Executing matching algorithm");
-//		Matching matching = new GreedyMatching();
+		System.out.println("Executing org.dama.datasynth.matching algorithm");
+//		Matching org.dama.datasynth.matching = new GreedyMatching();
 		Matching matching = new StochasticBlockModelMatching();
 		long start = System.currentTimeMillis();
 		Map<Long, Long> mapping = matching.run(edges, attributes, attributesDistribution);

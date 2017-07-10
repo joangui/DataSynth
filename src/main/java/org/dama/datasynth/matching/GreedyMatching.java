@@ -11,7 +11,7 @@ public class GreedyMatching implements Matching {
 
 
     /**
-     * Computes a matching between entities with attributes and nodes of the graph
+     * Computes a org.dama.datasynth.matching between entities with attributes and nodes of the graph
      * @param graph The table containing the edges of the graph
      * @param attributes The table containing the mapping between entity id and attribute
      * @param distribution The joint probability distribution of observing pairs of entities with attributes connected
