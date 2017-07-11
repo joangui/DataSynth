@@ -8,5 +8,8 @@ import org.dama.datasynth.matching.MatchingStrategy
   * Created by joangui on 10/07/2017.
   */
 class StochasticBlockModelStrategy extends MatchingStrategy {
-  override def run(edgeTable: ExecutionPlan.EdgeTable, propertyTable: ExecutionPlan.PropertyTable[_], jointDistribution: matching.JointDistribution[_, _]): ExecutionPlan.EdgeTable = ???
+  override def run(edgeTable: ExecutionPlan.EdgeTable, propertyTable: ExecutionPlan.PropertyTable[_], jointDistribution: matching.JointDistribution[_, _]): ExecutionPlan.EdgeTable =
+  {
+    null
+  }
 }
