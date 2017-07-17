@@ -1,0 +1,37 @@
+{
+  "nodeTypes" : [
+    {
+      "name" : "entity1",
+      "instances" : 1000000,
+      "properties" : [
+        {
+          "name": "attribute1",
+          "dataType": "Long",
+          "generator": {
+          "name":"org.dama.datasynth.common.generators.property.empirical.IntGenerator",
+          "dependencies":[],
+          "initParameters" : ["src/main/resources/distributions/intDistribution.txt:String"," :String"]}
+        },
+        {
+          "name": "attribute2",
+          "dataType": "Long",
+          "generator": {
+          "name":"org.dama.datasynth.common.generators.property.empirical.IntGenerator",
+          "dependencies":[],
+          "initParameters" : ["src/main/resources/distributions/intDistribution.txt:String"," :String"]}
+        }
+      ]
+    }
+  ],
+  "edgeTypes" : [
+    {
+      "name" : "edge1",
+      "source" : "entity1",
+      "target" : "entity1",
+      "structure" : {
+        "name" : "org.dama.datasynth.common.generators.structure.BTERGenerator",
+        "initParameters" : ["src/main/resources/degrees/dblp:String","src/main/resources/ccs/dblp:String"]
+      }
+    }
+  ]
+}

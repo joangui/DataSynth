@@ -19,16 +19,9 @@ import scala.reflect.runtime.universe.typeOf
   */
 class RuntimePropertyGeneratorBuilder(config : DataSynthConfig) extends ExecutionPlanNonVoidVisitor[RuntimeClasses] {
 
-
-  def codePropertyTableClasses(executionPlan:Seq[ExecutionPlan.Table]): RuntimeClasses={
+  def codePropertyTableClasses(executionPlan : Seq[ExecutionPlan.Table]) : RuntimeClasses = {
     /** Writing .scala files **/
-  /*  val classes:Map[String,(String,String)] = executionPlan.foldLeft(
-      Map[String,(String,String)]())( (currentDeclarations, nextNode) => currentDeclarations ++ nextNode.accept(this))
-    classes
-*/
-    val classes2:RuntimeClasses=executionPlan.foldLeft(new RuntimeClasses)((codeClassses, nextNode)=>codeClassses++nextNode.accept(this))
-    classes2
-
+    executionPlan.foldLeft(new RuntimeClasses)((codeClassses, nextNode) => codeClassses++nextNode.accept(this))
   }
 
   /**
@@ -43,34 +36,37 @@ class RuntimePropertyGeneratorBuilder(config : DataSynthConfig) extends Executio
     settings.nc.value = true
     settings.usejavacp.value = true
     settings.outputDirs.setSingleOutput(s"${config.driverWorkspaceDir}")
-    val currentJarPath : String = getClass().getProtectionDomain().getCodeSource().getLocation().getPath()
-    println(currentJarPath)
+    val currentJarPath : String = getClass()
+                                  .getProtectionDomain()
+                                  .getCodeSource()
+                                  .getLocation()
+                                  .getPath()
     settings.classpath.append(currentJarPath)
     val g = new Global(settings)
     val run = new g.Run
 
+    // Creating .scala source code files
+    val sourceFileNames : List[String] = classes.toList.map(
+      {
+        case (className,classCode) => {
+          val fileName : String = s"${config.driverWorkspaceDir}/$className.scala"
+          val writer = new PrintWriter(new java.io.File(fileName))
+          writer.write(classCode)
+          writer.close()
+          fileName
+        }
+      }
+    )
 
-
-
-    val sourceFileNames : List[String] = classes.toList.map({case (className,classCode)=>{
-    val fileName:String = s"${config.driverWorkspaceDir}/$className.scala"
-    val writer = new PrintWriter(new java.io.File(fileName))
-    writer.write(classCode)
-    writer.close()
-
-    fileName
-    }})
-
+    // Compiling the .scala source code files
     run.compile(sourceFileNames)
 
-    /** Building JAR **/
+    // Building JAR
     val jar : JarWriter = new JarWriter(new scala.reflect.io.File(new java.io.File(jarFileName)), new JManifest())
-    sourceFileNames.map( file => file.replace(".scala",".class")).foreach( file => jar.addFile(new scala.reflect.io.File( new java.io.File(file)),""))
+    sourceFileNames.map( file => file.replace(".scala",".class"))
+                                     .foreach( file => jar.addFile(new scala.reflect.io.File(new java.io.File(file)), ""))
     jar.close()
   }
-
-
-
 
   /**
     * Generates the name of a generated proeprty generator given an original generator name
@@ -113,7 +109,6 @@ class RuntimePropertyGeneratorBuilder(config : DataSynthConfig) extends Executio
     }
     val propertyGeneratorName:String = propertyGenerator.className
     val generatedClassName:String = generateClassName(className)
-   // val dependentGenerators = propertyGenerator.dependentPropertyTables.map(table => generateClassName(table.name))
     val dependentGeneratorsCallList : String = propertyGenerator.dependentPropertyTables.zipWithIndex.foldLeft("")(
       {case (current,(table,index)) => s"$current,${mkMatch(table,index)}"})
 
@@ -126,54 +121,36 @@ class RuntimePropertyGeneratorBuilder(config : DataSynthConfig) extends Executio
   }
 
   override def visit(node: ExecutionPlan.StaticValue[_]): RuntimeClasses =  {
-//    Map.empty
     throw new RuntimeException("No code should be generated for StaticValue[_]")
   }
 
   override def visit(node: ExecutionPlan.PropertyGenerator[_]): RuntimeClasses =  {
-    //    Map.empty
     throw new RuntimeException("No code should be generated for PropertyGenerator[_]")
   }
 
   override def visit(node: ExecutionPlan.StructureGenerator): RuntimeClasses =  {
-    //    Map.empty
     throw new RuntimeException("No code should be generated for StructureGenerator")
   }
-
-  /*override def visit(node: ExecutionPlan.PropertyTable[_]): Map[String, (String,String)] =  {
-    val classTypeName = generateClassName(node.name)
-    val classDeclaration = generatePGClassDefinition(classTypeName,node.generator)
-    val dependants = node.generator.dependentPropertyTables.map( table => table.accept[Map[String,(String,String)]](this) ).
-      foldLeft(Map[String,(String,String)]())( {case (accumulated, next) => accumulated ++ next} )
-    dependants + (node.name -> (classTypeName,classDeclaration))
-
-  }*/
 
   override def visit(node: ExecutionPlan.PropertyTable[_]): RuntimeClasses =  {
     val classTypeName = generateClassName(node.name)
     val classDeclaration = generatePGClassDefinition(classTypeName,node.generator)
 
-
     val dependants:RuntimeClasses = node.generator.dependentPropertyTables.map(table => table.accept[RuntimeClasses](this) ).
       foldLeft(new RuntimeClasses())( {case (accumulated, next) => accumulated ++ next} )
     val codeClass : RuntimeClass = new RuntimeClass(node.name,classTypeName,classDeclaration)
     dependants + codeClass
-dependants
   }
 
-
   override def visit(node: ExecutionPlan.EdgeTable): RuntimeClasses =  {
-    //    Map.empty
-    throw new RuntimeException("No code should be generated for EdgeTable")
+    new RuntimeClasses()
   }
 
   override def visit(node: ExecutionPlan.TableSize): RuntimeClasses =  {
-    //    Map.empty
     throw new RuntimeException("No code should be generated for TableSize")
   }
 
   override def visit(node: ExecutionPlan.Match): RuntimeClasses =  {
-    //    Map.empty
-    throw new RuntimeException("No code should be generated for Match")
+    new RuntimeClasses()
   }
 }
