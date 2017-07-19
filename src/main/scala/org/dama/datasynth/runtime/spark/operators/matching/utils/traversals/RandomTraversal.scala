@@ -13,7 +13,6 @@ class RandomTraversal(edgeTable:DataFrame)extends Traversal{
   val nodesTmp: Array[Long] = targetNodes.union(sourceNodes).distinct
   val nodesTmp2: mutable.ListBuffer[Long] = nodesTmp.foldLeft(new mutable.ListBuffer[Long])({case (nodes,nextNode)=>nodes += nextNode})
   val nodes: mutable.ListBuffer[Long] = util.Random.shuffle(nodesTmp2)
-
   override def hasNext(): Boolean = nodes.nonEmpty
   override def next(): Long = nodes.remove(0)
 

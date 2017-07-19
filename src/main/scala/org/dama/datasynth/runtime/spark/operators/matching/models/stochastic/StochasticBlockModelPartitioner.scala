@@ -8,6 +8,5 @@ import org.dama.datasynth.runtime.spark.operators.matching.utils.traversals.Trav
 /**
   * Created by joangui on 18/07/2017.
   */
-class StochasticBlockModelPartitioner(edgeDataframe: DataFrame, traversal:Traversal) extends GraphPartitioner {
-
+class StochasticBlockModelPartitioner[T](edgeDataframe: DataFrame, traversal:Traversal,blockModel:StochasticBlockModel[T]) extends GraphPartitioner(edgeDataframe, traversal) {
 }

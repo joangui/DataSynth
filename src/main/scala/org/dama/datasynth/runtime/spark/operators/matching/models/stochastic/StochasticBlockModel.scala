@@ -1,6 +1,6 @@
 package org.dama.datasynth.runtime.spark.operators.matching.models.stochastic
 
-import org.apache.spark.sql.{DataFrame, Dataset}
+import org.apache.spark.sql.{DataFrame, Dataset, Row}
 import org.dama.datasynth.executionplan.ExecutionPlan.PropertyTable
 import org.dama.datasynth.runtime.spark.SparkRuntime
 import org.dama.datasynth.runtime.spark.operators.matching.Tuple
@@ -23,7 +23,7 @@ private object StochasticBlockModel
     val mappingDataFrame:DataFrame = df.groupBy("value").count()
 
 
-    val localData = mappingDataFrame.collect()
+    val localData: Array[Row] = mappingDataFrame.collect()
     val valueList = localData.map(_.getAs[T]("value"))
     val countList = localData.map(_.getAs[Long]("count"))
 
@@ -33,9 +33,10 @@ private object StochasticBlockModel
       {case (probabilitiesTMP,(value1,count1)) => {
         mapping.foreach({case (value2,count2)=>{
           val probability: Double = jointDistribution.getProbability(new Tuple[T,T](value1,value2))
+
           if (value1.equals(value2))
             probabilitiesTMP += (value1,value2)->2D*numEdges*probability/(count1*count2-1)
-          else if (value1 < value2)
+          else
             probabilitiesTMP += (value1,value2)->numEdges*probability/(count1*count2)
         }})
         probabilitiesTMP

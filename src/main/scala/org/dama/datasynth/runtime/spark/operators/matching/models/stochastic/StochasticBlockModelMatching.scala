@@ -29,8 +29,11 @@ class StochasticBlockModelMatching extends MatchingOperator {
 
 
 
-    null
+    _
   }
 
-  override def run[T1,T2](node: ExecutionPlan.BipartiteMatchNode[T1,T2]): ExecutionPlan.EdgeTable = ???
+  override def run[T1,T2](node: ExecutionPlan.BipartiteMatchNode[T1,T2]): ExecutionPlan.EdgeTable = {
+
+    _
+  }
 }
