@@ -17,7 +17,8 @@ abstract class ExecutionPlanNonVoidVisitor[T] {
   def visit( node : PropertyTable[_] ) : T
   def visit( node : EdgeTable ) : T
   def visit( node : TableSize ) : T
-  def visit( node : Match ) : T
+  def visit( node : MatchNode[_] ) : T
+  def visit( node : BipartiteMatchNode[_,_] ) : T
 }
 
 abstract class TableNonVoidVisitor[T] extends ExecutionPlanNonVoidVisitor[T]{
@@ -31,7 +32,8 @@ abstract class PropertyGeneratorNonVoidVisitor extends ExecutionPlanNonVoidVisit
 
   def visit(node: PropertyTable[_])  = throw new RuntimeException(msg);//Table
   def visit(node: EdgeTable)  = throw new RuntimeException(msg);//Table
-  def visit(node: Match)  = throw new RuntimeException(msg);//Table
+  def visit(node: MatchNode[_])  = throw new RuntimeException(msg);//Table
+  def visit(node: BipartiteMatchNode[_,_])  = throw new RuntimeException(msg);//Table
   def visit( node : StructureGenerator )  = throw new RuntimeException(msg);//Generator
   def visit( node : StaticValue[_] )  = throw new RuntimeException(msg);//Value
   def visit( node : TableSize)  = throw new RuntimeException(msg);//Table
@@ -40,7 +42,8 @@ abstract class PropertyGeneratorNonVoidVisitor extends ExecutionPlanNonVoidVisit
 abstract class GraphGeneratorNonVoidVisitor  extends ExecutionPlanNonVoidVisitor {
   def visit(node: PropertyTable[_]) = throw new RuntimeException(msg); //Table
   def visit(node: EdgeTable) = throw new RuntimeException(msg); //Table
-  def visit(node: Match)  = throw new RuntimeException(msg);//Table
+  def visit(node: MatchNode[_])  = throw new RuntimeException(msg);//Table
+  def visit(node: BipartiteMatchNode[_,_])  = throw new RuntimeException(msg);//Table
   def visit( node : PropertyGenerator[_] )  = throw new RuntimeException(msg);//Generator
   def visit( node : StaticValue[_] )  = throw new RuntimeException(msg);//Value
   def visit( node : TableSize)  = throw new RuntimeException(msg);//Table
@@ -49,7 +52,8 @@ abstract class GraphGeneratorNonVoidVisitor  extends ExecutionPlanNonVoidVisitor
 abstract class ValueNonVoidVisitor  extends ExecutionPlanNonVoidVisitor {
   def visit(node: PropertyTable[_])  = throw new RuntimeException(msg);//Table
   def visit(node: EdgeTable)  = throw new RuntimeException(msg);//Table
-  def visit(node: Match)  = throw new RuntimeException(msg);//Table
+  def visit(node: MatchNode[_])  = throw new RuntimeException(msg);//Table
+  def visit(node: BipartiteMatchNode[_,_])  = throw new RuntimeException(msg);//Table
   def visit( node : PropertyGenerator[_] )  = throw new RuntimeException(msg);//Generator
   def visit( node : StructureGenerator )  = throw new RuntimeException(msg);//Generator
   def visit( node : TableSize)  = throw new RuntimeException(msg);//Table

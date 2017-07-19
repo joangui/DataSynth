@@ -1,6 +1,9 @@
 package org.dama.datasynth.executionplan
 
 
+import org.dama.datasynth.runtime.spark.operators.matching
+import org.dama.datasynth.runtime.spark.operators.matching.utils.JointDistribution
+
 import scala.reflect.runtime.universe._
 
 /**
@@ -19,6 +22,7 @@ object ExecutionPlan {
   sealed abstract class ExecutionPlanNode {
     def accept( visitor : ExecutionPlanVoidVisitor )
     def accept[T]( visitor : ExecutionPlanNonVoidVisitor[T] ) : T
+//    def accept[T]( visitor : ExecutionPlanNonVoidVisitor[T] ) : T
   };
 
   /********************************************************************/
@@ -143,12 +147,20 @@ object ExecutionPlan {
     * @param sourcePropertyTable The property table to match
     * @param edgeTable The graph to match
     */
-  case class Match(tableName : String, sourcePropertyTable : PropertyTable[_], targetPropertyTable : PropertyTable[_], edgeTable : EdgeTable, distribution:String)
+  case class BipartiteMatchNode[T1,T2](tableName : String, sourcePropertyTable : PropertyTable[T1], targetPropertyTable : PropertyTable[T2], edgeTable : EdgeTable, jointDistribution: matching.JointDistribution[T1,T2])
     extends AbstractEdgeTable(tableName) {
     override def toString: String = s"[Match,$tableName]"
 
     override def accept(visitor: ExecutionPlanVoidVisitor) =  visitor.visit(this)
 
-    override def accept[T](visitor: ExecutionPlanNonVoidVisitor[T]): T = visitor.visit(this)
+    override def accept[T3](visitor: ExecutionPlanNonVoidVisitor[T3]): T3 = visitor.visit(this)
+  }
+  case class MatchNode[T](tableName : String, propertyTable : PropertyTable[T], edgeTable : EdgeTable, jointDistribution: JointDistribution[T,T])
+    extends AbstractEdgeTable(tableName) {
+    override def toString: String = s"[Match,$tableName]"
+
+    override def accept(visitor: ExecutionPlanVoidVisitor) =  visitor.visit(this)
+
+    override def accept[T3](visitor: ExecutionPlanNonVoidVisitor[T3]): T3 = visitor.visit(this)
   }
 }

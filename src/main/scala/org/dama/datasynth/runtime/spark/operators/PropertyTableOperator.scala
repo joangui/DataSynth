@@ -20,7 +20,8 @@ class PropertyTableOperator {
     import sparkSession.implicits._
     val generator = SparkRuntime.instantiatePropertyGeneratorOperator[Boolean](node.name, node.generator)
     val size : Long = SparkRuntime.evalValueOperator(node.size).asInstanceOf[Long]
-    sparkSession.range (0, size).map (i => Tuple2[Long,Boolean](i.toLong, generator(i) ) )
+    sparkSession.range (0, size)
+                .map (i => Tuple2[Long,Boolean](i.toLong, generator(i) ) )
   }
 
   /**
@@ -33,7 +34,8 @@ class PropertyTableOperator {
     import sparkSession.implicits._
     val generator = SparkRuntime.instantiatePropertyGeneratorOperator[Int](node.name, node.generator)
     val size : Long = SparkRuntime.evalValueOperator( node.size).asInstanceOf[Long]
-    sparkSession.range (0, size).map (i => Tuple2[Long,Int](i.toLong, generator(i) ) )
+    sparkSession.range (0, size)
+                .map (i => Tuple2[Long,Int](i.toLong, generator(i) ) )
   }
 
   /**
@@ -46,7 +48,8 @@ class PropertyTableOperator {
     import sparkSession.implicits._
     val generator = SparkRuntime.instantiatePropertyGeneratorOperator[Long](node.name, node.generator)
     val size : Long = SparkRuntime.evalValueOperator(node.size).asInstanceOf[Long]
-    sparkSession.range (0, size).map (i => Tuple2[Long,Long](i.toLong, generator(i) ) )
+    sparkSession.range (0, size)
+                .map (i => Tuple2[Long,Long](i.toLong, generator(i) ) )
   }
 
   /**
@@ -59,7 +62,8 @@ class PropertyTableOperator {
     import sparkSession.implicits._
     val generator = SparkRuntime.instantiatePropertyGeneratorOperator[Float](node.name, node.generator)
     val size : Long = SparkRuntime.evalValueOperator(node.size).asInstanceOf[Long]
-    sparkSession.range (0, size).map (i => Tuple2[Long,Float](i.toLong, generator(i) ) )
+    sparkSession.range (0, size)
+                .map (i => Tuple2[Long,Float](i.toLong, generator(i) ) )
   }
 
   /**
@@ -72,7 +76,8 @@ class PropertyTableOperator {
     import sparkSession.implicits._
     val generator = SparkRuntime.instantiatePropertyGeneratorOperator[Double](node.name, node.generator)
     val size : Long = SparkRuntime.evalValueOperator( node.size).asInstanceOf[Long]
-    sparkSession.range (0, size).map (i => Tuple2[Long,Double](i.toLong, generator(i) ) )
+    sparkSession.range (0, size)
+                .map (i => Tuple2[Long,Double](i.toLong, generator(i) ) )
   }
 
   /**
@@ -85,6 +90,7 @@ class PropertyTableOperator {
     import sparkSession.implicits._
     val generator = SparkRuntime.instantiatePropertyGeneratorOperator[String](node.name, node.generator)
     val size : Long = SparkRuntime.evalValueOperator(node.size).asInstanceOf[Long]
-    sparkSession.range (0, size).map (i => Tuple2[Long,String](i.toLong, generator(i) ) )
+    sparkSession.range (0, size)
+                .map (i => Tuple2[Long,String](i.toLong, generator(i) ) )
   }
 }

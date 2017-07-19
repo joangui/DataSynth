@@ -73,10 +73,10 @@ class ExecutionPlanPrinter extends ExecutionPlanVoidVisitor {
     numIndents-=1
   }
 
-  override def visit(node: Match) = {
+  override def visit(node: MatchNode[_]) = {
     numIndents+=1
     printstring(node.toString)
-    node.sourcePropertyTable.accept(this)
+    node.propertyTable.accept(this)
     node.edgeTable.accept(this)
     numIndents-=1
   }

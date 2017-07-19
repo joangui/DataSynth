@@ -172,7 +172,7 @@ dependants
     throw new RuntimeException("No code should be generated for TableSize")
   }
 
-  override def visit(node: ExecutionPlan.Match): RuntimeClasses =  {
+  override def visit(node: ExecutionPlan.MatchNode): RuntimeClasses =  {
     //    Map.empty
     throw new RuntimeException("No code should be generated for Match")
   }

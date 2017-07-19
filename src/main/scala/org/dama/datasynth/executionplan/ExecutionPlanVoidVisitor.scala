@@ -15,7 +15,8 @@ abstract class ExecutionPlanVoidVisitor {
 
   def visit(node: PropertyTable[_]) //Table
   def visit(node: EdgeTable) //Table
-  def visit(node: Match) //Table
+  def visit(node: MatchNode[_]) //Table
+  def visit(node: BipartiteMatchNode[_,_]) //Table
   def visit( node : PropertyGenerator[_] ) //Generator
   def visit( node : StructureGenerator ) //Generator
   def visit( node : StaticValue[_] ) //Value
@@ -34,7 +35,8 @@ abstract class PropertyGeneratorVoidVisitor extends ExecutionPlanVoidVisitor {
 
   def visit(node: PropertyTable[_])  = throw new RuntimeException(msg);//Table
   def visit(node: EdgeTable)  = throw new RuntimeException(msg);//Table
-  def visit(node: Match)  = throw new RuntimeException(msg);//Table
+  def visit[T](node: MatchNode[T]) //Table
+  def visit[T1,T2](node: BipartiteMatchNode[T1,T2]) //Table
   def visit( node : StructureGenerator )  = throw new RuntimeException(msg);//Generator
   def visit( node : StaticValue[_] )  = throw new RuntimeException(msg);//Value
   def visit( node : TableSize)  = throw new RuntimeException(msg);//Table
@@ -44,7 +46,8 @@ abstract class GraphGeneratorVoidVisitor  extends ExecutionPlanVoidVisitor {
 
   def visit(node: PropertyTable[_]) = throw new RuntimeException(msg); //Table
   def visit(node: EdgeTable) = throw new RuntimeException(msg); //Table
-  def visit(node: Match)  = throw new RuntimeException(msg);//Table
+  def visit[T](node: MatchNode[T]) //Table
+  def visit[T1,T2](node: BipartiteMatchNode[T1,T2]) //Table
   def visit( node : PropertyGenerator[_] )  = throw new RuntimeException(msg);//Generator
   def visit( node : StaticValue[_] )  = throw new RuntimeException(msg);//Value
   def visit( node : TableSize)  = throw new RuntimeException(msg);//Table
@@ -53,7 +56,8 @@ abstract class GraphGeneratorVoidVisitor  extends ExecutionPlanVoidVisitor {
 abstract class ValueVoidVisitor  extends ExecutionPlanVoidVisitor {
   def visit(node: PropertyTable[_])  = throw new RuntimeException(msg);//Table
   def visit(node: EdgeTable)  = throw new RuntimeException(msg);//Table
-  def visit(node: Match)  = throw new RuntimeException(msg);//Table
+  def visit[T](node: MatchNode[T]) //Table
+  def visit[T1,T2](node: BipartiteMatchNode[T1,T2]) //Table
   def visit( node : PropertyGenerator[_] )  = throw new RuntimeException(msg);//Generator
   def visit( node : StructureGenerator )  = throw new RuntimeException(msg);//Generator
   def visit( node : TableSize)  = throw new RuntimeException(msg);//Table

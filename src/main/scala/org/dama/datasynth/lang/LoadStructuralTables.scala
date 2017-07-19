@@ -62,7 +62,7 @@ object LoadStructuralTables{
           case Some(propertyTable) => propertyTable
           case None => throw new RuntimeException(s"There is no PropertyTable for ${targetPropertyTableName}. Should never happen: check schema validation.") }
 
-        val matchTable: Table = Match(edgeType.name, sourcePropertyTable, targetPropertyTable, edgeTable, filename)
+        val matchTable: Table = MatchNode(edgeType.name, sourcePropertyTable, targetPropertyTable, edgeTable, filename)
         val edgeAndMatchTableNodes :Seq[Table]=Seq(edgeTable,matchTable)
           edgeAndMatchTableNodes
       } } })
