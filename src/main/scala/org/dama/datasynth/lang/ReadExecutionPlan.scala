@@ -52,14 +52,16 @@ object ReadExecutionPlan {
     */
   def readInitParameters(initParameters: Seq[String]):Seq[Value[_]] = {
     initParameters.map(initParameter=> {
-     val keyValueSeq = initParameter.split(":")
-     keyValueSeq(1).toLowerCase match {
-      case "string" =>  StaticValue[String](keyValueSeq(0))
-      case "int" =>  StaticValue[Int](keyValueSeq(0).toInt)
-      case "double" =>  StaticValue[Double](keyValueSeq(0).toDouble)
-      case "long" =>  StaticValue[Long](keyValueSeq(0).toLong)
-      case "float" =>  StaticValue[Float](keyValueSeq(0).toFloat)
-     }
+      val colonPosition = initParameter.lastIndexOf(":")
+      val dataType = initParameter.substring(colonPosition+1).toLowerCase
+      val value = initParameter.substring(0,colonPosition);
+      dataType match {
+        case "string" =>  StaticValue[String](value)
+        case "int" =>  StaticValue[Int](value.toInt)
+        case "double" =>  StaticValue[Double](value.toDouble)
+        case "long" =>  StaticValue[Long](value.toLong)
+        case "float" =>  StaticValue[Float](value.toFloat)
+      }
     })
 
   }

@@ -16,9 +16,9 @@ class BTERGeneratorTest extends FlatSpec with Matchers with BeforeAndAfterAll {
 
   "BTERGenerator " should "not crash and produce a graph in /tmp/bterEdges" in {
     val bterGenerator = new BTERGenerator();
-    bterGenerator.initialize("src/main/resources/degrees/dblp",
-      "src/main/resources/ccs/dblp")
-    bterGenerator.run(1000000, new Configuration(), "/tmp/bterEdges")
+    bterGenerator.initialize("file://./src/main/resources/degrees/dblp",
+                             "file://./src/main/resources/ccs/dblp")
+    bterGenerator.run(1000000, new Configuration(), "hdfs:///tmp/bterEdges")
     val fileSystem = FileSystem.get(new Configuration())
     fileSystem.exists(new Path("/tmp/bterEdges")) should be (true)
   }

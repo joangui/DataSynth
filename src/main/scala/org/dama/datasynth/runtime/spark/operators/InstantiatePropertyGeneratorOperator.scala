@@ -24,8 +24,10 @@ class InstantiatePropertyGeneratorOperator {
     * @return The instantiated property generator
     */
   def apply[T](propertyTableName : String, info : ExecutionPlan.PropertyGenerator[T]) : PropertyGeneratorWrapper[T] = {
-    val initParameters : Seq[Object] = info.initParameters.map( x => SparkRuntime.evalValueOperator(x)).map( ref => ref.asInstanceOf[Object])
-    val urlCL = new URLClassLoader( Array[URL](new URL("file:///tmp/temp.jar")), getClass.getClassLoader());
+    val initParameters : Seq[Object] = info.initParameters.map( x => SparkRuntime.evalValueOperator(x))
+                                                          .map( ref => ref.asInstanceOf[Object])
+    val jarUrl = "file://"+SparkRuntime.getConfig().driverWorkspaceDir+"/temp.jar"
+    val urlCL = new URLClassLoader( Array[URL]( new URL(jarUrl)),getClass.getClassLoader());
     val constructor = urlCL.loadClass(info.className).getConstructors()(0)
     val generator = constructor.newInstance(initParameters : _*).asInstanceOf[PropertyGenerator[T]]
     val rndGen = SparkRuntime.fetchRndGeneratorOperator(propertyTableName)

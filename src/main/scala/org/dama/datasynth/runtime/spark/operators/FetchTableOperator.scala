@@ -17,7 +17,6 @@ import scala.collection.mutable
   */
 class FetchTableOperator {
 
-
   // Maps used to store the property tables per type
   val booleanTables = new mutable.HashMap[String, Dataset[(Long,Boolean)]]
   val intTables     = new mutable.HashMap[String, Dataset[(Long,Int)]]
@@ -40,28 +39,28 @@ class FetchTableOperator {
   def getDataset[T](table: ExecutionPlan.PropertyTable[T])  : Dataset[(Long,T)]= {
 
 
-   def fetchPropertyTableHelper[T2](map: mutable.HashMap[String, Dataset[(Long, T2)]],
-                                          node: ExecutionPlan.PropertyTable[T2],
-                                          f: (ExecutionPlan.PropertyTable[T2]) => Dataset[(Long, T2)]): Dataset[(Long, T2)] = {
-    map.get(node.name) match {
-      case Some(t) => t
-      case none => {
-        val table = f(node)
-        map.put(node.name, table)
-        table
+    def fetchPropertyTableHelper[T2](map: mutable.HashMap[String, Dataset[(Long, T2)]],
+                                     node: ExecutionPlan.PropertyTable[T2],
+                                     f: (ExecutionPlan.PropertyTable[T2]) => Dataset[(Long, T2)]): Dataset[(Long, T2)] = {
+      map.get(node.name) match {
+        case Some(t) => t
+        case none => {
+          val table = f(node)
+          map.put(node.name, table)
+          table
+        }
       }
     }
-  }
 
 
-  val d=table match {
-     case t: ExecutionPlan.PropertyTable[Boolean@unchecked] if typeOf[Boolean] =:= table.tag.tpe => fetchPropertyTableHelper(booleanTables, t, SparkRuntime.propertyTableOperator.boolean)
-     case t: ExecutionPlan.PropertyTable[Int@unchecked] if typeOf[Int] =:= table.tag.tpe => fetchPropertyTableHelper(intTables, t, SparkRuntime.propertyTableOperator.int)
-     case t: ExecutionPlan.PropertyTable[Long@unchecked] if typeOf[Long] =:= table.tag.tpe => fetchPropertyTableHelper(longTables, t, SparkRuntime.propertyTableOperator.long)
-     case t: ExecutionPlan.PropertyTable[Float@unchecked] if typeOf[Float] =:= table.tag.tpe => fetchPropertyTableHelper(floatTables, t, SparkRuntime.propertyTableOperator.float)
-     case t: ExecutionPlan.PropertyTable[Double@unchecked] if typeOf[Double] =:= table.tag.tpe => fetchPropertyTableHelper(doubleTables, t, SparkRuntime.propertyTableOperator.double)
-     case t: ExecutionPlan.PropertyTable[String@unchecked] if typeOf[String] =:= table.tag.tpe => fetchPropertyTableHelper(stringTables, t, SparkRuntime.propertyTableOperator.string)
-   }
+    val d=table match {
+      case t: ExecutionPlan.PropertyTable[Boolean@unchecked] if typeOf[Boolean] =:= table.tag.tpe => fetchPropertyTableHelper(booleanTables, t, SparkRuntime.propertyTableOperator.boolean)
+      case t: ExecutionPlan.PropertyTable[Int@unchecked] if typeOf[Int] =:= table.tag.tpe => fetchPropertyTableHelper(intTables, t, SparkRuntime.propertyTableOperator.int)
+      case t: ExecutionPlan.PropertyTable[Long@unchecked] if typeOf[Long] =:= table.tag.tpe => fetchPropertyTableHelper(longTables, t, SparkRuntime.propertyTableOperator.long)
+      case t: ExecutionPlan.PropertyTable[Float@unchecked] if typeOf[Float] =:= table.tag.tpe => fetchPropertyTableHelper(floatTables, t, SparkRuntime.propertyTableOperator.float)
+      case t: ExecutionPlan.PropertyTable[Double@unchecked] if typeOf[Double] =:= table.tag.tpe => fetchPropertyTableHelper(doubleTables, t, SparkRuntime.propertyTableOperator.double)
+      case t: ExecutionPlan.PropertyTable[String@unchecked] if typeOf[String] =:= table.tag.tpe => fetchPropertyTableHelper(stringTables, t, SparkRuntime.propertyTableOperator.string)
+    }
 
     d.asInstanceOf[Dataset[(Long,T)]]
   }
@@ -77,7 +76,7 @@ class FetchTableOperator {
       edgeTables.get(node.name) match {
         case Some(t) => t
         case None => {
-          val table: Dataset[(Long, Long, Long)] = SparkRuntime.edgeTableOperator(node)
+          val table = SparkRuntime.edgeTableOperator(node)
           edgeTables.put(node.name, table)
           table
         }
@@ -100,7 +99,6 @@ class FetchTableOperator {
     * @return The spark Dataset representing the fetched table
     */
   def apply( table : Table ): Dataset[_] =  table.accept[Dataset[_]](new FetchTableVisitor())
-
 
   def clear(): Unit = {
 

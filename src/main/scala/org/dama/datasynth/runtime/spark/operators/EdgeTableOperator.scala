@@ -22,13 +22,13 @@ class EdgeTableOperator {
   def apply( node : EdgeTable) : Dataset[(Long,Long,Long)]= {
     val sparkSession = SparkRuntime.getSparkSession()
     import sparkSession.implicits._
-    val generator = SparkRuntime.instantiateStructureGeneratorOperator(node.structure)
+    val generator = SparkRuntime.instantiateStructureGeneratorOperator( node.structure )
     val size = SparkRuntime.evalValueOperator(node.size).asInstanceOf[Long]
     val random : Random = new Random()
     val id : Int = random.nextInt()
     val path : String = s"/tmp/${id}"
     val sparkContext = sparkSession.sparkContext
-    generator.run(size, sparkContext.hadoopConfiguration,path)
+    generator.run(size, sparkContext.hadoopConfiguration,"hdfs://"+path)
     val edgesRDD = sparkContext.textFile(path)
                                .map( s => s.split("\t"))
                                .map( l => (l(0).toLong, l(1).toLong))
