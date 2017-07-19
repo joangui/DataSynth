@@ -30,7 +30,7 @@
       "target" : "entity1",
       "structure" : {
         "name" : "org.dama.datasynth.common.generators.structure.BTERGenerator",
-        "initParameters" : ["src/main/resources/degrees/dblp:String","src/main/resources/ccs/dblp:String"]
+        "initParameters" : ["file://./src/main/resources/degrees/dblp:String","file://./src/main/resources/ccs/dblp:String"]
       }
     }
   ]

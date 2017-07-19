@@ -10,8 +10,8 @@ import org.apache.hadoop.conf.Configuration
   */
 class BTERGenerator extends StructureGenerator {
 
-  var degreesFileName : String = "src/main/resources/degreeSequences/dblp"
-  var ccsFileName : String = "src/main/resources/CCs/dblp"
+  var degreesFileName : String = "file://./src/main/resources/degreeSequences/dblp"
+  var ccsFileName : String = "file://./src/main/resources/CCs/dblp"
   var conf : Configuration = null
 
   override def initialize(parameters: Any*): Unit = {
@@ -25,7 +25,7 @@ class BTERGenerator extends StructureGenerator {
     conf.setInt("ldbc.snb.bteronh.generator.numThreads", 4)
     conf.setLong("ldbc.snb.bteronh.generator.numNodes", num)
     conf.setInt("ldbc.snb.bteronh.generator.seed", 12323540)
-    conf.set("ldbc.snb.bteronh.serializer.workspace", "/tmp")
+    conf.set("ldbc.snb.bteronh.serializer.workspace", "hdfs:///tmp")
     conf.set("ldbc.snb.bteronh.serializer.outputFileName", path)
     conf.set("ldbc.snb.bteronh.generator.degreeSequence", degreesFileName)
     conf.set("ldbc.snb.bteronh.generator.ccPerDegree", ccsFileName)

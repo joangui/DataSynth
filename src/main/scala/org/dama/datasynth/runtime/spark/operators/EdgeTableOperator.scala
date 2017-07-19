@@ -28,7 +28,7 @@ class EdgeTableOperator {
     val id : Int = random.nextInt()
     val path : String = s"/tmp/${id}"
     val sparkContext = sparkSession.sparkContext
-    generator.run(size, sparkContext.hadoopConfiguration,path)
+    generator.run(size, sparkContext.hadoopConfiguration,"hdfs://"+path)
     val edgesRDD = sparkContext.textFile(path)
                                .map( s => s.split("\t"))
                                .map( l => (l(0).toLong, l(1).toLong))

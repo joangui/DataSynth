@@ -9,6 +9,8 @@ import org.junit.runner.RunWith
 import org.scalatest.{BeforeAndAfterAll, FlatSpec, Matchers}
 import org.scalatest.junit.JUnitRunner
 
+import scala.util.Try
+
 /**
   * Created by aprat on 17/07/17.
   */
@@ -26,9 +28,9 @@ class DataSynthTest extends FlatSpec with Matchers with BeforeAndAfterAll {
     testFolder.mkdir()
     dataFolder.mkdir()
     workspaceFolder.mkdir()
-    DataSynth.main(List("--output-dir", dataFolder.getAbsolutePath,
-                        "--driver-workspace-dir", workspaceFolder.getAbsolutePath,
-                        "--schema-file", "src/test/resources/test.json").toArray)
-    FileUtils.deleteDirectory(testFolder)
+    val result = Try(DataSynth.main(List("--output-dir", dataFolder.getAbsolutePath,
+      "--driver-workspace-dir", workspaceFolder.getAbsolutePath,
+      "--schema-file", "src/test/resources/test.json").toArray))
+    result.isSuccess should be(true)
   }
 }

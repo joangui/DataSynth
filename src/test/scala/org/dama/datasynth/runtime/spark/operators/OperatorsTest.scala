@@ -61,8 +61,8 @@ class OperatorsTest extends FlatSpec with Matchers {
   }
   "A FetchTableOperator2" should "return a Dataset when fetching a table (either property or edge)" in {
     SparkSession.builder().master("local[*]").getOrCreate()
-    val file1 = ExecutionPlan.StaticValue[String]("src/main/resources/degrees/dblp")
-    val file2 = ExecutionPlan.StaticValue[String]("src/main/resources/ccs/dblp")
+    val file1 = ExecutionPlan.StaticValue[String]("file://./src/main/resources/degrees/dblp")
+    val file2 = ExecutionPlan.StaticValue[String]("file://./src/main/resources/ccs/dblp")
     val structureGenerator = ExecutionPlan.StructureGenerator("org.dama.datasynth.common.generators.structure.BTERGenerator",Seq(file1, file2))
     val size = ExecutionPlan.StaticValue[Long](1000)
     val createEdgeTable = EdgeTable("edges",structureGenerator,size)
