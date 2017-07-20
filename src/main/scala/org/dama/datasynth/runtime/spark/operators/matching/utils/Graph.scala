@@ -1,13 +1,14 @@
 package org.dama.datasynth.runtime.spark.operators.matching.utils
 
 import org.apache.spark.sql.{DataFrame, Row}
-
 import scala.collection.mutable
+
 
 /**
   * Created by joangui on 19/07/2017.
   */
 public class Graph(edgeDataFrame:DataFrame) extends mutable.HashMap[Long,mutable.Set[Long]] {
+  this = new mutable.HashMap[Long,mutable.Set[Long]]()
   addEdges()
 
   def addEdges(): Unit = {

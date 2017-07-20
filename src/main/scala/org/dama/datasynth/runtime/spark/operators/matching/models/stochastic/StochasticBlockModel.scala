@@ -6,6 +6,7 @@ import org.dama.datasynth.runtime.spark.SparkRuntime
 import org.dama.datasynth.runtime.spark.operators.matching.Tuple
 import org.dama.datasynth.runtime.spark.operators.matching.utils.JointDistribution
 
+import scala.collection.immutable.HashMap
 import scala.collection.{breakOut, immutable, mutable}
 /**
   * Created by joangui on 10/07/2017.
@@ -79,7 +80,8 @@ class StochasticBlockModel [T <% Ordered[T]] (probabilities : immutable.HashMap[
     }
   }
 
-  def getMapping():immutable.HashMap[(T, T), Double] = probabilities
+  def getMapping():HashMap[T, Long] = mapping
+  def getProbabilities: HashMap[(T, T), Double] = probabilities
   def getSizes():Array[Long] = mapping.values.toArray
 }
 
