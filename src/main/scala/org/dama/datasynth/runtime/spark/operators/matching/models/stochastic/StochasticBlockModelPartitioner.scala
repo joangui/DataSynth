@@ -49,12 +49,13 @@ class StochasticBlockModelPartitioner[T <% Ordered[T]](edgeDataframe: DataFrame,
 
   def create(): Unit = {
 
-    while(traversal.hasNext())
-      {
-        val node: Long = traversal.next()
+    //while(traversal.hasNext())
+
+      traversal.foreach(node =>{
+        //val node: Long = traversal.next()
         val partitionId: Int = findBestPartition(node)
-        partition.addToPartition(node,partitionId)
-      }
+        partition.addTo(node,partitionId)
+      })
 
 
   }

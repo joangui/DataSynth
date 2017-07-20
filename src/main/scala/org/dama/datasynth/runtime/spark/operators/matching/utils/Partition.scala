@@ -6,7 +6,7 @@ class Partition extends mutable.HashMap[Int,mutable.Set[Long]] {
   this = new mutable.HashMap[Int,mutable.Set[Long]]()
   val partitionDictionary:mutable.HashMap[Long,Integer] = new mutable.HashMap[Long,Integer]()
 
-  def addToPartition(nodeId: Long, partitionId : Int): Unit =
+  def addTo(nodeId: Long, partitionId : Int): Unit =
   {
     get(partitionId) match
     {
@@ -22,7 +22,7 @@ class Partition extends mutable.HashMap[Int,mutable.Set[Long]] {
     partitionDictionary.put(nodeId,partitionId)
   }
 
-  def getNodePartition(nodeId:Long): Option[Integer] = {
+  def getNode(nodeId:Long): Option[Integer] = {
     partitionDictionary.get(nodeId)
   }
 
